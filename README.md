@@ -12,7 +12,7 @@ Her işlem öncesi plan ve rapor okunur. Tamamlanma, test ve dosya inceleme kan�
 
 ## Araçlar ve kurulum
 
-Node **24.21.0 LTS**, pnpm **11.19.0**. `packageManager` ve lockfile sabittir; pnpm `devEngines.runtime` üzerinden proje komutlarını doğru Node ile çalıştırır. Sistem Node kurulumu değiştirilmez. Docker Engine/Desktop veya uyumlu bir daemon ve Compose eklentisi yerel veri hizmetleri için gereklidir.
+Node **24.21.0 LTS**, pnpm **11.19.0**. `packageManager` ve lockfile sabittir; pnpm `devEngines.runtime` üzerinden proje komutlarını doğru Node ile çalıştırır. Sistem Node kurulumu değiştirilmez. Docker Engine/Desktop veya uyumlu bir daemon ve Compose eklentisi yerel veri hizmetleri için gereklidir. Bu Mac'te Homebrew ile Colima, Docker CLI, Compose ve Buildx kuruldu. Projeye özel VM: `colima start --profile uludott --cpu 2 --memory 4 --disk 20 --vm-type vz`; kapatma: `colima stop --profile uludott`. VM diski üst sınırdır; VDS kapasite kararı değildir. Homebrew kurulumu: `brew install colima docker docker-compose docker-buildx`. Global Docker ayarları değiştirilmedi; eklenti bulunmazsa `docker-compose` komutunu kullanın.
 
 ```sh
 pnpm install --frozen-lockfile
@@ -37,7 +37,7 @@ docker compose --env-file .env.local ps
 pnpm dev
 ```
 
-Uygulama: http://127.0.0.1:3000 . Yerel PostgreSQL: 127.0.0.1:5432. S3 uyumlu Garage: 127.0.0.1:9000. Garage başlangıçta özel bucket ve yerel anahtarı oluşturur; API için path-style adresler ve `garage` region kullanılır. `docker compose --env-file .env.local exec object-store /garage status` ile servis kontrol edilir. Tek düğümlü depo yalnızca geliştirme içindir; canlı depo sağlayıcısı seçilmedi. Compose ve Docker çalıştırma kabulü raporda ayrıca izlenir. Resmî yerel kurulum: https://garagehq.deuxfleurs.fr/documentation/quick-start/
+Uygulama: http://127.0.0.1:3000 . Yerel PostgreSQL: 127.0.0.1:5432. S3 uyumlu Garage: 127.0.0.1:9000. Garage başlangıçta özel bucket ve yerel anahtarı oluşturur; API için path-style adresler ve `garage` region kullanılır. `docker compose --env-file .env.local exec object-store /garage status` ile servis kontrol edilir. Tek düğümlü depo yalnızca geliştirme içindir; canlı depo sağlayıcısı seçilmedi. Compose ve Docker çalıştırma kabulü yerel ortamda geçti; raporda kanıtları bulunur. Resmî yerel kurulum: https://garagehq.deuxfleurs.fr/documentation/quick-start/
 
 `config:check` yalnızca ayarları doğrular; servislerin erişilebilir olduğunu kanıtlamaz. Next başlangıç sayfası henüz DB okumaz ve DB yokken de açılır. Bu durum boş PostgreSQL kabulünün yerine geçmez.
 
@@ -53,7 +53,7 @@ pnpm test:e2e
 pnpm build
 ```
 
-Mevcut Vitest kontrolleri yapılandırma sınırına yöneliktir; henüz gerçek DB transaction veya S3 yükleme testi yoktur. Playwright kendi izole Next sunucusunu 3100 portunda açar/kapatır. Üretim build'inden sonra `pnpm start` kullanılabilir. Docker build: `docker build -t uludott-web:local .` (henüz gerçek konteynerde doğrulanmadı).
+Vitest yapılandırma yanında gerçek PostgreSQL bağlantısını ve S3 yükle/oku/sil ile anonim erişim reddini kontrol eder. Entegrasyon testleri çalışan yerel servisler ve `.env.local` gerektirir; servis yoksa testler atlanmaz, başarısız olur. Playwright kendi izole Next sunucusunu 3100 portunda açar/kapatır. Üretim build'inden sonra `pnpm start` kullanılabilir. Docker build: `docker build -t uludott-web:local .` (yerel ARM Linux konteynerinde doğrulandı).
 
 `pnpm db:migrate` Drizzle migration'larını uygular, seed çalıştırmaz. Migration dosyaları Görev 2'de oluşturulacak; şimdilik komut açık açıklamayla exit 1 verir. Başarılı migration gibi gösterilmez. 2026 editoryal sonuç seed'i Görev 8'de ayrıca yapılacaktır.
 
@@ -65,4 +65,4 @@ Ham `Media` ve `Uludott Logo Pack` varlıkları yerinde korunur, depoya alınmaz
 
 ## Şu an açık kalanlar
 
-Gerçek boş PostgreSQL ve S3 başlangıcı, Docker imaj çalıştırma, migration şeması ve bütün sonraki ürün görevleri bekliyor. Hukuk, gerçek etkinlik bilgileri, bildirim sağlayıcısı, Wallet hesap/sertifika/cihaz ve canlı hosting kabulü ayrı bağımlılıklardır. Ayrıntılı durum ilerleme raporundadır.
+Görev 1 yerel PostgreSQL/S3 ve Docker kabulüyle tamamlandı. Görev 2 migration şeması ve sonraki ürün görevleri yürütülüyor/bekliyor. Hukuk, gerçek etkinlik bilgileri, bildirim sağlayıcısı, Wallet hesap/sertifika/cihaz ve canlı hosting kabulü ayrı bağımlılıklardır. Ayrıntılı durum ilerleme raporundadır.

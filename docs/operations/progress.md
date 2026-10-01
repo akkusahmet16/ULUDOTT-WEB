@@ -79,3 +79,14 @@ Playwright alt süreçlerinde çalışma ortamından gelen NO_COLOR/FORCE_COLOR 
 **Görev 1 bütünü tamamlanmadı.** Sır ayrılması ve sürüm/lockfile adımları kanıtlı işaretlendi. Gerçek PostgreSQL ve Garage kurulumunun test edilmesi, boş DB ile ana sayfa kabulü ve Docker bağlamı/runtime provası açık. Sonraki görev atlanmaz: önce bu altyapı kabulü sağlanır, sonra Görev 2 şema/migration'a geçilir. VDS'ye bağlantı, dağıtım, ücretli kaynak oluşturma veya Discord botunda değişiklik yapılmadı.
 
 Bu turdaki doğrulanmış başlangıç kaynakları küçük bir Git commit'ine alınır; görev kutularının açık olması çalışma kaybı olduğu anlamına gelmez.
+
+## Görev 1 — altyapı kabulü (2 Ekim, ikinci çalışma)
+
+- Kullanıcı eksik kurulumları ve Görev 1 → 2 yürütmesini açıkça yetkilendirdi. Homebrew ile Colima/Docker/Compose/Buildx kuruldu. `uludott` profili 2 CPU, 4 GiB RAM ve 20 GiB üst disk sınırıyla VZ üzerinde açıldı; VDS ve bot değiştirilmedi. Resmî kaynak: https://colima.run/docs/installation/ .
+- Yerel `.env.local` ve RPC sırrı rastgele üretildi, mevcut dosyaya yazmama ve 0600 izinleri uygulandı; değerler çıktıya alınmadı. Global Docker config değiştirilmedi; Homebrew `docker-compose` kullanıldı.
+- Gerçek altyapı testi ilk çalıştırmada eksik env ile durdu; env oluşturulduktan sonra 2/2 test ECONNREFUSED ile RED oldu. Compose başladıktan sonra 2/2 GREEN: PostgreSQL 17, S3 yaz/oku/sil ve anonim 403. Garage status sağlıklı v2.3.0.
+- Ana sayfa browser kabulünden hemen önce PostgreSQL public tablo sayısı 0 doğrulandı; Playwright 1/1 geçti. Başlangıç ekranı henüz DB okumasına ihtiyaç duymaz; bu kanıt yalnızca boş DB ile başlangıç kabulüdür.
+- `pnpm test`: 9/9, typecheck ve lint geçti. Docker build/runtime ve son tarama devam ediyor; Görev 1 kapanışı henüz yazılmadı.
+- Docker imajı gerçek daemon üzerinde üretildi; runtime `USER node`, yaklaşık 93 MB. İlk anlık HTTP kontrolü startup yarışında ECONNREFUSED verdi; hazır olana kadar sınırlı bekleyen kontrol HTTP 200 ve Uludott metniyle geçti. Geçici web konteyneri kaldırıldı, veri servisleri çalışıyor.
+- Build bağlamı yaklaşık 140 kB; runtime dosya adı ve kaynak/test/static private-key/AWS örüntü taraması 0 bulgu. Yerel sırlar Git ignore altında ve 0600. Bu sınırlı kontrol tam güvenlik kabulü değildir. Audit 0 bulgu, frozen install ve diff --check geçti. Değişen test/config/docs/lockfile ve diff incelendi.
+- **Task 1: complete.** 9/9 test, 1/1 E2E, typecheck/lint, gerçek PostgreSQL/S3 ve Docker build/runtime kabulü geçti. Önceki açık durumlar yukarıda tarihsel kayıttır; artık Görev 2'ye geçilir. İlk başlangıç commit'i `50531fc`; altyapı kapanışı bu kayıtla commit edilir.

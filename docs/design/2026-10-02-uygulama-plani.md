@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (- [ ]) syntax for tracking. The user requested file-by-file review with the assistant; do not delegate implementation.
 
-Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1 devam ediyor. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
+Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1 tamamlandı; Görev 2 yürütülüyor. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
 
 **Goal:** Uludott topluluk sitesi, genel etkinlik/form/duyuru/link yönetimi, UluJam takım ve onay akışları, 2026 arşivi, 2027 “Yakında” alanı, derece oyunları ve onay sonrası Wallet kartlarını sıfırdan güvenli ve sürdürülebilir biçimde üretmek.
 
@@ -70,15 +70,15 @@ Ortak sözleşmeler ilk görevlerde sabitlenir: Actor = {adminId, roles, eventSc
 
 **Dosyalar:** Oluştur: .gitignore, package.json, pnpm-lock.yaml, tsconfig.json, next.config.ts, eslint.config.mjs, .env.example, compose.yaml, Dockerfile, README.md, src/lib/config/server.ts, src/app/layout.tsx, src/app/page.tsx, tests/integration/bootstrap.test.ts. İncele: mimari öneri ve mevcut Media/Logo Pack dosya listesi; Wallet secrets içeriği açılmaz.
 
-Görev 1 yardımcı dosyaları: .dockerignore, .node-version, pnpm-workspace.yaml, vitest.config.ts, playwright.config.ts, scripts/{check-config.ts,migrate.mjs}, tests/helpers/server-only.ts, tests/e2e/bootstrap.spec.ts, infrastructure/garage.toml ve docs/operations/{progress,vds-assessment}.md. Yerel S3 depo Garage v2.3.0'dır; bakım almayan eski MinIO Community imajı kullanılmaz. Gerçek Docker/DB/S3 kabulü tamamlanmadan görev kapatılmaz.
+Görev 1 yardımcı dosyaları: .dockerignore, .node-version, pnpm-workspace.yaml, vitest.config.ts, playwright.config.ts, scripts/{check-config.ts,migrate.mjs}, tests/helpers/server-only.ts, tests/e2e/bootstrap.spec.ts, tests/integration/infrastructure.test.ts, infrastructure/garage.toml ve docs/operations/{progress,vds-assessment}.md. Yerel S3 depo Garage v2.3.0'dır; bakım almayan eski MinIO Community imajı kullanılmaz. Gerçek Docker/DB/S3 kabulü tamamlanmadan görev kapatılmaz.
 
 **Arayüz:** Üretir: pnpm dev, pnpm test, pnpm test:integration, pnpm test:e2e, pnpm typecheck, pnpm lint, pnpm build, pnpm db:migrate komutları; yalnızca sunucuda kullanılan yapılandırma yükleyicisi src/lib/config/server.ts.
 
 - [x] Gizli klasörün proje dışına alınacağı güvenli konumu ve ignore kurallarını belirle; dosya içeriğini yazdırmadan Git/build kapsamı dışı olduğunu kontrol et. Kanıt: docs/operations/progress.md §1.1.
 - [x] Desteklenen kararlı Node/Next/React/Drizzle/Zod sürümlerini doğrula; package manager ve lockfile'ı sabitle. Kanıt: docs/operations/progress.md §1.2 ve §1.4, frozen lockfile kurulumu.
-- [ ] Yerel PostgreSQL ve S3 uyumlu depo için compose, env.example ve kurulum testi yaz; ilk çalıştırmada beklenen eksik yapılandırma hatasını doğrula.
-- [ ] En küçük Next.js uygulamasını ve komutları kur; boş veritabanıyla açılan ana sayfa testini geçir.
-- [ ] Gizli klasör proje dışına alınıp ignore doğrulandıktan sonra Git deposunu başlat; bütün oluşturulan dosyaları ve build çıktısını sır taramasından geçir; README'ye ilk gün kurulumunu ekle; global dosya kontrolünü uygula ve commit et.
+- [x] Yerel PostgreSQL ve S3 uyumlu depo için compose, env.example ve kurulum testi yaz; ilk çalıştırmada beklenen eksik yapılandırma hatasını doğrula.
+- [x] En küçük Next.js uygulamasını ve komutları kur; boş veritabanıyla açılan ana sayfa testini geçir.
+- [x] Gizli klasör proje dışına alınıp ignore doğrulandıktan sonra Git deposunu başlat; bütün oluşturulan dosyaları ve build çıktısını sır taramasından geçir; README'ye ilk gün kurulumunu ekle; global dosya kontrolünü uygula ve commit et.
 
 ### Görev 2 — veritabanı omurgası, transaction ve denetim kaydı
 
