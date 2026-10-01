@@ -1,0 +1,8 @@
+saveExact: true
+strictPeerDependencies: true
+overrides:
+  '@esbuild-kit/core-utils>esbuild': 0.25.12
+allowBuilds:
+  esbuild: true
+  sharp: true
+  unrs-resolver: true

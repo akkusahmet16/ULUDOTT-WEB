@@ -1,0 +1,33 @@
+# Yalnızca yerel geliştirme. Üretim hizmet seçimi ayrıca yapılacaktır.
+services:
+  postgres:
+    image: postgres:17.10-alpine
+    environment:
+      POSTGRES_DB: uludott
+      POSTGRES_USER: uludott
+      POSTGRES_PASSWORD: ${LOCAL_POSTGRES_PASSWORD:?Yerel PostgreSQL parolasını ayarlayın}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U uludott -d uludott"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  object-store:
+    image: dxflrs/garage:v2.3.0
+    command: /garage server --single-node --default-bucket
+    environment:
+      GARAGE_DEFAULT_ACCESS_KEY: ${OBJECT_STORAGE_ACCESS_KEY:?Yerel depo erişim anahtarını ayarlayın}
+      GARAGE_DEFAULT_SECRET_KEY: ${OBJECT_STORAGE_SECRET_KEY:?Yerel depo parolasını ayarlayın}
+      GARAGE_DEFAULT_BUCKET: ${OBJECT_STORAGE_BUCKET:?Yerel bucket adını ayarlayın}
+    ports:
+      - "127.0.0.1:9000:3900"
+    volumes:
+      - ./infrastructure/garage.toml:/etc/garage.toml:ro
+      - ./.local/garage-rpc.secret:/run/secrets/garage-rpc:ro
+      - object-store-data:/var/lib/garage
+volumes:
+  postgres-data:
+  object-store-data:

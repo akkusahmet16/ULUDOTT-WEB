@@ -1,0 +1,22 @@
+node_modules/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+playwright-report/
+test-results/
+.env*
+!.env.example
+.DS_Store
+.local/
+.superpowers/
+.worktrees/
+Wallet secrets/
+*.pem
+*.p12
+*.pfx
+*.key
+*.pkpass
+# Kaynak medya yalnızca doğrulanmış türevler olarak uygulamaya alınır.
+Media/
+Uludott Logo Pack/
