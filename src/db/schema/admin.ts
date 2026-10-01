@@ -7,6 +7,8 @@ import {
   primaryKey,
   check,
   index,
+  integer,
+  bigint,
 } from "drizzle-orm/pg-core";
 import { id, createdAt, instant } from "./shared.ts";
 
@@ -21,10 +23,14 @@ export const admins = pgTable(
       .$type<string[]>()
       .default([])
       .notNull(),
+    failedAttempts: integer("failed_attempts").default(0).notNull(),
+    lockedUntil: instant("locked_until"),
+    lastTotpCounter: bigint("last_totp_counter", { mode: "number" }),
     disabledAt: instant("disabled_at"),
     createdAt: createdAt(),
   },
   (t) => [
+    check("admin_failed_attempts", sql`${t.failedAttempts}>=0`),
     check(
       "admin_email_normalized",
       sql`${t.email} = lower(btrim(${t.email})) AND ${t.email} <> ''`,
@@ -57,9 +63,14 @@ export const adminSessions = pgTable(
     tokenHash: text("token_hash").notNull().unique(),
     createdAt: createdAt(),
     expiresAt: instant("expires_at").notNull(),
+    absoluteExpiresAt: instant("absolute_expires_at").notNull(),
     revokedAt: instant("revoked_at"),
   },
   (t) => [
+    check(
+      "admin_session_absolute",
+      sql`${t.absoluteExpiresAt} >= ${t.expiresAt}`,
+    ),
     check("admin_session_expiry", sql`${t.expiresAt} > ${t.createdAt}`),
     index("admin_sessions_admin_idx").on(t.adminId),
     index("admin_sessions_expiry_idx").on(t.expiresAt),

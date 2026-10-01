@@ -4,7 +4,7 @@ Plan: `docs/design/2026-10-02-uygulama-plani.md`
 Mimari: `docs/design/2026-10-01-mimari-oneri.md`
 Başlangıç: 2 Ekim 2026. Kullanıcı planın yürütülmesine izin verdi.
 
-**Güncel durum: Görev 1 ve Görev 2 tamamlandı. Sonraki adım Görev 3.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 2 kapanışıdır.
+**Güncel durum: Görev 1, 2 ve 3 tamamlandı. Sonraki adım Görev 4.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 3 kapanışıdır.
 
 ## Çalışma disiplini
 
@@ -110,3 +110,26 @@ Başlangıç commit'i `3f03eda`. İlgili plan ve mimarinin veri/tutarlılık bö
 - İnceleme: 7 schema modülü + shared/index, client/transaction/migrate, audit/outbox, Drizzle config, CLI, yerel test DB yardımcısı, iki entegrasyon dosyası, README, plan, ER belge ve her iki migration SQL'i okundu; FK/CHECK/unique/time/index kararları belgeyle karşılaştırıldı. Üretilmiş iki snapshot JSON bütün olarak parse edildi: 40 tablo; son snapshot 53 FK ve 65 CHECK; metadata check/no-drift/gerçek migration ile doğrulandı. Kodlar Prettier 3.6.2 ile biçimlendirildi; formatter runtime bağımlılığı değildir.
 - Kod inceleme becerisi kontrol listesiyle ayrı öz-inceleme yapıldı. Kullanıcının planındaki delege etmeme kuralı nedeniyle bağımsız reviewer çalıştırılmadı. Görev 1–2 kapsamında açık kritik/önemli bulgu kalmadı; sonraki domain görevlerinin kabulü bu incelemeye dahil edilmedi ve ER belgesinde açık listelendi. Bu bağımsız güvenlik denetimi değildir.
 - **Task 2: complete.** ER/constraint kararları ve kırmızı test, tekrar migration/seed yokluğu, şema/transaction/audit/outbox, gerçek rollback/unique ihlali kabulü sağlandı. Görev 3 başlatılmadı. VDS'ye dağıtım veya botta değişiklik yok.
+
+## Görev 3 — devam ediyor
+
+Başlangıç `f6e8647`; plan, veri/güvenlik mimarisi, mevcut admin/session şeması ve Next'in paketle gelen route/cookie belgeleri okundu. Hedef modül/route/test dosyaları henüz yok. Var olan geliştirme dalı kullanılıyor; implementasyon delege edilmez.
+
+Kararlar: Argon2id (19 MiB / t=2 / p=1), AES-256-GCM ile admin kimliğine bağlı TOTP sırrı, ±1 zaman adımı ve DB'de replay engeli; 5 hatada 15 dakika hesap kilidi; hashlenmiş tek kullanımlık 128-bit kurtarma kodları. Oturum token'ı 32 byte, DB'de SHA256; 30 dakika idle / 8 saat mutlak süre; yenilemede eski token iptal. Secure/HttpOnly/SameSite=Strict ve __Host- çerezleri. Mutasyonlarda APP_URL Origin + imzalı, süreli ve oturuma bağlı double-submit CSRF. İlk admin CLI'de TOTP doğrulanmadan kaydedilmez; gerçek admin/test kişi seed edilmez. Kaynaklar: https://github.com/hectorm/otpauth ve https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html .
+
+- İlk 8 kimlik/yetki/CSRF testi eksik servislerle 8 RED → 8 GREEN. Oturum/MFA yaşam döngüsü ek testleri başarı yolunu geçici kapatan mutation ile 6 RED / 9 GREEN → 15 GREEN; bu ikinci setin kanıtı mutation kontrolüdür. Bootstrap MFA testi stub ile 1 RED / 15 GREEN → 16 GREEN. E2E admin akışları route/UI yokken 2 RED → 2 GREEN (başlangıç E2E ile toplam 3).
+- Ek API/rol uç testleri: 1 RED / 20 GREEN; JavaScript nesne prototipi isimlerinde izin listesi lookup'ı TypeError üretiyordu. Own-property kontrolü eklendi, 21/21 GREEN. Boyut/type sınırı, genel hata/sır içermeyen yanıt, güvenli cookie, süresi dolan kilidin açılması ve paylaşılan rate-limit doğrulandı.
+- Yerel AUTH anahtarı rastgele üretildi; yalnız ignore altındaki .env.local dosyasına yazıldı, değeri çıktılanmadı. Native Argon2 enum ambient const-enum izolasyon hatası paket tipinden doğrulanarak sayısal Argon2id değeriyle giderildi; şifreleme istemciye taşınmadı.
+- İlk E2E testleri geçti fakat Playwright varsayılan zorla kapatma ayrı Next süreç grubunu ve test DB'sini açık bıraktı. Süreç ağacıyla kök neden doğrulandı; sadece o grubun süreçleri ve e-posta fixture'ı doğrulanan ayrı test DB'si temizlendi. gracefulShutdown SIGTERM eklendi; temiz kapanış yeniden doğrulanıyor.
+- Kurulum CLI'si ve işletme yönergesi hazır. Gerçek admin oluşturulmadı; test fixture'ları ayrı DB'de. Son tam test/build, migration, sır taraması ve dosya/diff incelemesi henüz kapanmadı.
+
+
+### Görev 3 doğrulama ve kapanış
+
+- Config CLI eksik AUTH anahtarını henüz kontrol etmiyordu: ek test 1 RED / 21 GREEN. `authKey()` denetimi komuta eklendi; son admin suite 22/22 GREEN. Hata yalnız alan adını gösterir; gizli değer verilmez.
+- Son `pnpm test`: **48/48** (7 config + 2 gerçek altyapı + 17 şema + 22 admin). `pnpm test:e2e`: **3/3**, exit 0; graceful shutdown sonrası kalan test DB sayısı **0**. Typecheck, lint ve Next standalone production build geçti. Yönetim sayfası ve tüm auth route'ları dinamik olarak derlendi.
+- `pnpm db:migrate` iki kez exit 0, `db:check` geçti, `db:generate` değişiklik yok. Ana DB **40 public tablo / 0 iş kaydı**; gerçek admin veya etkinlik seed'i yok. Yeni migration SQL'i ve snapshot/journal incelendi; snapshot 40 tablo, admin/session alanları şemayla tutarlı.
+- Frozen install ve audit geçti: **0 güvenlik bulgusu**. Yerel DB/S3/AUTH değerleri kaynak, scripts, tests ve `.next/static` içinde birebir tarandı: 65 dosya / **0 eşleşme**. `.env.local` 0600 ve Git ignore altında. Bu tarama tam güvenlik denetimi değildir.
+- Dosya incelemesi: auth config/crypto/CSRF/session; admin izin matrisi, repository, giriş ve bootstrap servisleri, HTTP sınırı, client form; admin page/layout ve beş API route; CLI/config checker, E2E launcher/Playwright, iki test dosyası; admin schema/migration metadata; env örneği, Next headers, package/lockfile, README ve işletme belgesi. Prettier 3.6.2 uygulanıp diff --check geçti. Next'in ürettiği next-env route type yolları build sonrasında incelendi.
+- Kod inceleme becerisinin kontrol listesiyle öz-inceleme yapıldı; planın delege etmeme kuralı nedeniyle bağımsız reviewer kullanılmadı. Görev 3 kabulünü engelleyen kritik/önemli bulgu kalmadı. İleriki endpoint'lerin izin kontrolü, edge trafik koruması, kayıt temizliği, yönetici sıfırlama işlemleri ve üretim kapasite/HTTPS kabulü ileriki görevlerdedir; bu kayıt bağımsız pentest iddiası değildir.
+- **Task 3: complete.** Argon2id + kişisel TOTP, tek kullanımlık recovery, kilitlenme, hash'li ve dönen oturumlar, CSRF, event kapsamı ve CLI MFA kurulumu kanıtlandı. Planın üç kutusu kanıtlarla kapatıldı. Çalışma bu görev commit'iyle kaydedilir; Görev 4 başlatılmadı. VDS'ye dağıtım veya Discord botunda değişiklik yok.

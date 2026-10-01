@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (- [ ]) syntax for tracking. The user requested file-by-file review with the assistant; do not delegate implementation.
 
-Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1 ve 2 tamamlandı; sonraki adım Görev 3. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
+Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1, 2 ve 3 tamamlandı; sonraki adım Görev 4. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
 
 **Goal:** Uludott topluluk sitesi, genel etkinlik/form/duyuru/link yönetimi, UluJam takım ve onay akışları, 2026 arşivi, 2027 “Yakında” alanı, derece oyunları ve onay sonrası Wallet kartlarını sıfırdan güvenli ve sürdürülebilir biçimde üretmek.
 
@@ -95,11 +95,13 @@ Görev 1 yardımcı dosyaları: .dockerignore, .node-version, pnpm-workspace.yam
 
 **Dosyalar:** Oluştur: src/modules/admin/{domain/permissions.ts,application/auth-service.ts,infrastructure/admin-repository.ts,ui/login-form.tsx}, src/lib/auth/{session.ts,csrf.ts}, src/app/admin/{page.tsx,layout.tsx}, src/app/api/admin/{login,logout}/route.ts, tests/integration/admin-auth.test.ts, tests/e2e/admin-login.spec.ts.
 
+Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/crypto.ts, src/modules/admin/{index.ts,application/bootstrap-admin.ts,application/http.ts}, src/app/api/admin/{csrf,session,session/renew}/route.ts, scripts/admin-bootstrap.ts, tests/helpers/start-e2e.ts ve docs/operations/admin-auth.md; next.config.ts, playwright.config.ts ve package.json, scripts/check-config.ts güncellemeleri. Mevcut admin/session şeması migration ile kilitlenme, TOTP replay ve mutlak oturum süresi alanlarına genişletilir.
+
 **Arayüz:** Üretir: authenticateAdmin(email,password,mfaCode): Promise<AdminSession>; requirePermission(actor,permission,eventId?): void; revokeSession(sessionId): Promise<void>. İlk admin kurulumu CLI/işletme yönergesiyle yapılır; genel kayıt endpoint'i açılmaz.
 
-- [ ] Yanlış parola, kilitlenme, oturum yenileme/iptal, CSRF ve başka etkinlik verisine erişim reddi testlerini yazıp kırmızı durumunu gör.
-- [ ] Argon2id parola, kişiye özel admin, TOTP tabanlı MFA ve hash'lenmiş tek kullanımlık kurtarma kodları, HttpOnly/Secure/SameSite oturum ve açık izin matrisini uygula.
-- [ ] API ve UI testlerini geçir; çerez, gizli yanıt ve rol kapsamını dosya incelemesinde kontrol edip commit et.
+- [x] Yanlış parola, kilitlenme, oturum yenileme/iptal, CSRF ve başka etkinlik verisine erişim reddi testlerini yazıp kırmızı durumunu gör.
+- [x] Argon2id parola, kişiye özel admin, TOTP tabanlı MFA ve hash'lenmiş tek kullanımlık kurtarma kodları, HttpOnly/Secure/SameSite oturum ve açık izin matrisini uygula.
+- [x] API ve UI testlerini geçir; çerez, gizli yanıt ve rol kapsamını dosya incelemesinde kontrol edip commit et.
 
 ### Görev 4 — tasarım sistemi, kabuk ve erişilebilir gezinme
 
