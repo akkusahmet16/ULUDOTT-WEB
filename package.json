@@ -24,8 +24,10 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings=0",
     "build": "next build",
-    "db:migrate": "node --env-file-if-exists=.env.local scripts/migrate.mjs",
-    "config:check": "node --env-file-if-exists=.env.local --conditions=react-server --experimental-strip-types scripts/check-config.ts"
+    "db:migrate": "node --env-file-if-exists=.env.local --conditions=react-server scripts/migrate.ts",
+    "config:check": "node --env-file-if-exists=.env.local --conditions=react-server --experimental-strip-types scripts/check-config.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:check": "drizzle-kit check"
   },
   "dependencies": {
     "drizzle-orm": "0.45.3",

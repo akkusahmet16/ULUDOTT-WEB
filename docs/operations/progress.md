@@ -4,6 +4,8 @@ Plan: `docs/design/2026-10-02-uygulama-plani.md`
 Mimari: `docs/design/2026-10-01-mimari-oneri.md`
 Başlangıç: 2 Ekim 2026. Kullanıcı planın yürütülmesine izin verdi.
 
+**Güncel durum: Görev 1 ve Görev 2 tamamlandı. Sonraki adım Görev 3.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 2 kapanışıdır.
+
 ## Çalışma disiplini
 
 Her işlem öncesinde planın ilgili adımı ve bu rapor okunur. Her kutucuk sonunda ilgili dosyalar ve diff yeniden incelenir; doğrulama kanıtı olmadan tamamlandı işaretlenmez. Uygulama bu sohbet içinde yürütülür; implementasyon delege edilmez.
@@ -90,3 +92,21 @@ Bu turdaki doğrulanmış başlangıç kaynakları küçük bir Git commit'ine a
 - Docker imajı gerçek daemon üzerinde üretildi; runtime `USER node`, yaklaşık 93 MB. İlk anlık HTTP kontrolü startup yarışında ECONNREFUSED verdi; hazır olana kadar sınırlı bekleyen kontrol HTTP 200 ve Uludott metniyle geçti. Geçici web konteyneri kaldırıldı, veri servisleri çalışıyor.
 - Build bağlamı yaklaşık 140 kB; runtime dosya adı ve kaynak/test/static private-key/AWS örüntü taraması 0 bulgu. Yerel sırlar Git ignore altında ve 0600. Bu sınırlı kontrol tam güvenlik kabulü değildir. Audit 0 bulgu, frozen install ve diff --check geçti. Değişen test/config/docs/lockfile ve diff incelendi.
 - **Task 1: complete.** 9/9 test, 1/1 E2E, typecheck/lint, gerçek PostgreSQL/S3 ve Docker build/runtime kabulü geçti. Önceki açık durumlar yukarıda tarihsel kayıttır; artık Görev 2'ye geçilir. İlk başlangıç commit'i `50531fc`; altyapı kapanışı bu kayıtla commit edilir.
+
+## Görev 2 — devam ediyor
+
+Başlangıç commit'i `3f03eda`. İlgili plan ve mimarinin veri/tutarlılık bölümü yeniden okundu. Şema/client/transaction/audit/outbox dosyaları yoktu. Doğrudan yardımcı dosyalar plana eklendi; migration CLI aynı API'yi kullanmak için TypeScript'e taşınacak.
+
+- İlk 10 gerçek PostgreSQL testi RED: `Görev 2 migration henüz uygulanmadı`. Her suite rastgele adlandırılan ayrı yerel test DB oluşturur; canlı/uzak DB'de çalışmayı reddeder, bitince yalnızca kendi DB'sini kaldırır.
+- Kapsam: 40 çekirdek tablo; FK/CHECK/unique/timestamptz/index, seed içermeyen tekrar uygulanabilir migration, iş verisi+audit+outbox atomikliği. Takım kapasite/immutable snapshot gibi ileri domain kuralları ilgili Görev 11/16/18'de ayrıca sıkılaştırılıp test edilir; şema varlığı çalışan ürün akışı iddiası değildir.
+
+### Görev 2 doğrulama ve kapanış
+
+- Temel 10/10 test GREEN. Ek 7 izolasyon/güvenlik testi ilk çalıştırmada 4 RED / 13 GREEN gösterdi: farklı etkinlik game/award ilişkisi, çift aktif üyelik, form/event izolasyonu ve outbox kişi verisi. Bileşik FK, partial unique ve UUID payload allowlist eklendi. Son schema suite 17/17 GREEN.
+- Drizzle `0001` SQL'inde parent unique child FK'den sonra üretildi; boş migration testi `42830` ile durdu. SQL incelendi, yalnızca `form_event_identity_unique` kurulumu FK'den önceye taşındı. Aynı gerçek boş DB testleri GREEN. Bu düzenleme üretilmiş SQL'in elle incelenmesinin neden gerekli olduğunu gösterir; snapshot semantiği değişmedi.
+- `pnpm db:migrate` ana geliştirme DB'sinde iki defa exit 0; 40 public tablo / toplam 0 iş kaydı. Test fixture'ları yalnızca ayrı geçici DB'de; kalan test DB sayısı 0. Kişi/takım/admin/kart/2026 oyun seed'i yok.
+- Son `pnpm test`: **26/26** (7 config + 2 gerçek altyapı + 17 şema); `pnpm test:e2e`: **1/1**. Typecheck, lint ve Next üretim build geçti. `db:check` geçti; `db:generate` “No schema changes” verdi. İlk görev audit 0 bulgu, yeni runtime bağımlılığı eklenmedi.
+- Yerel DB/depo sırlarının birebir değerleri kaynak/scripts/tests ve `.next/static` içinde tarandı: 0 eşleşme; değerler çıktıya alınmadı. Önceki private-key dosya/örüntü taraması ve ignore sınırı korundu.
+- İnceleme: 7 schema modülü + shared/index, client/transaction/migrate, audit/outbox, Drizzle config, CLI, yerel test DB yardımcısı, iki entegrasyon dosyası, README, plan, ER belge ve her iki migration SQL'i okundu; FK/CHECK/unique/time/index kararları belgeyle karşılaştırıldı. Üretilmiş iki snapshot JSON bütün olarak parse edildi: 40 tablo; son snapshot 53 FK ve 65 CHECK; metadata check/no-drift/gerçek migration ile doğrulandı. Kodlar Prettier 3.6.2 ile biçimlendirildi; formatter runtime bağımlılığı değildir.
+- Kod inceleme becerisi kontrol listesiyle ayrı öz-inceleme yapıldı. Kullanıcının planındaki delege etmeme kuralı nedeniyle bağımsız reviewer çalıştırılmadı. Görev 1–2 kapsamında açık kritik/önemli bulgu kalmadı; sonraki domain görevlerinin kabulü bu incelemeye dahil edilmedi ve ER belgesinde açık listelendi. Bu bağımsız güvenlik denetimi değildir.
+- **Task 2: complete.** ER/constraint kararları ve kırmızı test, tekrar migration/seed yokluğu, şema/transaction/audit/outbox, gerçek rollback/unique ihlali kabulü sağlandı. Görev 3 başlatılmadı. VDS'ye dağıtım veya botta değişiklik yok.

@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (- [ ]) syntax for tracking. The user requested file-by-file review with the assistant; do not delegate implementation.
 
-Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1 tamamlandı; Görev 2 yürütülüyor. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
+Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1 ve 2 tamamlandı; sonraki adım Görev 3. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
 
 **Goal:** Uludott topluluk sitesi, genel etkinlik/form/duyuru/link yönetimi, UluJam takım ve onay akışları, 2026 arşivi, 2027 “Yakında” alanı, derece oyunları ve onay sonrası Wallet kartlarını sıfırdan güvenli ve sürdürülebilir biçimde üretmek.
 
@@ -82,14 +82,14 @@ Görev 1 yardımcı dosyaları: .dockerignore, .node-version, pnpm-workspace.yam
 
 ### Görev 2 — veritabanı omurgası, transaction ve denetim kaydı
 
-**Dosyalar:** Oluştur: src/lib/database/client.ts, src/lib/database/transaction.ts, src/lib/queue/outbox.ts, src/db/schema/{admin,content,forms,ulujam,wallet,links,operations}.ts, src/db/migrations/*, src/lib/logging/audit.ts, tests/integration/schema.test.ts.
+**Dosyalar:** Oluştur: src/lib/database/client.ts, src/lib/database/transaction.ts, src/lib/queue/outbox.ts, src/db/schema/{admin,content,forms,ulujam,wallet,links,operations}.ts, src/db/migrations/*, src/lib/logging/audit.ts, tests/integration/schema.test.ts. Doğrudan yardımcı dosyalar: src/db/schema/{shared,index}.ts, src/lib/database/migrate.ts, scripts/migrate.ts (migrate.mjs yerine), drizzle.config.ts, tests/helpers/local-database.ts, docs/architecture/database.md.
 
 **Arayüz:** Üretir: withTransaction<T>(work: (tx: DbTx) => Promise<T>): Promise<T>; appendAudit(tx, actor, action, object, redactedChanges): Promise<void>; enqueue(tx,type,aggregateId,revision,payload): Promise<void>; migrateEmptyDatabase(): Promise<void>. Görev 21 bu kayıtların işlenmesini ekler.
 
-- [ ] Şemadaki FK, CHECK, unique, zaman ve indeks kararlarını ER diyagramında yaz; kişisel veri tablolarının boş açılacağını doğrulayan kırmızı test ekle.
-- [ ] Aynı migration'ı boş veritabanına uygulama ve ikinci kurulumda beklenmeyen kişisel seed olmaması testini çalıştır.
-- [ ] Şema, transaction yardımcısı ve migration'ları uygula; testleri geçir.
-- [ ] Gerçek PostgreSQL ile rollback ve unique ihlali testlerini çalıştır; dosyaları ve migration SQL'ini satır satır inceleyip commit et.
+- [x] Şemadaki FK, CHECK, unique, zaman ve indeks kararlarını ER diyagramında yaz; kişisel veri tablolarının boş açılacağını doğrulayan kırmızı test ekle.
+- [x] Aynı migration'ı boş veritabanına uygulama ve ikinci kurulumda beklenmeyen kişisel seed olmaması testini çalıştır.
+- [x] Şema, transaction yardımcısı ve migration'ları uygula; testleri geçir.
+- [x] Gerçek PostgreSQL ile rollback ve unique ihlali testlerini çalıştır; dosyaları ve migration SQL'ini satır satır inceleyip commit et.
 
 ### Görev 3 — yönetici kimliği, roller ve oturumlar
 
