@@ -4,7 +4,7 @@ Plan: `docs/design/2026-10-02-uygulama-plani.md`
 Mimari: `docs/design/2026-10-01-mimari-oneri.md`
 Başlangıç: 2 Ekim 2026. Kullanıcı planın yürütülmesine izin verdi.
 
-**Güncel durum: Görev 1–12 tamamlandı. Görev 13 sıradaki adım.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 10 kapanışıdır.
+**Güncel durum: Görev 1–13 tamamlandı. Görev 14 sıradaki adım.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 13 kapanışıdır.
 
 ## Çalışma disiplini
 
@@ -322,3 +322,19 @@ Görev 12 bütün Vitest 154/154 (15 dosya), typecheck/lint/build/db:check ve ik
 ### Görev 12 kapanış
 
 154/154 Vitest; 31/31 production E2E (14.8 sn), 2/2 odak dev E2E; typecheck/lint/build/db:check ve iki migrate geçti. Son kontrol: 42 tablo, 10 editoryal satır, 0 test DB/medya nesnesi, ana kişisel tablolar boş. Source/browser/standalone sır 0, yasak build dosyası 0; staged tekrar taranır. 0009, submission/replay/receipt servisleri, public HTTP/limiter/CSRF/honeypot, form yayın ve ayar kimlik kapısı, consent tuple doğrulaması, form-fields/public/receipt UI, public/admin routes/header, E2E fixture ve bütün test/belgeler incelendi. Görev 12 kutuları tamamlandı; Görev 13'e geçilir.
+
+
+### Görev 13 başlangıç
+
+ExcelJS 4.4.0 resmi npm registry/upstream doğrulandı ve exact kuruldu; server export writer, ziyaretçi XLSX upload/parser yok. İlk test dizini yoktu, oluşturulup gerçek RED koşusu alındı. Ruling: VDS sınırı için liste 25/en çok100; export en çok5000 satır, 1000 sürümlü alan, 250000 hücre/20 MB; fazla istek açık hata, sessiz truncation yok — maliyet: filtre ile daraltma gerekir. Ruling: admin correction eski version doğrular ve consent cevabını değiştiremez — maliyet: yeni rıza kişinin ayrı eylemini gerektirir. Ruling: bağlı UluJam application satırları generic delete/purge tarafından atlanır/blocked sayılır; gelecekte takım/kart yaşam döngüsü entegre bağlanmalı, FK bütünlüğü korunur. Cursor tam PG mikro-saniye UTC timestamp'ını saklar; JS Date truncation ile sayfa atlama yapılmaz.
+
+Görev 13 PG/security odak 18/18 GREEN; microsecond cursor 206 kayıt, eski/yeni version etiketleri, kapsam reddi, revision/capacity, receipt+replay silme ve expiry purge doğrulandı. ExcelJS typedef eski Buffer'ı ArrayBuffer diye tanımladığı için testte gerçek Uint8Array.buffer kullanıldı; runtime writer string. İlk E2E başlangıcı Node strip-only constructor parameter property reddetti; SubmissionError eşdeğer explicit status özelliğine çevrildi. Retention CLI aktif DB yönetici/kapsamı doğrular; canlı günlük timer dağıtım aşamasında bağlanır. Yeni destek dosyaları submission-http, migration0010 form-email/replay-resource indeksleri, CLI ve izole E2E fixture doğrudan Görev13 kapsamını tamamlar. Tarih filtreleri UI'da açık UTC, detay İstanbul olarak etiketlidir.
+
+172/172 Vitest ilk tam koşu geçti. Lint tek kullanılmayan import bildirdi, kaldırıldı. Bağımlılık audit uuid8.3.2 moderate bulundu; ExcelJS yalnız v4 kullandığı ve uuid11.1.1 require/import exportlarını koruduğu registry/kodla doğrulandı. Override pnpm11'in pnpm-workspace.yaml dosyasında 11.1.1 exact; son audit bütün seviyelerde 0. İlk yanlış package.json konumu pnpm uyarısıyla düzeltildi; çalışma dosyaları eski override'ı korur. E2E Form seçiminin implicit label metni option'ları da içeriyordu; açık aria-label eklendi. Ayrıntı yeniden yükleme revision key'i kaydetme mesajını sıfırlıyordu, aynı component yeni server revision alacak şekilde korundu.
+
+Görev13 ilk production E2E 32/33: düzeltmeden hemen sonraki durum isteği RSC yenilemesini beklemeden eski expectedRevision gönderiyordu (409). Başarılı POST'un revision'ı client state'e hemen yazıldı; sunucu CAS koruması aynen korunur. Aynı tarayıcı testi gerçek üretim hatasını yeniden sınar. Dev odak E2E önce 2/2 geçmiştir.
+
+
+### Görev 13 kapanış
+
+172/172 Vitest; 33/33 production E2E (19.8 sn), 2/2 odak dev E2E; typecheck/lint/build/db:check/db:generate ve iki migrate başarılı. Migration0010 yalnız iki destek indeksidir; yeniden generation schema değişikliği yok. CLI yetkisiz UUID negatif koşu doğru exit1/güvenli hata. Dependency production audit 0. Son kontrol 42 tablo, 10 editoryal satır, 0 test DB/medya nesnesi; ana PII boş. Source/browser/standalone sır eşleşmesi0, yasak build dosyası0, staged yeniden taranır. Form scoped liste/detay/PII minimizasyonu, cursor/arama, eski sürüm correction, durum/capacity/CAS, receipt/replay/answer/consent/history silme, export/version/limits/audit/injection, bağlı kayıt guard/purge, UI/API/CLI ve bütün destek dosyaları/belgeleri incelendi. Plan Görev13 kutuları tamam; Görev14 başlatılmadı. 11–13 bütün dal son bağımsız incelemesi sıradadır.

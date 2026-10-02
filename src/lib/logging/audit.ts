@@ -9,6 +9,8 @@ const identity = z.object({
   id: z.uuid(),
 });
 const changesSchema = z.strictObject({
+  recordCount: z.int().min(0).max(10000).optional(),
+  format: z.enum(["csv", "xlsx"]).optional(),
   revision: z.int().positive().optional(),
   previousRevision: z.int().positive().optional(),
   status: z

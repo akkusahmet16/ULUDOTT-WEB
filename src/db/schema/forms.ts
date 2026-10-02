@@ -151,6 +151,7 @@ export const submissions = pgTable(
     check("submission_expiry", sql`${t.expiresAt}>${t.createdAt}`),
     index("submissions_expiry_idx").on(t.expiresAt),
     index("submissions_cursor_idx").on(t.formId, t.createdAt, t.id),
+    index("submissions_form_email_idx").on(t.formId, t.email),
     index("submissions_email_idx").on(t.eventId, t.email),
   ],
 );

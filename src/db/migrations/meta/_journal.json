@@ -71,6 +71,13 @@
       "when": 1790955683977,
       "tag": "0009_submission_receipts",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1790956933899,
+      "tag": "0010_submission_admin_indexes",
+      "breakpoints": true
     }
   ]
 }

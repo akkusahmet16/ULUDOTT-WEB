@@ -30,12 +30,14 @@
     "db:check": "drizzle-kit check",
     "admin:bootstrap": "node --env-file-if-exists=.env.local --conditions=react-server scripts/admin-bootstrap.ts",
     "db:seed:2026": "node --env-file-if-exists=.env.local --conditions=react-server scripts/seed-2026.ts",
-    "db:seed:ulujam": "node --env-file-if-exists=.env.local --conditions=react-server scripts/seed-ulujam-years.ts"
+    "db:seed:ulujam": "node --env-file-if-exists=.env.local --conditions=react-server scripts/seed-ulujam-years.ts",
+    "submissions:purge": "node --env-file-if-exists=.env.local --conditions=react-server scripts/purge-submissions.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.1144.0",
     "@node-rs/argon2": "2.2.1",
     "drizzle-orm": "0.45.3",
+    "exceljs": "4.4.0",
     "libheif-js": "1.23.2",
     "next": "16.3.8",
     "otpauth": "9.5.2",

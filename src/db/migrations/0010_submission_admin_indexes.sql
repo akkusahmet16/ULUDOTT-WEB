@@ -1,0 +1,2 @@
+CREATE INDEX "submissions_form_email_idx" ON "submissions" USING btree ("form_id","email");--> statement-breakpoint
+CREATE INDEX "idempotency_resource_idx" ON "idempotency_records" USING btree ("resource_id");

@@ -97,6 +97,7 @@ export const idempotencyRecords = pgTable(
   (t) => [
     primaryKey({ columns: [t.scope, t.keyHash] }),
     check("idempotency_expiry", sql`${t.expiresAt}>${t.createdAt}`),
+    index("idempotency_resource_idx").on(t.resourceId),
     index("idempotency_expiry_idx").on(t.expiresAt),
   ],
 );

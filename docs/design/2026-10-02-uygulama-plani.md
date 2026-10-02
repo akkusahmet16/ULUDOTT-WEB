@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (- [ ]) syntax for tracking. The user requested file-by-file review with the assistant; do not delegate implementation.
 
-Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–12 tamamlandı; sıradaki adım Görev 13. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
+Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–13 tamamlandı; sıradaki adım Görev 14. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
 
 **Goal:** Uludott topluluk sitesi, genel etkinlik/form/duyuru/link yönetimi, UluJam takım ve onay akışları, 2026 arşivi, 2027 “Yakında” alanı, derece oyunları ve onay sonrası Wallet kartlarını sıfırdan güvenli ve sürdürülebilir biçimde üretmek.
 
@@ -211,9 +211,9 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Arayüz:** Üretir: listSubmissions(actor,formId,cursor,filters), changeSubmissionStatus(actor,id,status), exportSubmissions(actor,formId,format). Kişisel veri erişimi etkinlik kapsamıyla sınırlandırılır.
 
-- [ ] Başka etkinliğin başvurusunu okuyamama, cursor sayfalama, durum geçmişi, CSV/XLSX formül enjeksiyonu ve export audit testlerini yaz.
-- [ ] Arama/filtre, durum geçişleri, güvenli indirme, düzeltme/silme/dışa aktarma iş akışı ve saklama süresi uygulamasını yap.
-- [ ] Büyük veri listesi ve farklı form sürümlerini dene; yalnızca yetkili alanların yanıtlandığını dosya/API incelemesinde doğrulayıp commit et.
+- [x] Başka etkinliğin başvurusunu okuyamama, cursor sayfalama, durum geçmişi, CSV/XLSX formül enjeksiyonu ve export audit testlerini yaz.
+- [x] Arama/filtre, durum geçişleri, güvenli indirme, düzeltme/silme/dışa aktarma iş akışı ve saklama süresi uygulamasını yap.
+- [x] Büyük veri listesi ve farklı form sürümlerini dene; yalnızca yetkili alanların yanıtlandığını dosya/API incelemesinde doğrulayıp commit et.
 
 ### Görev 14 — Coffee Talk uçtan uca yayın örneği
 

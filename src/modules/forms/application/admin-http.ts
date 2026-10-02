@@ -27,6 +27,14 @@ export async function adminActor(req: Request) {
 export function formError(e: unknown) {
   const m = e instanceof Error ? e.message : "";
   const safe = [
+    "Başvuru bulunamadı",
+    "Geçersiz sayfa",
+    "Durum geçişi geçersiz",
+    "Kontenjan dolu",
+    "Rıza yönetici tarafından değiştirilemez",
+    "Bu e-posta ile başvuru mevcut",
+    "Bağlı katılımcı kaydı önce yönetilmelidir",
+    "Dışa aktarma sınırı aşıldı; filtreleri daraltın",
     "Yetki yok",
     "Oturum geçersiz",
     "Sürüm çakışması",

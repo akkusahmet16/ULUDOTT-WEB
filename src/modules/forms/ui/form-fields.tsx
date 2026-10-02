@@ -24,11 +24,13 @@ export function FormFields({
   answers,
   onChange,
   prefix = "answer",
+  readOnlyConsent = false,
 }: {
   definition: ValidFormDefinition;
   answers: Answers;
   onChange: (a: Answers) => void;
   prefix?: string;
+  readOnlyConsent?: boolean;
 }) {
   const visible = new Set(evaluateVisibility(definition, answers));
   function change(id: string, value: Answer | undefined) {
@@ -64,6 +66,7 @@ export function FormFields({
                   <input
                     id={id}
                     type="checkbox"
+                    disabled={readOnlyConsent && f.type === "consent"}
                     checked={v === true}
                     required={f.required}
                     aria-describedby={f.helpText ? help : undefined}
