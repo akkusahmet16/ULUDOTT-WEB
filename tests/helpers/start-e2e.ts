@@ -7,7 +7,8 @@ import { request as proxyRequest } from "node:http";
 import { execFileSync, spawn } from "node:child_process";
 import { createTestDatabase } from "./local-database.ts";
 import { migrateEmptyDatabase } from "../../src/lib/database/migrate.ts";
-import { closeDatabase } from "../../src/lib/database/client.ts";
+import { seed2026Results } from "../../src/db/seeds/2026-results.ts";
+import { getDatabase, closeDatabase } from "../../src/lib/database/client.ts";
 import {
   hashPassword,
   encryptMfaSecret,
@@ -58,6 +59,7 @@ try {
   process.env.DATABASE_URL = local.url;
   process.env.APP_URL = "http://127.0.0.1:3100";
   await migrateEmptyDatabase();
+  await seed2026Results(getDatabase());
   const id = randomUUID();
   await local.sql`insert into admins(id,email,password_hash,mfa_secret_encrypted) values(${id},'admin-e2e@test.invalid',${await hashPassword("E2E-only-password-long-42")},${encryptMfaSecret("JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP", id)})`;
   await local.sql`insert into admin_roles(admin_id,role) values(${id},'system_admin')`;

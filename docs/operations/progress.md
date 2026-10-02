@@ -4,7 +4,7 @@ Plan: `docs/design/2026-10-02-uygulama-plani.md`
 Mimari: `docs/design/2026-10-01-mimari-oneri.md`
 Başlangıç: 2 Ekim 2026. Kullanıcı planın yürütülmesine izin verdi.
 
-**Güncel durum: Görev 1–7 tamamlandı. Sıradaki adım Görev 8.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 7 kapanışıdır.
+**Güncel durum: Görev 1–8 tamamlandı. Sıradaki adım Görev 9.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 8 kapanışıdır.
 
 ## Çalışma disiplini
 
@@ -213,3 +213,23 @@ Kaynaklar: https://github.com/soldair/node-qrcode , https://github.com/cozmo/jsQ
 - Son cleanup: 41 public tablo, 0 ürün satırı, 0 geçici test DB, 0 S3 medya nesnesi. Gerçek sosyal adres veya ürün seed'i eklenmedi.
 - Şema/migration, domain/service/repository/HTTP/QR, public/admin ekranları, header/admin menüsü/CSS, helper ve testler dosya bazında incelendi. İşletme rehberi, DB kararları, izin rehberi, README ve plan güncellendi. Görev 7'nin üç kutucuğu kanıtla tamamlandı.
 - Görev 8 başlatılmadı. VDS dağıtımı, canlı veri/alan adı, QR baskı boyutuna göre kullanım kabulü ve sonraki ürün görevleri kapsam dışındaki bağımlılıklar olarak duruyor; uygulama bütünü üretime hazır değildir.
+
+## Görev 8 — devam ediyor
+
+Başlangıç ba24d2b. Plan, rapor ve 2026 mimari kaydı okundu; inline development/bootstrap dalında ilerlenir.
+Ruling: Mevcut games.historical_partial/published_at ve awards/event_years şeması yeterlidir; migration gerekmez. Yalnız verilen 2026 UluJam 1/2/3 URL envanteri kısmi istisnadan yararlanır; yıl/etkinlik kimliği/oyun kimliği/derece/URL yeniden doğrulanır. Başlık, takım, credits, görsel ve açıklama boş kalır; dış sayfa başlığı veya hesap adı içeri alınmaz. Tam sonuç yayını Görev 20'ye aittir. Tarihi/konumu bilinmeyen etkinlik kabuğu draft ve tarihleri NULL kalır; oyunların published_at değeri seed'in gerçek yayın anıdır. Genel etkinlik sayfası bu nedenle açılmaz. Seed ayrı açık CLI komutudur, migration ve sayfa okuması seed çalıştırmaz. Transaction+advisory lock ve sabit kimlikler tekrar/yarışta çift kayıt oluşturmaz; çelişen kayıt varsa sessizce ezmek yerine rollback olur. Gizlenmiş veya sonradan düzenlenmiş alanlar tekrar seed ile eski değere döndürülmez. Seed test DB'sinde ve ardından yerel geliştirme DB'sinde editoryal içerik olarak uygulanır; kişi/takım/kart oluşturmaz. Yanlışsa etkisi bu modülün editoryal başlangıç içeriğini yeniden değerlendirmektir.
+
+### 8.1 İlk kabul kanıtları
+
+Altı PostgreSQL entegrasyon testi stub seed/okuma servislerinde RED (boş liste ve çakışma reddinin eksikliği), uygulama sonrası GREEN oldu. Kısmi bayrakla 2027 eksik sonuç saklanabilse de public tarihî okuyucu bunu göstermiyor; yeni tam sonuç yayın servisi Görev 20'de ayrıca doğrulanacak. Yeni /oyunlar E2E önce 404 RED, rota/kart sonrası GREEN oldu. Tam Vitest 84/84 ve dev Playwright 24/24 geçti; yeni yıl istisnası, seed tekrarı/yarışı, rollback, gizlemenin korunması, boş kişi/takım/kart tabloları ve mobil/Tab/dış link/axe doğrulandı.
+
+Araç notu: projede prettier binary'si yoktu; pnpm exec formatter çalışmadı, ürün/test çalışması etkilenmedi. Registry sürümü 3.9.9 doğrulanıp pnpm dlx prettier@3.9.9 ile yalnız yeni dosyalar biçimlendirildi; ürün bağımlılığı eklenmedi. Web erişim probunda üçüncü itch.io sayfası okunabildi, ilk iki adres araçtan açılamadı; bu hedeflerin kapalı olduğuna dair kanıt değildir. URL/derece kaynağı kullanıcının mimari kaydıdır; dış sayfa adı/kişi/görsel/veri içeri alınmadı. Bugünkü üçünün de erişilebilir olduğu iddia edilmez.
+
+### 8.2 Son doğrulama ve kapanış — tamamlandı
+
+- Son `pnpm install --frozen-lockfile`, `pnpm typecheck`, `pnpm lint` ve `pnpm build` başarılı. Ürün bağımlılığı veya lockfile değişimi yok. db:check geçti; db:generate 41 tablo ve “No schema changes” döndürdü. Yeni migration yok.
+- Tam Vitest 8 dosyada **84/84**; dev Playwright **24/24** (25.7 sn); son standalone/HTTPS Playwright **24/24** (12.6 sn). Dokuz genel rota axe ve dolu sonuç ekranı axe ihlalsiz. 390/768/1440 gezinme/taşma kontrolleri geçti. Son 390px ve 1440px sonuç ekranları görsel olarak incelendi; derece sırası ve kart düzeni doğru. Testte main odağı nedeniyle görülen çerçeve klavye odak stilidir.
+- `pnpm db:seed:2026` yerel ana geliştirme DB'sinde iki kez başarılı: yalnız 1 draft etkinlik + 1 yıl ilişkisi + 3 NULL alanlı kısmi oyun + 3 derece, toplam **8 editoryal satır**. Kişisel veri tabloları boş: applications/teams/game_credits/cards 0; test kabulünde submissions/memberships/wallet_passes/finalists de 0. Genel event ayrıntısı gerçek tarih olmadan yayımlanmadı.
+- Son cleanup **41 public tablo, 0 test DB, 0 S3 medya nesnesi**. Başlangıç ürün tablolarının boş olması kuralı, izinli üç 2026 editoryal sonuç dışındaki kayıtlar için sürer; test fixture'ları ana DB'ye yazılmadı.
+- Src/scripts/tests/tarayıcı/standalone içindeki 1936 dosyada yerel sır eşleşmesi **0**; standalone env/PEM/key/HEIC özel dosyası **0**. Git diff whitespace kontrolü temiz. Sır içerikleri çıktıya yazılmadı.
+- Domain, seed/CLI, repository/service, kart/rota, header/iç yol entegrasyonu, helper/testler ve rehberler dosya bazında incelendi. Planın üç kutucuğu kanıtla kapatıldı. Görev 9 başlatılmadı; VDS'ye deployment/push yapılmadı. Tam oyun yönetimi/yayın/rıza ve sonraki ürün görevleri kendi aşamalarında tamamlanacak.

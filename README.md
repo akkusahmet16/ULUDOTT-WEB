@@ -1,6 +1,6 @@
 # Uludott Web
 
-Üretim platformunun adım adım geliştirildiği depo. **Görev 1–7 tamamlandı**: çalışma ortamı, veritabanı, yönetici kimliği, tasarım sistemi, özel medya, etkinlik/duyuru yayın akışı ve bağlantı merkezi hazır. Sıradaki adım Görev 8 tarihî sonuç bağlantıları; başvuru ve Wallet özellikleri henüz uygulanmadı. Üretime hazır değildir.
+Üretim platformunun adım adım geliştirildiği depo. **Görev 1–8 tamamlandı**: çalışma ortamı, veritabanı, yönetici kimliği, tasarım sistemi, özel medya, etkinlik/duyuru yayın akışı, bağlantı merkezi ve 2026 derece bağlantıları hazır. Sıradaki adım Görev 9 UluJam arşivi/2027 yakında ve mini oyunlar; başvuru ve Wallet özellikleri henüz uygulanmadı. Üretime hazır değildir.
 
 ## Önce okunacak belgeler
 
@@ -55,7 +55,7 @@ pnpm build
 
 Vitest yapılandırma yanında gerçek PostgreSQL bağlantısını ve S3 yükle/oku/sil ile anonim erişim reddini kontrol eder. Entegrasyon testleri çalışan yerel servisler ve `.env.local` gerektirir; servis yoksa testler atlanmaz, başarısız olur. Playwright kendi izole Next sunucusunu 3100 portunda açar/kapatır. Üretim build'inden sonra `pnpm start` kullanılabilir. Docker build: `docker build -t uludott-web:local .` (yerel ARM Linux konteynerinde doğrulandı).
 
-`pnpm db:migrate` Drizzle migration'larını uygular, seed çalıştırmaz. 41 tabloyu kuran migration dosyaları hazırdır; komut gerçek PostgreSQL üzerinde iki kez başarıyla çalıştırıldı. `pnpm db:generate` yeni migration üretir, `pnpm db:check` metadata tutarlılığını kontrol eder. Üretilen SQL uygulanmadan önce incelenir; migration dağıtımda tek süreçten çalıştırılır. [ER diyagramı ve şema kararları](docs/architecture/database.md) burada kayıtlıdır. 2026 editoryal sonuç seed'i Görev 8'de ayrıca yapılacaktır.
+`pnpm db:migrate` Drizzle migration'larını uygular, seed çalıştırmaz. 41 tabloyu kuran migration dosyaları hazırdır; komut gerçek PostgreSQL üzerinde iki kez başarıyla çalıştırıldı. `pnpm db:generate` yeni migration üretir, `pnpm db:check` metadata tutarlılığını kontrol eder. Üretilen SQL uygulanmadan önce incelenir; migration dağıtımda tek süreçten çalıştırılır. [ER diyagramı ve şema kararları](docs/architecture/database.md) burada kayıtlıdır. 2026 editoryal derece bağlantıları migration'dan ayrı `pnpm db:seed:2026` ile yüklenir; tekrar çalıştırılabilir ve kişi/takım oluşturmaz.
 
 ## Sırlar ve kaynak varlıklar
 
@@ -65,7 +65,7 @@ Ham `Media` ve `Uludott Logo Pack` varlıkları yerinde korunur, depoya alınmaz
 
 ## Şu an açık kalanlar
 
-Görev 1–7 tamamlandı. Yönetici kimliği, MFA, oturum/rol altyapısı, ortak arayüz, medya, etkinlik/duyuru yayın akışı ve bağlantı merkezi hazır; sonraki adım Görev 8 tarihî sonuç bağlantıları. Sonraki ürün görevleri henüz uygulanmadı. Hukuk, gerçek etkinlik bilgileri, bildirim sağlayıcısı, Wallet hesap/sertifika/cihaz ve canlı hosting kabulü ayrı bağımlılıklardır. Ayrıntılı durum ilerleme raporundadır.
+Görev 1–8 tamamlandı. Yönetici kimliği, MFA, oturum/rol altyapısı, ortak arayüz, medya, etkinlik/duyuru yayın akışı, bağlantı merkezi ve 2026 derece bağlantıları hazır; sonraki adım Görev 9 UluJam arşivi/2027 yakında ve mini oyunlar. Sonraki ürün görevleri henüz uygulanmadı. Hukuk, gerçek etkinlik bilgileri, bildirim sağlayıcısı, Wallet hesap/sertifika/cihaz ve canlı hosting kabulü ayrı bağımlılıklardır. Ayrıntılı durum ilerleme raporundadır.
 
 Yönetici girişi `/admin`; ilk kişi kurulumu ve izin matrisi: [Yönetici kimliği](docs/operations/admin-auth.md).
 
@@ -74,3 +74,5 @@ Medya kütüphanesi `/admin/medya`; sınırlar ve yayın/silme davranışı: [Me
 Etkinlik/duyuru panelleri `/admin/etkinlikler` ve `/admin/duyurular`; yayın kuralları, izinler ve form CTA bağımlılığı: [Yayın rehberi](docs/operations/publication.md).
 
 Bağlantı merkezi `/linkler`, yönetim `/admin/linkler`; doğrulanmış adresler, sıralama, zaman penceresi, kopyalama ve QR: [Bağlantı rehberi](docs/operations/links.md).
+
+2026 ilk üç sonuç `/oyunlar`; seed, boş alanlar ve yeni yıl istisnasının sınırı: [Tarihî sonuç rehberi](docs/operations/historical-results.md).

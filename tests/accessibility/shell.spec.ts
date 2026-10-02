@@ -9,6 +9,7 @@ for (const route of [
   "/etkinlikler",
   "/duyurular",
   "/linkler",
+  "/oyunlar",
 ])
   test(`axe ${route}`, async ({ page }) => {
     expect((await page.goto(route))?.status()).toBe(200);

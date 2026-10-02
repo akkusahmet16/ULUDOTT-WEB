@@ -28,7 +28,8 @@
     "config:check": "node --env-file-if-exists=.env.local --conditions=react-server --experimental-strip-types scripts/check-config.ts",
     "db:generate": "drizzle-kit generate",
     "db:check": "drizzle-kit check",
-    "admin:bootstrap": "node --env-file-if-exists=.env.local --conditions=react-server scripts/admin-bootstrap.ts"
+    "admin:bootstrap": "node --env-file-if-exists=.env.local --conditions=react-server scripts/admin-bootstrap.ts",
+    "db:seed:2026": "node --env-file-if-exists=.env.local --conditions=react-server scripts/seed-2026.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.1144.0",

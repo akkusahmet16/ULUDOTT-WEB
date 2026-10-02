@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (- [ ]) syntax for tracking. The user requested file-by-file review with the assistant; do not delegate implementation.
 
-Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–7 tamamlandı; sıradaki adım Görev 8. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
+Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–8 tamamlandı; sıradaki adım Görev 9. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
 
 **Goal:** Uludott topluluk sitesi, genel etkinlik/form/duyuru/link yönetimi, UluJam takım ve onay akışları, 2026 arşivi, 2027 “Yakında” alanı, derece oyunları ve onay sonrası Wallet kartlarını sıfırdan güvenli ve sürdürülebilir biçimde üretmek.
 
@@ -149,11 +149,13 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Dosyalar:** Oluştur: src/modules/games/{domain/historical-result.ts,application/historical-results.ts,infrastructure/game-repository.ts,ui/result-card.tsx}, src/db/seeds/2026-results.ts, src/app/(public)/oyunlar/page.tsx, tests/integration/historical-results.test.ts, tests/e2e/2026-results.spec.ts.
 
+**Destek dosyaları:** scripts/seed-2026.ts ve db:seed:2026 komutu; header/Oyunlar bağlantısı, link domain iç yol listesi, E2E seed helper ve axe listesi; tarihî sonuç işletme rehberi, README, DB belgesi ve ilerleme raporu. Migration gerekmez.
+
 **Arayüz:** Üretir: seed2026Results(db): Promise<void>; listPublicHistoricalResults(year): Promise<HistoricalResult[]>; HistoricalResult eksik title/team/credits/image/description için null kabul eder.
 
-- [ ] Üç URL'nin 1/2/3 sırasını, seed tekrarında çift kayıt olmamasını ve kişi/takım tablosunun boş kalmasını test et.
-- [ ] “Kısmi editoryal kayıt” durumunu ve derece + itch.io linki gösteren, eksik bilgi uydurmayan kartı uygula.
-- [ ] Yeni yılların eksik tam sonuç kaydını bu istisnadan yararlandırmayan testi geçir; dosyaları inceleyip commit et.
+- [x] Üç URL'nin 1/2/3 sırasını, seed tekrarında çift kayıt olmamasını ve kişi/takım tablosunun boş kalmasını test et.
+- [x] “Kısmi editoryal kayıt” durumunu ve derece + itch.io linki gösteren, eksik bilgi uydurmayan kartı uygula.
+- [x] Yeni yılların eksik tam sonuç kaydını bu istisnadan yararlandırmayan testi geçir; dosyaları inceleyip commit et.
 
 ### Görev 9 — UluJam 2026 arşivi, 2027 yakında ve mini oyunlar
 

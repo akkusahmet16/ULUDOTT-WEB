@@ -15,6 +15,7 @@ export const staticPaths = new Set([
   "/etkinlikler",
   "/duyurular",
   "/linkler",
+  "/oyunlar",
 ]);
 export function validLinkUrl(value: string) {
   if (/[\s\\\u0000-\u001f\u007f]/u.test(value)) return false;

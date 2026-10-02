@@ -90,3 +90,7 @@ Takım kapasite kilidi/constraint trigger, tam NFKC Türkçe isim normalizasyonu
 ## Görev 7 şema genişletmesi
 
 0005: link_groups ve links revision, links verified_at, kategori sırası ve kategori içi link sırası unique kısıtları. Yeni tablo yok; toplam 41. Bağlantı servisleri advisory transaction kilidi ve expectedRevision ile eski ekranın yeni kaydı ezmesini önler. Sıralama önce boş pozisyon aralığına, sonra tam hedef sırasına aynı transaction içinde taşır. Genel okuma yayın penceresini ve hedef uygunluğunu denetler. [Bağlantı işletme rehberi](../operations/links.md).
+
+## Görev 8 editoryal seed
+
+Şema değişmedi; toplam 41 tablo. games.historical_partial/published_at, awards event+rank unique ve event_years year unique kullanılır. `pnpm db:seed:2026` ayrı açık transaction ile 1 draft etkinlik kabuğu + 1 yıl + 3 oyun + 3 derece oluşturur; tekrar/eşzamanlı koşuda advisory lock ve sabit kimlikler kullanılır. Gizleme ve düzenleme ezilmez, çelişki rollback olur. Başvuru/kişi/takım/credit/finalist/kart oluşturulmaz. Public kısmi okuyucu yalnız 2026 bilinen envanterini gösterir; başka yıl bayrağı tam sonuç yayın kontrolünü aşamaz. [Seed işletme rehberi](../operations/historical-results.md).
