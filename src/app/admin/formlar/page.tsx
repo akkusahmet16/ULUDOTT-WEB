@@ -33,6 +33,15 @@ export default async function Page() {
           </li>
         ))}
       </ul>
+      {events
+        .filter((e) => e.kind === "ulujam")
+        .map((e) => (
+          <p key={e.id}>
+            <Link href={"/admin/ulujam-formu/" + e.id}>
+              {e.title} özel form önizlemesi
+            </Link>
+          </p>
+        ))}
       <FormCreator events={events} />
     </main>
   );

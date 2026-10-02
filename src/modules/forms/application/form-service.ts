@@ -242,7 +242,7 @@ export async function formEvents(actor: Actor) {
   if (!actor.roles.includes("event_manager")) throw Error("Yetki yok");
   if (!actor.eventScopes.length) return [];
   return getDatabase()
-    .select({ id: events.id, title: events.title })
+    .select({ id: events.id, title: events.title, kind: events.kind })
     .from(events)
     .where(inArray(events.id, actor.eventScopes))
     .limit(200);

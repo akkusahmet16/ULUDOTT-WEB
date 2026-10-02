@@ -4,7 +4,7 @@ Plan: `docs/design/2026-10-02-uygulama-plani.md`
 Mimari: `docs/design/2026-10-01-mimari-oneri.md`
 Başlangıç: 2 Ekim 2026. Kullanıcı planın yürütülmesine izin verdi.
 
-**Güncel durum: Görev 1–14 tamamlandı. Görev 15 sıradaki adım.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 14 kapanışıdır.
+**Güncel durum: Görev 1–15 tamamlandı. Görev 16 sıradaki adım.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 15 kapanışıdır.
 
 ## Çalışma disiplini
 
@@ -369,3 +369,11 @@ Başlangıç d17fd65, temiz checkout. Plan/mimari/rapor ve Next async page rehbe
 ### Görev 14 kapanışı
 
 Seed/CTA PostgreSQL testi RED→GREEN; 174/174 unit+integration, typecheck/lint ve production build geçti. Coffee Talk E2E 1/1; tüm production TLS E2E 34/34 (tek worker: ortak yayın fixture çakışmasını önler). İlk E2E başarısızlıkları güvenli localhost cookie/API fixture aktarımı ve yayın isteği confirmed alanı eksikliğiydi; test gerçek API sözleşmesine düzeltildi. Kaynak, test ve diff dosyaları incelendi. Ana DB42 tablo/10 mevcut içerik satırı, kişisel kayıt0, test DB0, medya0; sır/build taraması0 ve production audit0. Aşama2 kanıtı phase-2-acceptance.md. Görev14 tamamlandı; Görev15 özel form tanımı sonraki adımdır.
+
+### Görev 15 başlangıcı — BASE 2455757
+
+Ruling: Görev15 formu yetkili etkinlik yöneticisine salt önizleme olarak sunulur; atomik kayıt/makbuz16'da yapılacağı için public başvuru açılmaz — maliyet: kullanıcılar16 tamamlanana kadar UluJam başvurusu gönderemez. Takım parolası genel FormVersion/answers alanı değildir; özel geçici credential olarak tutulur ve mod değişince silinir — aksi durumda genel export/snapshot parolayı açığa çıkarabilir. Takım seçimi için buildUlujamFormDefinition(eventId, teams = []) opsiyonel gerçek seçenek listesi alır; boş listede sahte takım üretmez. Önizleme mevcut event-scope ile okunur, yalnız isim/id alır; kayıt servisi eklenmez.
+
+### Görev 15 kapanışı
+
+Görev14 commit2455757 sonrası15 başladı. UluJam domain/template19 test, gerçek PG yetki/takım izolasyonu1 test ve dört mod/anonim erişim E2E2 test RED→GREEN. Toplam `pnpm test`194/194, typecheck/lint/production build başarılı; production TLS E2E36/36 tek worker başarılı. axe erişilebilirlik0; koşullu skill/team alanları ve parola/mod temizliği doğrulandı; browser storage yazımı0. Genel Coffee Talk E2E ve integration aynı suite'te geçer. Kaynak/test/belge/diff dosyaları tamamen incelendi. Test sonrası42 ana tablo/10 önceki içerik satırı, kişisel kayıt0, geçici DB0, medya0, sır/build taraması0. Yeni bağımlılık/migration yok. Domain, UI, scoped readonly preview ve yönetim listesi bağlantısı hazır; atomik kayıt/tekillik/kapasite/erişim/makbuz16'da, Wallet sonraki görevlerde. Son bağımsız14–15 diff incelemesi kalan kontrol.

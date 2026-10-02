@@ -239,9 +239,9 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Arayüz:** Üretir: validateUlujamInput(raw): UlujamInput; buildUlujamFormDefinition(eventId): FormDefinition. Genel FormVersion altyapısına bağlanır; UluJam iş kuralını genel forma bulaştırmaz.
 
-- [ ] Zorunlu telefon, seçilen her alanda 1–5 seviye, çoklu alanda açıklama, oyuncu adı alanı bulunmaması ve dört mod testlerini yaz.
-- [ ] Genel form şablonunda dört modu ve koşullu alanları uygula; etkinlik bazında e-posta tekilliği, beceri kaydı ve makbuz transaction'ını Görev 16'nın sözleşmesine bırak.
-- [ ] Genel Coffee Talk formunun UluJam beceri/takım doğrulamasından etkilenmediğini test et; dosyaları inceleyip commit et.
+- [x] Zorunlu telefon, seçilen her alanda 1–5 seviye, çoklu alanda açıklama, oyuncu adı alanı bulunmaması ve dört mod testlerini yaz.
+- [x] Genel form şablonunda dört modu ve koşullu alanları uygula; etkinlik bazında e-posta tekilliği, beceri kaydı ve makbuz transaction'ını Görev 16'nın sözleşmesine bırak.
+- [x] Genel Coffee Talk formunun UluJam beceri/takım doğrulamasından etkilenmediğini test et; dosyaları inceleyip commit et.
 
 ### Görev 16 — takım oluşturma, katılma, kapasite ve erişim
 
