@@ -40,6 +40,17 @@ export default async function Page({
         Üye sayısı: {view.memberCount} / {view.expectedSize}
       </p>
       <p>Katılım onayı ve kart uygunluğu ayrı değerlendirilir.</p>
+      <section aria-label="Takım kart özetleri">
+        <h2>Katılım kartları</h2>
+        <ul>
+          {view.cards.map((c, i) => (
+            <li key={i}>
+              {c.name} · {c.status}
+            </li>
+          ))}
+        </ul>
+        <p>Bireysel kartınıza kendi makbuz bağlantınızdan ulaşın.</p>
+      </section>
       <TeamLogout />
     </main>
   );

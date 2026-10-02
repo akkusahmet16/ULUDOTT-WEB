@@ -1,4 +1,5 @@
 import "server-only";
+import { createApplicationCard } from "../../cards/application/card-service.ts";
 import { z } from "zod";
 import { eq, and, sql, gt } from "drizzle-orm";
 import { withTransaction } from "../../../lib/database/transaction.ts";
@@ -47,6 +48,9 @@ const teamReceipt = z.strictObject({
 });
 export const ulujamReceiptSchema = receiptSchema.extend({
   team: teamReceipt.optional(),
+  card: z
+    .strictObject({ id: z.uuid(), token: z.string().regex(/^[\w-]{43}$/) })
+    .optional(),
 });
 export type UlujamReceipt = z.infer<typeof ulujamReceiptSchema>;
 export async function submitUlujam(
@@ -72,7 +76,8 @@ export async function submitUlujam(
       .from(events)
       .where(eq(events.id, form.eventId))
       .for("update");
-    if (!event || event.kind !== "ulujam") throw new SubmissionError(409, "UluJam başvurusu açık değil");
+    if (!event || event.kind !== "ulujam")
+      throw new SubmissionError(409, "UluJam başvurusu açık değil");
     const scope = "ulujam:" + form.id,
       where = and(
         eq(idempotencyRecords.scope, scope),
@@ -113,7 +118,12 @@ export async function submitUlujam(
       }
       return result;
     }
-    if (event.status !== "published" || !event.startsAt || (event.endsAt && event.endsAt <= new Date())) throw new SubmissionError(409, "UluJam başvurusu açık değil");
+    if (
+      event.status !== "published" ||
+      !event.startsAt ||
+      (event.endsAt && event.endsAt <= new Date())
+    )
+      throw new SubmissionError(409, "UluJam başvurusu açık değil");
     if (prior) await tx.delete(idempotencyRecords).where(where);
     const version = await readFormVersion(tx, input.versionId);
     if (version.formId !== form.id)
@@ -148,8 +158,17 @@ export async function submitUlujam(
         ? { teamId: input.teamId, password: input.password }
         : {}),
     });
-    const [duplicate] = await tx.select({id: applications.id}).from(applications).where(and(eq(applications.eventId,event.id), eq(applications.email,application.email)));
-    if (duplicate) throw new SubmissionError(409,"Bu e-posta ile başvuru mevcut");
+    const [duplicate] = await tx
+      .select({ id: applications.id })
+      .from(applications)
+      .where(
+        and(
+          eq(applications.eventId, event.id),
+          eq(applications.email, application.email),
+        ),
+      );
+    if (duplicate)
+      throw new SubmissionError(409, "Bu e-posta ile başvuru mevcut");
     const [{ n }] = await tx
       .select({ n: sql<number>`count(*)::int` })
       .from(applications)
@@ -188,17 +207,16 @@ export async function submitUlujam(
       );
       team = { id: joined.id, token: joined.token };
     }
-    const result = { ...receipt, ...(team ? { team } : {}) };
-    await tx
-      .insert(idempotencyRecords)
-      .values({
-        scope,
-        keyHash: tokenHash(key),
-        requestHash: hash,
-        resourceId: receipt.id,
-        responseEncrypted: encryptReplay(result, scope),
-        expiresAt: new Date(Date.now() + 86400000),
-      });
+    const card = await createApplicationCard(tx, a.id);
+    const result = { ...receipt, card, ...(team ? { team } : {}) };
+    await tx.insert(idempotencyRecords).values({
+      scope,
+      keyHash: tokenHash(key),
+      requestHash: hash,
+      resourceId: receipt.id,
+      responseEncrypted: encryptReplay(result, scope),
+      expiresAt: new Date(Date.now() + 86400000),
+    });
     return result;
   });
 }

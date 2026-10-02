@@ -1,0 +1,1 @@
+ALTER TABLE "cards" ADD COLUMN "checkin_token_encrypted" text;

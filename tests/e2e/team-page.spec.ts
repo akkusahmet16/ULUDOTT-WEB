@@ -30,7 +30,9 @@ test("UluJam kayıt, yeni takım makbuzu, güvenli giriş/çıkış ve kişisel 
   await page
     .getByRole("button", { name: "Takıma giriş yap", exact: true })
     .click();
-  await expect(page.locator("main").getByRole("alert")).toHaveText("Takım erişimi geçersiz");
+  await expect(page.locator("main").getByRole("alert")).toHaveText(
+    "Takım erişimi geçersiz",
+  );
   await page.getByLabel("Takım parolası", { exact: true }).fill(password);
   await page
     .getByRole("button", { name: "Takıma giriş yap", exact: true })
@@ -40,13 +42,11 @@ test("UluJam kayıt, yeni takım makbuzu, güvenli giriş/çıkış ve kişisel 
   ).toBeVisible();
   await expect(page.getByText("Üye sayısı: 1 / 2")).toBeVisible();
   const body = await page.locator("body").innerText();
-  for (const secret of [
-    "team-e2e@test.invalid",
-    "+905551234567",
-    "DEMO özel kişi",
-    password,
-  ])
+  for (const secret of ["team-e2e@test.invalid", "+905551234567", password])
     expect(body).not.toContain(secret);
+  await expect(
+    page.getByRole("region", { name: "Takım kart özetleri" }),
+  ).toContainText("DEMO özel kişi");
   await expect(page.getByRole("link", { name: /Wallet|Kart/ })).toHaveCount(0);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   const other = await browser.newContext({ ignoreHTTPSErrors: true }),
@@ -65,6 +65,11 @@ test("UluJam kayıt, yeni takım makbuzu, güvenli giriş/çıkış ve kişisel 
   ).toBeVisible();
 });
 test("UluJam/team endpoint CSRF olmadan yazmaz", async ({ request }) => {
-  for (const route of ["ulujam/apply", "team/login", "team/logout", "admin/teams/access"])
+  for (const route of [
+    "ulujam/apply",
+    "team/login",
+    "team/logout",
+    "admin/teams/access",
+  ])
     expect((await request.post("/api/" + route)).status()).toBe(403);
 });

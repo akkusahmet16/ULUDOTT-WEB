@@ -1,4 +1,5 @@
 import "server-only";
+import { getTeamCardSummaries } from "../../cards/application/card-service.ts";
 import { z } from "zod";
 import { eq, and, isNull, sql } from "drizzle-orm";
 import { getDatabase } from "../../../lib/database/client.ts";
@@ -44,14 +45,12 @@ export async function loginTeam(token: string, password: string) {
       throw new SubmissionError(403, "Takım erişimi geçersiz");
     const session = randomToken(),
       expiresAt = new Date(Date.now() + 30 * 60000);
-    await tx
-      .insert(teamSessions)
-      .values({
-        teamId: access.teamId,
-        tokenHash: tokenHash(session),
-        accessRevision: access.revision,
-        expiresAt,
-      });
+    await tx.insert(teamSessions).values({
+      teamId: access.teamId,
+      tokenHash: tokenHash(session),
+      accessRevision: access.revision,
+      expiresAt,
+    });
     return { token: session, teamId: access.teamId, expiresAt };
   });
 }
@@ -129,7 +128,7 @@ export async function getTeamView(token: string, request: Request) {
     .from(teamAccess)
     .where(eq(teamAccess.tokenHash, tokenHash(token)));
   if (!a) throw new SubmissionError(404, "Takım bulunamadı");
-  await requireTeamSession(request, a.teamId);
+  const session = await requireTeamSession(request, a.teamId);
   const [t] = await getDatabase()
     .select({
       name: teams.name,
@@ -142,5 +141,5 @@ export async function getTeamView(token: string, request: Request) {
     .select({ n: sql<number>`count(*)::int` })
     .from(memberships)
     .where(and(eq(memberships.teamId, a.teamId), isNull(memberships.leftAt)));
-  return { ...t, memberCount: n };
+  return { ...t, memberCount: n, cards: await getTeamCardSummaries(session) };
 }

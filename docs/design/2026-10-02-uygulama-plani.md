@@ -279,15 +279,15 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Arayüz:** Üretir: cardEligibility(participant,teamApproval): Pending | Active | Revoked; getOwnCard(privateToken): Promise<CardView>; getTeamCardSummaries(teamSession): Promise<CardSummary[]>.
 
-- [ ] Başvuru sonrası pending, takım/kadro onayı sonrası active, ret/iptal sonrası revoked ve başka üyenin bireysel kart token'ını alamama testlerini yaz.
-- [ ] Ana sayfadaki UluJam biletine uyumlu web kartı ve takımda yalnızca sınırlı özet gösteren ekranı uygula; QR'ı ayrı iptal edilebilir check-in kimliğine bağla.
-- [ ] no-store/noindex/no-referrer, log redaction, mobil görünüm ve kart erişim testlerini geçir; dosyaları inceleyip commit et.
+- [x] Başvuru sonrası pending, takım/kadro onayı sonrası active, ret/iptal sonrası revoked ve başka üyenin bireysel kart token'ını alamama testlerini yaz.
+- [x] Ana sayfadaki UluJam biletine uyumlu web kartı ve takımda yalnızca sınırlı özet gösteren ekranı uygula; QR'ı ayrı iptal edilebilir check-in kimliğine bağla.
+- [x] no-store/noindex/no-referrer, log redaction, mobil görünüm ve kart erişim testlerini geçir; dosyaları inceleyip commit et.
 
 ### Aşama 3 kontrol kapısı
 
-- [ ] Dört UluJam modu, beceri ve telefon kuralları, takım erişimi, kapasite yarışı, eşleştirme önerisi, yönetici onayı ve web kartı durumları test edilir.
-- [ ] Onay öncesi aktif kart ve Wallet hakkı sunucudan reddedilir; onaylı takıma yeni gelen üye ayrıca bekler.
-- [ ] Değişen dosyaların tamamı incelenir; docs/operations/phase-3-acceptance.md dosyasına kanıt yazılır.
+- [x] Dört UluJam modu, beceri ve telefon kuralları, takım erişimi, kapasite yarışı, eşleştirme önerisi, yönetici onayı ve web kartı durumları test edilir.
+- [x] Onay öncesi aktif kart ve Wallet hakkı sunucudan reddedilir; onaylı takıma yeni gelen üye ayrıca bekler.
+- [x] Değişen dosyaların tamamı incelenir; docs/operations/phase-3-acceptance.md dosyasına kanıt yazılır.
 
 ## Aşama 4 — oyun, sonuç ve Wallet sağlayıcıları
 

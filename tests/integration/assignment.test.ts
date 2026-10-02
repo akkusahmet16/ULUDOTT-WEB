@@ -85,7 +85,7 @@ it("Alan/seviye/kapsam, öneri salt okuma; son koltuk yarışı, atama/geri alma
         await x.sql`select action from audit_logs where action in ('matching.assigned','matching.unassigned') order by created_at`
       ).map((r) => r.action),
     ).toEqual(["matching.assigned", "matching.unassigned"]);
-    expect((await x.sql`select count(*)::int n from cards`)[0].n).toBe(0);
+    expect((await x.sql`select count(*)::int n from cards where status<>'pending'`)[0].n).toBe(0);
   } finally {
     await x.cleanup();
   }

@@ -204,6 +204,12 @@ export function UlujamForm({
         <a href={"/makbuz#token=" + receipt.receiptToken}>
           Makbuzu ve durumu görüntüle
         </a>
+        {receipt.card && (
+          <p>
+            Kart bağlantınızı güvenli bir yerde saklayın.{" "}
+            <a href={"/kart/" + receipt.card.token}>Bireysel kartımı aç</a>
+          </p>
+        )}
         {receipt.team && (
           <>
             <p>Takım bağlantınızı güvenli bir yerde saklayın.</p>

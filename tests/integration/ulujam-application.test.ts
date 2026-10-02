@@ -39,7 +39,7 @@ it("UluJam atomik kayıt, replay, farklı gövde, normalize e-posta ve generic b
         randomUUID(),
       ),
     ).rejects.toThrow();
-    expect((await x.sql`select count(*)::int n from cards`)[0].n).toBe(0);
+    expect((await x.sql`select count(*)::int n from cards where status<>'pending'`)[0].n).toBe(0);
   } finally {
     await x.cleanup();
   }

@@ -22,6 +22,7 @@ export const cards = pgTable(
       .references(() => applications.id),
     tokenHash: text("token_hash").notNull().unique(),
     checkinTokenHash: text("checkin_token_hash").notNull().unique(),
+    checkinTokenEncrypted: text("checkin_token_encrypted"),
     status: text("status").default("pending").notNull(),
     revision: integer("revision").default(1).notNull(),
     createdAt: createdAt(),

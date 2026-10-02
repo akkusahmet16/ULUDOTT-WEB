@@ -36,6 +36,8 @@ export default async function AdminPage() {
               <Link href="/admin/takim-arayanlar">Takım arayanlar</Link>
               {" · "}
               <Link href="/admin/takim-onaylari">Takım onayları</Link>
+              {" · "}
+              <Link href="/admin/check-in">Giriş QR kontrolü</Link>
             </p>
           )}
           <SessionActions />

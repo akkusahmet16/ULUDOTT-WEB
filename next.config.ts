@@ -2,6 +2,10 @@ import type { NextConfig } from "next";
 
 const config: NextConfig = {
   output: "standalone",
+  logging: {
+    incomingRequests: { ignore: [/^\/(kart|takim)\//] },
+    serverFunctions: false,
+  },
   outputFileTracingIncludes: {
     "/api/admin/media": [
       "./node_modules/sharp/**/*",
@@ -15,6 +19,7 @@ const config: NextConfig = {
   productionBrowserSourceMaps: false,
   async headers() {
     const headers = [
+      { key: "Cache-Control", value: "no-store" },
       { key: "Referrer-Policy", value: "no-referrer" },
       { key: "X-Robots-Tag", value: "noindex, nofollow" },
       { key: "X-Content-Type-Options", value: "nosniff" },
@@ -26,6 +31,8 @@ const config: NextConfig = {
       "/basvuru/:path*",
       "/makbuz",
       "/takim/:path*",
+      "/kart/:path*",
+      "/api/cards/:path*",
       "/api/team/:path*",
       "/api/ulujam/:path*",
       "/api/forms/:path*",

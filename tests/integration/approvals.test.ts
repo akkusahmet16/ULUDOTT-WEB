@@ -11,7 +11,6 @@ import {
   listApprovals,
 } from "../../src/modules/teams/application/approval-service";
 import { cardEligibility } from "../../src/modules/cards/domain/card-eligibility";
-import { tokenHash, randomToken } from "../../src/lib/auth/crypto";
 it("Yetki, eski revision, immutable kadro kararı, geç üye ve gerekçeli geçişler", async () => {
   const x = await ulujamFixture();
   try {
@@ -20,7 +19,6 @@ it("Yetki, eski revision, immutable kadro kararı, geç üye ve gerekçeli geçi
     const team = founder.team;
     const [a] =
       await x.sql`select id from applications where submission_id=${founder.id}`;
-    await x.sql`insert into cards(application_id,token_hash,checkin_token_hash) values(${a.id},${tokenHash(randomToken())},${tokenHash(randomToken())})`;
     await expect(
       approveRoster({ ...x.actor, eventScopes: [] }, team.id, 2),
     ).rejects.toThrow("Yetki yok");
