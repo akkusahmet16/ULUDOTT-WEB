@@ -377,3 +377,24 @@ Ruling: Görev15 formu yetkili etkinlik yöneticisine salt önizleme olarak sunu
 ### Görev 15 kapanışı
 
 Görev14 commit2455757 sonrası15 başladı. UluJam domain/template19 test, gerçek PG yetki/takım izolasyonu1 test ve dört mod/anonim erişim E2E2 test RED→GREEN. Toplam `pnpm test`194/194, typecheck/lint/production build başarılı; production TLS E2E36/36 tek worker başarılı. axe erişilebilirlik0; koşullu skill/team alanları ve parola/mod temizliği doğrulandı; browser storage yazımı0. Genel Coffee Talk E2E ve integration aynı suite'te geçer. Kaynak/test/belge/diff dosyaları tamamen incelendi. Test sonrası42 ana tablo/10 önceki içerik satırı, kişisel kayıt0, geçici DB0, medya0, sır/build taraması0. Yeni bağımlılık/migration yok. Domain, UI, scoped readonly preview ve yönetim listesi bağlantısı hazır; atomik kayıt/tekillik/kapasite/erişim/makbuz16'da, Wallet sonraki görevlerde. Son bağımsız14–15 diff incelemesi kalan kontrol.
+
+### Son inceleme — 14–15
+
+Bağımsız read-only reviewer d17fd65..0adbffc: Critical0, Important0, Minor3. Etki yeniden derecelendirmesi: ortak ana sayfadaki iki etkinliğin global selector çakışması CI/test güvenilirliği için Important; gerçek ikinci DEMO etkinlikle deterministik RED→GREEN yapılır. Domain hata alanının işaretlenmemesi ve README alt durum paragrafının13 demesi Minor olarak ertelendi. Kaynak iş kuralı değişmez.
+
+Final: fixed ortak yayın testlerinde global link selector çakışması — ikinci gerçek DEMO etkinlik + açık Coffee formu ile regression RED (global Başvur1, beklenen0)→GREEN (kendi kartıyla kontrol/gezinme), suite194/194 ve default2-worker production E2E36/36. typecheck/lint geçti. Ürün kodu değişmediği için önceki production build geçerli; son testler bu standalone build'i kullandı. Tek fix pass; ikinci reviewer yok.
+
+Final: minor (deferred): UluJam önizlemesinde domain hataları (kesirli kişi sayısı/boş takım parolası) ilgili alanı işaretlemek yerine genel mesaj verir.
+Final: minor (deferred): README alt durum paragrafı sonraki görev13 der; üst durum/plan/rapor doğru şekilde16'yı gösterir.
+
+Reviewer'ın kapsam dışında bıraktığı davranışlar için executor kararları:
+
+Final: Ruling: atomik UluJam kayıt/e-posta tekilliği/beceri kalıcılığı/makbuz16'da — plan açıkça bu servisi16'ya bırakır; maliyet: bu aşamada public UluJam kayıt alınmaz.
+Final: Ruling: takım normalizasyonu/gerçek uygunluk-kapasite/parola kontrolü/erişim üretme-döndürme/oturum16'da — salt önizleme bunların çalıştığını iddia etmez; maliyet: gerçek takım erişimi henüz yok.
+Final: Ruling: genel submit üzerinden özel UluJam kurallarını atlama koruması16 entegrasyonunda — özel şablon bu çalışmada public yayımlanmaz ve UluJam CTA kapalıdır; maliyet:16 guard tamamlanmadan özel şablon genel endpoint'te yayımlanamaz.
+Final: Ruling:50 üstü takım seçimi16 entegrasyonunda — önizleme ilk50 gerçek seçenekle sınırlıdır; maliyet:51. ve sonraki takım bu önizlemeden seçilemez.
+Final: Ruling: özel şablonun kalıcı/live yayını16'da —15 kabulü yetkili, veri yazmayan önizlemedir; maliyet: katılımcılar bu formu henüz gönderemez.
+Final: Ruling: onay/geç üye Wallet/kart/outbox revision/sonraki sonuç akışları sonraki görevlerde — bu aralık bunları değiştirmez; maliyet: bu özellikler için canlı kabul verilmez.
+Final: Ruling: değişmeyen12 idempotency ve8–9 arşiv/sayaç davranışları yeni implementasyon olarak incelenmedi — mevcut regresyon testleri tüm suite'te geçti; maliyet: bu görevlerde ek sınır-durum kapsamı üretilmedi.
+
+Son kabul: Görev14(2455757) ve15(0adbffc) sırasıyla tamam; bağımsız inceleme ve test izolasyonu fix'i tamam. Son veri kontrolü ana42 tablo/10 mevcut editoryal satır, kişisel kayıt0, test DB0, medya0. Plan kutuları/phase2 kabulü güncel. Mevcut development/bootstrap dalında tutulur;14–15 için push/merge/deploy yapılmadı.

@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import sharp from "sharp";
+import { openEventWithoutApplication } from "../helpers/event-card";
 import AxeBuilder from "@axe-core/playwright";
 async function login(page: Page, code: string) {
   await page.goto("/admin");
@@ -141,10 +142,7 @@ test("Coffee Talk taslak kalır; doğrulanmış afiş ve tarih sonrası ana sayf
   await expect(
     page.getByRole("img", { name: "Sentetik test afişi" }),
   ).toBeVisible();
-  await expect(page.getByRole("link", { name: /Başvur/ })).toHaveCount(0);
-  await page
-    .getByRole("link", { name: "Etkinlik ayrıntıları", exact: true })
-    .click();
+  await openEventWithoutApplication(page, "Coffee Talk test taslağı");
   await expect(page.getByText(/2 Ocak 2030.*15:00/)).toBeVisible();
   expect(
     (

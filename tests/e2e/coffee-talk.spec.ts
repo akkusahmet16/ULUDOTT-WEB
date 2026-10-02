@@ -1,13 +1,24 @@
 import { test, expect } from "@playwright/test";
 import sharp from "sharp";
+import { openEventWithoutApplication } from "../helpers/event-card";
 import { randomUUID } from "node:crypto";
 test("Coffee Talk DEMO editör yayını, site içi başvuru ve kapanış", async ({
   page,
 }) => {
   await page.goto("/");
   await expect(
-    page.getByRole("link", { name: "Başvur", exact: true }),
+    page
+      .getByRole("article")
+      .filter({
+        has: page.getByRole("heading", {
+          name: "Coffee Talk: Tanışma Etkinliği",
+          exact: true,
+        }),
+      }),
   ).toHaveCount(0);
+  expect((await page.request.get("/etkinlikler/coffee-talk")).status()).toBe(
+    404,
+  );
   await page.goto("/admin");
   await page.getByLabel("E-posta").fill("admin-e2e@test.invalid");
   await page
@@ -137,6 +148,35 @@ test("Coffee Talk DEMO editör yayını, site içi başvuru ve kapanış", async
     has: page.getByRole("heading", { name: "Coffee Talk DEMO", exact: true }),
   });
   await expect(card.getByRole("img", { name: /sentetik DEMO/ })).toBeVisible();
+  // Deterministically recreate the other publication test overlapping this open form.
+  const other = await post("/api/admin/events", {
+    action: "save",
+    input: {
+      title: "İkinci DEMO etkinliği",
+      slug: "coffee-other-demo",
+      kind: "general",
+      startsAt: "2030-01-01T12:00:00Z",
+      location: "DEMO test konumu",
+      mediaId: asset.id,
+      featuredPosition: 2,
+    },
+  });
+  await post("/api/admin/events", {
+    action: "publish",
+    id: other.id,
+    expectedRevision: other.revision,
+    confirmed: true,
+  });
+  await page.goto("/");
+  await openEventWithoutApplication(page, "İkinci DEMO etkinliği");
+  await expect(page).toHaveURL(/etkinlikler\/coffee-other-demo$/);
+  await post("/api/admin/events", {
+    action: "archive",
+    id: other.id,
+    expectedRevision: other.revision + 1,
+    confirmed: true,
+  });
+  await page.goto("/");
   await card.getByRole("link", { name: "Başvur", exact: true }).click();
   await expect(page.getByLabel(/Takım|Beceri|Oyuncu adı/)).toHaveCount(0);
   await page.getByLabel("Ad soyad *").fill("DEMO kişi");
