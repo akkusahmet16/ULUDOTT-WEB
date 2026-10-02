@@ -77,7 +77,7 @@ try {
   await local.sql`insert into admin_roles(admin_id,role) values(${id},'content_editor')`;
   await local.sql`insert into admin_roles(admin_id,role) values(${id},'event_manager')`;
   await local.sql`insert into admin_event_scopes(admin_id,event_id) select ${id},id from events`;
-  await local.sql`update admins set recovery_code_hashes=${local.sql.json([tokenHash("11111111111111111111111111111111"), tokenHash("22222222222222222222222222222222"), tokenHash("33333333333333333333333333333333"), tokenHash("44444444444444444444444444444444"), tokenHash("55555555555555555555555555555555"), tokenHash("66666666666666666666666666666666"), tokenHash("77777777777777777777777777777777"), tokenHash("88888888888888888888888888888888"), tokenHash("99999999999999999999999999999999")])} where id=${id}`;
+  await local.sql`update admins set recovery_code_hashes=${local.sql.json([tokenHash("11111111111111111111111111111111"), tokenHash("22222222222222222222222222222222"), tokenHash("33333333333333333333333333333333"), tokenHash("44444444444444444444444444444444"), tokenHash("55555555555555555555555555555555"), tokenHash("66666666666666666666666666666666"), tokenHash("77777777777777777777777777777777"), tokenHash("88888888888888888888888888888888"), tokenHash("99999999999999999999999999999999"), tokenHash("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")])} where id=${id}`;
   const [scopeEvent] =
     await local.sql`select event_id from event_years where year=2027`;
   await local.sql`insert into teams(id,event_id,name,normalized_name,expected_size) values('15000000-0000-4000-8000-000000000090',${scopeEvent.event_id},'DEMO önizleme takımı','demo önizleme takımı',3)`;
@@ -86,23 +86,51 @@ try {
     roles: ["event_manager"],
     eventScopes: ["c0ffee00-0000-4000-8000-000000000014"],
   };
-  const registrationEvent="16000000-0000-4000-8000-000000000001";
+  const registrationEvent = "16000000-0000-4000-8000-000000000001";
   await local.sql`insert into events(id,title,slug,kind,status,starts_at,location) values(${registrationEvent},'DEMO UluJam başvuru','ulujam-registration-test','ulujam','published','2030-01-01','DEMO yer')`;
   await local.sql`insert into admin_event_scopes(admin_id,event_id) values(${id},${registrationEvent})`;
-  const registrationActor={adminId:id,roles:['event_manager'],eventScopes:[registrationEvent]};
-  const registrationForm=await createDraftForm(registrationActor,registrationEvent,{title:'DEMO UluJam başvuru',slug:'e2e-ulujam',opensAt:'2020-01-01T00:00:00Z',closesAt:null,capacity:10,waitlist:false,duplicatePolicy:'reject',thankYou:'DEMO başvuru alındı.',retentionDays:1});
-  await saveDraftForm(registrationActor,registrationForm.id,buildUlujamFormDefinition(registrationEvent),1);await publishForm(registrationActor,registrationForm.id,2);
-  const publicForm = await createDraftForm(formActor, "c0ffee00-0000-4000-8000-000000000014", {
-    title: "E2E genel form",
-    slug: "e2e-public",
-    opensAt: "2020-01-01T00:00:00Z",
-    closesAt: null,
-    capacity: 20,
-    waitlist: true,
-    duplicatePolicy: "reject",
-    thankYou: "Test başvurusu alındı.",
-    retentionDays: 180,
-  });
+  const registrationActor = {
+    adminId: id,
+    roles: ["event_manager"],
+    eventScopes: [registrationEvent],
+  };
+  const registrationForm = await createDraftForm(
+    registrationActor,
+    registrationEvent,
+    {
+      title: "DEMO UluJam başvuru",
+      slug: "e2e-ulujam",
+      opensAt: "2020-01-01T00:00:00Z",
+      closesAt: null,
+      capacity: 10,
+      waitlist: false,
+      duplicatePolicy: "reject",
+      thankYou: "DEMO başvuru alındı.",
+      retentionDays: 1,
+    },
+  );
+  await saveDraftForm(
+    registrationActor,
+    registrationForm.id,
+    buildUlujamFormDefinition(registrationEvent),
+    1,
+  );
+  await publishForm(registrationActor, registrationForm.id, 2);
+  const publicForm = await createDraftForm(
+    formActor,
+    "c0ffee00-0000-4000-8000-000000000014",
+    {
+      title: "E2E genel form",
+      slug: "e2e-public",
+      opensAt: "2020-01-01T00:00:00Z",
+      closesAt: null,
+      capacity: 20,
+      waitlist: true,
+      duplicatePolicy: "reject",
+      thankYou: "Test başvurusu alındı.",
+      retentionDays: 180,
+    },
+  );
   const email = randomUUID(),
     phone = randomUUID(),
     toggle = randomUUID(),
@@ -136,17 +164,21 @@ try {
     1,
   );
   await publishForm(formActor, publicForm.id, 2);
-  const adminForm = await createDraftForm(formActor, "c0ffee00-0000-4000-8000-000000000014", {
-    title: "E2E başvuru yönetimi",
-    slug: "e2e-admin",
-    opensAt: "2020-01-01T00:00:00Z",
-    closesAt: null,
-    capacity: 2,
-    waitlist: true,
-    duplicatePolicy: "allow",
-    thankYou: "Test alındı.",
-    retentionDays: 180,
-  });
+  const adminForm = await createDraftForm(
+    formActor,
+    "c0ffee00-0000-4000-8000-000000000014",
+    {
+      title: "E2E başvuru yönetimi",
+      slug: "e2e-admin",
+      opensAt: "2020-01-01T00:00:00Z",
+      closesAt: null,
+      capacity: 2,
+      waitlist: true,
+      duplicatePolicy: "allow",
+      thankYou: "Test alındı.",
+      retentionDays: 180,
+    },
+  );
   const adminField = randomUUID();
   await saveDraftForm(
     formActor,
@@ -160,6 +192,11 @@ try {
   );
   await publishForm(formActor, adminForm.id, 2);
   await submitForm("e2e-admin", { [adminField]: "=1+1" }, randomUUID(), {});
+  const matchingTeam = randomUUID(),
+    matchingPerson = randomUUID();
+  await local.sql`insert into teams(id,event_id,name,normalized_name,expected_size) values(${matchingTeam},${registrationEvent},'DEMO eşleştirme takımı','demo eşleştirme takımı',2)`;
+  await local.sql`insert into applications(id,event_id,full_name,email,phone,mode) values(${matchingPerson},${registrationEvent},'DEMO arayan','matching-e2e@test.invalid','+905551234567','seeking')`;
+  await local.sql`insert into application_skills(application_id,skill,level) values(${matchingPerson},'visual_art',4)`;
   await closeDatabase();
   if (process.env.ULUDOTT_E2E_PRODUCTION === "1") {
     productionDir = await mkdtemp(join(tmpdir(), "uludott-standalone-"));

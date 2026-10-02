@@ -4,7 +4,7 @@ Plan: `docs/design/2026-10-02-uygulama-plani.md`
 Mimari: `docs/design/2026-10-01-mimari-oneri.md`
 Başlangıç: 2 Ekim 2026. Kullanıcı planın yürütülmesine izin verdi.
 
-**Güncel durum: Görev 1–16 tamamlandı. Görev 17 sıradaki adım.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 15 kapanışıdır.
+**Güncel durum: Görev 1–17 tamamlandı. Görev 18 sıradaki adım.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 15 kapanışıdır.
 
 ## Çalışma disiplini
 
@@ -411,3 +411,10 @@ Task16: Ruling: public takım seçimi sürümlü sabit options dışında canlı
 Task16: Ruling: özel UluJam kontenjanı dolunca atomik409; genel form waitlist akışı korunur — bekleme listesi henüz onaysız takım üyeliği yaratmaz — maliyet: UluJam waitlist ayarı bu akışta kayıt açmaz, daha sonraki ürün kararı gerekir.
 Task16: Ruling: genel form testleri Coffee etkinliğine taşındı, yayın testleri ayrı2030 DEMO UluJam'dedir — özel bypass korumasını gevşetmeden generic regresyonu test eder — maliyet: fixture ayrımı sürdürülmelidir,2027 gerçek tarihleri değişmez.
 Task16: complete (BASE ae6cd64; tests vitest --maxWorkers=2 199/199; E2E38/38).
+
+## Görev 17 — tamamlandı
+BASE0b832ac. Deterministik beceri çeşitliliği/seviye artışı puanı ve gerekçeleri; dolu takımlar sorguda ve domainde dışlanır. Yönetici paneli eventscope, beceri1–5 filtre, cursor katılımcı/takım sayfaları; telefon/e-posta/iç not göstermez. Öneri üyelik değiştirmez, kişisel veri AI servisine gönderilmez. Atama/taşıma/geri alma event→application→sıralıtakım kilitleriyle, roster revision, onaysız üyelik, kapasite ve audit tek transaction. Geri alınan üyelik tarihçedeleftAt ile kalır, kart oluşmaz.
+RED: yeni recommendation/matching-service modülleri yok testleri izlendi; GREEN unit+PG202/202, üretimTLS tarayıcı40/40 (panel gerçek filtre+gerekçe+atama+undo+axe0), typecheck/lint/build geçti. İlk E2E getByLabel exact sarmalanan select seçenekleri nedeniyle bekledi; snapshot combobox doğru accessible name, locator getByRole ile düzeltildi. Kapalı/yabancı takıma başarısız transferin önceki üyelik ve revision'ı değiştirmemesi testi geçti.
+Task17: Ruling: expectedRevision hedef takımın rosterRevision'ıdır — son koltuk ataması ve eski geri alma komutlarının çakışmasını önler — maliyet: başka üyelik değişince yönetici listeyi yeniler.
+Task17: Ruling: öneriler50 takım sayfasından en yüksek5; diğer takımlar cursor ile açılır — sınırlı sunucu kaynakları ve büyük listelerde sayfalama gereği — maliyet: başka sayfada daha yüksek katkılı takım olabilir, panel açıklaması bunu belirtir.
+Task17: complete (BASE0b832ac; vitest --maxWorkers=2 202/202; E2E40/40). Tek son bağımsız review bekleniyor; Sites genel önizleme kapsamı sorusu cevaplanmadı, deployment yapılmadı.

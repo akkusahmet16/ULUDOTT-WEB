@@ -259,9 +259,9 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Arayüz:** Üretir: recommendTeams(seeker,availableTeams): ExplainedRecommendation[]; assignParticipant(actor,participantId,teamId,expectedRevision): Promise<AssignmentResult>. Öneri üyelik değiştirmez.
 
-- [ ] Alan/seviye filtreleri, dolu takımın önerilmemesi, açıklanabilir sıralama ve admin komutu olmadan üyelik değişmemesi testlerini yaz.
-- [ ] Takım arayan panelini ve transaction güvenli atamayı uygula; üçüncü taraf AI'ya kişisel veri göndermeyen deterministik öneriyle başla.
-- [ ] Atama/geri alma, kapasite ve audit kontrolünü geçir; dosyaları inceleyip commit et.
+- [x] Alan/seviye filtreleri, dolu takımın önerilmemesi, açıklanabilir sıralama ve admin komutu olmadan üyelik değişmemesi testlerini yaz.
+- [x] Takım arayan panelini ve transaction güvenli atamayı uygula; üçüncü taraf AI'ya kişisel veri göndermeyen deterministik öneriyle başla.
+- [x] Atama/geri alma, kapasite ve audit kontrolünü geçir; dosyaları inceleyip commit et.
 
 ### Görev 18 — yönetici takım/kadro ve bireysel katılım onayı
 
