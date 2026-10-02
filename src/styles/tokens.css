@@ -331,3 +331,37 @@ dialog::backdrop {
     transition: none !important;
   }
 }
+
+.content-form {
+  display: grid;
+  gap: 16px;
+  margin: 24px 0;
+}
+.content-body {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.preview-mobile {
+  width: 390px;
+  max-width: 100%;
+  padding: 16px;
+  border: 1px solid var(--line);
+}
+.preview-desktop {
+  width: 100%;
+  padding: 24px;
+  border: 1px solid var(--line);
+}
+.featured-primary {
+  margin-bottom: 24px;
+}
+@media (min-width: 700px) and (max-width: 1100px) {
+  .header-inner {
+    flex-wrap: wrap;
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+  .site-nav {
+    flex-wrap: wrap;
+  }
+}

@@ -4,7 +4,7 @@ Plan: `docs/design/2026-10-02-uygulama-plani.md`
 Mimari: `docs/design/2026-10-01-mimari-oneri.md`
 Başlangıç: 2 Ekim 2026. Kullanıcı planın yürütülmesine izin verdi.
 
-**Güncel durum: Görev 1–5 tamamlandı. Sıradaki adım Görev 6.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 5 kapanışıdır.
+**Güncel durum: Görev 1–6 tamamlandı. Sıradaki adım Görev 7.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 6 kapanışıdır.
 
 ## Çalışma disiplini
 
@@ -163,3 +163,27 @@ Ruling: gerçek IMG_0427 5712×4284 (24.47 MP), IMG_1206 4032×2268; bu nedenle 
 - Temizlik kabulü: ana DB'de 40 public tablo, tüm ürün tablolarında toplam 0 satır; kalan geçici test DB'si 0; originals/variants prefix'lerinde nesne 0. İlk temizlik sorgusundaki varsayımsal participants tablo adı hatası, şemadan tablo envanteri okuyarak düzeltildi. Önceki 4 sentetik fixture nesnesi yalnız byte eşleşmesiyle kaldırıldı; testler artık DB/S3 temizliği yapar.
 - İki gerçek HEIC yalnız bellek içi yerel dönüşüm testine girdi; aidiyet doğrulanmadığı için S3/DB/2026/public'e aktarılmadı. Dosyalar, izinler, HTTP sınırları, eşzamanlı kilitler, worker ve UI diff'i incelendi. Görev 4 ayrı commit 3e2388f ile kapandı; Görev 5 ayrı commit ile kapatılıyor. VDS'ye dağıtım yapılmadı; sonraki görev başlatılmadı.
 - İşletme sınırları docs/operations/media.md içinde: S3 silme retry worker'ı Görev 21, özel orphan uzlaştırma ve VDS tepe bellek ölçümü dağıtım/operasyon kabulünde tamamlanacak. Bu bağımlılıklar mevcut görev kapsamını genişletmez.
+
+
+## Görev 6 — devam ediyor
+
+Başlangıç e06faad. Plan ve mimari onaylı; mevcut development/bootstrap dalı kullanılır, implementasyon delege edilmez. Etkinlik/duyuru durum, zaman penceresi, revision, scope, medya ve slug testleri önce yazılacak.
+Ruling: Şemada etkinlik afiş/form/kısa metin/organizer, duyuru SEO/CTA ve eski slug kaydı eksik. Tipli alanlar ve tek redirect tablosu migration ile eklenecek; döngüsel form ilişkisi servis içinde aynı etkinlik FK doğrulamasıyla korunacak. Önceki 40 tablo kabulü tarihîdir, yeni toplam 41 olacaktır. Silme arşivleme olarak uygulanır; başvuru/FK/audit geçmişi kaybolmaz. Coffee Talk gerçek bilgi olmadan yalnız adminin oluşturduğu taslak kalır, otomatik seed yapılmaz. Form rotası Görev 14'te geleceğinden bu görevde form bağlantısı saklanır fakat başvuru CTA'sı sunulmaz. Planlı yayın worker beklemeden her public okumada UTC zaman penceresiyle değerlendirilir. Geçmiş/iptal içerik listede durumuyla görünebilir, ana sayfada yaklaşan olarak öne çıkarılmaz. İçerik yöneticisi yalnız atanmış etkinlikte yazabilir; genel oluşturma content_editor izni ister.
+
+- İlk servis yüklemesinde import eksikliği görüldü; stub sözleşmeleriyle 6 davranış testi RED oldu. Servis sonrası 5/6 geçti; yayınlı içeriği kaydederken boş publishAt görünürlüğü kaldırıyordu. Yayın zamanını koruyan düzeltmeyle 6/6 geçti. İlk UI/API E2E üçü RED (rotalar eksik), UI sonrası 1/3 geçti. Dev HTTP Playwright APIRequest secure cookie göndermediği için testin browser-context cookie aktarımı düzeltiliyor; üretim çerez kuralları değiştirilmiyor.
+
+- Scope/form FK/CTA için üç ek RED → 9/9 GREEN. Form composite FK migration 0004 ile DB'de farklı etkinlik bağlantısını engeller; döngüsel şema TypeScript çıkarımı AnyPgColumn callback anotasyonuyla çözüldü. Genel listeyi son 100 taslağın gizlemesi ve hasarlı afişin arşivlemeyi engellemesi incelemede bulundu; iki RED regresyon testiyle düzeltilecek. Tam tarayıcı suite 16/17; medya testinin “işleme meşgul” (429) yanıtı, iki sentetik upload fixture'ın seri decoder kilidini aynı anda istemesinden. Fixture testleri yalnız 429 için sınırlı yeniden deneme yapar; sunucu sınırı korunur.
+
+- Son iki inceleme regresyonu RED → 11/11 GREEN; tam suite 70/70. Fixture retry yardımcı fonksiyonunda eksik async TypeScript tarafından yakalandı ve düzeltildi; dev E2E 17/17, ilk production build geçti. Teknik UUID metin alanları kategori ve aynı etkinliğin formunu adlarıyla seçen seçeneklere çevriliyor; seçeneklerin etkinlik kapsamı için bir RED test eklendi.
+
+- Düzenleyici seçenekleri RED → 12/12 GREEN, tam suite 71/71; dev ve izole standalone HTTPS E2E 19/19 (7 genel axe + önceki akışlar + yayın/özel önizleme/afiş/İstanbul/XSS/308/arşiv akışı). Son yetki incelemesinde atanmış duyurunun eventId=null ile kapsam dışına taşınması için RED test eklendi; hedef kapsam artık null olduğunda da genel publication.write izni denetlenir.
+
+
+## Görev 6 kapanışı — 2 Ekim 2026
+
+- Etkinlik/duyuru oluşturma, okuma, sürümlü düzenleme, onaylı yayın/zamanlama, taslağa alma, iptal/bitti ve soft arşivleme tamamlandı. Görev 6 paylaşılmış servisleri aynı yayın çekirdeğini kullanır; yetki, medya kilidi, revision, slug geçmişi ve audit transaction içinde korunur. Event manager atanmış etkinlikte ve bağlı duyuruda yazabilir; genel duyuruya ayırma dahil hedef kapsam tekrar kontrol edilir. Son kapsam testi RED → GREEN, toplam **72/72** Vitest (6 dosya; 13 yayın entegrasyon testi).
+- Genel liste/slug detayları, yayın penceresi, 308 eski adres yönlendirmesi, afiş/alt metin, İstanbul saat gösterimi, kategori/form seçenekleri, CTA hedef görünürlüğü, düz metin güvenliği ve canonical/OG/Twitter alanları tamamlandı. Ana sayfa sırası 0 birincil, diğerleri kart; geçmiş/başlamış/iptal etkinlik yaklaşan listesinde kalmaz. Coffee Talk gerçek tarih/konum olmadan yayımlanamaz; otomatik gerçek içerik seed edilmedi. Form bağlı olsa da başvuru CTA'sı Görev 14 kabulüne kadar gösterilmez.
+- Dev Playwright **19/19**, son izole standalone/HTTPS Playwright **19/19**. Yedi genel sayfa axe, yayın ayrıntısı ve admin önizlemesi axe; özel önizlemenin gerçek afiş decode'u, 390/768/1440 taşma, İstanbul zamanı, XSS metni, yayın/slug/arşiv, önceki MFA ve medya akışları birlikte geçti. .local/task6-event-mobile.png, task6-event-desktop.png ve task6-editor-mobile.png gözle incelendi: taşma/çakışma yok. Görüntüler yalnız sentetik fixture içerir.
+- Son typecheck/lint/build geçti. Migration 0003/0004 incelendi ve yerel ana DB'ye uygulandı; db:check başarılı, son db:generate “No schema changes”. Yeni toplam **41 public tablo**; ana ürün tabloları toplam 0 satır, kalan geçici test DB'si 0, özel originals/variants nesnesi 0. Fixture cleanup gerçek kullanıcı dosyalarına dokunmadı.
+- Güncel src/scripts/tests/tarayıcı çıktısında yerel sır eşleşmesi 0; standalone'da env/PEM/key/HEIC dosyası 0, .env.local 0600. Build next-env.d.ts çıktısını önceki kanonik hâline getirdi; gereksiz generated diff kalmadı. Tüm görev dosyaları, iki migration ve metadata, ortak domain/repository/service/HTTP/UI, genel/admin rotalar, schema/permission/media reference ve test diff'leri incelendi; git diff --check temiz.
+- Yayın/medya/admin/DB/README rehberleri güncellendi. Yeni paket gerekmedi; mevcut bağımlılıklar kullanıldı. VDS dağıtımı veya push yapılmadı; Görev 7 başlatılmadı. Tek commit ile Görev 6 kapanışı kaydedilir. Büyük envanter için pagination, form yayın/başvuru ve gerçek işletme girdileri ilgili sonraki görevlerdedir.

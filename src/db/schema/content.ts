@@ -12,6 +12,7 @@ import {
   foreignKey,
 } from "drizzle-orm/pg-core";
 import { id, createdAt, instant } from "./shared.ts";
+import { forms } from "./forms.ts";
 import { teams } from "./ulujam.ts";
 import { applications } from "./ulujam.ts";
 
@@ -29,6 +30,11 @@ export const events = pgTable(
     kind: text("kind").notNull(),
     categoryId: uuid("category_id").references(() => eventCategories.id),
     description: text("description"),
+    excerpt: text("excerpt"),
+    organizer: text("organizer"),
+    locationType: text("location_type").default("physical").notNull(),
+    mediaId: uuid("media_id").references(() => mediaAssets.id),
+    formId: uuid("form_id"),
     location: text("location"),
     startsAt: instant("starts_at"),
     endsAt: instant("ends_at"),
@@ -42,6 +48,15 @@ export const events = pgTable(
     createdAt: createdAt(),
   },
   (t) => [
+    foreignKey({
+      name: "event_form_scope_fk",
+      columns: [t.id, t.formId],
+      foreignColumns: [forms.eventId, forms.id],
+    }),
+    check(
+      "event_location_type",
+      sql`${t.locationType} IN ('physical','online')`,
+    ),
     check(
       "event_status",
       sql`${t.status} IN ('draft','scheduled','published','ended','cancelled','archived')`,
@@ -121,6 +136,10 @@ export const announcements = pgTable(
     title: text("title").notNull(),
     slug: text("slug").notNull().unique(),
     body: text("body").notNull(),
+    excerpt: text("excerpt"),
+    seo: jsonb("seo").default({}).notNull(),
+    ctaUrl: text("cta_url"),
+    ctaLabel: text("cta_label"),
     mediaId: uuid("media_id").references(() => mediaAssets.id),
     status: text("status").default("draft").notNull(),
     publishAt: instant("publish_at"),
@@ -250,5 +269,22 @@ export const finalists = pgTable(
     }),
     unique("finalist_event_position_unique").on(t.eventId, t.position),
     check("finalist_position", sql`${t.position}>=0`),
+  ],
+);
+
+export const contentRedirects = pgTable(
+  "content_redirects",
+  {
+    id: id(),
+    contentType: text("content_type").notNull(),
+    contentId: uuid("content_id").notNull(),
+    oldSlug: text("old_slug").notNull(),
+  },
+  (t) => [
+    unique("content_redirect_slug_unique").on(t.contentType, t.oldSlug),
+    check(
+      "content_redirect_type",
+      sql`${t.contentType} IN ('event','announcement')`,
+    ),
   ],
 );

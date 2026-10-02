@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  type AnyPgColumn,
   pgTable,
   text,
   uuid,
@@ -18,7 +19,7 @@ export const forms = pgTable(
   "forms",
   {
     id: id(),
-    eventId: uuid("event_id").references(() => events.id),
+    eventId: uuid("event_id").references((): AnyPgColumn => events.id),
     title: text("title").notNull(),
     slug: text("slug").notNull().unique(),
     status: text("status").default("draft").notNull(),
@@ -102,7 +103,7 @@ export const submissions = pgTable(
       .notNull()
       .references(() => forms.id),
     versionId: uuid("version_id").notNull(),
-    eventId: uuid("event_id").references(() => events.id),
+    eventId: uuid("event_id").references((): AnyPgColumn => events.id),
     fullName: text("full_name"),
     email: text("email"),
     phone: text("phone"),

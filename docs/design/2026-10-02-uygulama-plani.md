@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (- [ ]) syntax for tracking. The user requested file-by-file review with the assistant; do not delegate implementation.
 
-Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–5 tamamlandı; sıradaki adım Görev 6. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
+Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–6 tamamlandı; sıradaki adım Görev 7. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
 
 **Goal:** Uludott topluluk sitesi, genel etkinlik/form/duyuru/link yönetimi, UluJam takım ve onay akışları, 2026 arşivi, 2027 “Yakında” alanı, derece oyunları ve onay sonrası Wallet kartlarını sıfırdan güvenli ve sürdürülebilir biçimde üretmek.
 
@@ -127,11 +127,11 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Dosyalar:** Oluştur: src/modules/events/{domain/event.ts,application/event-service.ts,infrastructure/event-repository.ts,ui/event-card.tsx,ui/event-editor.tsx}, src/modules/announcements/{domain/announcement.ts,application/announcement-service.ts,infrastructure/announcement-repository.ts,ui/announcement-card.tsx,ui/announcement-editor.tsx}, src/app/(public)/{etkinlikler/page.tsx,etkinlikler/[slug]/page.tsx,duyurular/page.tsx,duyurular/[slug]/page.tsx}, src/app/admin/{etkinlikler/page.tsx,duyurular/page.tsx}, src/app/api/admin/{events,announcements}/route.ts, tests/integration/publication.test.ts, tests/e2e/featured-event.spec.ts.
 
-**Arayüz:** Üretir: publishEvent(id,actor,expectedRevision), publishAnnouncement(id,actor,expectedRevision), getFeaturedEvents(now), getPublicAnnouncement(slug,now). Tüm zamanlar UTC saklanır, İstanbul saatinde gösterilir.
+**Arayüz:** Üretir: publishEvent(id,actor,expectedRevision), publishAnnouncement(id,actor,expectedRevision), getFeaturedEvents(now), getPublicAnnouncement(slug,now). Tüm zamanlar UTC saklanır, İstanbul saatinde gösterilir. Ortak destek: src/modules/publication/{domain.ts,repository.ts,service.ts,http.ts,ui/*}; schema/content.ts ve forms.ts, migrations 0003/0004, medya silme referansları, header/home/admin bağlantıları, yayın rehberi ve ilgili test yardımcıları.
 
-- [ ] Taslak/planlı/yayımlı/bitti/iptal/arşiv, slug yönlendirmesi, önizleme ve yayın zaman penceresi testlerini yaz.
-- [ ] Etkinlik ve duyuru CRUD, medya/CTA ilişkisi, SEO/sosyal alanlar ve ana sayfa öne çıkarma akışını uygula.
-- [ ] Coffee Talk'u gerçek tarih/konum yokken taslak tut; yayımlanan etkinliğin afişini göster ama yayınlanmış form yokken çalışmayan başvuru CTA'sı üretme. Form bağlı tam akış Görev 14'te test edilir; dosyaları inceleyip commit et.
+- [x] Taslak/planlı/yayımlı/bitti/iptal/arşiv, slug yönlendirmesi, önizleme ve yayın zaman penceresi testlerini yaz.
+- [x] Etkinlik ve duyuru CRUD, medya/CTA ilişkisi, SEO/sosyal alanlar ve ana sayfa öne çıkarma akışını uygula.
+- [x] Coffee Talk'u gerçek tarih/konum yokken taslak tut; yayımlanan etkinliğin afişini göster ama yayınlanmış form yokken çalışmayan başvuru CTA'sı üretme. Form bağlı tam akış Görev 14'te test edilir; dosyaları inceleyip commit et.
 
 ### Görev 7 — Uludott bağlantı merkezi
 

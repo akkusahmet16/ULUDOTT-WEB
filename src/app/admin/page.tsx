@@ -11,12 +11,16 @@ export default async function AdminPage() {
       {session ? (
         <>
           <p>Yönetim oturumu açık.</p>
-          <p>Yönetim araçları sonraki adımlarda eklenecek.</p>
+
           {session.actor.roles.some((role) =>
             ["content_editor", "event_manager"].includes(role),
           ) && (
             <p>
               <Link href="/admin/medya">Medya yönetimi</Link>
+              {" · "}
+              <Link href="/admin/etkinlikler">Etkinlik yönetimi</Link>
+              {" · "}
+              <Link href="/admin/duyurular">Duyuru yönetimi</Link>
             </p>
           )}
           <SessionActions />

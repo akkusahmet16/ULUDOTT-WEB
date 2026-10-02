@@ -1,6 +1,6 @@
 # Uludott Web
 
-Üretim platformunun adım adım geliştirildiği depo. **Görev 1–5 tamamlandı**: çalışma ortamı, veritabanı, yönetici kimliği, tasarım sistemi ve özel medya akışı hazır. Etkinlik/duyuru yayın akışı sıradaki Görev 6; başvuru ve Wallet özellikleri henüz uygulanmadı. Üretime hazır değildir.
+Üretim platformunun adım adım geliştirildiği depo. **Görev 1–6 tamamlandı**: çalışma ortamı, veritabanı, yönetici kimliği, tasarım sistemi, özel medya ve etkinlik/duyuru yayın akışı hazır. Sıradaki adım Görev 7 bağlantı merkezi; başvuru ve Wallet özellikleri henüz uygulanmadı. Üretime hazır değildir.
 
 ## Önce okunacak belgeler
 
@@ -39,7 +39,7 @@ pnpm dev
 
 Uygulama: http://127.0.0.1:3000 . Yerel PostgreSQL: 127.0.0.1:5432. S3 uyumlu Garage: 127.0.0.1:9000. Garage başlangıçta özel bucket ve yerel anahtarı oluşturur; API için path-style adresler ve `garage` region kullanılır. `docker-compose --env-file .env.local exec object-store /garage status` ile servis kontrol edilir. Tek düğümlü depo yalnızca geliştirme içindir; canlı depo sağlayıcısı seçilmedi. Compose ve Docker çalıştırma kabulü yerel ortamda geçti; raporda kanıtları bulunur. Resmî yerel kurulum: https://garagehq.deuxfleurs.fr/documentation/quick-start/
 
-`config:check` yalnızca ayarları doğrular; servislerin erişilebilir olduğunu kanıtlamaz. Next başlangıç sayfası henüz DB okumaz ve DB yokken de açılır. Bu durum boş PostgreSQL kabulünün yerine geçmez.
+`config:check` yalnızca ayarları doğrular; servislerin erişilebilir olduğunu kanıtlamaz. Ana sayfa ve yayın listeleri artık DB okur; PostgreSQL servisi gerekir. Boş DB kabulü ayrıca entegrasyon testleriyle doğrulanır.
 
 ## Kontroller
 
@@ -55,7 +55,7 @@ pnpm build
 
 Vitest yapılandırma yanında gerçek PostgreSQL bağlantısını ve S3 yükle/oku/sil ile anonim erişim reddini kontrol eder. Entegrasyon testleri çalışan yerel servisler ve `.env.local` gerektirir; servis yoksa testler atlanmaz, başarısız olur. Playwright kendi izole Next sunucusunu 3100 portunda açar/kapatır. Üretim build'inden sonra `pnpm start` kullanılabilir. Docker build: `docker build -t uludott-web:local .` (yerel ARM Linux konteynerinde doğrulandı).
 
-`pnpm db:migrate` Drizzle migration'larını uygular, seed çalıştırmaz. 40 tabloyu kuran migration dosyaları hazırdır; komut gerçek PostgreSQL üzerinde iki kez başarıyla çalıştırıldı. `pnpm db:generate` yeni migration üretir, `pnpm db:check` metadata tutarlılığını kontrol eder. Üretilen SQL uygulanmadan önce incelenir; migration dağıtımda tek süreçten çalıştırılır. [ER diyagramı ve şema kararları](docs/architecture/database.md) burada kayıtlıdır. 2026 editoryal sonuç seed'i Görev 8'de ayrıca yapılacaktır.
+`pnpm db:migrate` Drizzle migration'larını uygular, seed çalıştırmaz. 41 tabloyu kuran migration dosyaları hazırdır; komut gerçek PostgreSQL üzerinde iki kez başarıyla çalıştırıldı. `pnpm db:generate` yeni migration üretir, `pnpm db:check` metadata tutarlılığını kontrol eder. Üretilen SQL uygulanmadan önce incelenir; migration dağıtımda tek süreçten çalıştırılır. [ER diyagramı ve şema kararları](docs/architecture/database.md) burada kayıtlıdır. 2026 editoryal sonuç seed'i Görev 8'de ayrıca yapılacaktır.
 
 ## Sırlar ve kaynak varlıklar
 
@@ -65,8 +65,10 @@ Ham `Media` ve `Uludott Logo Pack` varlıkları yerinde korunur, depoya alınmaz
 
 ## Şu an açık kalanlar
 
-Görev 1–5 tamamlandı. Yönetici kimliği, MFA, oturum/rol altyapısı, ortak arayüz ve medya kütüphanesi hazır; sonraki adım Görev 6 etkinlik ve duyuru yayın akışı. Sonraki ürün görevleri henüz uygulanmadı. Hukuk, gerçek etkinlik bilgileri, bildirim sağlayıcısı, Wallet hesap/sertifika/cihaz ve canlı hosting kabulü ayrı bağımlılıklardır. Ayrıntılı durum ilerleme raporundadır.
+Görev 1–6 tamamlandı. Yönetici kimliği, MFA, oturum/rol altyapısı, ortak arayüz, medya ve etkinlik/duyuru yayın akışı hazır; sonraki adım Görev 7 bağlantı merkezi. Sonraki ürün görevleri henüz uygulanmadı. Hukuk, gerçek etkinlik bilgileri, bildirim sağlayıcısı, Wallet hesap/sertifika/cihaz ve canlı hosting kabulü ayrı bağımlılıklardır. Ayrıntılı durum ilerleme raporundadır.
 
 Yönetici girişi `/admin`; ilk kişi kurulumu ve izin matrisi: [Yönetici kimliği](docs/operations/admin-auth.md).
 
 Medya kütüphanesi `/admin/medya`; sınırlar ve yayın/silme davranışı: [Medya işletme rehberi](docs/operations/media.md).
+
+Etkinlik/duyuru panelleri `/admin/etkinlikler` ve `/admin/duyurular`; yayın kuralları, izinler ve form CTA bağımlılığı: [Yayın rehberi](docs/operations/publication.md).

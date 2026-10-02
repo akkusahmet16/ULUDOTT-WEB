@@ -81,3 +81,8 @@ Bütün anlar `timestamptz` olarak saklanır, uygulama İstanbul saatinde göste
 - Next standalone web imajı migration CLI ortamı değildir; migration kaynak/dependency ortamından dağıtım öncesi çalıştırılır. Canlı paketleme Görev 28'de tamamlanır.
 
 Takım kapasite kilidi/constraint trigger, tam NFKC Türkçe isim normalizasyonu, yayımlanmış form snapshot değişmezliği, başvuru kapasite yarışı ve Wallet uygunluğu ilgili sonraki görevlerde servis ve DB testleriyle tamamlanır. Buradaki iskelet bu domain kabulünü kendiliğinden sağlamaz. Hash/encrypted adları kriptografik uygulamanın tamamlandığını söylemez; gerçek üretim ve doğrulama Görev 3/12/17/24'te yapılır.
+
+
+## Görev 6 şema genişletmesi
+
+0003: etkinlikte excerpt/organizer/location_type/media_id/form_id, duyuruda excerpt/seo/cta_url/cta_label, `content_redirects` eski slug envanteri. Yeni toplam 41 public tablo. 0004: events(id,form_id) → forms(event_id,id) bileşik FK, location_type physical/online CHECK. Döngüsel referans migration ile iki tablo kurulduktan sonra eklenir; TypeScript callback dönüş tipi AnyPgColumn ile açıkça tanımlanır. Etkinlik afişinin FK'si media_assets'e bağlıdır. Soft arşivleme, redirect hedef kimliğini ve audit geçmişini korur. Yayın alanları mevcut publish_at/unpublish_at/revision omurgasını kullanır; worker olmadan okuma anındaki zaman penceresi görünürlüğü belirler.

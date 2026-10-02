@@ -1,0 +1,2 @@
+ALTER TABLE "events" ADD CONSTRAINT "event_form_scope_fk" FOREIGN KEY ("id","form_id") REFERENCES "public"."forms"("event_id","id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "events" ADD CONSTRAINT "event_location_type" CHECK ("events"."location_type" IN ('physical','online'));

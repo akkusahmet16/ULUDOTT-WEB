@@ -27,7 +27,23 @@ test("mobil medya yükleme, özel önizleme, yayın ve silme etkisi", async ({
       .toBuffer(),
   });
   await page.getByLabel("Alt metin").fill("Mor test görseli");
-  await page.getByRole("button", { name: "Yükle", exact: true }).click();
+  // Seri medya işleyicisi başka fixture işlerken 429 beklenen yanıttır.
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const response = page.waitForResponse(
+      (r) =>
+        r.url().includes("/api/admin/media") && r.request().method() === "POST",
+    );
+    await page.getByRole("button", { name: "Yükle", exact: true }).click();
+    const result = await response;
+    if (result.status() !== 429) {
+      expect(result.status()).toBe(201);
+      break;
+    }
+    await expect(
+      page.getByRole("button", { name: "Yükle", exact: true }),
+    ).toBeEnabled();
+    await page.waitForTimeout(300);
+  }
   await expect(
     page.getByRole("heading", { name: "Mor test görseli" }),
   ).toBeVisible();

@@ -2,6 +2,7 @@ import "server-only";
 import { eq } from "drizzle-orm";
 import type { DbTx } from "../../../lib/database/transaction.ts";
 import {
+  events,
   mediaAssets,
   mediaVariants,
   announcements,
@@ -28,7 +29,12 @@ export async function references(tx: DbTx, id: string) {
       .select({ id: featuredSlots.id })
       .from(featuredSlots)
       .where(eq(featuredSlots.mediaId, id));
+  const e = await tx
+    .select({ id: events.id })
+    .from(events)
+    .where(eq(events.mediaId, id));
   return [
+    ...e.map((x) => ({ ...x, type: "event" })),
     ...a.map((x) => ({ ...x, type: "announcement" })),
     ...g.map((x) => ({ ...x, type: "game" })),
     ...f.map((x) => ({ ...x, type: "featured_slot" })),

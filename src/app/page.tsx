@@ -1,7 +1,11 @@
 import { PublicShell } from "../components/layout/public-shell";
 import { ButtonLink } from "../components/design-system/button";
 import { Card } from "../components/design-system/card";
-export default function HomePage() {
+import { getFeaturedEvents } from "../modules/events/application/event-service";
+import { EventCard } from "../modules/events/ui/event-card";
+export const dynamic = "force-dynamic";
+export default async function HomePage() {
+  const featured = await getFeaturedEvents();
   return (
     <PublicShell>
       <section className="hero">
@@ -26,6 +30,21 @@ export default function HomePage() {
           </ButtonLink>
         </div>
       </section>
+      {featured.length > 0 && (
+        <section className="section" aria-label="Öne çıkan etkinlikler">
+          <h2>Yaklaşan buluşmalar</h2>
+          <div className="featured-primary">
+            <EventCard event={featured[0]} />
+          </div>
+          {featured.length > 1 && (
+            <div className="grid">
+              {featured.slice(1).map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))}
+            </div>
+          )}
+        </section>
+      )}
       <section className="section">
         <div className="grid">
           <Card>
@@ -45,8 +64,9 @@ export default function HomePage() {
               Yeni şeyler dene.
             </h3>
             <p className="empty">
-              Henüz yayımlanmış etkinlik yok. Yeni buluşmalar burada
-              duyurulacak.
+              {featured.length
+                ? "Yeni buluşmaları yukarıda keşfedebilirsiniz."
+                : "Henüz öne çıkan etkinlik yok. Yeni buluşmalar burada duyurulacak."}
             </p>
           </Card>
           <Card>

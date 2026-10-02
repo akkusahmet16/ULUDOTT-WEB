@@ -23,6 +23,7 @@ afterAll(async () => {
   process.env.DATABASE_URL = originalUrl;
 });
 const required = [
+  "content_redirects",
   "admins",
   "admin_sessions",
   "admin_roles",

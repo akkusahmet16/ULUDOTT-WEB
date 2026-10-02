@@ -7,6 +7,8 @@ const links = [
   ["/", "Ana sayfa"],
   ["/hakkimizda", "Hakkımızda"],
   ["/ulujam", "UluJam"],
+  ["/etkinlikler", "Etkinlikler"],
+  ["/duyurular", "Duyurular"],
   ["/destek", "Destek"],
 ] as const;
 export function Header() {

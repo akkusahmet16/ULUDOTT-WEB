@@ -1,6 +1,14 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-for (const route of ["/", "/hakkimizda", "/ulujam", "/destek", "/admin"])
+for (const route of [
+  "/",
+  "/hakkimizda",
+  "/ulujam",
+  "/destek",
+  "/admin",
+  "/etkinlikler",
+  "/duyurular",
+])
   test(`axe ${route}`, async ({ page }) => {
     expect((await page.goto(route))?.status()).toBe(200);
     expect(

@@ -41,3 +41,5 @@ Anahtarı kaybetmek TOTP sırlarının çözülmesini engeller. Anahtar değişi
 `pnpm test` PostgreSQL üzerinde rastgele ayrı test DB'leri kullanır. `pnpm test:e2e` de kendi DB'sinde sahte admin oluşturur ve sunucu kapandığında DB'yi kaldırır; ana geliştirme DB'sine seed yazmaz. Playwright graceful SIGTERM, izole Next süreç grubunun kapanıp cleanup yapmasını sağlar. Zorla SIGKILL test temizliğini engelleyebilir; beklenmeyen kapanıştan sonra yalnız doğrulanmış test DB'si temizlenmelidir.
 
 `pnpm admin:bootstrap --help` sır üretmeden ve DB'ye yazmadan kullanım gösterir. Gerçek yönetici kurulumu Codex tarafından test çıktısına sırrı dökülerek çalıştırılmaz. VDS dağıtımı ve üretim yöneticisi kurulumu ayrı işletme adımlarıdır.
+
+Görev 6: publication.write content_editor için geneldir; event_manager yalnız eventScopes içindeki etkinliği ve ona bağlı duyuruyu yönetir. Sistem yöneticisi tek başına içerik yayınlayamaz. [Yayın işletme rehberi](publication.md).
