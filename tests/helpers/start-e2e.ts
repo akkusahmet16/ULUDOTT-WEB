@@ -1,3 +1,4 @@
+import {createDraftForm,saveDraftForm,publishForm} from "../../src/modules/forms/application/form-service.ts";
 import { randomUUID } from "node:crypto";
 import { readFile, writeFile, cp, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -69,6 +70,12 @@ try {
   await local.sql`insert into admin_roles(admin_id,role) values(${id},'event_manager')`;
   await local.sql`insert into admin_event_scopes(admin_id,event_id) select ${id},id from events`;
   await local.sql`update admins set recovery_code_hashes=${local.sql.json([tokenHash("11111111111111111111111111111111"), tokenHash("22222222222222222222222222222222"), tokenHash("33333333333333333333333333333333"), tokenHash("44444444444444444444444444444444"), tokenHash("55555555555555555555555555555555"), tokenHash("66666666666666666666666666666666")])} where id=${id}`;
+  const [scopeEvent]=await local.sql`select event_id from event_years where year=2027`;
+  const formActor={adminId:id,roles:["event_manager"],eventScopes:[scopeEvent.event_id]};
+  const publicForm=await createDraftForm(formActor,scopeEvent.event_id,{title:"E2E genel form",slug:"e2e-public",opensAt:"2020-01-01T00:00:00Z",closesAt:null,capacity:20,waitlist:true,duplicatePolicy:"reject",thankYou:"Test başvurusu alındı.",retentionDays:180});
+  const email=randomUUID(),toggle=randomUUID(),note=randomUUID(),consent=randomUUID();
+  await saveDraftForm(formActor,publicForm.id,{fields:[{id:email,type:"email",label:"E-posta",required:true},{id:toggle,type:"checkbox",label:"Not ekle"},{id:note,type:"long_text",label:"Ek not",condition:{op:"eq",fieldId:toggle,value:true}},{id:consent,type:"consent",label:"Test rızası",content:"E2E test metni; gerçek hukuk metni değildir.",consentVersion:"test-v1",purpose:"test",required:true}]},1);
+  await publishForm(formActor,publicForm.id,2);
   await closeDatabase();
   if (process.env.ULUDOTT_E2E_PRODUCTION === "1") {
     productionDir = await mkdtemp(join(tmpdir(), "uludott-standalone-"));

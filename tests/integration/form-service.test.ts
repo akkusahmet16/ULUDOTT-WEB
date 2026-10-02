@@ -27,7 +27,7 @@ const settings = {
   closesAt: null,
   capacity: 2,
   waitlist: true,
-  duplicatePolicy: "reject",
+  duplicatePolicy: "allow",
   thankYou: "Teşekkürler",
   retentionDays: 180,
 };
@@ -136,4 +136,43 @@ it("boş tarih ve alan yayımlanamaz; ayar kaydı revision'a bağlıdır", async
   await publishForm(actor, f.id, 3);
   const [audit] = await local.sql`select count(*)::int as n from audit_logs`;
   expect(audit.n).toBeGreaterThan(0);
+});
+
+it("reject yayın politikası hesap yerine tek zorunlu koşulsuz e-posta ister", async () => {
+  const f = await createDraftForm(actor, eventId, {
+    ...settings,
+    duplicatePolicy: "reject",
+  });
+  await saveDraftForm(
+    actor,
+    f.id,
+    {
+      fields: [
+        { id: randomUUID(), type: "email", label: "E-posta", required: false },
+      ],
+    },
+    1,
+  );
+  await expect(publishForm(actor, f.id, 2)).rejects.toThrow(
+    "Tekrar politikası",
+  );
+});
+
+it("yayımlı form ayarı mevcut sürümün e-posta kimliğini bozmaz", async () => {
+  const f = await createDraftForm(actor, eventId, settings);
+  await saveDraftForm(
+    actor,
+    f.id,
+    { fields: [{ id: randomUUID(), type: "short_text", label: "Not" }] },
+    1,
+  );
+  await publishForm(actor, f.id, 2);
+  await expect(
+    saveFormSettings(
+      actor,
+      f.id,
+      { ...settings, duplicatePolicy: "reject" },
+      3,
+    ),
+  ).rejects.toThrow("Tekrar politikası");
 });

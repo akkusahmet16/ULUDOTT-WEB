@@ -118,6 +118,9 @@ export function FormSettings({
           </option>
           <option value="allow">Tekrar başvuruya izin ver</option>
         </select>
+        <small>
+          Tekrarı engellemek için tek zorunlu, koşulsuz e-posta alanı ekleyin.
+        </small>
       </label>
       <label className="field">
         Teşekkür metni

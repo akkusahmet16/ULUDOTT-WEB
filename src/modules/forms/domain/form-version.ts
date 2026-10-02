@@ -63,6 +63,13 @@ export function validateFormDefinition(input: unknown): ValidFormDefinition {
   if (new Set(d.fields.map((f) => f.id)).size !== d.fields.length)
     throw Error("Tekrarlı alan kimliği");
   for (const f of d.fields) validateField(f);
+  const consents = new Set<string>();
+  for (const f of d.fields)
+    if (f.type === "consent") {
+      const key = JSON.stringify([f.purpose, f.consentVersion]);
+      if (consents.has(key)) throw Error("Tekrarlı rıza amaç/sürümü");
+      consents.add(key);
+    }
   validateConditions(d);
   return d;
 }

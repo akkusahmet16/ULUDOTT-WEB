@@ -107,3 +107,8 @@ Takım kapasite kilidi/constraint trigger, tam NFKC Türkçe isim normalizasyonu
 ## Görev 11 form yönetimi
 
 0008_form_settings forms içine settings JSONB, draft/current version pointer ve paused ekler. Composite FK (forms.id,versionId) → (form_versions.form_id,id) başka forma bağlantıyı reddeder. 42 tablo; form mutation scoped forms.write/revision/audit transaction kullanır.
+
+
+## Görev 12 receipt ve kapasite
+
+0009_submission_receipts: submissions revision>0 ve expires_at>created_at, expiry index, waitlisted status/history CHECK; idempotency_records nullable resource_id. Form parent lock kapasite ve idempotency/duplicate kontrolünü serileştirir. Answers/consents/history aynı transaction. Receipt token hash ve AES-GCM replay ayrı AAD; replay TTL 24 saat ve resource expiry/deletion kontrolü. 42 tablo, ana DB kişisel veri boşluğu sürer.

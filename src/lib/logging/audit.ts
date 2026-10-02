@@ -29,6 +29,7 @@ const changesSchema = z.strictObject({
       "revoked",
       "closed",
       "paused",
+      "waitlisted",
     ])
     .optional(),
   changedFields: z

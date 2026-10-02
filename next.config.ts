@@ -20,7 +20,14 @@ const config: NextConfig = {
       { key: "X-Content-Type-Options", value: "nosniff" },
       { key: "X-Frame-Options", value: "DENY" },
     ];
-    return ["/admin/:path*", "/api/admin/:path*"].map((source) => ({
+    return [
+      "/admin/:path*",
+      "/api/admin/:path*",
+      "/basvuru/:path*",
+      "/makbuz",
+      "/api/forms/:path*",
+      "/api/submissions/:path*",
+    ].map((source) => ({
       source,
       headers,
     }));

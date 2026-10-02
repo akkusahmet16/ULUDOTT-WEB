@@ -4,7 +4,7 @@ Plan: `docs/design/2026-10-02-uygulama-plani.md`
 Mimari: `docs/design/2026-10-01-mimari-oneri.md`
 Başlangıç: 2 Ekim 2026. Kullanıcı planın yürütülmesine izin verdi.
 
-**Güncel durum: Görev 1–11 tamamlandı. Görev 12 ve ardından 13 yürütülecek.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 10 kapanışıdır.
+**Güncel durum: Görev 1–12 tamamlandı. Görev 13 sıradaki adım.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 10 kapanışıdır.
 
 ## Çalışma disiplini
 
@@ -306,3 +306,19 @@ Görev 11 odak E2E 2/2 GREEN (12 sn); tüm Vitest 144/144; typecheck/lint/build 
 ### Görev 11 kapanış
 
 144/144 Vitest, 29/29 production E2E (14.3 sn), 2/2 odak dev E2E; typecheck/lint/build/db:check ve iki migrate başarılı. Son kontrol 42 tablo, 10 editoryal satır, 0 test DB/medya nesnesi; PII tabloları boş. Source/browser/standalone sır eşleşmesi 0; yasak build dosyası 0. 0008 şema/migration/metadata, form servis/HTTP/scoped izin/audit, helperText/repository tx desteği, bounded JSON, UI/settings/fields/preview/builder, admin route/menu, PG/E2E ve fixture değişiklikleri dosya bazında incelendi. Birleşik koşul UI sınırlaması rehberde açık; mevcut gruplar korunur. Alan kaydetme yeni draft version oluşturur, eski published version değişmez. Plan kutuları tamamlandı; sonraki Görev 12.
+
+
+### Görev 12 başlangıç
+
+Ruling: tekrar reddi bir formdaki tek zorunlu, koşulsuz e-posta alanını kimlik kabul eder; böyle bir alan yoksa reject politikasıyla yayın reddedilir — ziyaretçi hesabı olmadan kimlik uydurulamaz; maliyet: e-posta istemeyen form allow seçmelidir. requestContext versionId ile eski sekme korunur; idempotency cevabı önce bulunur, same-key/different-body 409. Receipt 32-byte rastgele, DB SHA-256 hash, replay AES-GCM ayrı AAD ile şifreli ve 24 saat TTL; silme/expiry replay iptal edilir. Makbuz yalnız tarih/durum/teşekkür gösterir, yanıt/PII göstermez. Raw token URL fragment'ında, HTTP log/query dışındadır. DB form kilidi kapasite+duplicate+idempotency işlemlerini serileştirir. Form global dakika rate sınırı ve Origin/CSRF, honeypot perimeter eklenir; Turnstile tam kabulü Görev 25 kapsamıdır.
+
+Görev 12 RED 5/5 PG ve 1 failed/1 passed E2E (public page yok). İlk implementasyonda Drizzle select-from olmadan clock çağrısı çalışmıyordu; tx.execute ile düzeltildi. Raw SQL param Date postgres-js encode hatası verdi; expiry karşılaştırmaları ORM gt ile kolon encoder'ına bağlandı. Hata sadece test fixture değerleri içeriyordu; HTTP genel hata döndürür, query/answer loglamaz. Yeni public/receipt route bağlandı, token fragment; noindex/no-referrer ve no-store API.
+
+Görev 12 PG odak 8/8 ve dev E2E 2/2 GREEN. İncelemede aynı amaç/sürümde iki çelişen rıza alanı ve yayımlı e-postasız formun ayarını reject'e çevirme testleri RED görüldü; tanımda consent tuple tekilliği ve saveSettings current version kimlik kontrolü eklendi. Allow tekrar, expired receipt/replay 404/410 ve kapandıktan sonra güvenli aynı-body retry testleri eklendi.
+
+Görev 12 bütün Vitest 154/154 (15 dosya), typecheck/lint/build/db:check ve iki migration başarılı. SQL 0009 incelendi; receipt snapshot yalnız başlık/teşekkür, replay ciphertext, hash ve expiration/resource ilişkisi; log/API safe hata yolları; public get yalnız active definition, noindex headers, CSRF/global rate/honeypot, fragment receipt ve client answer clear davranışı dosya bazında incelendi. Test fixture yalnız izole E2E DB'de demo form üretir. Production tarayıcı ve son veri/sır taraması kapanışta.
+
+
+### Görev 12 kapanış
+
+154/154 Vitest; 31/31 production E2E (14.8 sn), 2/2 odak dev E2E; typecheck/lint/build/db:check ve iki migrate geçti. Son kontrol: 42 tablo, 10 editoryal satır, 0 test DB/medya nesnesi, ana kişisel tablolar boş. Source/browser/standalone sır 0, yasak build dosyası 0; staged tekrar taranır. 0009, submission/replay/receipt servisleri, public HTTP/limiter/CSRF/honeypot, form yayın ve ayar kimlik kapısı, consent tuple doğrulaması, form-fields/public/receipt UI, public/admin routes/header, E2E fixture ve bütün test/belgeler incelendi. Görev 12 kutuları tamamlandı; Görev 13'e geçilir.

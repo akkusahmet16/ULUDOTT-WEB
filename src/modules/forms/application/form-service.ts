@@ -15,6 +15,7 @@ import {
   publishStoredVersion,
   readFormVersion,
 } from "../infrastructure/form-repository.ts";
+import { emailIdentity } from "../domain/email-identity.ts";
 import { settingsSchema } from "../domain/form-settings.ts";
 async function locked(tx: DbTx, actor: Actor, id: string, revision?: number) {
   z.uuid().parse(id);
@@ -104,6 +105,16 @@ export async function saveFormSettings(
   const v = values(input);
   return withTransaction(async (tx) => {
     const old = await locked(tx, actor, id, revision);
+    if (
+      old.currentVersionId &&
+      v.settings.duplicatePolicy === "reject" &&
+      !emailIdentity(
+        (await readFormVersion(tx, old.currentVersionId)).definition,
+      )
+    )
+      throw Error(
+        "Tekrar politikası tek zorunlu koşulsuz e-posta alanı gerektirir",
+      );
     if (old.slug !== v.slug && old.currentVersionId)
       throw Error("Yayımlı form adresi değiştirilemez");
     const [f] = await tx
@@ -127,7 +138,16 @@ export async function saveFormSettings(
 export async function publishForm(actor: Actor, id: string, revision: number) {
   return withTransaction(async (tx) => {
     const f = await locked(tx, actor, id, revision);
-    settingsSchema.parse(f.settings);
+    const settings = settingsSchema.parse(f.settings);
+    const candidate = f.draftVersionId ?? f.currentVersionId;
+    if (
+      candidate &&
+      settings.duplicatePolicy === "reject" &&
+      !emailIdentity((await readFormVersion(tx, candidate)).definition)
+    )
+      throw Error(
+        "Tekrar politikası tek zorunlu koşulsuz e-posta alanı gerektirir",
+      );
     if (!f.opensAt) throw Error("Başlangıç tarihi gerekli");
     if (f.closesAt && f.closesAt <= new Date())
       throw Error("Formun tarih penceresi geçmiş");

@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (- [ ]) syntax for tracking. The user requested file-by-file review with the assistant; do not delegate implementation.
 
-Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–11 tamamlandı; sıradaki adım Görev 12. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
+Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–12 tamamlandı; sıradaki adım Görev 13. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
 
 **Goal:** Uludott topluluk sitesi, genel etkinlik/form/duyuru/link yönetimi, UluJam takım ve onay akışları, 2026 arşivi, 2027 “Yakında” alanı, derece oyunları ve onay sonrası Wallet kartlarını sıfırdan güvenli ve sürdürülebilir biçimde üretmek.
 
@@ -201,9 +201,9 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Arayüz:** Üretir: submitForm(formSlug,answers,idempotencyKey,requestContext): Promise<Receipt>; getReceipt(receiptToken): Promise<PrivateReceipt>. İstek anahtarı + gövde özeti atomik saklanır.
 
-- [ ] Kapalı form, görünmez koşullu alan, kapasite son koltuğu, bekleme listesi, tekrar başvuru ve aynı idempotency anahtarı/farklı gövde için 409 testlerini yaz.
-- [ ] Sunucu doğrulaması, transaction içinde kontenjan yeniden kontrolü, rıza sürümü, makbuz token hash'i ve ivedi ama güvenli yanıtı uygula.
-- [ ] Paralel gönderim testinde kapasite aşılmadığını, gizli yanıtların log/istemci paketine girmediğini ve hata metinlerinin anlaşılır olduğunu kontrol edip commit et.
+- [x] Kapalı form, görünmez koşullu alan, kapasite son koltuğu, bekleme listesi, tekrar başvuru ve aynı idempotency anahtarı/farklı gövde için 409 testlerini yaz.
+- [x] Sunucu doğrulaması, transaction içinde kontenjan yeniden kontrolü, rıza sürümü, makbuz token hash'i ve ivedi ama güvenli yanıtı uygula.
+- [x] Paralel gönderim testinde kapasite aşılmadığını, gizli yanıtların log/istemci paketine girmediğini ve hata metinlerinin anlaşılır olduğunu kontrol edip commit et.
 
 ### Görev 13 — başvuruları yönetme, dışa aktarma ve veri yaşam döngüsü
 

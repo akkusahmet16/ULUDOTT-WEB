@@ -123,6 +123,10 @@ export const submissions = pgTable(
     phone: text("phone"),
     status: text("status").default("received").notNull(),
     snapshot: jsonb("snapshot").notNull(),
+    revision: integer("revision").default(1).notNull(),
+    expiresAt: instant("expires_at")
+      .default(sql`now() + interval '180 days'`)
+      .notNull(),
     receiptTokenHash: text("receipt_token_hash").notNull().unique(),
     createdAt: createdAt(),
   },
@@ -141,8 +145,11 @@ export const submissions = pgTable(
     unique("submission_event_identity_unique").on(t.eventId, t.id),
     check(
       "submission_status",
-      sql`${t.status} IN ('received','pending','approved','rejected','withdrawn')`,
+      sql`${t.status} IN ('received','pending','approved','rejected','withdrawn','waitlisted')`,
     ),
+    check("submission_revision", sql`${t.revision}>0`),
+    check("submission_expiry", sql`${t.expiresAt}>${t.createdAt}`),
+    index("submissions_expiry_idx").on(t.expiresAt),
     index("submissions_cursor_idx").on(t.formId, t.createdAt, t.id),
     index("submissions_email_idx").on(t.eventId, t.email),
   ],
@@ -182,7 +189,7 @@ export const submissionStatusHistory = pgTable(
   (t) => [
     check(
       "history_status",
-      sql`${t.status} IN ('received','pending','approved','rejected','withdrawn')`,
+      sql`${t.status} IN ('received','pending','approved','rejected','withdrawn','waitlisted')`,
     ),
     index("submission_history_idx").on(t.submissionId, t.createdAt),
   ],

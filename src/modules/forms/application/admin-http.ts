@@ -36,6 +36,7 @@ export function formError(e: unknown) {
     "Yayımlı form adresi değiştirilemez",
     "Form henüz yayımlanmadı",
     "Form bulunamadı",
+    "Tekrar politikası tek zorunlu koşulsuz e-posta alanı gerektirir",
   ];
   const status =
     m === "Yetki yok"

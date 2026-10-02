@@ -89,6 +89,7 @@ export const idempotencyRecords = pgTable(
     scope: text("scope").notNull(),
     keyHash: text("key_hash").notNull(),
     requestHash: text("request_hash").notNull(),
+    resourceId: uuid("resource_id"),
     responseEncrypted: text("response_encrypted"),
     expiresAt: instant("expires_at").notNull(),
     createdAt: createdAt(),

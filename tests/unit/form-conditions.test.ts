@@ -306,3 +306,21 @@ it("OR, boş grup, yanlış liste türü ve yasak yapılandırmayı denetler", (
     validateSubmission({ definition: limited }, { [id(1)]: "uzun" }),
   ).toThrow();
 });
+
+it("bir amaç/sürüm için çelişen iki rıza alanını reddeder", () => {
+  const consent = {
+    type: "consent",
+    label: "Rıza",
+    content: "Metin A",
+    purpose: "test",
+    consentVersion: "v1",
+  };
+  expect(() =>
+    validateFormDefinition({
+      fields: [
+        { ...consent, id: id(1) },
+        { ...consent, id: id(2), content: "Metin B" },
+      ],
+    }),
+  ).toThrow();
+});
