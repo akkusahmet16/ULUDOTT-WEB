@@ -193,3 +193,7 @@ Kesin paket patch sürümleri uygulama başlangıcında resmi kayıtlarla doğru
 ## Tasarım öz kontrolü
 
 Kapsam bu belge içinde açıklandı; dosya alanı kapalı, Wallet harici kabulü ayrı, boş üretim katılımcı/takım DB'si açık, 2026 tarihî sonuç bağlantıları kişisel veri içermeyen editoryal içerik, 2027 tarihi bilinmiyor, Wallet açılması yönetici takım/kadro onayına bağlı, hesap gereksinimi yalnızca admin için. Bekleyen gerçek işletme girdileri yukarıda listelidir. Bu belge test sonucu, onaylanmış hukuk metni veya üretime hazır olma raporu değildir.
+
+### Görev 10 uygulama netleştirmesi — 2 Ekim 2026
+
+On beş form türü ve izinli JSON AST genel altyapı olarak uygulanır. Alan/ref/answer kimlikleri küçük harf UUID, yayınlanan version snapshot ve field/rule kayıtları DB trigger'larıyla mühürlenir. Gizli referans yaprakları false; gizli alana gönderilen yanıt reddedilir. 100 alan, 100 KB JSON ve 16 yapısal derinlik sınırı küçük VDS profiline uygundur. HTTP/panel/yetki ve canlı kabul sonraki görevlerde servisle bağlanır. SQL migration mevcut Drizzle journal içinde custom 0007_form_versioning olarak yönetilir. Yeni servis/ürün bağımlılığı eklenmez.

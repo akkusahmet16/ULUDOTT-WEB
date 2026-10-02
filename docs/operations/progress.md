@@ -4,7 +4,7 @@ Plan: `docs/design/2026-10-02-uygulama-plani.md`
 Mimari: `docs/design/2026-10-01-mimari-oneri.md`
 Başlangıç: 2 Ekim 2026. Kullanıcı planın yürütülmesine izin verdi.
 
-**Güncel durum: Görev 1–9 tamamlandı. Aşama 1 kabul edildi; sıradaki adım Görev 10.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 9 kapanışıdır.
+**Güncel durum: Görev 1–10 tamamlandı. Aşama 1 kabul edildi; sıradaki adım Görev 11.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 10 kapanışıdır.
 
 ## Çalışma disiplini
 
@@ -255,3 +255,29 @@ Tam kontrol ilk koşuda 94/95 Vitest, 22/27 E2E döndürdü. Şema kabulünün t
 Son kanıt: 95/95 Vitest; 27/27 geliştirme E2E; 27/27 production E2E (14.9 sn); typecheck/lint/build başarılı. db:check ve db:generate tutarlı, 42 tablo ve yeni şema farkı yok. Ana DB migration ve iki seed koşusu başarılı. Testlerden sonra 0 test DB, 0 medya nesnesi, 10 editoryal satır; kişi/takım/credit/kart 0. Gerçek sır değerleri src/scripts/tests/browser/standalone içinde bulunmadı; build içinde env/PEM/key/HEIC/Wallet secrets yok. Staged diff kontrolü commit öncesi tekrar yapılır.
 
 Aşama 1 kanıtı docs/operations/phase-1-acceptance.md içinde. Gerçek 2026 galeri/finalist içeriği ve 2027 tarih/konum bilinmediğinden yayımlanmadı. Finalist slotunun tam sonuç/rıza yayını Görev 20'de; 2027 draft seed başvuru açmaz. Sayfa yeni istekte yayımlanmış tarihi okur; açık sekmede yayın geri çekmesini anlık poll etmez. VDS deployment yapılmadı. Görev 9 ve kapı kutuları işaretlendi; sıradaki Görev 10.
+
+
+### Görev 10 başlangıç — sözleşme ve kapsam
+
+Plan/mimari ve mevcut forms/form_versions/form_fields/form_rules/submission_answers FK'leri okundu. Sözleşme: UUID alan kimlikleri sürümler arasında korunur; definition schemaVersion=1, en çok 100 alan; bütün 15 tür kayıtlı; dosya türü yok. Alan koşulu izinli JSON AST (and/or, eq/neq/gt/gte/lt/lte/contains/in/is_empty), bilinmeyen referans/tip ve döngü reddi, boyut/derinlik sınırı. Gizli alan cevapları yok sayılmayıp reddedilir; gizli referans yaprakları false olur. Merkezi sunucu doğrulaması string-sayı dönüşümü yapmaz.
+
+Yayınlanan version snapshot ve field/rule satırları DB trigger'larıyla değişmez; taslak yeni sürüm ayrı numara alır. Repository işlem katmanıdır, HTTP/panel/yetki/yayınlama servisi Görev 11'de bağlanır; burada form status açılmaz. Migration plandaki genel dosya adı yerine mevcut Drizzle journal ile 0007_form_versioning.sql custom olarak üretilir. Yeni ürün bağımlılığı yok. Önce unit ve gerçek PG testleri kırmızı, sonra uygulama.
+
+Görev 10 RED: unit 29 failed/1 passed (eksik motor), gerçek PG 3/3 failed (eksik repository). Test kurulumu/migration başarılı; başarısızlık implementasyon stub çağrılarında. Şimdi izinli schema/validator/koşul ve trigger repository uygulanır.
+
+Görev 10 ilk GREEN: 30/30 unit ve 3/3 gerçek PostgreSQL. İncelemede boşlukla zorunlu alanı geçme ve UUID büyük/küçük harfin PostgreSQL ile farklı kimlik oluşturma durumları için ek test RED görüldü; boş metin trim boşluk kontrolü ve bütün alan/ref/answer UUID anahtarları için canonical küçük harf zorunluluğu eklendi. Bütün operatör ve limit sınırları ile parent-lock yayın yarışı testleri genişletildi.
+
+45/45 odak test geçti; lint ilk koşuda fieldRows destructuring içinde unused condition bildirdi. Config ayrı izinli anahtar filtresiyle üretildi, kural AST aynı kaldı. Parent lock yarışının ters sırası için de gerçek PG testi eklendi. İmplementasyon bu sohbet içinde dosya bazında incelenir; kullanıcı çalışma disiplini nedeniyle reviewer/implementer delegasyonu yapılmaz.
+
+
+### Görev 10 kapanış
+
+Dosya bazında incelendi: field-types kayıt/config/answer parser; form-version sıkı schema/JSON limitleri; condition izinli AST/referans tür kontrolü/döngü/visibility; server-only merkezi submission validator; server-only form repository ve canonical snapshot/field/rule aynası; 0007 SQL parent-lock trigger'ları; journal ve snapshot kimlik zinciri; unit ve gerçek PG fixture/cleanup testleri; form rehberi, mimari/veritabanı notları, plan ve README. Custom snapshot'ın 0006 ile id/prevId dışında tüm şema içeriği aynı olduğu programatik doğrulandı. Ürün bağımlılığı kurulmadı; kullanılan formatter pnpm dlx ile sabit sürümdür.
+
+Son kanıt: 141/141 Vitest (13 dosya; 41 yeni unit + 5 yeni gerçek PG), 27/27 production E2E (16.7 sn), typecheck/lint/build başarılı. db:check tutarlı; db:generate 42 tablo ve yeni fark yok. 0007 ana DB'de uygulandı; ikinci migrate no-op başarılı. v1 etiketi/cevabı v2'den etkilenmez; yayımlı snapshot/child INSERT/UPDATE/DELETE SQLSTATE 23514 ile reddedilir; paralel yeni version numaraları tekil; publication ve child yazısının iki kilit sırası test edildi.
+
+Son veri kontrolü: 42 tablo, 10 editoryal satır, 0 test DB, 0 medya nesnesi; kişi/takım/credit/kart 0. Ana DB'de form/submission seed yok. Gerçek sır src/scripts/tests/browser/standalone içinde bulunmadı; build'de env/PEM/key/HEIC/Wallet secrets yok. Staged diff sır kontrolü commit öncesi tekrar yapılır.
+
+Görev 10 kutuları tamamlandı. Panel/yetki/audit/yayınlama iş akışı Görev 11, canlı submission kabulü Görev 12 ve sonraki görevlerdir. Mevcut repository iç katmandır; form status açmaz. Gerçek içerik/hukuk/sunucu/Wallet canlı kabulü henüz yapılmadı. Görev 11 başlatılmadı.
+
+Görev 10 commit öncesi staged diff ve build/source sır kontrolü tekrar geçti: secretFileHits=0, forbiddenBuildFiles=0, stagedSecretHits=0; git diff --cached --check temiz. Görev 9 commit d9be96d; Görev 10 ayrı commit ile kaydedilir.

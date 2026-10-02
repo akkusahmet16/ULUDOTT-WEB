@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (- [ ]) syntax for tracking. The user requested file-by-file review with the assistant; do not delegate implementation.
 
-Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–9 tamamlandı; sıradaki adım Görev 10. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
+Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–10 tamamlandı; sıradaki adım Görev 11. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
 
 **Goal:** Uludott topluluk sitesi, genel etkinlik/form/duyuru/link yönetimi, UluJam takım ve onay akışları, 2026 arşivi, 2027 “Yakında” alanı, derece oyunları ve onay sonrası Wallet kartlarını sıfırdan güvenli ve sürdürülebilir biçimde üretmek.
 
@@ -177,13 +177,13 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 ### Görev 10 — form şeması, alan tipleri ve koşul motoru
 
-**Dosyalar:** Oluştur: src/modules/forms/{domain/field-types.ts,domain/form-version.ts,domain/condition.ts,application/form-validator.ts,infrastructure/form-repository.ts}, src/db/migrations/form-versioning.sql, tests/unit/form-conditions.test.ts, tests/integration/form-versions.test.ts.
+**Dosyalar:** Oluştur: src/modules/forms/{domain/field-types.ts,domain/form-version.ts,domain/condition.ts,application/form-validator.ts,infrastructure/form-repository.ts}, src/db/migrations/0007_form_versioning.sql (Drizzle custom/journal), tests/unit/form-conditions.test.ts, tests/integration/form-versions.test.ts.
 
 **Arayüz:** Üretir: validateFormDefinition(input): ValidFormDefinition; evaluateVisibility(definition,answers): VisibleFieldIds; validateSubmission(version,answers): ValidatedAnswers. Yayınlanan FormVersion değişmezdir; alan ID'si sürümler arasında kararlıdır.
 
-- [ ] Şartnamedeki bütün alan türleri, tip uyuşmazlığı, döngü, olmayan alan referansı ve gizli koşullu alan değerinin reddi için testleri yazıp kırmızı sonucu gör.
-- [ ] Alan kayıtları, güvenli izinli operatörlü JSON koşulları ve merkezi sunucu doğrulamasını uygula; keyfi JavaScript/SQL yürütme yolu açma.
-- [ ] Form v1 yanıtının v2 etiket/alan değişikliğinden etkilenmediğini gerçek PostgreSQL'de doğrula; bütün dosyaları inceleyip commit et.
+- [x] Şartnamedeki bütün alan türleri, tip uyuşmazlığı, döngü, olmayan alan referansı ve gizli koşullu alan değerinin reddi için testleri yazıp kırmızı sonucu gör.
+- [x] Alan kayıtları, güvenli izinli operatörlü JSON koşulları ve merkezi sunucu doğrulamasını uygula; keyfi JavaScript/SQL yürütme yolu açma.
+- [x] Form v1 yanıtının v2 etiket/alan değişikliğinden etkilenmediğini gerçek PostgreSQL'de doğrula; bütün dosyaları inceleyip commit et.
 
 ### Görev 11 — panelde form oluşturma, önizleme ve yayınlama
 

@@ -98,3 +98,7 @@ Takım kapasite kilidi/constraint trigger, tam NFKC Türkçe isim normalizasyonu
 ## Görev 9 galeri genişletmesi
 
 0006 event_gallery: event/media FK, event+position unique, 0–49 position ve positive revision, verified_at. Toplam 42 tablo. Medya reference kontrolü galeri ilişkisini içerir. 2027 yılı ayrı tarihsiz draft seed ile ilişkilendirilir; ana editoryal satır toplamı 10 olur, kişisel tablo boşluğu korunur. [Arşiv rehberi](../operations/ulujam-archive.md).
+
+## Görev 10 — form sürümü mühürleme
+
+0007_form_versioning custom/journal migration tablo sayısını değiştirmez (42). form_versions snapshot ve form_fields/form_rules çocukları published_at sonrası trigger'larla değişmez. Child mutasyonu version parent'ını kilitler; yayınlama repository'si de aynı kilitle aynaların tutarlılığını doğrular. versionId+fieldKey composite PK/FK geçmiş cevapları korur; yeni etiket eski yanıtı değiştirmez. Actor servis/panel Görev 11, gerçek submission transaction Görev 12 kapsamıdır. Ayrıntılar docs/operations/form-definitions.md.
