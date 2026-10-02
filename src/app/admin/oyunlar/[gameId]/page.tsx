@@ -33,7 +33,10 @@ export default async function Page({
     notFound();
   }
   const [options, list] = await Promise.all([
-    gameOptions(s.actor, initial.eventId),
+    gameOptions(s.actor, initial.eventId, {
+      teamId: initial.teamId ?? undefined,
+      mediaId: initial.mediaId ?? undefined,
+    }),
     listGames(s.actor),
   ]);
   return (

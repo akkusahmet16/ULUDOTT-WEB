@@ -25,7 +25,13 @@ export function GameEditor({
     [game, setGame] = useState(initial),
     [eventId, setEventId] = useState(initial?.eventId ?? events[0]?.id ?? ""),
     [options, setOptions] = useState<Options>(
-      initialOptions ?? { teams: [], members: [], covers: [] },
+      initialOptions ?? {
+        teams: [],
+        members: [],
+        covers: [],
+        nextTeamCursor: null,
+        nextMediaCursor: null,
+      },
     ),
     [title, setTitle] = useState(initial?.title ?? ""),
     [slug, setSlug] = useState(initial?.slug ?? ""),
@@ -40,11 +46,20 @@ export function GameEditor({
     [busy, setBusy] = useState(false),
     [preview, setPreview] = useState(false);
   useEffect(() => {
-    if (initial || !eventId) return;
+    if (!eventId) return;
     let ignore = false;
-    void fetch("/api/admin/games?options=1&eventId=" + eventId, {
-      cache: "no-store",
-    })
+    void fetch(
+      "/api/admin/games?" +
+        new URLSearchParams({
+          options: "1",
+          eventId,
+          ...(teamId ? { teamId } : {}),
+          ...(mediaId ? { mediaId } : {}),
+        }),
+      {
+        cache: "no-store",
+      },
+    )
       .then(async (r) => {
         const d = await r.json();
         if (!r.ok) throw Error(d.error);
@@ -56,7 +71,32 @@ export function GameEditor({
     return () => {
       ignore = true;
     };
-  }, [eventId, initial]);
+  }, [eventId, teamId, mediaId]);
+  async function loadOptionPage(kind?: "team" | "media") {
+    setBusy(true);
+    try {
+      const q = new URLSearchParams({
+        options: "1",
+        eventId,
+        ...(teamId ? { teamId } : {}),
+        ...(mediaId ? { mediaId } : {}),
+        ...(kind === "team" && options.nextTeamCursor
+          ? { teamCursor: options.nextTeamCursor }
+          : {}),
+        ...(kind === "media" && options.nextMediaCursor
+          ? { mediaCursor: options.nextMediaCursor }
+          : {}),
+      });
+      const r = await fetch("/api/admin/games?" + q, { cache: "no-store" }),
+        d = await r.json();
+      if (!r.ok) throw Error(d.error);
+      setOptions(d);
+    } catch (e) {
+      setMessage(e instanceof Error ? e.message : "Seçenekler alınamadı.");
+    } finally {
+      setBusy(false);
+    }
+  }
   async function reload() {
     if (!game) return;
     const r = await fetch("/api/admin/games/" + game.id, { cache: "no-store" }),
@@ -187,6 +227,7 @@ export function GameEditor({
             Oyun adresi
             <input
               value={slug}
+              disabled={game?.slugLocked}
               maxLength={100}
               onChange={(e) => setSlug(e.target.value)}
             />
@@ -216,6 +257,15 @@ export function GameEditor({
               ))}
             </select>
           </label>
+          <p>
+            <button
+              type="button"
+              disabled={!options.nextTeamCursor}
+              onClick={() => void loadOptionPage("team")}
+            >
+              Sonraki takımları getir
+            </button>
+          </p>
           {game?.historic && (
             <>
               <label className="field">
@@ -254,6 +304,18 @@ export function GameEditor({
               ))}
             </select>
           </label>
+          <p>
+            <button
+              type="button"
+              disabled={!options.nextMediaCursor}
+              onClick={() => void loadOptionPage("media")}
+            >
+              Sonraki kapakları getir
+            </button>{" "}
+            <button type="button" onClick={() => void loadOptionPage()}>
+              Seçeneklerin ilk sayfasına dön
+            </button>
+          </p>
           <label className="field">
             itch.io HTTPS oyun bağlantısı
             <input

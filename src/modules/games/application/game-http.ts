@@ -44,14 +44,31 @@ export async function gameRequest(req: Request, id?: string) {
       if (id) {
         const game = await getGameEditor(actor, id);
         return Response.json(
-          { game, options: await gameOptions(actor, game.eventId) },
+          {
+            game,
+            options: await gameOptions(actor, game.eventId, {
+              teamId: game.teamId ?? undefined,
+              mediaId: game.mediaId ?? undefined,
+            }),
+          },
           { headers: privateHeaders },
         );
       }
       const eventId = url.searchParams.get("eventId") ?? undefined;
       return Response.json(
         url.searchParams.get("options") === "1"
-          ? await gameOptions(actor, eventId ?? "")
+          ? await gameOptions(
+              actor,
+              eventId ?? "",
+              Object.fromEntries(
+                ["teamId", "mediaId", "teamCursor", "mediaCursor"].flatMap(
+                  (k) =>
+                    url.searchParams.get(k)
+                      ? [[k, url.searchParams.get(k)!]]
+                      : [],
+                ),
+              ),
+            )
           : await listGames(
               actor,
               eventId,

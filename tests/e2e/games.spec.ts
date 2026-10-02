@@ -101,6 +101,14 @@ test("2026 oyun editörü, gerçek yapımcı onayı, finalist, tam yayın ve ger
     path: ".local/task20-public-game-mobile.png",
     fullPage: true,
   });
+  await page.goto("/ulujam");
+  const archive = page.getByRole("region", { name: "UluJam 2026 arşivi" });
+  await expect(
+    archive
+      .getByRole("region", { name: "Finalist oyunları" })
+      .getByText("DEMO arşiv oyunu", { exact: true }),
+  ).toBeVisible();
+  await page.goto("/oyunlar/demo-archive-game");
   await owner.getByRole("button", { name: "Yayın onayımı geri çek" }).click();
   await expect(owner.getByRole("status")).toContainText("geri çekildi");
   await page.reload();

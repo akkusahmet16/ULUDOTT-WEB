@@ -141,6 +141,11 @@ export async function saveGameDraft(
         .for("update");
       if (!old) throw new SubmissionError(404, "Oyun bulunamadı");
       if (old.revision !== d.expectedRevision) throw Error("Sürüm çakışması");
+      if (old.slugLocked && old.slug !== d.slug)
+        throw new SubmissionError(
+          409,
+          "İlk yayından sonra oyun adresi sabittir",
+        );
     }
     const id = old?.id ?? randomUUID(),
       historic = isHistoricalGame(eventId, id),
@@ -361,7 +366,11 @@ export async function publishGame(
     const revision = g.revision + 1;
     await tx
       .update(games)
-      .set({ publishedAt: sql`now()`, revision })
+      .set({
+        publishedAt: sql`now()`,
+        revision,
+        slugLocked: !!g.slug || g.slugLocked,
+      })
       .where(eq(games.id, id));
     await gameCardsChanged(tx, [g.teamId]);
     await appendAudit(
@@ -511,52 +520,106 @@ export async function getGameEditor(actor: Actor, id: string) {
   };
 }
 export type GameEditorData = Awaited<ReturnType<typeof getGameEditor>>;
-export async function gameOptions(actor: Actor, eventId: string) {
+export async function gameOptions(
+  actor: Actor,
+  eventId: string,
+  raw: {
+    teamId?: string;
+    mediaId?: string;
+    teamCursor?: string;
+    mediaCursor?: string;
+  } = {},
+) {
   requirePermission(actor, "games.edit");
   z.uuid().parse(eventId);
   requireGameEdit(actor, eventId);
+  const options = z
+    .strictObject({
+      teamId: z.uuid().optional(),
+      mediaId: z.uuid().optional(),
+      teamCursor: z.uuid().optional(),
+      mediaCursor: z.uuid().optional(),
+    })
+    .parse(raw);
   const mayReadNames =
-    actor.roles.includes("event_manager") &&
-    actor.eventScopes.includes(eventId);
-  const db = getDatabase();
-  const teamRows = await db
+      actor.roles.includes("event_manager") &&
+      actor.eventScopes.includes(eventId),
+    db = getDatabase();
+  const page = await db
     .select({ id: teams.id, name: teams.name })
     .from(teams)
-    .where(eq(teams.eventId, eventId))
-    .orderBy(teams.name)
-    .limit(100);
-  const members = await db
-    .select({
-      id: applications.id,
-      teamId: memberships.teamId,
-      label: mayReadNames
-        ? applications.fullName
-        : sql<string>`${applications.id}::text`,
-    })
-    .from(applications)
-    .innerJoin(memberships, eq(memberships.applicationId, applications.id))
     .where(
       and(
-        eq(applications.eventId, eventId),
-        sql`${memberships.leftAt} is null`,
-        sql`(${applications.submissionId} is null or exists(select 1 from submissions s where s.id=${applications.submissionId} and s.expires_at>clock_timestamp()))`,
+        eq(teams.eventId, eventId),
+        options.teamCursor
+          ? sql`${teams.id}>${options.teamCursor}::uuid`
+          : undefined,
       ),
     )
-    .orderBy(applications.id)
-    .limit(600);
-  const covers = await db
-    .select({ id: mediaAssets.id, label: mediaAssets.altText })
-    .from(mediaAssets)
-    .innerJoin(mediaVariants, eq(mediaVariants.assetId, mediaAssets.id))
-    .where(
-      and(
-        eq(mediaAssets.status, "ready"),
-        eq(mediaVariants.purpose, "webp"),
-        sql`${mediaVariants.publishedAt} is not null`,
-      ),
-    )
-    .limit(100);
-  return { teams: teamRows, members, covers };
+    .orderBy(teams.id)
+    .limit(51);
+  const teamRows = page.slice(0, 50);
+  if (options.teamId && !teamRows.some((t) => t.id === options.teamId)) {
+    const [selected] = await db
+      .select({ id: teams.id, name: teams.name })
+      .from(teams)
+      .where(and(eq(teams.eventId, eventId), eq(teams.id, options.teamId)));
+    if (selected) teamRows.push(selected);
+  }
+  const members = options.teamId
+    ? await db
+        .select({
+          id: applications.id,
+          teamId: memberships.teamId,
+          label: mayReadNames
+            ? applications.fullName
+            : sql<string>`${applications.id}::text`,
+        })
+        .from(applications)
+        .innerJoin(memberships, eq(memberships.applicationId, applications.id))
+        .where(
+          and(
+            eq(applications.eventId, eventId),
+            eq(memberships.teamId, options.teamId),
+            sql`${memberships.leftAt} is null`,
+            sql`(${applications.submissionId} is null or exists(select 1 from submissions s where s.id=${applications.submissionId} and s.expires_at>clock_timestamp()))`,
+          ),
+        )
+        .orderBy(applications.id)
+    : [];
+  async function coverPage(filter: ReturnType<typeof sql> | undefined) {
+    return db
+      .select({ id: mediaAssets.id, label: mediaAssets.altText })
+      .from(mediaAssets)
+      .innerJoin(mediaVariants, eq(mediaVariants.assetId, mediaAssets.id))
+      .where(
+        and(
+          eq(mediaAssets.status, "ready"),
+          eq(mediaVariants.purpose, "webp"),
+          sql`${mediaVariants.publishedAt} is not null`,
+          filter,
+        ),
+      )
+      .orderBy(mediaAssets.id)
+      .limit(51);
+  }
+  const mediaPage = await coverPage(
+      options.mediaCursor
+        ? sql`${mediaAssets.id}>${options.mediaCursor}::uuid`
+        : undefined,
+    ),
+    covers = mediaPage.slice(0, 50);
+  if (options.mediaId && !covers.some((c) => c.id === options.mediaId)) {
+    const [selected] = await coverPage(eq(mediaAssets.id, options.mediaId));
+    if (selected) covers.push(selected);
+  }
+  return {
+    teams: teamRows,
+    members,
+    covers,
+    nextTeamCursor: page.length > 50 ? page[49].id : null,
+    nextMediaCursor: mediaPage.length > 50 ? mediaPage[49].id : null,
+  };
 }
 export async function listGames(
   actor: Actor,

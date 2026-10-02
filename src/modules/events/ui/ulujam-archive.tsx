@@ -1,3 +1,4 @@
+import type { PublicGameView } from "../../games/infrastructure/game-repository";
 import Image from "next/image";
 import type { HistoricalResult } from "../../games/domain/historical-result";
 import type { GalleryImage } from "../application/ulujam-service";
@@ -7,9 +8,13 @@ export function UlujamArchive({
   year,
   results,
   gallery,
+  finalists = [],
+  nextFinalistCursor = null,
 }: {
   year: number;
-  results: HistoricalResult[];
+  results: (HistoricalResult | PublicGameView)[];
+  finalists?: PublicGameView[];
+  nextFinalistCursor?: string | null;
   gallery: GalleryImage[];
 }) {
   return (
@@ -47,7 +52,7 @@ export function UlujamArchive({
       ) : (
         <p className="empty">Henüz yayımlanmış derece bağlantısı yok.</p>
       )}
-      <FinalistList />
+      <FinalistList items={finalists} nextCursor={nextFinalistCursor} />
     </section>
   );
 }

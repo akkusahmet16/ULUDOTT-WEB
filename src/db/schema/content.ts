@@ -184,6 +184,7 @@ export const games = pgTable(
     teamId: uuid("team_id"),
     slug: text("slug").unique(),
     editorialTeamName: text("editorial_team_name"),
+    slugLocked: boolean("slug_locked").default(false).notNull(),
     title: text("title"),
     itchUrl: text("itch_url").notNull(),
     description: text("description"),

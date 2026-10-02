@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { listPublicGames } from "../../../modules/games/infrastructure/game-repository";
 import { PublicShell } from "../../../components/layout/public-shell";
 import { listPublicHistoricalResults } from "../../../modules/games/application/historical-results";
@@ -7,10 +8,15 @@ export const metadata = {
   title: "Oyunlar — Uludott",
   description: "UluJam 2026'nın doğrulanmış derece ve itch.io bağlantıları.",
 };
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ cursor?: string }>;
+}) {
+  const { cursor } = await searchParams;
   const [results, full] = await Promise.all([
     listPublicHistoricalResults(2026),
-    listPublicGames(),
+    listPublicGames({ cursor }),
   ]);
   return (
     <PublicShell>
@@ -36,14 +42,26 @@ export default async function Page() {
         </section>
         <section aria-label="Yayımlanmış oyunlar" className="section">
           <h2>Yayımlanmış oyunlar ve finalistler</h2>
-          {full.length ? (
+          {full.items.length ? (
             <div className="grid">
-              {full.map((g) => (
+              {full.items.map((g) => (
                 <ResultCard key={g.id} result={g} />
               ))}
             </div>
           ) : (
             <p className="empty">Henüz tam oyun kaydı yayımlanmadı.</p>
+          )}
+          {full.nextCursor && (
+            <p>
+              <Link href={"/oyunlar?cursor=" + full.nextCursor}>
+                Sonraki oyunlar
+              </Link>
+            </p>
+          )}
+          {cursor && (
+            <p>
+              <Link href="/oyunlar">İlk oyun sayfasına dön</Link>
+            </p>
           )}
         </section>
       </section>

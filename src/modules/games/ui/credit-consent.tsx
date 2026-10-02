@@ -48,36 +48,43 @@ export function CreditConsent({
         bu oyunun genel sonuç sayfasında görünebilir. Bu özel bağlantıyı
         saklayarak onayınızı geri çekebilirsiniz.
       </p>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          void submit(true);
-        }}
-      >
-        <fieldset disabled={busy}>
-          <label className="field">
-            Yayımlanacak yapımcı adı
-            <input
-              value={name}
-              maxLength={160}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={checked}
-              onChange={(e) => setChecked(e.target.checked)}
-            />{" "}
-            Bu adın bu oyunda herkese açık yayımlanmasına izin veriyorum.
-          </label>
-          <p>
-            <button disabled={busy || !checked || !name.trim()}>
-              Yayın adımı onayla
-            </button>
-          </p>
-        </fieldset>
-      </form>
+      {initial.canApprove ? (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void submit(true);
+          }}
+        >
+          <fieldset disabled={busy}>
+            <label className="field">
+              Yayımlanacak yapımcı adı
+              <input
+                value={name}
+                maxLength={160}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={checked}
+                onChange={(e) => setChecked(e.target.checked)}
+              />{" "}
+              Bu adın bu oyunda herkese açık yayımlanmasına izin veriyorum.
+            </label>
+            <p>
+              <button disabled={busy || !checked || !name.trim()}>
+                Yayın adımı onayla
+              </button>
+            </p>
+          </fieldset>
+        </form>
+      ) : (
+        <p>
+          Yeni yayın onayı kapalıdır. Mevcut onayınızı aşağıdan geri
+          çekebilirsiniz.
+        </p>
+      )}
       {approved && (
         <button disabled={busy} onClick={() => void submit(false)}>
           Yayın onayımı geri çek

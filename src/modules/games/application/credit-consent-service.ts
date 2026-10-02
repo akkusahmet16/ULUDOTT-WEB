@@ -35,19 +35,27 @@ export async function getPublicationConsent(token: string) {
     .select()
     .from(events)
     .where(eq(events.id, g.eventId));
-  if (["cancelled", "archived"].includes(e.status))
-    throw new SubmissionError(410, "Yayın onayı kapalı");
+  let canApprove = !["cancelled", "archived"].includes(e.status);
   if (c.applicationId) {
     const r = await readCard(sql`c.application_id=${c.applicationId}::uuid`);
-    if (!r || r.expired)
-      throw new SubmissionError(410, "Başvurunun saklama süresi doldu");
+    canApprove = canApprove && !!r && !r.expired && r.status === "active";
   }
+  if (!canApprove)
+    return {
+      title: "Yayın onayını geri çekme",
+      event: "",
+      publicationName: "",
+      consented: !!c.consentedAt,
+      revision: c.revision,
+      canApprove: false,
+    };
   return {
     title: g.title ?? "Başlığı henüz girilmemiş oyun",
     event: e.title,
     publicationName: c.publicationName ?? "",
     consented: !!c.consentedAt,
     revision: c.revision,
+    canApprove: true,
   };
 }
 export async function approvePublicationName(

@@ -1,5 +1,5 @@
 import "server-only";
-import { and, eq, lte, ne, sql } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 import { getDatabase } from "../../../lib/database/client.ts";
 import {
   games,
@@ -25,22 +25,45 @@ export async function historicalGameRecords(year: number, now: Date) {
         eq(events.slug, historical2026.slug),
         eq(events.kind, "ulujam"),
         ne(events.status, "archived"),
-        eq(games.historicalPartial, true),
-        lte(games.publishedAt, now),
+        ne(events.status, "cancelled"),
+        sql`(${games.historicalPartial}=false or ${games.publishedAt}<=${now.toISOString()}::timestamptz)`,
       ),
     )
     .orderBy(awards.rank);
 }
 
-// Yalnız tamamlanmış, güncel rızası ve katılım hakkı bulunan kayıtlar public görünür.
-export async function getPublicGame(slug: string) {
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || slug.length > 100)
-    return null;
-  const db = getDatabase();
-  const rows = await db.execute(
-    sql`select g.*,e.title event_title,e.status event_status,t.name team_name,t.status team_status,aw.rank,exists(select 1 from finalists f where f.game_id=g.id) finalist,v.id variant_id,a.alt_text from games g join events e on e.id=g.event_id left join teams t on t.id=g.team_id left join awards aw on aw.game_id=g.id left join media_assets a on a.id=g.media_id and a.status='ready' left join media_variants v on v.asset_id=a.id and v.purpose='webp' and v.published_at is not null where g.slug=${slug} and g.historical_partial=false and g.published_at<=clock_timestamp() and e.status not in ('cancelled','archived')`,
+// Oyun ve ad onayı aynı SQL snapshot'ından okunur. Uygunluk LIMIT'ten öncedir.
+function publicQuery() {
+  const historicalIds = sql.join(
+    historical2026.results.map((r) => sql`${r.id}::uuid`),
+    sql`, `,
   );
-  const g = rows[0];
+  return sql`select g.*,e.title event_title,e.status event_status,t.name team_name,t.status team_status,aw.rank,
+ exists(select 1 from finalists f where f.game_id=g.id) finalist,v.id variant_id,a.alt_text,cr.credits
+ from games g join events e on e.id=g.event_id left join teams t on t.id=g.team_id
+ left join awards aw on aw.game_id=g.id left join media_assets a on a.id=g.media_id and a.status='ready'
+ left join media_variants v on v.asset_id=a.id and v.purpose='webp' and v.published_at is not null
+ join lateral (
+ select jsonb_agg(jsonb_build_object('publication_name',c.publication_name,'consented_at',c.consented_at,
+ 'application_id',c.application_id,'application_status',p.status,'mode',p.mode,'team_status',mt.status,
+ 'team_id',m.team_id,'member_approved',ap.status='approved','expired',
+ p.submission_id is not null and not exists(select 1 from submissions s where s.id=p.submission_id and s.expires_at>clock_timestamp())) order by c.id) credits,
+ count(*)>0 and bool_and((c.publication_name is not null and c.consented_at is not null and
+ ((c.application_id is null and g.event_id=${historical2026.eventId}::uuid and g.id in (${historicalIds})) or
+ (p.id is not null and p.mode<>'solo' and p.status not in ('rejected','withdrawn') and m.team_id=g.team_id
+ and mt.status in ('approved','changes_requested') and ap.status='approved'
+ and (p.submission_id is null or exists(select 1 from submissions s where s.id=p.submission_id and s.expires_at>clock_timestamp()))))) IS TRUE) eligible
+ from game_credits c left join applications p on p.id=c.application_id
+ left join memberships m on m.application_id=p.id and m.left_at is null left join teams mt on mt.id=m.team_id
+ left join team_approvals ap on ap.team_id=mt.id and ap.revision=m.approved_revision where c.game_id=g.id
+ ) cr on cr.eligible=true
+ where g.historical_partial=false and g.published_at<=clock_timestamp() and e.status not in ('cancelled','archived')
+ and (e.status in ('published','ended') or (g.event_id=${historical2026.eventId}::uuid and g.id in (${historicalIds})))
+ and g.title is not null and g.slug is not null and g.description is not null
+ and ((t.status in ('approved','changes_requested')) or (g.team_id is null and g.editorial_team_name is not null and g.event_id=${historical2026.eventId}::uuid and g.id in (${historicalIds})))
+ and (g.media_id is null or (v.id is not null and a.alt_text is not null))`;
+}
+function publicView(g: Record<string, unknown> | undefined) {
   if (!g || !g.title || !g.description) return null;
   const historical = isHistoricalGame(String(g.event_id), String(g.id));
   if (!historical && !["published", "ended"].includes(String(g.event_status)))
@@ -51,9 +74,7 @@ export async function getPublicGame(slug: string) {
     !["approved", "changes_requested"].includes(String(g.team_status))
   )
     return null;
-  const credits =
-    await db.execute(sql`select c.publication_name,c.consented_at,c.application_id,a.status application_status,a.mode,t.status team_status,m.team_id,(ap.status='approved') member_approved,
- (a.id is not null and a.submission_id is not null and not exists(select 1 from submissions s where s.id=a.submission_id and s.expires_at>clock_timestamp())) expired from game_credits c left join applications a on a.id=c.application_id left join memberships m on m.application_id=a.id and m.left_at is null left join teams t on t.id=m.team_id left join team_approvals ap on ap.team_id=t.id and ap.revision=m.approved_revision where c.game_id=${g.id}::uuid order by c.id`);
+  const credits = g.credits as Record<string, unknown>[];
   if (
     !credits.length ||
     credits.some(
@@ -95,26 +116,45 @@ export async function getPublicGame(slug: string) {
       : null,
   };
 }
+export async function getPublicGame(slug: string) {
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || slug.length > 100)
+    return null;
+  const rows = await getDatabase().execute(
+    sql`${publicQuery()} and g.slug=${slug}`,
+  );
+  return publicView(rows[0]);
+}
+export async function getPublicGameById(id: string) {
+  if (!z.uuid().safeParse(id).success) return null;
+  const rows = await getDatabase().execute(
+    sql`${publicQuery()} and g.id=${id}::uuid`,
+  );
+  return publicView(rows[0]);
+}
 export type PublicGameView = NonNullable<
   Awaited<ReturnType<typeof getPublicGame>>
 >;
-export async function listPublicGames() {
-  const rows = await getDatabase()
-    .select({ slug: games.slug })
-    .from(games)
-    .where(
-      and(
-        eq(games.historicalPartial, false),
-        lte(games.publishedAt, new Date()),
-      ),
-    )
-    .orderBy(games.createdAt)
-    .limit(100);
-  const results = await Promise.all(
-    rows.map((r) => (r.slug ? getPublicGame(r.slug) : null)),
-  );
-  return results.filter((r): r is PublicGameView => r !== null);
+export async function listPublicGames(
+  options: { cursor?: string; eventId?: string; finalistOnly?: boolean } = {},
+) {
+  if (
+    (options.cursor && !z.uuid().safeParse(options.cursor).success) ||
+    (options.eventId && !z.uuid().safeParse(options.eventId).success)
+  )
+    return { items: [], nextCursor: null };
+  const rows = await getDatabase().execute(sql`${publicQuery()}
+ ${options.cursor ? sql`and g.id>${options.cursor}::uuid` : sql``}
+ ${options.eventId ? sql`and g.event_id=${options.eventId}::uuid` : sql``}
+ ${options.finalistOnly ? sql`and exists(select 1 from finalists f where f.game_id=g.id)` : sql``}
+ order by g.id limit 21`);
+  return {
+    items: rows
+      .slice(0, 20)
+      .map(publicView)
+      .filter((g): g is PublicGameView => g !== null),
+    nextCursor: rows.length > 20 ? String(rows[19].id) : null,
+  };
 }
-
+import { z } from "zod";
 import { isHistoricalGame, itchUrl } from "../domain/game-publication.ts";
 import { cardEligibility } from "../../cards/domain/card-eligibility.ts";
