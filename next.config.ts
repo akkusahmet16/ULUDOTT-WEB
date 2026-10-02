@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const config: NextConfig = {
   output: "standalone",
   logging: {
-    incomingRequests: { ignore: [/^\/(kart|takim)\//] },
+    incomingRequests: { ignore: [/^\/(kart|takim|yayin-onayi)\//] },
     serverFunctions: false,
   },
   outputFileTracingIncludes: {
@@ -32,6 +32,7 @@ const config: NextConfig = {
       "/makbuz",
       "/takim/:path*",
       "/kart/:path*",
+      "/yayin-onayi/:path*",
       "/api/cards/:path*",
       "/api/team/:path*",
       "/api/ulujam/:path*",

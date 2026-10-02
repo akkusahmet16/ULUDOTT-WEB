@@ -182,6 +182,8 @@ export const games = pgTable(
       .notNull()
       .references(() => events.id),
     teamId: uuid("team_id"),
+    slug: text("slug").unique(),
+    editorialTeamName: text("editorial_team_name"),
     title: text("title"),
     itchUrl: text("itch_url").notNull(),
     description: text("description"),
@@ -215,6 +217,9 @@ export const gameCredits = pgTable(
       .references(() => games.id),
     applicationId: uuid("application_id").references(() => applications.id),
     publicationName: text("publication_name"),
+    revision: integer("revision").default(1).notNull(),
+    consentTokenHash: text("consent_token_hash").unique(),
+    consentTokenEncrypted: text("consent_token_encrypted"),
     consentedAt: instant("consented_at"),
   },
   (t) => [
@@ -223,6 +228,8 @@ export const gameCredits = pgTable(
       sql`${t.consentedAt} IS NULL OR nullif(btrim(${t.publicationName}),'') IS NOT NULL`,
     ),
     index("game_credits_game_idx").on(t.gameId),
+    unique("game_credit_application_unique").on(t.gameId, t.applicationId),
+    check("game_credit_revision", sql`${t.revision}>0`),
   ],
 );
 export const awards = pgTable(

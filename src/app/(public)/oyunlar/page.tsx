@@ -1,3 +1,4 @@
+import { listPublicGames } from "../../../modules/games/infrastructure/game-repository";
 import { PublicShell } from "../../../components/layout/public-shell";
 import { listPublicHistoricalResults } from "../../../modules/games/application/historical-results";
 import { ResultCard } from "../../../modules/games/ui/result-card";
@@ -7,7 +8,10 @@ export const metadata = {
   description: "UluJam 2026'nın doğrulanmış derece ve itch.io bağlantıları.",
 };
 export default async function Page() {
-  const results = await listPublicHistoricalResults(2026);
+  const [results, full] = await Promise.all([
+    listPublicHistoricalResults(2026),
+    listPublicGames(),
+  ]);
   return (
     <PublicShell>
       <section className="section">
@@ -28,6 +32,18 @@ export default async function Page() {
             </div>
           ) : (
             <p className="empty">Henüz yayımlanmış derece bağlantısı yok.</p>
+          )}
+        </section>
+        <section aria-label="Yayımlanmış oyunlar" className="section">
+          <h2>Yayımlanmış oyunlar ve finalistler</h2>
+          {full.length ? (
+            <div className="grid">
+              {full.map((g) => (
+                <ResultCard key={g.id} result={g} />
+              ))}
+            </div>
+          ) : (
+            <p className="empty">Henüz tam oyun kaydı yayımlanmadı.</p>
           )}
         </section>
       </section>

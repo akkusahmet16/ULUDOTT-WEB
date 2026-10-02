@@ -113,6 +113,13 @@
       "when": 1790968510439,
       "tag": "0015_normal_makkari",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1790969832684,
+      "tag": "0016_ancient_multiple_man",
+      "breakpoints": true
     }
   ]
 }

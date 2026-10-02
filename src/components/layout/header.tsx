@@ -21,12 +21,7 @@ export function Header() {
     <header className="site-header">
       <div className="wrap header-inner">
         <Link href="/" className="brand" aria-label="Uludott ana sayfa">
-          <Image
-            src="/brand/uludott-white.svg"
-            alt="Uludott"
-            width={48}
-            height={48}
-          />
+          <Image src="/brand/uludott-white.svg" alt="" width={48} height={48} />
           <span>ULUDOTT</span>
         </Link>
         <button

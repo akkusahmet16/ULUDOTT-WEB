@@ -1,4 +1,5 @@
 import "server-only";
+import { attachGameCover } from "../../games/application/game-service.ts";
 import { randomUUID } from "node:crypto";
 import { eq, and, isNotNull, desc, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -11,7 +12,6 @@ import {
   mediaAssets,
   mediaVariants,
   announcements,
-  games,
   featuredSlots,
 } from "../../../db/schema/content.ts";
 import {
@@ -251,6 +251,8 @@ export async function attachMedia(
   requirePermission(actor, "media.write");
   z.enum(["announcement", "game", "featured_slot"]).parse(content.type);
   uuid(content.id);
+  if (content.type === "game")
+    return attachGameCover(actor, content.id, uuid(assetId));
   await withTransaction(async (tx) => {
     const a = await asset(tx, uuid(assetId), true);
     if (!a || a.status !== "ready") throw new Error("Medya yok");
@@ -261,14 +263,6 @@ export async function attachMedia(
           .select({ eventId: announcements.eventId })
           .from(announcements)
           .where(eq(announcements.id, content.id))
-          .for("update")
-      )[0]?.eventId;
-    if (content.type === "game")
-      eventId = (
-        await tx
-          .select({ eventId: games.eventId })
-          .from(games)
-          .where(eq(games.id, content.id))
           .for("update")
       )[0]?.eventId;
     if (content.type === "featured_slot")
@@ -286,11 +280,6 @@ export async function attachMedia(
         .update(announcements)
         .set({ mediaId: a.id, revision: sql`${announcements.revision}+1` })
         .where(eq(announcements.id, content.id));
-    if (content.type === "game")
-      await tx
-        .update(games)
-        .set({ mediaId: a.id, revision: sql`${games.revision}+1` })
-        .where(eq(games.id, content.id));
     if (content.type === "featured_slot")
       await tx
         .update(featuredSlots)
