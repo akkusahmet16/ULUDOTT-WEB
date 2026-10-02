@@ -4,7 +4,7 @@ Plan: `docs/design/2026-10-02-uygulama-plani.md`
 Mimari: `docs/design/2026-10-01-mimari-oneri.md`
 Başlangıç: 2 Ekim 2026. Kullanıcı planın yürütülmesine izin verdi.
 
-**Güncel durum: Görev 1, 2 ve 3 tamamlandı. Sonraki adım Görev 4.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 3 kapanışıdır.
+**Güncel durum: Görev 1–5 tamamlandı. Sıradaki adım Görev 6.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 5 kapanışıdır.
 
 ## Çalışma disiplini
 
@@ -141,3 +141,25 @@ Başlangıç ce17080. Onaylı tasarım/plan geçerli; yeni tasarım onayı isten
 - İlk gezinme testleri 4 RED / 8 GREEN (eksik menü/CTA). Axe testlerine HTTP 200 şartı eklendi; 404 sayfasının axe geçmesi kabul sayılmaz. JSX kapanış yazımı typecheck'te yakalandı ve düzeltildi; yanlışlıkla eşzamanlı başlatılan E2E EADDRINUSE verdi, çalıştırmalar sıraya alındı. Ürün düzeltmesi sonrası 12/12 E2E ve 48/48 entegrasyon, typecheck/lint/build geçti.
 - 390/768/1440 görüntüleri incelendi; ortak .button kuralı masaüstü .menu-toggle gizlemesini eziyordu ve admin body>main kuralı genel sayfayı daraltıyordu. CSS kapsamı/specificity düzeltmesi ve masaüstü gizli menü regresyonu ekleniyor.
 - Masaüstü gizli menü regresyonu 2 RED → GREEN; son E2E 12/12 (5 axe, 4 gezinme, 3 önceki akış). 390/768/1440 ekranları tekrar gözle incelendi: taşma/çakışma yok, menü yalnız mobilde. 48/48 test, typecheck, lint ve üretim build geçti. CSS/token, 5 ortak bileşen, 3 kabuk bileşeni, root/home ve 3 genel sayfa; SVG gerçek paketle birebir, testler/Playwright/package diff'i incelendi. `git diff --check` temiz. Task 4: complete. Doğrulanmamış fotoğraf/tarih/URL eklenmedi.
+
+## Görev 5 — devam ediyor
+
+Başlangıç 3e2388f. Plan/medya şeması/güvenlik mimarisi tekrar okundu. Ruling: S3 bucket tüm nesnelerde özel kalır; yayınlanan türev /media/<variant UUID> üzerinden DB yayın kontrolüyle sunulur. Orijinal için public route/presigned URL yok. 8 MiB, 25 MP, tek kare, uzun kenar 1600; Node worker 20 saniye timeout, Sharp tek thread/cache kapalı ve PostgreSQL tek işleme kilidi VDS bütçesini sınırlar. Harici worker kuyruğu Görev 21'de; bu görevde yetkili küçük medya yüklemesi sınırlı senkron HTTP akışıdır.
+
+Ruling: publishVariant ve attachMedia mutasyonları zorunlu Actor alacak; plana yazılan iki parametreli imza yetkiyi taşımadığından genişletilir. Desteklenen içerik FK'leri announcement/game/featured_slot; etkinlik/editör yetkisi kontrol edilir. Şema publication alanı varyantta zaten var, migration gerekmez. Alt metin zorunlu. Sahipliği bilinmeyen iki HEIC yalnız yerel decode/yön kabulünde kullanılacak; DB/S3/siteye yüklenmez. Sharp 0.35.5 ve libheif-js 1.23.2 sürümleri sabitlendi; S3 SDK runtime'a taşındı. @types/libheif-js registry'de yok (404); decoder izole worker içinde JS API ile kullanılacak, uygulama sınırı TypeScript tipli.
+Kaynaklar: https://sharp.pixelplumbing.com/api-constructor/ , https://sharp.pixelplumbing.com/api-output/ , https://github.com/catdad-experiments/libheif-js .
+
+Ruling: gerçek IMG_0427 5712×4284 (24.47 MP), IMG_1206 4032×2268; bu nedenle piksel sınırı 25 MP, bomba testi 30 MP. Yön beklentisi tahminden değil sips/HEIF display geometri kontrolünden alınır.
+- İlk medya suite 6 RED / 1 GREEN → 7 GREEN; ek kapsam/silme/anonim erişim/rollback kontrolleriyle tam suite 58/58. İlk medya E2E route yokken 2 RED. HTTP/UI eklendikten sonra Node worker yollarının Turbopack tarafından runtime dışı kimliklere çevrildiği derlenmiş chunk ile doğrulandı; bound Node resolver + explicit tracing uygulanıyor. Geçici hata teşhisi yalnız hata adı/code yazdı, girdi/env değerleri yazılmadı; teşhis kodu kapanışta çıkarılır.
+- Git'in macOS ignore-case ayarı köksüz Media/ örüntüsünü src/modules/media ve API medya klasörlerine de uyguluyordu; .gitignore /Media/ ve /Uludott Logo Pack/ olarak kökle sabitlendi. Ham medya hâlâ dışarıda; ürün kodu artık takip/formatter kapsamında. Test nesnelerine DB cleanup öncesi S3 cleanup eklendi.
+
+
+## Görev 5 kapanışı — 2 Ekim 2026
+
+- Özel S3 orijinal, UUID anahtarları, worker içinde doğrulanmış WebP/AVIF/JPEG türevleri, metadata temizliği, yön düzeltmesi, alt metin, yetkili özel önizleme, ayrı yayın onayı, içerik kapsamına göre attach ve silme etkisi tamamlandı. Yayın/silme/attach audit ve silmede outbox kaydı vardır. 8 MiB / 25 MP / tek kare / 20 saniye ve DB genel seri işleme sınırları uygulanır.
+- Sharp 0.35.5, libheif-js 1.23.2 kuruldu; S3 SDK runtime bağımlılığına taşındı. Worker için bound runtime resolver kullanıldı. Geniş pnpm native tracing örüntüsü symlink dizininde build panic üretti; dosya uzantılarıyla daraltılarak üretim build'i başarıyla tamamlandı. Geçici hata teşhis kodu kaldırıldı. UI testi strict locator/diyalog kaldırılma beklentisi düzeltildi; ürün davranışı tekrar doğrulandı.
+- Son doğrulama: Vitest **59/59** (5 dosya, gerçek PostgreSQL/S3; 11 medya testi), dev Playwright **14/14**, üretim standalone Playwright **14/14**. Üretim paketi depo dışındaki geçici dizine kopyalandı; uygulama ve S3 yerel TLS geçitleri, bir günlük yerel test CA'sı ile çalıştırıldı. NODE_ENV=production HTTPS kuralları korunarak upload/preview/publish/delete, MFA/oturum, responsive gezinme ve axe kontrolleri geçti. Test CA/anahtarı geçici dizinle temizlenir; canlı sertifika değildir.
+- TypeScript, lint, build, migration metadata kontrolü ve git diff whitespace kontrolü geçti. pnpm audit: tüm önem seviyelerinde 0. Mobil medya ekranı .local/task5-mobile.png ile görsel olarak incelendi. Güncel src/scripts/tests ve tarayıcı çıktısında gerçek yerel sır eşleşmesi 0; standalone paketinde env/anahtar/HEIC dosyası 0; .env.local 0600.
+- Temizlik kabulü: ana DB'de 40 public tablo, tüm ürün tablolarında toplam 0 satır; kalan geçici test DB'si 0; originals/variants prefix'lerinde nesne 0. İlk temizlik sorgusundaki varsayımsal participants tablo adı hatası, şemadan tablo envanteri okuyarak düzeltildi. Önceki 4 sentetik fixture nesnesi yalnız byte eşleşmesiyle kaldırıldı; testler artık DB/S3 temizliği yapar.
+- İki gerçek HEIC yalnız bellek içi yerel dönüşüm testine girdi; aidiyet doğrulanmadığı için S3/DB/2026/public'e aktarılmadı. Dosyalar, izinler, HTTP sınırları, eşzamanlı kilitler, worker ve UI diff'i incelendi. Görev 4 ayrı commit 3e2388f ile kapandı; Görev 5 ayrı commit ile kapatılıyor. VDS'ye dağıtım yapılmadı; sonraki görev başlatılmadı.
+- İşletme sınırları docs/operations/media.md içinde: S3 silme retry worker'ı Görev 21, özel orphan uzlaştırma ve VDS tepe bellek ölçümü dağıtım/operasyon kabulünde tamamlanacak. Bu bağımlılıklar mevcut görev kapsamını genişletmez.

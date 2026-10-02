@@ -2,6 +2,15 @@ import type { NextConfig } from "next";
 
 const config: NextConfig = {
   output: "standalone",
+  outputFileTracingIncludes: {
+    "/api/admin/media": [
+      "./node_modules/sharp/**/*",
+      "./node_modules/libheif-js/**/*",
+      "./node_modules/.pnpm/@img+sharp*/node_modules/@img/sharp*/**/*.{js,json,node,dylib,so,wasm}",
+      "./node_modules/.pnpm/@img+sharp*/node_modules/@img/sharp*/lib/*.so.*",
+    ],
+  },
+  serverExternalPackages: ["sharp", "libheif-js"],
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
   async headers() {

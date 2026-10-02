@@ -18,5 +18,5 @@ Wallet secrets/
 *.key
 *.pkpass
 # Kaynak medya yalnızca doğrulanmış türevler olarak uygulamaya alınır.
-Media/
-Uludott Logo Pack/
+/Media/
+/Uludott Logo Pack/

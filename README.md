@@ -1,6 +1,6 @@
 # Uludott Web
 
-Üretim platformunun adım adım geliştirildiği depo. **Görev 1 (çalışma ortamı) ve Görev 2 (veritabanı omurgası) tamamlandı**; ürün, admin, başvuru ve Wallet özellikleri henüz uygulanmadı. Ana sayfa yalnızca başlangıç ekranıdır. Üretime hazır değildir.
+Üretim platformunun adım adım geliştirildiği depo. **Görev 1–5 tamamlandı**: çalışma ortamı, veritabanı, yönetici kimliği, tasarım sistemi ve özel medya akışı hazır. Etkinlik/duyuru yayın akışı sıradaki Görev 6; başvuru ve Wallet özellikleri henüz uygulanmadı. Üretime hazır değildir.
 
 ## Önce okunacak belgeler
 
@@ -65,6 +65,8 @@ Ham `Media` ve `Uludott Logo Pack` varlıkları yerinde korunur, depoya alınmaz
 
 ## Şu an açık kalanlar
 
-Görev 1, 2 ve 3 tamamlandı. Yönetici kimliği, MFA ve oturum/rol altyapısı hazır; sonraki adım Görev 4 tasarım sistemi. Sonraki ürün görevleri henüz uygulanmadı. Hukuk, gerçek etkinlik bilgileri, bildirim sağlayıcısı, Wallet hesap/sertifika/cihaz ve canlı hosting kabulü ayrı bağımlılıklardır. Ayrıntılı durum ilerleme raporundadır.
+Görev 1–5 tamamlandı. Yönetici kimliği, MFA, oturum/rol altyapısı, ortak arayüz ve medya kütüphanesi hazır; sonraki adım Görev 6 etkinlik ve duyuru yayın akışı. Sonraki ürün görevleri henüz uygulanmadı. Hukuk, gerçek etkinlik bilgileri, bildirim sağlayıcısı, Wallet hesap/sertifika/cihaz ve canlı hosting kabulü ayrı bağımlılıklardır. Ayrıntılı durum ilerleme raporundadır.
 
 Yönetici girişi `/admin`; ilk kişi kurulumu ve izin matrisi: [Yönetici kimliği](docs/operations/admin-auth.md).
+
+Medya kütüphanesi `/admin/medya`; sınırlar ve yayın/silme davranışı: [Medya işletme rehberi](docs/operations/media.md).

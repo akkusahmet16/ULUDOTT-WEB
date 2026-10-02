@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (- [ ]) syntax for tracking. The user requested file-by-file review with the assistant; do not delegate implementation.
 
-Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1, 2 ve 3 tamamlandı; sonraki adım Görev 4. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
+Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–5 tamamlandı; sıradaki adım Görev 6. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
 
 **Goal:** Uludott topluluk sitesi, genel etkinlik/form/duyuru/link yönetimi, UluJam takım ve onay akışları, 2026 arşivi, 2027 “Yakında” alanı, derece oyunları ve onay sonrası Wallet kartlarını sıfırdan güvenli ve sürdürülebilir biçimde üretmek.
 
@@ -117,11 +117,11 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Dosyalar:** Oluştur: src/modules/media/{domain/media-policy.ts,application/media-service.ts,infrastructure/object-store.ts,ui/media-library.tsx}, src/app/api/admin/media/route.ts, tests/integration/media.test.ts, docs/operations/media.md.
 
-**Arayüz:** Üretir: uploadMedia(actor,file,purpose): Promise<MediaAsset>; publishVariant(assetId): Promise<PublicMediaUrl>; attachMedia(contentId,assetId): Promise<void>.
+**Arayüz:** Üretir: uploadMedia(actor,file,purpose): Promise<MediaAsset>; publishVariant(assetId,actor): Promise<PublicMediaUrl>; attachMedia(actor,content,assetId): Promise<void>. Mutasyonlar Actor ile yetkilendirilir. Yardımcı dosyalar: process-image.ts, media-repository.ts, HTTP servis/index, admin/medya/page.tsx, media/[variantId]/route.ts, tests/e2e/media.spec.ts; Next serverExternalPackages/tracing, .gitignore kök medya örüntüsü, admin ana sayfa bağlantısı ve test launcher güncellenir.
 
-- [ ] Sahte MIME, büyük/decompression riski, EXIF, HEIC yönü ve yayına çıkmamış orijinalin okunamaması testlerini yaz.
-- [ ] Özel orijinal, rastgele object key, doğrulanmış optimize WebP/AVIF/JPEG türevleri, alt metin ve silme etki önizlemesini uygula.
-- [ ] İki mevcut HEIC dosyasını aidiyet doğrulanmadan 2026'ya bağlama; medya testlerini ve mobil görsel kontrolünü geçir; dosyaları inceleyip commit et.
+- [x] Sahte MIME, büyük/decompression riski, EXIF, HEIC yönü ve yayına çıkmamış orijinalin okunamaması testlerini yaz.
+- [x] Özel orijinal, rastgele object key, doğrulanmış optimize WebP/AVIF/JPEG türevleri, alt metin ve silme etki önizlemesini uygula.
+- [x] İki mevcut HEIC dosyasını aidiyet doğrulanmadan 2026'ya bağlama; medya testlerini ve mobil görsel kontrolünü geçir; dosyaları inceleyip commit et.
 
 ### Görev 6 — etkinlik ve duyuru yayın akışı
 

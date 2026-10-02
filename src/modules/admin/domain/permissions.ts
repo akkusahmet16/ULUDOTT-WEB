@@ -7,6 +7,7 @@ export const roles = [
 const globalPermissions: Record<string, readonly string[]> = {
   "content.write": ["content_editor", "event_manager"],
   "links.write": ["content_editor", "event_manager"],
+  "media.attach": ["content_editor"],
   "media.write": ["content_editor", "event_manager"],
   "games.edit": ["content_editor", "event_manager"],
   "admins.manage": ["system_admin"],
@@ -20,6 +21,7 @@ const eventPermissions = new Set([
   "teams.write",
   "teams.approve",
   "games.publish",
+  "media.attach",
   "cards.read",
   "wallet.support",
 ]);

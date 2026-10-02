@@ -22,6 +22,8 @@ Rol seçenekleri tekrarlanabilir: `--role event_manager --event <event UUID>`. E
 
 `requirePermission` bilinmeyen izni veya eksik etkinlik kapsamını reddeder. `system_admin` rolü tek başına başvuru/kişi verisini okumaz. Actor ve kapsam her oturum kontrolünde DB'den yeniden okunur. Gelecekteki endpoint'ler önce geçerli oturumu çözmeli, ardından doğru izin ve eventId ile yetki kontrolünü yapmalıdır; UI görünürlüğü erişim kontrolü yerine geçmez.
 
+Görev 5 ek izni: `media.attach`, content_editor için genel; event_manager için atanmış eventId zorunlu.
+
 ## Oturum ve korumalar
 
 - Argon2id: 19 MiB bellek, 2 tur, paralellik 1. TOTP SHA1 / 6 hane / 30 saniye, ±1 pencere; admin satır kilidi ve son sayaç aynı kodun eşzamanlı tekrarını engeller. TOTP sırrı AES-256-GCM ile admin UUID'sine bağlı şifrelenir.
