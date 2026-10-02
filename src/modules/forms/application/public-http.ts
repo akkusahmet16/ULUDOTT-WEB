@@ -1,4 +1,5 @@
 import "server-only";
+import { AnswerValidationError } from "../domain/answer-errors.ts";
 import { z } from "zod";
 import { sql } from "drizzle-orm";
 import { withTransaction } from "../../../lib/database/transaction.ts";
@@ -92,12 +93,17 @@ function error(e: unknown) {
         : 400;
   return Response.json(
     {
+      ...(e instanceof AnswerValidationError
+        ? { fieldErrors: e.fieldErrors }
+        : {}),
       error:
-        e instanceof SubmissionError
+        e instanceof AnswerValidationError
           ? e.message
-          : status === 403
-            ? "İstek doğrulanamadı"
-            : "Yanıtları, zorunlu alanları ve form kurallarını kontrol edin.",
+          : e instanceof SubmissionError
+            ? e.message
+            : status === 403
+              ? "İstek doğrulanamadı"
+              : "Yanıtları, zorunlu alanları ve form kurallarını kontrol edin.",
     },
     { status, headers: publicPrivateHeaders },
   );

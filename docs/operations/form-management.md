@@ -7,3 +7,5 @@ Alan ekle; tür, etiket, yardımcı metin, zorunluluk ve tür ayarlarını seç.
 Mobil/masaüstü önizleme yanıt kaydetmez. Alanlar önce kaydedilir; kirli alan varken ayar/yayın işlemi engellenir. Yayın geçerli alan ve başlangıç ister; geçmiş bitiş ve ters pencere reddedilir. Bitiş opsiyoneldir. Tarihler İstanbul girilir, UTC saklanır. Yayın / devam ettir, Duraklat ve Kapat ayrı işlemlerdir. Yayımlı slug korunur; alan değişikliği yeni draft version olur, geçmiş yanıtları değiştirmez. API scoped yetki/revision/parent kilidi/metadata audit/CSRF/no-store uygular.
 
 0008_form_settings: JSON ayarlar, paused ve same-form composite draft/current FK. Ana DB form/yanıt seed yok. Gönderim Görev 12, başvuru yönetimi Görev 13; gerçek içerik/hukuk onayı verilmiş sayılmaz.
+
+Son inceleme kabulü: seçenek düzenleme ham metni Enter/boş satır dahil korur; kaydedilen tanım ayrı parse edilir. Değişmeyen seçeneklerin mevcut etiketleri korunur. Başarılı alan kaydı/yayın cevabının revision'ı hemen güncellenir; hızlı kaydet→yayımla eski sürüm göndermeden çalışır, kirli alan koruması kalır.

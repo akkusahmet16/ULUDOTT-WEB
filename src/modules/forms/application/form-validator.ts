@@ -1,4 +1,8 @@
 import "server-only";
+import {
+  AnswerValidationError,
+  answerErrorMessage,
+} from "../domain/answer-errors.ts";
 import { z } from "zod";
 import {
   boundedJson,
@@ -22,14 +26,20 @@ export function validateSubmission(
   const raw = z.record(fieldIdSchema, z.unknown()).parse(input),
     byId = new Map(d.fields.map((f) => [f.id, f]));
   const answers: Answers = {};
+  const fieldErrors: Record<string, string> = {};
   for (const [id, v] of Object.entries(raw)) {
     const f = byId.get(id);
     if (!f) throw Error("Bilinmeyen alan yanıtı");
-    answers[id] = parseAnswer(f, v);
+    try {
+      answers[id] = parseAnswer(f, v);
+    } catch {
+      fieldErrors[id] = answerErrorMessage(f);
+    }
   }
   const visible = new Set(evaluateVisibility(d, answers));
   for (const id of Object.keys(raw))
-    if (!visible.has(id)) throw Error("Gizli alan yanıtı reddedildi");
+    if (!visible.has(id) && !fieldErrors[id])
+      throw Error("Gizli alan yanıtı reddedildi");
   for (const f of d.fields)
     if (
       visible.has(f.id) &&
@@ -37,6 +47,8 @@ export function validateSubmission(
       (isEmpty(answers[f.id]) ||
         (["checkbox", "consent"].includes(f.type) && answers[f.id] !== true))
     )
-      throw Error("Zorunlu alan yanıtı eksik");
+      fieldErrors[f.id] ??= "Bu zorunlu alanı doldurun veya onaylayın.";
+  if (Object.keys(fieldErrors).length)
+    throw new AnswerValidationError(fieldErrors);
   return answers;
 }

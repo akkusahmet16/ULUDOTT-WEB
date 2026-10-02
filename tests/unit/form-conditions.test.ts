@@ -324,3 +324,38 @@ it("bir amaç/sürüm için çelişen iki rıza alanını reddeder", () => {
     }),
   ).toThrow();
 });
+
+it("yanıt hatası alan UUID'sini ve güvenli mesajı taşır, değeri taşımaz", () => {
+  const phone = id(1),
+    selection = id(2);
+  const d = validateFormDefinition({
+    fields: [
+      { id: phone, type: "phone", label: "Telefon", required: true },
+      {
+        id: selection,
+        type: "multiple_choice",
+        label: "Seçim",
+        required: true,
+        minSelections: 2,
+        maxSelections: 2,
+        options: [
+          { value: "a", label: "A" },
+          { value: "b", label: "B" },
+        ],
+      },
+    ],
+  });
+  try {
+    validateSubmission(
+      { definition: d },
+      { [phone]: "private-invalid-phone", [selection]: ["a"] },
+    );
+    throw Error("Beklenen hata yok");
+  } catch (e) {
+    expect(e).toHaveProperty("fieldErrors", {
+      [phone]: "Telefonu ülke koduyla, boşluksuz yazın (örnek: +905551234567).",
+      [selection]: "İzinli seçeneklerden belirtilen sayıda seçim yapın.",
+    });
+    expect(JSON.stringify(e)).not.toContain("private-invalid-phone");
+  }
+});

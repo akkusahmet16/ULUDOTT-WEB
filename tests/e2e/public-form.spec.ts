@@ -18,6 +18,25 @@ test("genel form, koşullu alan, makbuz fragment ve gizli PII", async ({
     (await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze())
       .violations,
   ).toEqual([]);
+  const phone = page.getByLabel("Telefon *", { exact: true });
+  await phone.fill("05551234567");
+  const rejected = page.waitForResponse((r) =>
+    r.url().includes("/api/forms/e2e-public/submit"),
+  );
+  await page.getByRole("button", { name: "Başvuruyu gönder" }).click();
+  const response = await rejected;
+  expect(response.status()).toBe(400);
+  const problem = await response.json();
+  const fieldId = (await phone.getAttribute("id"))!.replace("answer-", "");
+  expect(problem.fieldErrors?.[fieldId]).toBe(
+    "Telefonu ülke koduyla, boşluksuz yazın (örnek: +905551234567).",
+  );
+  expect(JSON.stringify(problem)).not.toContain('05551234567"');
+  await expect(phone).toHaveAttribute("aria-invalid", "true");
+  await expect(page.locator("#answer-" + fieldId + "-error")).toHaveText(
+    problem.fieldErrors[fieldId],
+  );
+  await phone.fill("+905551234567");
   await page.getByRole("button", { name: "Başvuruyu gönder" }).click();
   await expect(
     page.getByRole("heading", { name: "Başvuru alındı" }),

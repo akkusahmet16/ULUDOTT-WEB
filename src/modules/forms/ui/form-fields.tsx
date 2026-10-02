@@ -25,12 +25,14 @@ export function FormFields({
   onChange,
   prefix = "answer",
   readOnlyConsent = false,
+  fieldErrors = {},
 }: {
   definition: ValidFormDefinition;
   answers: Answers;
   onChange: (a: Answers) => void;
   prefix?: string;
   readOnlyConsent?: boolean;
+  fieldErrors?: Record<string, string>;
 }) {
   const visible = new Set(evaluateVisibility(definition, answers));
   function change(id: string, value: Answer | undefined) {
@@ -48,6 +50,21 @@ export function FormFields({
         .map((f) => {
           const id = prefix + "-" + f.id,
             help = id + "-help",
+            errorId = id + "-error",
+            error = fieldErrors[f.id],
+            constraints =
+              f.type === "phone"
+                ? "Ülke koduyla boşluksuz yazın: +905551234567."
+                : f.type === "multiple_choice"
+                  ? `En az ${f.minSelections ?? (f.required ? 1 : 0)}, en çok ${f.maxSelections ?? f.options?.length ?? 0} seçim.`
+                  : ["short_text", "long_text"].includes(f.type)
+                    ? `En çok ${f.maxLength ?? (f.type === "long_text" ? 5000 : 200)} karakter.`
+                    : "",
+            helpText = [f.helpText, constraints].filter(Boolean).join(" "),
+            describedBy =
+              [helpText ? help : null, error ? errorId : null]
+                .filter(Boolean)
+                .join(" ") || undefined,
             label = f.label + (f.required ? " *" : ""),
             v = answers[f.id];
           if (f.type === "section") return <h2 key={f.id}>{f.label}</h2>;
@@ -69,17 +86,23 @@ export function FormFields({
                     disabled={readOnlyConsent && f.type === "consent"}
                     checked={v === true}
                     required={f.required}
-                    aria-describedby={f.helpText ? help : undefined}
+                    aria-describedby={describedBy}
+                    aria-invalid={error ? true : undefined}
                     onChange={(e) => change(f.id, e.target.checked)}
                   />
                   {label}
                 </label>
-                {f.helpText && <p id={help}>{f.helpText}</p>}
+                {helpText && <p id={help}>{helpText}</p>}
+                {error && <p id={errorId}>{error}</p>}
               </div>
             );
           if (["radio", "single_choice", "multiple_choice"].includes(f.type))
             return (
-              <fieldset key={f.id}>
+              <fieldset
+                key={f.id}
+                aria-describedby={describedBy}
+                aria-invalid={error ? true : undefined}
+              >
                 <legend>{label}</legend>
                 {f.options?.map((o) => (
                   <label className="check-field" key={o.value}>
@@ -108,17 +131,19 @@ export function FormFields({
                     {o.label}
                   </label>
                 ))}
-                {f.helpText && <p>{f.helpText}</p>}
+                {helpText && <p id={help}>{helpText}</p>}
+                {error && <p id={errorId}>{error}</p>}
               </fieldset>
             );
           const props = {
             id,
             required: f.required,
-            "aria-describedby": f.helpText ? help : undefined,
+            "aria-describedby": describedBy,
+            "aria-invalid": error ? (true as const) : undefined,
           };
           return (
-            <label className="field" htmlFor={id} key={f.id}>
-              {label}
+            <div className="field" key={f.id}>
+              <label htmlFor={id}>{label}</label>
               {f.type === "long_text" ? (
                 <textarea
                   {...props}
@@ -172,8 +197,9 @@ export function FormFields({
                   }
                 />
               )}{" "}
-              {f.helpText && <small id={help}>{f.helpText}</small>}
-            </label>
+              {helpText && <small id={help}>{helpText}</small>}
+              {error && <small id={errorId}>{error}</small>}
+            </div>
           );
         })}
     </>

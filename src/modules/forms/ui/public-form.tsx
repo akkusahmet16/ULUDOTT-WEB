@@ -3,6 +3,13 @@ import { useState, useRef, type FormEvent } from "react";
 import type { ValidFormDefinition } from "../domain/form-version";
 import type { Answers } from "../domain/field-types";
 import { FormFields } from "./form-fields";
+class PublicRequestError extends Error {
+  fieldErrors: Record<string, string>;
+  constructor(message: string, fieldErrors: Record<string, string> = {}) {
+    super(message);
+    this.fieldErrors = fieldErrors;
+  }
+}
 export async function publicRequest(url: string, body: unknown) {
   const c = await fetch("/api/forms/csrf", { cache: "no-store" });
   if (!c.ok) throw Error("İstek doğrulanamadı");
@@ -14,7 +21,11 @@ export async function publicRequest(url: string, body: unknown) {
     cache: "no-store",
   });
   const data = await r.json();
-  if (!r.ok) throw Error(data.error ?? "İşlem tamamlanamadı");
+  if (!r.ok)
+    throw new PublicRequestError(
+      data.error ?? "İşlem tamamlanamadı",
+      data.fieldErrors,
+    );
   return data;
 }
 export function PublicForm({
@@ -28,6 +39,7 @@ export function PublicForm({
 }) {
   const [answers, setAnswers] = useState<Answers>({}),
     [message, setMessage] = useState(""),
+    [fieldErrors, setFieldErrors] = useState<Record<string, string>>({}),
     [busy, setBusy] = useState(false),
     [receipt, setReceipt] = useState<{
       receiptToken: string;
@@ -50,6 +62,7 @@ export function PublicForm({
       setAnswers({});
       setMessage("");
     } catch (e) {
+      setFieldErrors(e instanceof PublicRequestError ? e.fieldErrors : {});
       setMessage(
         e instanceof Error
           ? e.message
@@ -82,8 +95,10 @@ export function PublicForm({
         <FormFields
           definition={definition}
           answers={answers}
+          fieldErrors={fieldErrors}
           onChange={(a) => {
             setAnswers(a);
+            setFieldErrors({});
             key.current = null;
           }}
         />

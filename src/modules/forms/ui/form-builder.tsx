@@ -58,6 +58,38 @@ export function FormCreator({
     </section>
   );
 }
+function OptionsEditor({
+  options,
+  onChange,
+}: {
+  options: Field["options"];
+  onChange: (options: NonNullable<Field["options"]>) => void;
+}) {
+  const [text, setText] = useState(
+    options?.map((o) => o.value).join("\n") ?? "",
+  );
+  return (
+    <label className="field">
+      Seçenekler (her satıra bir değer)
+      <textarea
+        value={text}
+        onChange={(e) => {
+          const raw = e.target.value;
+          setText(raw);
+          onChange(
+            raw
+              .split("\n")
+              .filter(Boolean)
+              .map((value) => ({
+                value,
+                label: options?.find((o) => o.value === value)?.label ?? value,
+              })),
+          );
+        }}
+      />
+    </label>
+  );
+}
 export function FormBuilder({
   form,
 }: {
@@ -71,6 +103,10 @@ export function FormBuilder({
   };
 }) {
   const [fields, setFields] = useState<Field[]>(form.definition?.fields ?? []),
+    [savedFields, setSavedFields] = useState<Field[]>(
+      form.definition?.fields ?? [],
+    ),
+    [revision, setRevision] = useState(form.revision),
     [message, setMessage] = useState(""),
     [busy, setBusy] = useState(false);
   const router = useRouter();
@@ -85,18 +121,20 @@ export function FormBuilder({
   async function action(action: string, input?: unknown) {
     if (
       action !== "definition" &&
-      JSON.stringify(fields) !== JSON.stringify(form.definition?.fields ?? [])
+      JSON.stringify(fields) !== JSON.stringify(savedFields)
     ) {
       setMessage("Önce alan değişikliklerini kaydedin.");
       return;
     }
     setBusy(true);
     try {
-      await formRequest("/api/admin/forms/" + form.id, {
+      const saved = await formRequest("/api/admin/forms/" + form.id, {
         action,
         input,
-        expectedRevision: form.revision,
+        expectedRevision: revision,
       });
+      setRevision(saved.revision);
+      if (action === "definition") setSavedFields(fields);
       setMessage("Kaydedildi.");
       router.refresh();
     } catch (e) {
@@ -218,20 +256,11 @@ export function FormBuilder({
               </label>
             )}
             {choiceTypes.includes(f.type) && (
-              <label className="field">
-                Seçenekler (her satıra bir değer)
-                <textarea
-                  value={f.options?.map((o) => o.value).join("\n") ?? ""}
-                  onChange={(e) =>
-                    patch(i, {
-                      options: e.target.value
-                        .split("\n")
-                        .filter(Boolean)
-                        .map((value) => ({ value, label: value })),
-                    })
-                  }
-                />
-              </label>
+              <OptionsEditor
+                key={f.id + f.type}
+                options={f.options}
+                onChange={(options) => patch(i, { options })}
+              />
             )}
             {(["number", "rating"].includes(f.type)
               ? ["min", "max"]

@@ -25,6 +25,13 @@ test("form oluşturma, klavye alanları, önizleme ve sürümlü yayın", async 
   await page.getByRole("button", { name: "Alan ekle", exact: true }).focus();
   await page.keyboard.press("Enter");
   await page.getByLabel("Alan etiketi").fill("İletişim");
+  await page.getByLabel("Alan türü").selectOption("dropdown");
+  const options = page.getByLabel("Seçenekler (her satıra bir değer)");
+  await options.fill("Birinci");
+  await options.press("End");
+  await options.press("Enter");
+  await options.pressSequentially("İkinci");
+  await expect(options).toHaveValue("Birinci\nİkinci");
   await page.getByLabel("Alan türü").selectOption("email");
   await page.getByLabel("Zorunlu alan").check();
   await page.getByLabel("Yardımcı metin").fill("Geçerli e-posta yazın.");

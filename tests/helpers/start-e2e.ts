@@ -94,6 +94,7 @@ try {
     retentionDays: 180,
   });
   const email = randomUUID(),
+    phone = randomUUID(),
     toggle = randomUUID(),
     note = randomUUID(),
     consent = randomUUID();
@@ -103,6 +104,7 @@ try {
     {
       fields: [
         { id: email, type: "email", label: "E-posta", required: true },
+        { id: phone, type: "phone", label: "Telefon", required: true },
         { id: toggle, type: "checkbox", label: "Not ekle" },
         {
           id: note,
