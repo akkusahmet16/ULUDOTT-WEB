@@ -64,7 +64,7 @@ Outbox, idempotency_records ve rate_limits polimorfik altyapı kayıtlarıdır; 
 | Onay/erişim | Approval team+revision PK ve admin FK; membership approved revision aynı takım approval FK; yeni üyelikte NULL; erişim token hash unique | Team/session expiry index; roster/access revision pozitif; late member otomatik onay almaz |
 | Oyun/derece | İsteğe bağlı takım aynı etkinlikte; awards/finalists game/event bileşik FK; sıra 1–3 ve event+rank unique; HTTPS itch.io hostname; bilinmeyen title/team/credits NULL | Game event; credit game; 2026 kısmi yayın ve rıza kontrolü Görev 8/20 servislerinde |
 | Kart/Wallet | Application başına tek kart; pending default; provider/card ve provider/object unique; provider/status allowlist; yalnızca hashlenmiş erişim anahtarları | Apple registration reverse pass index; gerçek uygunluk Görev 18/22 |
-| Link | Grup FK; pozisyon >=0; HTTPS veya yerel path; protokole göre URL kontrolü tabanda | Group+published+position; görünürlük penceresi |
+| Link | Grup FK; pozisyon >=0; kategori sırası ve grup+link sırası unique; revision >0; HTTPS veya yerel path | Group+published+position; starts_at/ends_at görünürlük penceresi ve verified_at |
 | İşletme | Outbox type+aggregate+revision unique; attempts >=0; statü allowlist; idempotency scope+keyHash PK; rate window bileşik PK | Pending available ve processing lease partial index; expiry indeksleri |
 
 Bütün anlar `timestamptz` olarak saklanır, uygulama İstanbul saatinde gösterir. Tablolar UUID `gen_random_uuid()` kullanır. Cascade silme yoktur; FK'ler NO ACTION'dır. Saklama/anonimleştirme politikası Görev 25'te kontrollü komutlarla uygulanır; personel veya içerik silinince ilişkili kayıtların sessizce kaybolması önlenir.
@@ -86,3 +86,7 @@ Takım kapasite kilidi/constraint trigger, tam NFKC Türkçe isim normalizasyonu
 ## Görev 6 şema genişletmesi
 
 0003: etkinlikte excerpt/organizer/location_type/media_id/form_id, duyuruda excerpt/seo/cta_url/cta_label, `content_redirects` eski slug envanteri. Yeni toplam 41 public tablo. 0004: events(id,form_id) → forms(event_id,id) bileşik FK, location_type physical/online CHECK. Döngüsel referans migration ile iki tablo kurulduktan sonra eklenir; TypeScript callback dönüş tipi AnyPgColumn ile açıkça tanımlanır. Etkinlik afişinin FK'si media_assets'e bağlıdır. Soft arşivleme, redirect hedef kimliğini ve audit geçmişini korur. Yayın alanları mevcut publish_at/unpublish_at/revision omurgasını kullanır; worker olmadan okuma anındaki zaman penceresi görünürlüğü belirler.
+
+## Görev 7 şema genişletmesi
+
+0005: link_groups ve links revision, links verified_at, kategori sırası ve kategori içi link sırası unique kısıtları. Yeni tablo yok; toplam 41. Bağlantı servisleri advisory transaction kilidi ve expectedRevision ile eski ekranın yeni kaydı ezmesini önler. Sıralama önce boş pozisyon aralığına, sonra tam hedef sırasına aynı transaction içinde taşır. Genel okuma yayın penceresini ve hedef uygunluğunu denetler. [Bağlantı işletme rehberi](../operations/links.md).

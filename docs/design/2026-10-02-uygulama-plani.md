@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (- [ ]) syntax for tracking. The user requested file-by-file review with the assistant; do not delegate implementation.
 
-Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–6 tamamlandı; sıradaki adım Görev 7. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
+Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–7 tamamlandı; sıradaki adım Görev 8. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
 
 **Goal:** Uludott topluluk sitesi, genel etkinlik/form/duyuru/link yönetimi, UluJam takım ve onay akışları, 2026 arşivi, 2027 “Yakında” alanı, derece oyunları ve onay sonrası Wallet kartlarını sıfırdan güvenli ve sürdürülebilir biçimde üretmek.
 
@@ -137,11 +137,13 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Dosyalar:** Oluştur: src/modules/links/{domain/link.ts,application/link-service.ts,infrastructure/link-repository.ts,ui/link-hub.tsx}, src/app/(public)/linkler/page.tsx, src/app/admin/linkler/page.tsx, tests/integration/links.test.ts, tests/e2e/link-hub.spec.ts.
 
-**Arayüz:** Üretir: saveLink(actor,input), reorderLinks(actor,orderedIds), getPublishedLinks(now): Promise<LinkGroup[]>.
+**Destek dosyaları:** ui/link-editor.tsx, application/{http.ts,link-qr.ts}, /api/admin/links, /api/links/[id]/qr ve /l/[id] rotaları; links schema ve 0005 migration/snapshot; header/admin menüsü, CSS, QR bağımlılıkları ve E2E helper; docs/operations/links.md, database/admin-auth/progress/README.
 
-- [ ] Geçersiz şema/URL, kategori-sıra, zamanlı görünürlük, gizleme, kopyalama ve QR testlerini yaz.
-- [ ] Doğrulanmış iç/dış bağlantıları, ikon ve öne çıkarma düzenini uygula; bilinmeyen sosyal URL seed etme.
-- [ ] Mobil ve klavye görünümünü, dış link güvenliğini ve görev dosyalarını kontrol edip commit et.
+**Arayüz:** Üretir: saveLink(actor,input), reorderLinks(actor,orderedIds,expectedRevisions), getPublishedLinks(now): Promise<LinkGroup[]>.
+
+- [x] Geçersiz şema/URL, kategori-sıra, zamanlı görünürlük, gizleme, kopyalama ve QR testlerini yaz.
+- [x] Doğrulanmış iç/dış bağlantıları, ikon ve öne çıkarma düzenini uygula; bilinmeyen sosyal URL seed etme.
+- [x] Mobil ve klavye görünümünü, dış link güvenliğini ve görev dosyalarını kontrol edip commit et.
 
 ### Görev 8 — 2026 tarihî sonuç bağlantıları
 

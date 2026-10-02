@@ -43,3 +43,5 @@ Anahtarı kaybetmek TOTP sırlarının çözülmesini engeller. Anahtar değişi
 `pnpm admin:bootstrap --help` sır üretmeden ve DB'ye yazmadan kullanım gösterir. Gerçek yönetici kurulumu Codex tarafından test çıktısına sırrı dökülerek çalıştırılmaz. VDS dağıtımı ve üretim yöneticisi kurulumu ayrı işletme adımlarıdır.
 
 Görev 6: publication.write content_editor için geneldir; event_manager yalnız eventScopes içindeki etkinliği ve ona bağlı duyuruyu yönetir. Sistem yöneticisi tek başına içerik yayınlayamaz. [Yayın işletme rehberi](publication.md).
+
+Görev 7: links.write content_editor ve event_manager için global bağlantı yönetimi sağlar; etkinlik scope sınırı bu yetkiye uygulanmaz. `/admin/linkler` ve yönetim API'si aynı permission kontrolünü kullanır. [Bağlantı işletme rehberi](links.md).

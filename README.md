@@ -1,6 +1,6 @@
 # Uludott Web
 
-Üretim platformunun adım adım geliştirildiği depo. **Görev 1–6 tamamlandı**: çalışma ortamı, veritabanı, yönetici kimliği, tasarım sistemi, özel medya ve etkinlik/duyuru yayın akışı hazır. Sıradaki adım Görev 7 bağlantı merkezi; başvuru ve Wallet özellikleri henüz uygulanmadı. Üretime hazır değildir.
+Üretim platformunun adım adım geliştirildiği depo. **Görev 1–7 tamamlandı**: çalışma ortamı, veritabanı, yönetici kimliği, tasarım sistemi, özel medya, etkinlik/duyuru yayın akışı ve bağlantı merkezi hazır. Sıradaki adım Görev 8 tarihî sonuç bağlantıları; başvuru ve Wallet özellikleri henüz uygulanmadı. Üretime hazır değildir.
 
 ## Önce okunacak belgeler
 
@@ -65,10 +65,12 @@ Ham `Media` ve `Uludott Logo Pack` varlıkları yerinde korunur, depoya alınmaz
 
 ## Şu an açık kalanlar
 
-Görev 1–6 tamamlandı. Yönetici kimliği, MFA, oturum/rol altyapısı, ortak arayüz, medya ve etkinlik/duyuru yayın akışı hazır; sonraki adım Görev 7 bağlantı merkezi. Sonraki ürün görevleri henüz uygulanmadı. Hukuk, gerçek etkinlik bilgileri, bildirim sağlayıcısı, Wallet hesap/sertifika/cihaz ve canlı hosting kabulü ayrı bağımlılıklardır. Ayrıntılı durum ilerleme raporundadır.
+Görev 1–7 tamamlandı. Yönetici kimliği, MFA, oturum/rol altyapısı, ortak arayüz, medya, etkinlik/duyuru yayın akışı ve bağlantı merkezi hazır; sonraki adım Görev 8 tarihî sonuç bağlantıları. Sonraki ürün görevleri henüz uygulanmadı. Hukuk, gerçek etkinlik bilgileri, bildirim sağlayıcısı, Wallet hesap/sertifika/cihaz ve canlı hosting kabulü ayrı bağımlılıklardır. Ayrıntılı durum ilerleme raporundadır.
 
 Yönetici girişi `/admin`; ilk kişi kurulumu ve izin matrisi: [Yönetici kimliği](docs/operations/admin-auth.md).
 
 Medya kütüphanesi `/admin/medya`; sınırlar ve yayın/silme davranışı: [Medya işletme rehberi](docs/operations/media.md).
 
 Etkinlik/duyuru panelleri `/admin/etkinlikler` ve `/admin/duyurular`; yayın kuralları, izinler ve form CTA bağımlılığı: [Yayın rehberi](docs/operations/publication.md).
+
+Bağlantı merkezi `/linkler`, yönetim `/admin/linkler`; doğrulanmış adresler, sıralama, zaman penceresi, kopyalama ve QR: [Bağlantı rehberi](docs/operations/links.md).

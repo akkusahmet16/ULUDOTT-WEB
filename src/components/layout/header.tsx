@@ -9,6 +9,7 @@ const links = [
   ["/ulujam", "UluJam"],
   ["/etkinlikler", "Etkinlikler"],
   ["/duyurular", "Duyurular"],
+  ["/linkler", "Linkler"],
   ["/destek", "Destek"],
 ] as const;
 export function Header() {

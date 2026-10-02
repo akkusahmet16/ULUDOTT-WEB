@@ -365,3 +365,38 @@ dialog::backdrop {
     flex-wrap: wrap;
   }
 }
+
+.link-profile {
+  max-width: 800px;
+  margin-bottom: 48px;
+}
+.link-profile h1 {
+  font-size: clamp(36px, 6vw, 76px);
+}
+.link-icon {
+  font-size: 36px;
+  color: var(--lime);
+}
+.link-card h3 a {
+  overflow-wrap: anywhere;
+}
+.link-note {
+  font-size: 14px;
+  color: var(--muted);
+}
+.link-qr {
+  background: white;
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+.check-field {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-height: 44px;
+}
+.check-field input {
+  width: 20px;
+  height: 20px;
+}

@@ -4,7 +4,7 @@ Plan: `docs/design/2026-10-02-uygulama-plani.md`
 Mimari: `docs/design/2026-10-01-mimari-oneri.md`
 Başlangıç: 2 Ekim 2026. Kullanıcı planın yürütülmesine izin verdi.
 
-**Güncel durum: Görev 1–6 tamamlandı. Sıradaki adım Görev 7.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 6 kapanışıdır.
+**Güncel durum: Görev 1–7 tamamlandı. Sıradaki adım Görev 8.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 7 kapanışıdır.
 
 ## Çalışma disiplini
 
@@ -187,3 +187,29 @@ Ruling: Şemada etkinlik afiş/form/kısa metin/organizer, duyuru SEO/CTA ve esk
 - Son typecheck/lint/build geçti. Migration 0003/0004 incelendi ve yerel ana DB'ye uygulandı; db:check başarılı, son db:generate “No schema changes”. Yeni toplam **41 public tablo**; ana ürün tabloları toplam 0 satır, kalan geçici test DB'si 0, özel originals/variants nesnesi 0. Fixture cleanup gerçek kullanıcı dosyalarına dokunmadı.
 - Güncel src/scripts/tests/tarayıcı çıktısında yerel sır eşleşmesi 0; standalone'da env/PEM/key/HEIC dosyası 0, .env.local 0600. Build next-env.d.ts çıktısını önceki kanonik hâline getirdi; gereksiz generated diff kalmadı. Tüm görev dosyaları, iki migration ve metadata, ortak domain/repository/service/HTTP/UI, genel/admin rotalar, schema/permission/media reference ve test diff'leri incelendi; git diff --check temiz.
 - Yayın/medya/admin/DB/README rehberleri güncellendi. Yeni paket gerekmedi; mevcut bağımlılıklar kullanıldı. VDS dağıtımı veya push yapılmadı; Görev 7 başlatılmadı. Tek commit ile Görev 6 kapanışı kaydedilir. Büyük envanter için pagination, form yayın/başvuru ve gerçek işletme girdileri ilgili sonraki görevlerdedir.
+
+
+## Görev 7 — devam ediyor
+
+Başlangıç c26b40b. Plan, rapor ve bağlantı mimarisi okundu. Var olan development/bootstrap dalında inline yürütülür; implementasyon delege edilmez. Genel hesap/tıklama izlemesi veya sosyal URL seed yok.
+Ruling: Şemada link/group revision ve dış URL doğrulama zamanı eksik; migration ile eklenir. Kategori ve kategori içi sıra unique olur; reorder transaction içinde geçici boş sıra aralığı kullanır. saveLink güncellemede id/expectedRevision, reorderLinks üçüncü parametrede tam revision snapshot ister; eski ekran sessizce yeni sırayı ezmez. Public kısa adres /l/<UUID> ve PNG QR endpoint'i her okumada yayın/zaman/URL kontrolü yapar; keyfi URL veya Host başlığından QR/redirect üretmez. Site içi yalnız mevcut genel rotalar ve görünür etkinlik/duyuru detayları kabul edilir; /l yönlendirme döngüsü, admin/API/form kapalı rotalar reddedilir. Kopyalama başarısızsa seçilebilir adres gösterilir. QR qrcode sunucuda üretilir, jsQR testte bağımsız decode eder. Kayıtlar/kategoriler ilk aşamada 200/50 ile sınırlıdır; daha büyük envanter pagination işi gerektirir. İşaretlenmiş dış URL yayınında editör doğrulama onayı gerekir, sunucu dış hedefe HTTP isteği yapmaz.
+Kaynaklar: https://github.com/soldair/node-qrcode , https://github.com/cozmo/jsQR . Registry sürümleri qrcode 1.5.4, @types/qrcode 1.5.6, jsqr 1.4.0 doğrulandı.
+
+### 7.1 Servis ve tarayıcı kabulü — yürütülüyor
+
+- Altı yeni entegrasyon testi önce stub servislerle RED, gerçek servislerle GREEN oldu. İlk hedef görünürlüğü fixture'ı SQL now() ile uygulama saati arasında sınırda kaldı; testin yayın zamanı sabit geçmiş UTC anına çekildi. Bu tanı tek başına saat kayması kanıtı değildir.
+- İlk iki E2E testi eksik rotalarda RED; ekran/API sonrası iki test GREEN. Gerçek clipboard, başarısız clipboard yedeği, QR PNG decode, gizlemede kısa adres/QR 404, mobil/masaüstü taşma ve klavye odak dönüşü doğrulandı. QR penceresi açılmadan ağ isteği olmadığı kontrol edildi.
+- Lint ham img uyarısını max-warnings=0 nedeniyle reddetti; QR Image unoptimized ile mevcut PNG endpoint'inden, lazy olarak gösteriliyor. ESLint ve typecheck geçti; tam Vitest 78/78 geçti.
+- Dosya incelemesinde gizlenen seçili kaydın editör formunda eski yayın/revision kalabildiği görüldü. Ek E2E assert RED oldu (Yayımla işaretli kaldı). Gizleme sonucu seçili formu güncelliyor; Listeyi yenile seçimi temizliyor. Tam tarayıcı ve üretim kontrolleri sürüyor.
+
+### 7.2 Son doğrulama ve kapanış — tamamlandı
+
+- `pnpm install --frozen-lockfile`: geçti. `pnpm audit`: bilinen açık yok. QR/runtime ve test bağımlılıkları sabit sürümlüdür.
+- `pnpm db:check`: geçti. `pnpm db:generate`: 41 tablo, değişiklik yok. İncelenen 0005 migration gerçek geliştirme PostgreSQL'inde iki kez başarıyla çalıştırıldı; ikinci koşu veri eklemedi.
+- Son `pnpm typecheck`, `pnpm lint`, `git diff --check`: geçti. `pnpm test`: 7 dosya, 78/78 test. Geçersiz tarih aralığı, başlangıçsız bitiş ve bozuk tarih girdisi de reddedildi.
+- Tam `pnpm test:e2e`: 22/22 (22.2 sn); son standalone build üzerinden `ULUDOTT_E2E_PRODUCTION=1 pnpm test:e2e`: 22/22 (11.3 sn). Sekiz genel rota axe kontrolü ve bağlantı akışındaki dolu ekran axe kontrolü ihlalsizdir. Seçili kaydı gizleyince formun yayın durumu güncellenmesi regression testi GREEN.
+- `pnpm build`: başarılı; /linkler, /admin/linkler, yönetim API, QR ve kısa yönlendirme rotaları dinamik. 390px mobil ve 1440px masaüstü ekran görüntüleri görsel olarak incelendi; taşma yok. Kopyalama yedeği seçilebilir, QR Escape sonrası odağı geri verir.
+- Kaynak, script, test, tarayıcı bundle ve standalone içindeki 1915 dosya yerel sır değerleriyle tarandı: 0 eşleşme. Standalone içinde env/PEM/key/HEIC özel dosyası: 0. Sırlar çıktıya yazılmadı.
+- Son cleanup: 41 public tablo, 0 ürün satırı, 0 geçici test DB, 0 S3 medya nesnesi. Gerçek sosyal adres veya ürün seed'i eklenmedi.
+- Şema/migration, domain/service/repository/HTTP/QR, public/admin ekranları, header/admin menüsü/CSS, helper ve testler dosya bazında incelendi. İşletme rehberi, DB kararları, izin rehberi, README ve plan güncellendi. Görev 7'nin üç kutucuğu kanıtla tamamlandı.
+- Görev 8 başlatılmadı. VDS dağıtımı, canlı veri/alan adı, QR baskı boyutuna göre kullanım kabulü ve sonraki ürün görevleri kapsam dışındaki bağımlılıklar olarak duruyor; uygulama bütünü üretime hazır değildir.
