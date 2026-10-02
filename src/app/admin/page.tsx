@@ -23,6 +23,8 @@ export default async function AdminPage() {
               <Link href="/admin/duyurular">Duyuru yönetimi</Link>
               {" · "}
               <Link href="/admin/linkler">Bağlantı yönetimi</Link>
+              {" · "}
+              <Link href="/admin/galeri">Galeri yönetimi</Link>
             </p>
           )}
           <SessionActions />

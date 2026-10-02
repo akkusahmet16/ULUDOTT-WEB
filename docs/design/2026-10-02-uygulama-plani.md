@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (- [ ]) syntax for tracking. The user requested file-by-file review with the assistant; do not delegate implementation.
 
-Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–8 tamamlandı; sıradaki adım Görev 9. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
+Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–9 tamamlandı; sıradaki adım Görev 10. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
 
 **Goal:** Uludott topluluk sitesi, genel etkinlik/form/duyuru/link yönetimi, UluJam takım ve onay akışları, 2026 arşivi, 2027 “Yakında” alanı, derece oyunları ve onay sonrası Wallet kartlarını sıfırdan güvenli ve sürdürülebilir biçimde üretmek.
 
@@ -163,15 +163,15 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Arayüz:** Üretir: countdownState(publishedStartAt,now): ComingSoon | Counting | Started; arşiv görselleri yalnızca doğrulanmış medya ilişkisinden gelir.
 
-- [ ] Tarih null, tarih geri çekilmiş, yayımlı gelecek tarih ve etkinlik başlamış durumlarını test et; boş tarihte sayı görünmediğini kanıtla.
-- [ ] 2026 galeri/finalist slotları ile 2027 “Yakında” alanını uygula; gerçek tarih yayımlanana kadar başvuru CTA'sı açma.
-- [ ] Kısa yıldız/hafıza oyunlarının fare-dokunmatik-klavye ve reduced-motion testlerini geçir; arşive doğrulanmamış HEIC atama; dosyaları inceleyip commit et.
+- [x] Tarih null, tarih geri çekilmiş, yayımlı gelecek tarih ve etkinlik başlamış durumlarını test et; boş tarihte sayı görünmediğini kanıtla.
+- [x] 2026 galeri/finalist slotları ile 2027 “Yakında” alanını uygula; gerçek tarih yayımlanana kadar başvuru CTA'sı açma.
+- [x] Kısa yıldız/hafıza oyunlarının fare-dokunmatik-klavye ve reduced-motion testlerini geçir; arşive doğrulanmamış HEIC atama; dosyaları inceleyip commit et.
 
 ### Aşama 1 kontrol kapısı
 
-- [ ] Boş PostgreSQL kurulumu, editoryal 2026 üç sonuç linki, 2027 “Yakında”, menü/rotalar, medya ve içerik/link yönetimi testleri geçer.
-- [ ] Admin dışında hesap açma yolu, yanlışlıkla yayımlanan kişi/takım ve işlenmemiş sır dosyası yoktur.
-- [ ] Değişen dosyaların tamamı incelenir; Aşama 1 kanıtı docs/operations/phase-1-acceptance.md dosyasına yazılır.
+- [x] Boş PostgreSQL kurulumu, editoryal 2026 üç sonuç linki, 2027 “Yakında”, menü/rotalar, medya ve içerik/link yönetimi testleri geçer.
+- [x] Admin dışında hesap açma yolu, yanlışlıkla yayımlanan kişi/takım ve işlenmemiş sır dosyası yoktur.
+- [x] Değişen dosyaların tamamı incelenir; Aşama 1 kanıtı docs/operations/phase-1-acceptance.md dosyasına yazılır.
 
 ## Aşama 2 — genel etkinlik formu altyapısı
 

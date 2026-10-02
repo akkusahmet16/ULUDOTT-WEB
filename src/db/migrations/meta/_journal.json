@@ -43,6 +43,13 @@
       "when": 1790934630027,
       "tag": "0005_woozy_goliath",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790938964856,
+      "tag": "0006_cuddly_mindworm",
+      "breakpoints": true
     }
   ]
 }

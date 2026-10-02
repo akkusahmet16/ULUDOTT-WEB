@@ -1,5 +1,6 @@
 import "server-only";
 import { z } from "zod";
+import { readJson } from "../../../lib/http/read-json.ts";
 import { SESSION_COOKIE, resolveSession } from "../../../lib/auth/session.ts";
 import { readCookie, verifyCsrf } from "../../../lib/auth/csrf.ts";
 import {
@@ -17,36 +18,6 @@ const headers = {
 };
 const json = (data: unknown, status = 200) =>
   Response.json(data, { status, headers });
-async function readBody(req: Request) {
-  if (!req.headers.get("content-type")?.startsWith("application/json"))
-    throw Error("Geçersiz istek");
-  const r = req.body?.getReader();
-  if (!r) throw Error("Geçersiz istek");
-  let total = 0,
-    expired = false;
-  const chunks: Uint8Array[] = [];
-  const timer = setTimeout(() => {
-    expired = true;
-    void r.cancel();
-  }, 10000);
-  try {
-    for (;;) {
-      const { done, value } = await r.read();
-      if (expired) throw Error("İstek süresi aşıldı");
-      if (done) break;
-      total += value.byteLength;
-      if (total > 32 * 1024) {
-        await r.cancel();
-        throw Error("İstek çok büyük");
-      }
-      chunks.push(value);
-    }
-    return JSON.parse(Buffer.concat(chunks).toString("utf8")) as unknown;
-  } finally {
-    clearTimeout(timer);
-    r.releaseLock();
-  }
-}
 export async function handleLinks(request: Request) {
   try {
     if (request.method !== "GET") {
@@ -78,7 +49,7 @@ export async function handleLinks(request: Request) {
         orderedIds: z.array(z.uuid()).min(1).max(200).optional(),
         expectedRevisions: z.record(z.uuid(), z.int().positive()).optional(),
       })
-      .parse(await readBody(request));
+      .parse(await readJson(request));
     if (d.action === "save_link")
       return json(await saveLink(session.actor, d.input));
     if (d.action === "save_group")

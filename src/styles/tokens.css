@@ -400,3 +400,36 @@ dialog::backdrop {
   width: 20px;
   height: 20px;
 }
+
+.star-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 70px);
+  gap: 8px;
+  margin-top: 20px;
+}
+.star-target {
+  font-size: 32px;
+}
+.memory-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .star-target:not(:disabled) {
+    animation: star-glow 2s ease-in-out infinite;
+  }
+}
+@keyframes star-glow {
+  50% {
+    box-shadow: 0 0 18px rgba(213, 255, 112, 0.3);
+  }
+}
+
+.event-cover {
+  width: 100%;
+  height: auto;
+  display: block;
+}

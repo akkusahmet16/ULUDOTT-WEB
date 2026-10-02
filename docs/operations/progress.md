@@ -4,7 +4,7 @@ Plan: `docs/design/2026-10-02-uygulama-plani.md`
 Mimari: `docs/design/2026-10-01-mimari-oneri.md`
 Başlangıç: 2 Ekim 2026. Kullanıcı planın yürütülmesine izin verdi.
 
-**Güncel durum: Görev 1–8 tamamlandı. Sıradaki adım Görev 9.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 8 kapanışıdır.
+**Güncel durum: Görev 1–9 tamamlandı. Aşama 1 kabul edildi; sıradaki adım Görev 10.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 9 kapanışıdır.
 
 ## Çalışma disiplini
 
@@ -233,3 +233,25 @@ Araç notu: projede prettier binary'si yoktu; pnpm exec formatter çalışmadı,
 - Son cleanup **41 public tablo, 0 test DB, 0 S3 medya nesnesi**. Başlangıç ürün tablolarının boş olması kuralı, izinli üç 2026 editoryal sonuç dışındaki kayıtlar için sürer; test fixture'ları ana DB'ye yazılmadı.
 - Src/scripts/tests/tarayıcı/standalone içindeki 1936 dosyada yerel sır eşleşmesi **0**; standalone env/PEM/key/HEIC özel dosyası **0**. Git diff whitespace kontrolü temiz. Sır içerikleri çıktıya yazılmadı.
 - Domain, seed/CLI, repository/service, kart/rota, header/iç yol entegrasyonu, helper/testler ve rehberler dosya bazında incelendi. Planın üç kutucuğu kanıtla kapatıldı. Görev 9 başlatılmadı; VDS'ye deployment/push yapılmadı. Tam oyun yönetimi/yayın/rıza ve sonraki ürün görevleri kendi aşamalarında tamamlanacak.
+
+## Görev 9 — devam ediyor
+
+Başlangıç 8084cbc. Inline mevcut development/bootstrap dalı kullanılır; Görev 9 kapanmadan Görev 10 başlamaz.
+Ruling: 2027 seed edilmez; yıl ilişkili yayımlı gerçek başlangıç varsa sayaç çalışır, kayıt/tarih geri çekilince Yakında olur. Başvuru/form kabulü Görev 14'e kadar CTA yoktur. Galeri için event_gallery ilişki tablosu (medya, konum, editörün doğrulama anı, revision) ve küçük yönetim ekranı eklenir; yalnız doğru UluJam 2026 ilişkisi ve yayımlanmış güvenli türev gösterilir. Media delete reference kontrolü yeni ilişkiyi kapsar. Bilinmeyen HEIC veya başka etkinlik fotoğrafı otomatik atanmaz. Finalist slotu derece kartlarından ayrıdır; veri/yayın yönetimi Görev 20’ye aittir, tam oyun/rıza yayın kontrolü Görev 20'ye kadar doğrulanmamış finalist yayımlanmaz. Mini oyunlar yalnız yerel state taşır; kimlik, ağ, puan kaydı yoktur. Yıldız 5 yakalamada biter; hafıza 3 çift içerir. Hareket tercihi CSS ile korunur. Aşama 1 kontrol kapısı aynı kapanışta kanıtlanır.
+
+### 9.1 Arayüz incelemesi ve taslak yıl kararı
+
+Sayaç/mini oyunlarda 5 RED + 2 temel durum PASS sonrasında 7 GREEN; galeri/yıl erişiminde üç PostgreSQL RED → GREEN. 2027 tarih/kayıt geri çekilmesi, özel/ilişkisiz medya ve yetki kontrolü geçti. E2E iki RED → iki GREEN oldu. Medya API GET cevabının {items} zarfı galeri editöründe liste gibi işleniyordu; ek yönetim E2E RED bunu yakaladı. Zarfın items alanı okunarak düzeltildi.
+
+Ruling güncellemesi: 2027 yıl ilişkisi mevcut değilse yönetici sıradan etkinlik ekranından gerçek tarihi sayaçla ilişkilendiremiyor. Bu yüzden ayrı açık db:seed:ulujam komutu, 2026 sonuçları yanında yalnız başlığı/yılı bilinen UluJam 2027 draft kabuğunu ekler. Tarih/konum/publish_at NULL kalır; örnek tarih veya başvuru kaydı yoktur. Sonradan gerçek tarih ve konum mevcut etkinlik panelinden yayımlanınca sayaç açılır. İlk “2027 seed edilmez” kararı bu işletme gereksinimi nedeniyle revize edildi. Yeni taslak-yıl testinde önce RED görüldü. Main editoryal satır beklentisi 8'den 10'a, tablo sayısı galeri ile 42'ye çıkar. Finalist alanı bu aşamada boş slot olarak durur; tam yayın/rıza akışı Görev 20'dir.
+
+Tam kontrol ilk koşuda 94/95 Vitest, 22/27 E2E döndürdü. Şema kabulünün tablo allowlist'ine event_gallery eklendi; schema testi kısıtları gevşetilmedi. Üç gezinme testi önceki kapalı başvuru cümlesinin noktasını bekliyordu; ürün metni “Başvurular henüz açılmadı.” olarak korundu. Galeri select'i snapshot'ta mevcut olsa da implicit label text'i option metinlerini içeriyordu; test açık accessible combobox adıyla seçim yapıyor. Coffee Talk akışı 30 sn üst sınırına yeni eşzamanlı derlemeler altında ulaştı; timeout artırılmadan E2E worker sayısı 2 CPU profiliyle eşleştirilip 2'ye sınırlandı. Bunlar rapora adlarıyla yazıldı; tam testler yeniden çalıştırılır.
+
+
+### Görev 9 kapanış ve Aşama 1 kabulü
+
+İncelenen değişiklikler: UluJam SSR sayfası, tarih/sayaç durumları, arşiv/finalist boş slotları, iki yerel mini oyun, doğrulanmış galeri şeması/0006 migration ve metadata, galeri servis/API/panel, medya referans koruması, ortak sınırlı JSON okuyucu, açık 2027 tarihsiz seed ve komutu, E2E launcher/2 worker ayarı, şema allowlist ve yeni unit/integration/E2E testleri; işletme ve mimari belgeleri. Mobil 390px ekran görüntüsü görsel incelendi; taşma yok.
+
+Son kanıt: 95/95 Vitest; 27/27 geliştirme E2E; 27/27 production E2E (14.9 sn); typecheck/lint/build başarılı. db:check ve db:generate tutarlı, 42 tablo ve yeni şema farkı yok. Ana DB migration ve iki seed koşusu başarılı. Testlerden sonra 0 test DB, 0 medya nesnesi, 10 editoryal satır; kişi/takım/credit/kart 0. Gerçek sır değerleri src/scripts/tests/browser/standalone içinde bulunmadı; build içinde env/PEM/key/HEIC/Wallet secrets yok. Staged diff kontrolü commit öncesi tekrar yapılır.
+
+Aşama 1 kanıtı docs/operations/phase-1-acceptance.md içinde. Gerçek 2026 galeri/finalist içeriği ve 2027 tarih/konum bilinmediğinden yayımlanmadı. Finalist slotunun tam sonuç/rıza yayını Görev 20'de; 2027 draft seed başvuru açmaz. Sayfa yeni istekte yayımlanmış tarihi okur; açık sekmede yayın geri çekmesini anlık poll etmez. VDS deployment yapılmadı. Görev 9 ve kapı kutuları işaretlendi; sıradaki Görev 10.

@@ -9,6 +9,7 @@ import {
   games,
   featuredSlots,
 } from "../../../db/schema/content.ts";
+import { eventGallery } from "../../../db/schema/gallery.ts";
 export async function asset(tx: DbTx, id: string, lock = false) {
   const q = tx.select().from(mediaAssets).where(eq(mediaAssets.id, id));
   return (lock ? await q.for("update") : await q)[0];
@@ -33,7 +34,12 @@ export async function references(tx: DbTx, id: string) {
     .select({ id: events.id })
     .from(events)
     .where(eq(events.mediaId, id));
+  const gallery = await tx
+    .select({ id: eventGallery.id })
+    .from(eventGallery)
+    .where(eq(eventGallery.mediaId, id));
   return [
+    ...gallery.map((x) => ({ ...x, type: "gallery" })),
     ...e.map((x) => ({ ...x, type: "event" })),
     ...a.map((x) => ({ ...x, type: "announcement" })),
     ...g.map((x) => ({ ...x, type: "game" })),
