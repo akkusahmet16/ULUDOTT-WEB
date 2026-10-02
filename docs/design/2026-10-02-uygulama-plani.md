@@ -221,15 +221,15 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Arayüz:** Mevcut createDraftForm, publishForm ve publishEvent sözleşmelerini kullanır; yeni özel Coffee Talk kod yolu üretmez.
 
-- [ ] Taslakta tarih/konum uydurulmadığını ve ana sayfada yayımlı başvuru CTA'sı görünmediğini test et.
-- [ ] Test ortamında gerçek olmayan, açıkça demo diye işaretlenmiş tarih/konum ve afiş verisiyle editörün etkinlik + formu yayımlamasını test et.
-- [ ] Formun siteden doldurulup makbuz vermesini, kapanınca doğru durumu göstermesini ve UluJam takım alanlarının görünmemesini doğrula; dosyaları inceleyip commit et.
+- [x] Taslakta tarih/konum uydurulmadığını ve ana sayfada yayımlı başvuru CTA'sı görünmediğini test et.
+- [x] Test ortamında gerçek olmayan, açıkça demo diye işaretlenmiş tarih/konum ve afiş verisiyle editörün etkinlik + formu yayımlamasını test et.
+- [x] Formun siteden doldurulup makbuz vermesini, kapanınca doğru durumu göstermesini ve UluJam takım alanlarının görünmemesini doğrula; dosyaları inceleyip commit et.
 
 ### Aşama 2 kontrol kapısı
 
-- [ ] Form oluşturucu, sürümleme, koşullar, sunucu doğrulaması, kapasite, makbuz, yönetici listesi ve güvenli export testleri geçer.
-- [ ] Coffee Talk akışı dış Google Forms bağı olmadan sitede tamamlanır; gerçek tarih/konum gelmeden canlı içerik yayımlanmaz.
-- [ ] Değişen dosyaların tamamı incelenir; docs/operations/phase-2-acceptance.md dosyasına kanıt yazılır.
+- [x] Form oluşturucu, sürümleme, koşullar, sunucu doğrulaması, kapasite, makbuz, yönetici listesi ve güvenli export testleri geçer.
+- [x] Coffee Talk akışı dış Google Forms bağı olmadan sitede tamamlanır; gerçek tarih/konum gelmeden canlı içerik yayımlanmaz.
+- [x] Değişen dosyaların tamamı incelenir; docs/operations/phase-2-acceptance.md dosyasına kanıt yazılır.
 
 ## Aşama 3 — UluJam başvuruları, takımlar ve onaylı web kartları
 

@@ -2,7 +2,7 @@
 
 GitHub deposu: [akkusahmet16/ULUDOTT-WEB](https://github.com/akkusahmet16/ULUDOTT-WEB).
 
-Üretim platformunun adım adım geliştirildiği depo. **Görev 1–13 tamamlandı**: çalışma ortamı, veritabanı, yönetici kimliği, tasarım sistemi, özel medya, etkinlik/duyuru yayın akışı, bağlantı merkezi ve 2026 derece bağlantıları hazır. UluJam arşivi/2027 yakında ve mini oyunlar tamamlandı. Form şeması, koşul motoru ve değişmez sürümler hazır. Form yönetim paneli hazır. Açık form gönderimi ve makbuz hazır. Etkinlik kapsamlı başvuru yönetimi, güvenli CSV/XLSX, düzeltme/silme ve saklama süresi temizliği hazır. Sıradaki adım Görev 14 genel etkinlik sayfası; UluJam takım ve Wallet özellikleri henüz uygulanmadı. Üretime hazır değildir.
+Üretim platformunun adım adım geliştirildiği depo. **Görev 1–14 tamamlandı**: çalışma ortamı, veritabanı, yönetici kimliği, tasarım sistemi, özel medya, etkinlik/duyuru yayın akışı, bağlantı merkezi ve 2026 derece bağlantıları hazır. UluJam arşivi/2027 yakında ve mini oyunlar tamamlandı. Form şeması, koşul motoru ve değişmez sürümler hazır. Form yönetim paneli hazır. Açık form gönderimi ve makbuz hazır. Etkinlik kapsamlı başvuru yönetimi, güvenli CSV/XLSX, düzeltme/silme ve saklama süresi temizliği hazır. Coffee Talk site içi başvuru ve kapanış akışı doğrulandı. Sıradaki adım Görev 15 UluJam özel formu; UluJam takım ve Wallet özellikleri henüz uygulanmadı. Üretime hazır değildir.
 
 ## Önce okunacak belgeler
 
@@ -68,7 +68,7 @@ Ham `Media` ve `Uludott Logo Pack` varlıkları yerinde korunur, depoya alınmaz
 
 ## Şu an açık kalanlar
 
-Görev 1–13 tamamlandı. Yönetici kimliği, MFA, oturum/rol altyapısı, ortak arayüz, medya, etkinlik/duyuru yayın akışı, bağlantı merkezi ve 2026 derece bağlantıları hazır; UluJam arşivi/2027 yakında ve mini oyunlar hazır; form şeması/koşul motoru/değişmez sürümler hazır; form yönetimi hazır; açık form/makbuz hazır; sonraki adım Görev 13 başvuru yönetimi. Sonraki ürün görevleri henüz uygulanmadı. Hukuk, gerçek etkinlik bilgileri, bildirim sağlayıcısı, Wallet hesap/sertifika/cihaz ve canlı hosting kabulü ayrı bağımlılıklardır. Ayrıntılı durum ilerleme raporundadır.
+Görev 1–14 tamamlandı. Yönetici kimliği, MFA, oturum/rol altyapısı, ortak arayüz, medya, etkinlik/duyuru yayın akışı, bağlantı merkezi ve 2026 derece bağlantıları hazır; UluJam arşivi/2027 yakında ve mini oyunlar hazır; form şeması/koşul motoru/değişmez sürümler hazır; form yönetimi hazır; açık form/makbuz hazır; sonraki adım Görev 13 başvuru yönetimi. Sonraki ürün görevleri henüz uygulanmadı. Hukuk, gerçek etkinlik bilgileri, bildirim sağlayıcısı, Wallet hesap/sertifika/cihaz ve canlı hosting kabulü ayrı bağımlılıklardır. Ayrıntılı durum ilerleme raporundadır.
 
 Yönetici girişi `/admin`; ilk kişi kurulumu ve izin matrisi: [Yönetici kimliği](docs/operations/admin-auth.md).
 

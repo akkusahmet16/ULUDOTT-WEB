@@ -4,7 +4,7 @@ Plan: `docs/design/2026-10-02-uygulama-plani.md`
 Mimari: `docs/design/2026-10-01-mimari-oneri.md`
 Başlangıç: 2 Ekim 2026. Kullanıcı planın yürütülmesine izin verdi.
 
-**Güncel durum: Görev 1–13 tamamlandı. Görev 14 sıradaki adım.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 13 kapanışıdır.
+**Güncel durum: Görev 1–14 tamamlandı. Görev 15 sıradaki adım.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 14 kapanışıdır.
 
 ## Çalışma disiplini
 
@@ -361,3 +361,11 @@ Final: fixed public alan doğrulama açıklaması — telefon HTTP/browser UUID+
 Final: fixed hızlı kaydet→yayımla eski revision/baseline yarışı — production form-builder32/33 RED→33/33 GREEN; suite173/173, type/lint/build geçti.
 Final review: bir bağımsız reviewer, iki Important düzeltildi; Critical/Minor yok, ertelenen küçük bulgu yok. İkinci review yok; tek düzeltme geçişi TDD ile kapandı. 4/4 odak dev E2E, 173/173 Vitest (17 dosya), 33/33 production E2E (25.1 sn), typecheck/lint/build başarılı. Son ana veri kontrolü42 tablo/10 editoryal satır/0 PII/0 test DB/0 medya; source/browser/standalone sır0, yasak build dosyası0. Ledger geçmiş son sayıları değiştirmez; son kabul bu satırdır.
 Task 11: complete (commits b731d00..0785089, tests144/144, production29/29); Task 12: complete (commits 0785089..85975be, tests154/154, production31/31). Görev13 35d5f75, ortak son düzeltmeler ayrı commit. Normal checkout/development/bootstrap korunur; merge/PR/push veya VDS dağıtımı bu görev dizisinde yapılmadı. Görev14 başlatılmadı.
+
+## Görev 14–15 başlangıç
+
+Başlangıç d17fd65, temiz checkout. Plan/mimari/rapor ve Next async page rehberi okundu; executing-plans inline, iki görev ayrı kapılarla yürütülür. Paylaşılan arayüz:14 mevcut event/form yayın servislerini,15 genel immutable form tanımı/koşul motorunu tüketir;16 özel atomik uygulama/team kaydını tüketir. Ruling: başvuru CTA yalnız aynı etkinliğe bağlı açık genel form için etkinleşir; UluJam özel gönderimi16'ya kadar CTA alamaz — generic submit takım kurallarını atlamasın — maliyet: UluJam gerçek başvuru bu görevde açılmaz. Coffee seed açık geliştirme çağrısıdır; otomatik ana DB başlangıcına eklenmez, tarih/konum/afiş bilinmez bırakılır.
+
+### Görev 14 kapanışı
+
+Seed/CTA PostgreSQL testi RED→GREEN; 174/174 unit+integration, typecheck/lint ve production build geçti. Coffee Talk E2E 1/1; tüm production TLS E2E 34/34 (tek worker: ortak yayın fixture çakışmasını önler). İlk E2E başarısızlıkları güvenli localhost cookie/API fixture aktarımı ve yayın isteği confirmed alanı eksikliğiydi; test gerçek API sözleşmesine düzeltildi. Kaynak, test ve diff dosyaları incelendi. Ana DB42 tablo/10 mevcut içerik satırı, kişisel kayıt0, test DB0, medya0; sır/build taraması0 ve production audit0. Aşama2 kanıtı phase-2-acceptance.md. Görev14 tamamlandı; Görev15 özel form tanımı sonraki adımdır.

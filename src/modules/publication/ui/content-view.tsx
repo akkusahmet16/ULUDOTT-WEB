@@ -56,6 +56,11 @@ export function ContentView({
           {item.organizer && <p>Düzenleyen: {item.organizer}</p>}
           {item.capacity && <p>Kapasite: {item.capacity}</p>}
           <p className="content-body">{item.description}</p>
+          {"applicationUrl" in item && item.applicationUrl && (
+            <Link className="button" href={item.applicationUrl}>
+              Başvur
+            </Link>
+          )}
         </>
       ) : (
         <>
@@ -95,6 +100,11 @@ export function ContentCard({
       {item.excerpt && <p>{item.excerpt}</p>}
       {type === "event" && item.startsAt && (
         <p>{formatInstant(item.startsAt)}</p>
+      )}
+      {type === "event" && item.applicationUrl && (
+        <Link className="button" href={item.applicationUrl}>
+          Başvur
+        </Link>
       )}
       <Link
         className="button secondary"

@@ -3,6 +3,7 @@ import {
   saveDraftForm,
   publishForm,
 } from "../../src/modules/forms/application/form-service.ts";
+import { seedCoffeeTalkDraft } from "../../src/db/seeds/development/coffee-talk-draft.ts";
 import { submitForm } from "../../src/modules/forms/application/submit-form.ts";
 import { randomUUID } from "node:crypto";
 import { readFile, writeFile, cp, mkdtemp, rm } from "node:fs/promises";
@@ -68,13 +69,14 @@ try {
   await migrateEmptyDatabase();
   await seed2026Results(getDatabase());
   await seedUlujamComingSoon(getDatabase());
+  await seedCoffeeTalkDraft(getDatabase());
   const id = randomUUID();
   await local.sql`insert into admins(id,email,password_hash,mfa_secret_encrypted) values(${id},'admin-e2e@test.invalid',${await hashPassword("E2E-only-password-long-42")},${encryptMfaSecret("JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP", id)})`;
   await local.sql`insert into admin_roles(admin_id,role) values(${id},'system_admin')`;
   await local.sql`insert into admin_roles(admin_id,role) values(${id},'content_editor')`;
   await local.sql`insert into admin_roles(admin_id,role) values(${id},'event_manager')`;
   await local.sql`insert into admin_event_scopes(admin_id,event_id) select ${id},id from events`;
-  await local.sql`update admins set recovery_code_hashes=${local.sql.json([tokenHash("11111111111111111111111111111111"), tokenHash("22222222222222222222222222222222"), tokenHash("33333333333333333333333333333333"), tokenHash("44444444444444444444444444444444"), tokenHash("55555555555555555555555555555555"), tokenHash("66666666666666666666666666666666"), tokenHash("77777777777777777777777777777777")])} where id=${id}`;
+  await local.sql`update admins set recovery_code_hashes=${local.sql.json([tokenHash("11111111111111111111111111111111"), tokenHash("22222222222222222222222222222222"), tokenHash("33333333333333333333333333333333"), tokenHash("44444444444444444444444444444444"), tokenHash("55555555555555555555555555555555"), tokenHash("66666666666666666666666666666666"), tokenHash("77777777777777777777777777777777"), tokenHash("88888888888888888888888888888888")])} where id=${id}`;
   const [scopeEvent] =
     await local.sql`select event_id from event_years where year=2027`;
   const formActor = {
