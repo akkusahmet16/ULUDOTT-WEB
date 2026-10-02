@@ -109,9 +109,9 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Arayüz:** Üretir: ortak Button, Field, Card, Status ve PublicShell bileşenleri; sunum bileşenleri veri/SQL bilmez.
 
-- [ ] Menü, tüm CTA'lar, mobil gezinme, klavye odak sırası ve boş sayfa durumlarını testle tanımla; kırmızı sonucu gör.
-- [ ] Antrasit/krem/mor/lime/sınırlı mercan token'larını, tipografi, odak ve reduced-motion kurallarını uygula; gerçek logo paketinin uygun varyantını yerleştir.
-- [ ] Playwright ve axe kontrollerini geçir; telefon/tablet/masaüstü ekranlarını elle incele; dosyaları okuyup commit et.
+- [x] Menü, tüm CTA'lar, mobil gezinme, klavye odak sırası ve boş sayfa durumlarını testle tanımla; kırmızı sonucu gör.
+- [x] Antrasit/krem/mor/lime/sınırlı mercan token'larını, tipografi, odak ve reduced-motion kurallarını uygula; gerçek logo paketinin uygun varyantını yerleştir.
+- [x] Playwright ve axe kontrollerini geçir; telefon/tablet/masaüstü ekranlarını elle incele; dosyaları okuyup commit et.
 
 ### Görev 5 — medya yükleme ve görsel yayını
 
