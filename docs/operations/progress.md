@@ -10,6 +10,8 @@ Başlangıç: 2 Ekim 2026. Kullanıcı planın yürütülmesine izin verdi.
 
 Her işlem öncesinde planın ilgili adımı ve bu rapor okunur. Her kutucuk sonunda ilgili dosyalar ve diff yeniden incelenir; doğrulama kanıtı olmadan tamamlandı işaretlenmez. Uygulama bu sohbet içinde yürütülür; implementasyon delege edilmez.
 
+Yerel önizleme disiplini (kullanıcı, 2 Ekim 2026): her görev/işlem bitiminde site yerelde başlatılır. Yeni göreve başlarken bu projeye ait önizleme sunucusu durdurulur; geliştirme ve kontroller tamamlanınca yeniden açılır. Kullanıcı şimdilik yerel önizlemeyle ilerlemeyi seçti; Sites yayın kapsamı sorusu beklenmez.
+
 ## Ön inceleme
 
 - Uygulama ve Git deposu henüz yok; Görev 1 dosyaları oluşturulacak.
@@ -437,3 +439,7 @@ Final: Ruling: gerçek sunucu kapasitesi/sır rotasyonu operasyonu/hukuki metin 
 Final: Ruling: değişmemiş arşiv/countdown kodu ve bütün generated snapshot içerikleri bağımsız source review kapsamı dışında; journal/DDL alignment incelendi — bu tur regresyon süiti mevcut sayfaları test eder — maliyet: derin eski kod denetimi ayrıca gerekir.
 İlk birlikte ağır test koşusunun timeout'undan kalan bu turun2 pasif test DB'si temizlendi; son veri kontrolünde42tablo/10editoryal kayıt/kişisel0/testDB0/media0. Migration tekrarlandı ve no changes; source/browser/standalone/staged secret taraması0.
 Son kabul: iki Important bulgu RED→GREEN; tüm süit204/204, üretimTLS E2E40/40 (altıncı aday details açılıp atandı/geri alındı, axe0), typecheck/lint/build başarılı. Tek review/fix pass kapandı; Minor1 ertelendi. Yerel geliştirme dalında kayıt korunur; Sites sorusu bekliyor. Görev16–17 tamamlandı,18'e başlanmadı.
+
+## Yerel önizleme çalışma düzeni
+Kullanıcı16–17 sonrasında Sites yerine yerel sunucunun her görev sonunda açık tutulmasını istedi. Yeni göreve başlamadan yalnız bu projenin önizleme süreci durdurulacak; plan ve rapor yine her işlemde okunacak.18 için yeni başlama talimatı verilmedi.
+Yerel site APP_URL=http://127.0.0.1:3000 pnpm dev ile başlatıldı (exec session45272, Next listener PID25531; gelecekte PID yeniden doğrulanır). Ana sayfa ve/admin HTTP200; localhost tarayıcı CSRF cookie kontrolü yapıldı. Log .local/local-preview.log. Site görev bitiminde açık kalır; yeni görev başlangıcında yalnız bu projeye ait süreç durdurulur.
