@@ -246,7 +246,7 @@ async function enrich(
   }
   let applicationUrl: string | null = null;
   if (
-    row.kind === "general" &&
+    ["general", "ulujam"].includes(row.kind ?? "") &&
     row.formId &&
     displayStatus(row, now) === "published"
   ) {

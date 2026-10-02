@@ -27,6 +27,8 @@ export default async function Page({
         key={f.revision}
         form={{
           id: f.id,
+          eventId: f.eventId,
+          isUlujam: f.eventKind === "ulujam",
           status: f.status,
           revision: f.revision,
           settings: f.settings,

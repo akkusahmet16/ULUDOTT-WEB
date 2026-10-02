@@ -4,7 +4,7 @@ Plan: `docs/design/2026-10-02-uygulama-plani.md`
 Mimari: `docs/design/2026-10-01-mimari-oneri.md`
 Başlangıç: 2 Ekim 2026. Kullanıcı planın yürütülmesine izin verdi.
 
-**Güncel durum: Görev 1–15 tamamlandı. Görev 16 sıradaki adım.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 15 kapanışıdır.
+**Güncel durum: Görev 1–16 tamamlandı. Görev 17 sıradaki adım.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 15 kapanışıdır.
 
 ## Çalışma disiplini
 
@@ -398,3 +398,16 @@ Final: Ruling: onay/geç üye Wallet/kart/outbox revision/sonraki sonuç akışl
 Final: Ruling: değişmeyen12 idempotency ve8–9 arşiv/sayaç davranışları yeni implementasyon olarak incelenmedi — mevcut regresyon testleri tüm suite'te geçti; maliyet: bu görevlerde ek sınır-durum kapsamı üretilmedi.
 
 Son kabul: Görev14(2455757) ve15(0adbffc) sırasıyla tamam; bağımsız inceleme ve test izolasyonu fix'i tamam. Son veri kontrolü ana42 tablo/10 mevcut editoryal satır, kişisel kayıt0, test DB0, medya0. Plan kutuları/phase2 kabulü güncel. Mevcut development/bootstrap dalında tutulur;14–15 için push/merge/deploy yapılmadı.
+
+## Görev16–17 başlangıcı
+
+BASE ae6cd64 temiz checkout; executing-plans inline/TDD, plan16→17→tek son bağımsız review. Next page/route/server-client rehberleri okundu. Paylaşılan arayüz16 üyelik/kadro revision/transaction güvenliği17 deterministik öneri+atama tarafından tüketilir.18 onay üyeliğin approvedRevision alanını tüketir;16–17 yeni üyelik onaylı sayılmaz. Kullanıcı erken yayına çıkılsa da görev kapsamının değişmemesini istedi. Sites istendi; Node/native Argon2/PostgreSQL uygulamasını Workers/D1'a yeniden yazmak bu isteğe aykırıdır; genel sayfa yayını/tam uygulama ayrımı kullanıcıya soruldu, görev geliştirme sürer.
+
+## Görev 16 — tamamlandı
+Başvuru/makbuz/beceri/yeni takım/üyelik tek PostgreSQL transaction içinde; event e-posta tekilliği ve kapasite, son takım koltuğu kilidi+DB constraint trigger, NFKC Türkçe isim, Argon2id parola, 30dk Secure HttpOnly oturum, erişim yenileme, CSRF/rate limit, no-referrer/noindex özel sayfa uygulandı. Genel form UluJam bypass 409. Yönetici form editöründen özel şablon yükler; public takım seçenekleri canlı cursor sorgusundan gelir. Yeni/katılan makbuz özel takım linki verir; parolalar cevap snapshotına yazılmaz. Kart/onay işlemleri18–19 kapsamıdır.
+RED: 3 backend not-implemented, HTTP404/CSRF ve replay/CTA testleri izlendi; GREEN:199/199 unit+gerçekPG (maxWorkers2),38/38 üretimTLS E2E, typecheck/lint/build/dbcheck geçti.0011–0012 ana DB migrate edildi;generate no changes. Genel galeri testi host saatine göre gelecekte verifiedAt yazıyordu; SQL now() ile önce başarısız test düzeltildi. Yoğun PG+E2E birlikte koşturulunca5s testtimeout görüldü; DB testleri ve tarayıcı süitleri sırayla koşturuldu. Browser Next route-announcer alert test locator main'e daraltıldı. Üretim kişisel kayıt yok, güvenlik taraması0.
+Task16: Ruling: takım davet token'ı hash yanında AEAD şifreli saklanır — mevcut takıma doğru parolayla katılanın özel link alması gerekir — maliyet: replay şifre anahtarının korunması/rotasyonu gerekir.
+Task16: Ruling: public takım seçimi sürümlü sabit options dışında canlı cursor listesi — yeni takımlar form yayımlandıktan sonra oluşur — maliyet: liste açıldıktan sonra dolan takıma katılım409 döner.
+Task16: Ruling: özel UluJam kontenjanı dolunca atomik409; genel form waitlist akışı korunur — bekleme listesi henüz onaysız takım üyeliği yaratmaz — maliyet: UluJam waitlist ayarı bu akışta kayıt açmaz, daha sonraki ürün kararı gerekir.
+Task16: Ruling: genel form testleri Coffee etkinliğine taşındı, yayın testleri ayrı2030 DEMO UluJam'dedir — özel bypass korumasını gevşetmeden generic regresyonu test eder — maliyet: fixture ayrımı sürdürülmelidir,2027 gerçek tarihleri değişmez.
+Task16: complete (BASE ae6cd64; tests vitest --maxWorkers=2 199/199; E2E38/38).

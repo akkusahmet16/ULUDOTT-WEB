@@ -249,9 +249,9 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Arayüz:** Üretir: createTeamWithFounder(tx,input), joinTeam(tx,teamId,participantId,password), submitUlujam(input,idempotencyKey): Promise<UlujamReceipt>, rotateTeamAccess(actor,teamId), requireTeamSession(request,teamId). Yeni takım ve kurucu tek transaction'dır.
 
-- [ ] Türkçe/NFKC isim çakışması, iki kişinin son kontenjan yarışı, yanlış parola/hız sınırı ve başka takımın üye verisini okuyamama testlerini yaz.
-- [ ] Bekleyen takım, hash'lenmiş güçlü parola, rastgele URL token'ı, kısa ömürlü takım oturumu ve erişim yenilemesini uygula.
-- [ ] Etkinlik bazında normalize e-posta tekilliği, beceri ve makbuz kaydı, son koltuk ve eski parolanın geçersizleşmesi testlerini gerçek PostgreSQL'de geçir. Genel form gönderim uç noktası UluJam'in telefon, takım parolası ve onay öncesi kart kurallarını atlatamamalıdır; bunu ayrı test et. Takım sayfasında telefon/e-posta/iç not/token sızmadığını inceleyip commit et.
+- [x] Türkçe/NFKC isim çakışması, iki kişinin son kontenjan yarışı, yanlış parola/hız sınırı ve başka takımın üye verisini okuyamama testlerini yaz.
+- [x] Bekleyen takım, hash'lenmiş güçlü parola, rastgele URL token'ı, kısa ömürlü takım oturumu ve erişim yenilemesini uygula.
+- [x] Etkinlik bazında normalize e-posta tekilliği, beceri ve makbuz kaydı, son koltuk ve eski parolanın geçersizleşmesi testlerini gerçek PostgreSQL'de geçir. Genel form gönderim uç noktası UluJam'in telefon, takım parolası ve onay öncesi kart kurallarını atlatamamalıdır; bunu ayrı test et. Takım sayfasında telefon/e-posta/iç not/token sızmadığını inceleyip commit et.
 
 ### Görev 17 — takım arayanlar ve yönetici ataması
 

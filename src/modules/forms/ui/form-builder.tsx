@@ -1,4 +1,5 @@
 "use client";
+import { buildUlujamFormDefinition } from "../../applications/domain/ulujam-input";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ValidFormDefinition } from "../domain/form-version";
@@ -100,6 +101,8 @@ export function FormBuilder({
     settings: Settings;
     definition: ValidFormDefinition | null;
     hasPublished: boolean;
+    eventId?: string | null;
+    isUlujam?: boolean;
   };
 }) {
   const [fields, setFields] = useState<Field[]>(form.definition?.fields ?? []),
@@ -174,6 +177,18 @@ export function FormBuilder({
           Alan değişiklikleri yeni form sürümü olarak yayımlanır. Önceki
           başvurular korunur.
         </p>
+      )}
+      {form.isUlujam && form.eventId && (
+        <button
+          disabled={busy}
+          type="button"
+          onClick={() => {
+            setFields(buildUlujamFormDefinition(form.eventId!).fields);
+            setMessage("UluJam şablonu yüklendi; alanları kaydedin.");
+          }}
+        >
+          UluJam şablonunu yükle
+        </button>
       )}
       <h2>Form ayarları</h2>
       <FormSettings

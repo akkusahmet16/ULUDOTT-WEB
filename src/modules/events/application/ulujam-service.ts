@@ -86,7 +86,7 @@ export async function saveGallery(actor: Actor, input: unknown): Promise<void> {
         throw Error("Medya uygun değil");
       const values = {
         mediaId: d.mediaId,
-        verifiedAt: d.verified ? new Date() : null,
+        verifiedAt: d.verified ? sql`now()` : null,
       };
       const [row] = existing
         ? await tx

@@ -25,6 +25,9 @@ const config: NextConfig = {
       "/api/admin/:path*",
       "/basvuru/:path*",
       "/makbuz",
+      "/takim/:path*",
+      "/api/team/:path*",
+      "/api/ulujam/:path*",
       "/api/forms/:path*",
       "/api/submissions/:path*",
     ].map((source) => ({

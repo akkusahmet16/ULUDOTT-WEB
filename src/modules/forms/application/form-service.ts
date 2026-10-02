@@ -213,6 +213,14 @@ export async function getForm(actor: Actor, id: string) {
     const f = await locked(tx, actor, id);
     return {
       ...f,
+      eventKind: f.eventId
+        ? (
+            await tx
+              .select({ kind: events.kind })
+              .from(events)
+              .where(eq(events.id, f.eventId))
+          )[0]?.kind
+        : null,
       settings: settingsSchema.parse(f.settings),
       draft: f.draftVersionId
         ? await readFormVersion(tx, f.draftVersionId)

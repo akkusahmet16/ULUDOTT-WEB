@@ -3,6 +3,7 @@ import {
   saveDraftForm,
   publishForm,
 } from "../../src/modules/forms/application/form-service.ts";
+import { buildUlujamFormDefinition } from "../../src/modules/applications/domain/ulujam-input.ts";
 import { seedCoffeeTalkDraft } from "../../src/db/seeds/development/coffee-talk-draft.ts";
 import { submitForm } from "../../src/modules/forms/application/submit-form.ts";
 import { randomUUID } from "node:crypto";
@@ -83,9 +84,15 @@ try {
   const formActor = {
     adminId: id,
     roles: ["event_manager"],
-    eventScopes: [scopeEvent.event_id],
+    eventScopes: ["c0ffee00-0000-4000-8000-000000000014"],
   };
-  const publicForm = await createDraftForm(formActor, scopeEvent.event_id, {
+  const registrationEvent="16000000-0000-4000-8000-000000000001";
+  await local.sql`insert into events(id,title,slug,kind,status,starts_at,location) values(${registrationEvent},'DEMO UluJam başvuru','ulujam-registration-test','ulujam','published','2030-01-01','DEMO yer')`;
+  await local.sql`insert into admin_event_scopes(admin_id,event_id) values(${id},${registrationEvent})`;
+  const registrationActor={adminId:id,roles:['event_manager'],eventScopes:[registrationEvent]};
+  const registrationForm=await createDraftForm(registrationActor,registrationEvent,{title:'DEMO UluJam başvuru',slug:'e2e-ulujam',opensAt:'2020-01-01T00:00:00Z',closesAt:null,capacity:10,waitlist:false,duplicatePolicy:'reject',thankYou:'DEMO başvuru alındı.',retentionDays:1});
+  await saveDraftForm(registrationActor,registrationForm.id,buildUlujamFormDefinition(registrationEvent),1);await publishForm(registrationActor,registrationForm.id,2);
+  const publicForm = await createDraftForm(formActor, "c0ffee00-0000-4000-8000-000000000014", {
     title: "E2E genel form",
     slug: "e2e-public",
     opensAt: "2020-01-01T00:00:00Z",
@@ -129,7 +136,7 @@ try {
     1,
   );
   await publishForm(formActor, publicForm.id, 2);
-  const adminForm = await createDraftForm(formActor, scopeEvent.event_id, {
+  const adminForm = await createDraftForm(formActor, "c0ffee00-0000-4000-8000-000000000014", {
     title: "E2E başvuru yönetimi",
     slug: "e2e-admin",
     opensAt: "2020-01-01T00:00:00Z",

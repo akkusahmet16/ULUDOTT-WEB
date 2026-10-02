@@ -1,0 +1,1 @@
+ALTER TABLE "team_access" ADD COLUMN "token_encrypted" text;

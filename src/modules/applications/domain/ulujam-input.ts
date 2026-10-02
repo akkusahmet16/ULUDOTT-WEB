@@ -3,13 +3,13 @@ import {
   skillsSchema,
   skillKeys,
   skillLabels,
-} from "../../matching/domain/skills";
+} from "../../matching/domain/skills.ts";
 import {
   boundedJson,
   validateFormDefinition,
   type ValidFormDefinition,
-} from "../../forms/domain/form-version";
-import type { Condition } from "../../forms/domain/condition";
+} from "../../forms/domain/form-version.ts";
+import type { Condition } from "../../forms/domain/condition.ts";
 export const modes = [
   { value: "solo", label: "Tek başına katılıyorum" },
   { value: "seeking", label: "Takım arıyorum" },

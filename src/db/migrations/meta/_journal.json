@@ -78,6 +78,20 @@
       "when": 1790956933899,
       "tag": "0010_submission_admin_indexes",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1790963207412,
+      "tag": "0011_team_capacity",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1790963569416,
+      "tag": "0012_team_token",
+      "breakpoints": true
     }
   ]
 }

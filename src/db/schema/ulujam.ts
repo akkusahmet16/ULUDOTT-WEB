@@ -177,6 +177,7 @@ export const teamAccess = pgTable(
       .references(() => teams.id),
     tokenHash: text("token_hash").notNull().unique(),
     passwordHash: text("password_hash").notNull(),
+    tokenEncrypted: text("token_encrypted"),
     revision: integer("revision").default(1).notNull(),
     rotatedAt: instant("rotated_at").defaultNow().notNull(),
   },
