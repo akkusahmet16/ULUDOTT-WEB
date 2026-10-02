@@ -281,3 +281,12 @@ Son veri kontrolü: 42 tablo, 10 editoryal satır, 0 test DB, 0 medya nesnesi; k
 Görev 10 kutuları tamamlandı. Panel/yetki/audit/yayınlama iş akışı Görev 11, canlı submission kabulü Görev 12 ve sonraki görevlerdir. Mevcut repository iç katmandır; form status açmaz. Gerçek içerik/hukuk/sunucu/Wallet canlı kabulü henüz yapılmadı. Görev 11 başlatılmadı.
 
 Görev 10 commit öncesi staged diff ve build/source sır kontrolü tekrar geçti: secretFileHits=0, forbiddenBuildFiles=0, stagedSecretHits=0; git diff --cached --check temiz. Görev 9 commit d9be96d; Görev 10 ayrı commit ile kaydedilir.
+
+
+## GitHub deposuna aktarım — 2 Ekim 2026
+
+Kullanıcı https://github.com/akkusahmet16/ULUDOTT-WEB deposunun temizlenip bu projeyle değiştirilmesini ve push edilmesini açıkça istedi. Plan/rapor, temiz çalışma ağacı, GitHub ref'leri ve mevcut main dosya listesi okundu. origin bu URL olarak tanımlandı; uzak depoda yalnız main vardı, tag yoktu. Eski main 9f5d4d0ca7b46756f827ce02af4f067a2e013d98 tam Git geçmişiyle .local/ULUDOTT-WEB-before-replacement-9f5d4d0.bundle içine yedeklendi; bundle verify başarılı, izin 0600, Git dışında. Eski kaynak bu projenin geçmişine birleştirilmedi.
+
+Yayın öncesi yeni proje HEAD geçmişindeki 306 blob tarandı: gerçek env sırları/private-key içerik eşleşmesi 0, yasak env/anahtar/Wallet/raw medya yolu 0. pnpm test tekrar 141/141 geçti (13 dosya, 8.68 sn). gh CLI yoktu; mevcut osxkeychain Git yetkilendirmesiyle ek kurulum gerekmeksizin aktarım yapıldı.
+
+Tam eski SHA'ya bağlı force-with-lease kullanılarak origin/main 9f5d4d0'dan 42475dd'ye başarıyla değiştirildi. Projenin Görev 1–10 commit geçmişi korundu, eski repo dosyaları main ağacından çıktı. Bu aktarım kaydı ayrı docs commit ile normal push edilir. .env.local, sırlar, node_modules/build çıktısı ve ham medya gönderilmedi. Bu işlem GitHub kaynak aktarımıdır; canlı VDS deployment değildir. Görev 11 henüz başlatılmadı.

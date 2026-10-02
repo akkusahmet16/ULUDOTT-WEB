@@ -1,5 +1,7 @@
 # Uludott Web
 
+GitHub deposu: [akkusahmet16/ULUDOTT-WEB](https://github.com/akkusahmet16/ULUDOTT-WEB).
+
 Üretim platformunun adım adım geliştirildiği depo. **Görev 1–10 tamamlandı**: çalışma ortamı, veritabanı, yönetici kimliği, tasarım sistemi, özel medya, etkinlik/duyuru yayın akışı, bağlantı merkezi ve 2026 derece bağlantıları hazır. UluJam arşivi/2027 yakında ve mini oyunlar tamamlandı. Form şeması, koşul motoru ve değişmez sürümler hazır. Sıradaki adım Görev 11 form yönetim paneli; başvuru ve Wallet özellikleri henüz uygulanmadı. Üretime hazır değildir.
 
 ## Önce okunacak belgeler
