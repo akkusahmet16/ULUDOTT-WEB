@@ -297,9 +297,9 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Arayüz:** Üretir: saveGameDraft(actor,eventId,input), markFinalist(actor,gameId), assignAward(actor,eventId,rank,gameId), publishGame(actor,gameId). 2026 tarihî kısmi kayıt ile yeni tam yayın doğrulaması ayrı durumlardır.
 
-- [ ] Aynı etkinlikte iki 1. sıra, yanlış itch.io hostname/şema, eksik yeni oyun bilgisi, gerçek adın izinsiz yayınlanması ve 2026 kısmi istisnası testlerini yaz.
-- [ ] Panelde oyun adı, açıklama, takım, finalist durumu, kapak, itch.io URL ve onaylı yapımcı yayın adlarını düzenleme/önizleme/yayımlama akışını uygula.
-- [ ] 2026'nın üç URL'si ve boş alanları korunurken daha sonra yönetici tarafından doldurulabildiğini; yayın değişikliğinin kart revision işi ürettiğini doğrula, dosyaları inceleyip commit et.
+- [x] Aynı etkinlikte iki 1. sıra, yanlış itch.io hostname/şema, eksik yeni oyun bilgisi, gerçek adın izinsiz yayınlanması ve 2026 kısmi istisnası testlerini yaz.
+- [x] Panelde oyun adı, açıklama, takım, finalist durumu, kapak, itch.io URL ve onaylı yapımcı yayın adlarını düzenleme/önizleme/yayımlama akışını uygula.
+- [x] 2026'nın üç URL'si ve boş alanları korunurken daha sonra yönetici tarafından doldurulabildiğini; yayın değişikliğinin kart revision işi ürettiğini doğrula, dosyaları inceleyip commit et.
 
 ### Görev 21 — outbox ve ayrı worker
 

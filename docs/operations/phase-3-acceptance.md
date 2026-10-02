@@ -19,3 +19,5 @@
 Görev19 genel birim/entegrasyon koşusu: 28 dosya,209 test başarılı (.local/task19-tests.log). Tip ve lint başarılı. Üretim derlemesi başarılı. ProductionTLS44 E2E:43 geçti; streamed title yarışına başlık bekleme eklendikten sonra ilgili3/3 tekrar geçti. Card-states2/2 ve team-page2/2 başarılı; axe0,390px taşma yok. Gerçek QR PNG okuma son koşusu1/1 başarılı. Mobil ekran görüntüsü .local/task19-card-mobile.png gözle incelendi. Ana DB migration0015 ve db:check başarılı; kaynak/build sır taraması0. Log redaction yerel preview kontrolüyle ayrıca kaydedilir.
 
 Veri uydurulmadı: ana DB kişi/takım/kartları boştur. 2026 üç editoryal URL korunur. Yerel doğrulama canlı VDS kapasite veya Wallet sağlayıcı kabulü değildir.
+
+Görev18–20 kapanışında yeniden doğrulandı:30dosya220/220; son TLS45/46 ve tek kart timeout'unun kaynak değiştirilmeden2/2 tekrar başarısı. Nihai kayıt tasks-18-20-acceptance.md.
