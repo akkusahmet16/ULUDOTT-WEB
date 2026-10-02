@@ -192,10 +192,15 @@ try {
   );
   await publishForm(formActor, adminForm.id, 2);
   await submitForm("e2e-admin", { [adminField]: "=1+1" }, randomUUID(), {});
-  const matchingTeam = randomUUID(),
+  const matchingTeam = "ffffffff-0000-4000-8000-000000000001",
     matchingPerson = randomUUID();
   await local.sql`insert into teams(id,event_id,name,normalized_name,expected_size) values(${matchingTeam},${registrationEvent},'DEMO eşleştirme takımı','demo eşleştirme takımı',2)`;
   await local.sql`insert into applications(id,event_id,full_name,email,phone,mode) values(${matchingPerson},${registrationEvent},'DEMO arayan','matching-e2e@test.invalid','+905551234567','seeking')`;
+  for (let candidate = 1; candidate <= 5; candidate++) {
+    const candidateId =
+      "17000000-0000-4000-8000-" + String(candidate).padStart(12, "0");
+    await local.sql`insert into teams(id,event_id,name,normalized_name,expected_size) values(${candidateId},${registrationEvent},${"DEMO aday " + candidate},${"demo aday " + candidate},2)`;
+  }
   await local.sql`insert into application_skills(application_id,skill,level) values(${matchingPerson},'visual_art',4)`;
   await closeDatabase();
   if (process.env.ULUDOTT_E2E_PRODUCTION === "1") {

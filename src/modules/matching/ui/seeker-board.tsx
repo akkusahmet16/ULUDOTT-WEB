@@ -1,4 +1,5 @@
 "use client";
+import type { ExplainedRecommendation } from "../domain/recommendation";
 import { useState } from "react";
 import type { SeekerBoardData } from "../application/matching-service";
 import { skillKeys, skillLabels } from "../domain/skills";
@@ -69,6 +70,27 @@ export function SeekerBoard({
       setBusy(false);
     }
   }
+  const renderTeam = (personId: string, team: ExplainedRecommendation) => (
+    <section key={team.id} aria-label={team.name}>
+      <h3>{team.name}</h3>
+      <p>
+        {team.memberCount}/{team.expectedSize} üye · katkı puanı {team.score}
+      </p>
+      <ul>
+        {team.reasons.map((reason) => (
+          <li key={reason}>{reason}</li>
+        ))}
+      </ul>
+      <button
+        disabled={busy}
+        onClick={() =>
+          void command("assign", personId, team.id, team.rosterRevision)
+        }
+      >
+        Bu takıma ata
+      </button>
+    </section>
+  );
   return (
     <section aria-label="Takım arayan paneli">
       <form
@@ -130,8 +152,9 @@ export function SeekerBoard({
       </form>
       <p role="status">{message}</p>
       <p>
-        Öneriler bu sayfadaki takımlar arasında beceri çeşitliliği ve seviye katkısına göre sıralanır. Diğer adaylar için sonraki takım önerileri sayfasını açın. Atama
-        katılım onayı vermez.
+        Öneriler bu sayfadaki takımlar arasında beceri çeşitliliği ve seviye
+        katkısına göre sıralanır. Diğer adaylar için sonraki takım önerileri
+        sayfasını açın. Atama katılım onayı vermez.
       </p>
       {data?.items.length === 0 && <p>Bu filtrelerde takım arayan yok.</p>}
       {data?.items.map((person) => (
@@ -164,33 +187,19 @@ export function SeekerBoard({
               {person.recommendations.length === 0 && (
                 <p>Bu sayfada uygun boş takım yok.</p>
               )}
-              {person.recommendations.map((team) => (
-                <section key={team.id} aria-label={team.name}>
-                  <h3>{team.name}</h3>
-                  <p>
-                    {team.memberCount}/{team.expectedSize} üye · katkı puanı{" "}
-                    {team.score}
-                  </p>
-                  <ul>
-                    {team.reasons.map((reason) => (
-                      <li key={reason}>{reason}</li>
-                    ))}
-                  </ul>
-                  <button
-                    disabled={busy}
-                    onClick={() =>
-                      void command(
-                        "assign",
-                        person.id,
-                        team.id,
-                        team.rosterRevision,
-                      )
-                    }
-                  >
-                    Bu takıma ata
-                  </button>
-                </section>
-              ))}
+              {person.recommendations
+                .slice(0, 5)
+                .map((team) => renderTeam(person.id, team))}
+              {person.recommendations.length > 5 && (
+                <details>
+                  <summary>
+                    Diğer uygun takımlar ({person.recommendations.length - 5})
+                  </summary>
+                  {person.recommendations
+                    .slice(5)
+                    .map((team) => renderTeam(person.id, team))}
+                </details>
+              )}
             </>
           )}
         </article>

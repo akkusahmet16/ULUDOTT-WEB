@@ -18,14 +18,19 @@ test("Yönetici beceri filtresi, açıklamalı öneri, atama ve geri alma", asyn
   await page
     .getByRole("combobox", { name: "Etkinlik", exact: true })
     .selectOption({ label: "DEMO UluJam başvuru" });
-  await page.getByRole("combobox", {name:"Beceri alanı",exact:true}).selectOption("visual_art");
-  await page.getByRole("combobox", {name:"En düşük seviye",exact:true}).selectOption("4");
+  await page
+    .getByRole("combobox", { name: "Beceri alanı", exact: true })
+    .selectOption("visual_art");
+  await page
+    .getByRole("combobox", { name: "En düşük seviye", exact: true })
+    .selectOption("4");
   await page.getByRole("button", { name: "Filtrele", exact: true }).click();
   const person = page.getByRole("article", {
     name: "DEMO arayan",
     exact: true,
   });
   await expect(person).toBeVisible();
+  await person.getByText(/^Diğer uygun takımlar \(\d+\)$/).click();
   const team = person.getByRole("region", {
     name: "DEMO eşleştirme takımı",
     exact: true,

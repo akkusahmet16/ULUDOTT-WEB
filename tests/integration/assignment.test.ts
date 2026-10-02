@@ -130,3 +130,61 @@ it("Dolu veya farklı etkinliğin takımına taşıma önceki üyeliği bozmaz",
     await x.cleanup();
   }
 });
+it("Liste okunduktan sonra saklama süresi dolan kişi atanamaz; süresi dolan beceriler öneriyi etkilemez", async () => {
+  const x = await ulujamFixture();
+  try {
+    const founder = await submitUlujam(x.input("new"), randomUUID());
+    if (!founder.team) throw Error("missing team");
+    const seeking = await submitUlujam(x.input("seeking"), randomUUID());
+    const [participant] =
+      await x.sql`select id from applications where submission_id=${seeking.id}`;
+    const before = await seekerBoard(x.actor, { eventId: x.eventId });
+    expect(before.items).toHaveLength(1);
+    await x.sql`update submissions set created_at=now()-interval '3 days',expires_at=now()-interval '1 day' where id in (${seeking.id},${founder.id})`;
+    await expect(
+      assignParticipant(x.actor, participant.id, founder.team.id, 2),
+    ).rejects.toThrow(/saklama/);
+    expect(
+      (
+        await x.sql`select count(*)::int n from memberships where left_at is null`
+      )[0].n,
+    ).toBe(1);
+    await submitUlujam(x.input("seeking"), randomUUID());
+    const after = await seekerBoard(x.actor, { eventId: x.eventId });
+    expect(after.items).toHaveLength(1);
+    expect(after.items[0].recommendations[0].skills).toEqual([]);
+  } finally {
+    await x.cleanup();
+  }
+});
+it("Altı ve elli bir aday takımın her birine öneri sayfalarından erişilir", async () => {
+  const x = await ulujamFixture();
+  try {
+    await submitUlujam(x.input("seeking"), randomUUID());
+    for (let n = 0; n < 6; n++)
+      await x.sql`insert into teams(event_id,name,normalized_name,expected_size) values(${x.eventId},${"DEMO " + n},${"demo " + n},2)`;
+    const small = await seekerBoard(x.actor, { eventId: x.eventId });
+    expect(small.items[0].recommendations).toHaveLength(6);
+    expect(small.nextTeamCursor).toBeNull();
+    for (let n = 6; n < 51; n++)
+      await x.sql`insert into teams(event_id,name,normalized_name,expected_size) values(${x.eventId},${"DEMO " + n},${"demo " + n},2)`;
+    const first = await seekerBoard(x.actor, { eventId: x.eventId });
+    expect(first.items[0].recommendations).toHaveLength(50);
+    expect(first.nextTeamCursor).not.toBeNull();
+    const second = await seekerBoard(x.actor, {
+      eventId: x.eventId,
+      teamCursor: first.nextTeamCursor!,
+    });
+    expect(second.items[0].recommendations).toHaveLength(1);
+    expect(
+      new Set(
+        [
+          ...first.items[0].recommendations,
+          ...second.items[0].recommendations,
+        ].map((t) => t.id),
+      ).size,
+    ).toBe(51);
+  } finally {
+    await x.cleanup();
+  }
+});

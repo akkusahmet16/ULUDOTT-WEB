@@ -76,6 +76,13 @@ async function changeAssignment(
       ["rejected", "withdrawn"].includes(participant.status)
     )
       throw new SubmissionError(409, "Katılımcı atamaya uygun değil");
+    if (!undo && participant.submissionId) {
+      const [retained] = await tx.execute(
+        sql`select id from submissions where id=${participant.submissionId} and expires_at>clock_timestamp() for share`,
+      );
+      if (!retained)
+        throw new SubmissionError(410, "Başvurunun saklama süresi doldu");
+    }
     const [active] = await tx
       .select()
       .from(memberships)
@@ -165,19 +172,17 @@ export async function seekerBoard(actor: Actor, raw: unknown) {
     const candidateRows =
       await tx.execute(sql`select t.id,t.name,t.expected_size,t.roster_revision,
  (select count(*)::int from memberships m where m.team_id=t.id and m.left_at is null) as member_count,
- coalesce((select jsonb_agg(jsonb_build_object('skill',s.skill,'level',s.level)) from application_skills s join memberships m on m.application_id=s.application_id where m.team_id=t.id and m.left_at is null),'[]'::jsonb) as skills
+ coalesce((select jsonb_agg(jsonb_build_object('skill',s.skill,'level',s.level)) from application_skills s join memberships m on m.application_id=s.application_id join applications a on a.id=s.application_id where m.team_id=t.id and m.left_at is null and (a.submission_id is null or exists(select 1 from submissions sub where sub.id=a.submission_id and sub.expires_at>now()))),'[]'::jsonb) as skills
  from teams t where t.event_id=${input.eventId} and t.status in ('pending','approved','changes_requested') and (select count(*) from memberships m where m.team_id=t.id and m.left_at is null)<t.expected_size
  ${input.teamCursor ? sql`and t.id>${input.teamCursor}::uuid` : sql``} order by t.id limit 51`);
-    const candidates: AvailableTeam[] = candidateRows
-      .slice(0, 50)
-      .map((r) => ({
-        id: String(r.id),
-        name: String(r.name),
-        expectedSize: Number(r.expected_size),
-        memberCount: Number(r.member_count),
-        rosterRevision: Number(r.roster_revision),
-        skills: levels.parse(r.skills),
-      }));
+    const candidates: AvailableTeam[] = candidateRows.slice(0, 50).map((r) => ({
+      id: String(r.id),
+      name: String(r.name),
+      expectedSize: Number(r.expected_size),
+      memberCount: Number(r.member_count),
+      rosterRevision: Number(r.roster_revision),
+      skills: levels.parse(r.skills),
+    }));
     const assignedSchema = z.strictObject({
       id: z.uuid(),
       name: z.string(),
@@ -194,7 +199,7 @@ export async function seekerBoard(actor: Actor, raw: unknown) {
           assigned,
           recommendations: assigned
             ? []
-            : recommendTeams({ skills }, candidates).slice(0, 5),
+            : recommendTeams({ skills }, candidates),
         };
       }),
       nextCursor: rows.length > 50 ? String(rows[49].id) : null,

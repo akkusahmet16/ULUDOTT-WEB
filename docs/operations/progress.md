@@ -418,3 +418,22 @@ RED: yeni recommendation/matching-service modülleri yok testleri izlendi; GREEN
 Task17: Ruling: expectedRevision hedef takımın rosterRevision'ıdır — son koltuk ataması ve eski geri alma komutlarının çakışmasını önler — maliyet: başka üyelik değişince yönetici listeyi yeniler.
 Task17: Ruling: öneriler50 takım sayfasından en yüksek5; diğer takımlar cursor ile açılır — sınırlı sunucu kaynakları ve büyük listelerde sayfalama gereği — maliyet: başka sayfada daha yüksek katkılı takım olabilir, panel açıklaması bunu belirtir.
 Task17: complete (BASE0b832ac; vitest --maxWorkers=2 202/202; E2E40/40). Tek son bağımsız review bekleniyor; Sites genel önizleme kapsamı sorusu cevaplanmadı, deployment yapılmadı.
+
+## Görev16–17 son bağımsız inceleme
+Fresh-context gpt-6-astra read-only review ae6cd64..217ecf8 yapıldı; tek inceleme, alt ajan/DB mutasyonu yok. Critical0; Important2 kabul; Minor1 ertelendi. Önemli bulgular tek TDD düzeltme pass'inde ele alındı.
+Final: fixed süresi dolan kişinin eski panelden atanabilmesi ve süresi dolan takım üyesi becerilerinin öneriye katılması — expiry-between-read-and-command testi RED (istek başarılı oldu)→GREEN (410, üyelik değişmedi; expired skills boş). Transaction içinde saklama kontrolü; skill aggregation retained kayıtlarla sınırlı.
+Final: fixed aday6..50'nin kesilmiş öneriler yüzünden erişilememesi —6/51 aday cursor testi RED5!=6→GREEN bütün51 erişilebilir. Sayfanın bütün50 önerisi döner; ilk5 görünür, diğerleri erişilebilir details içindedir. Task17'deki ilk5+cursor ruling'i bununla düzeltilmiştir.
+Final: minor (deferred): atama audit metadata'sında kaynak/hedef takım UUID'leri yok; application UUID/revision/üyelik tarihçesi mevcut, operatör doğrudan audit kaydından takımı göremez.
+Final: Ruling:18–19 onay/aktif kart/geç üye uygunluğu bu turda yapılmaz — kullanıcı16–17 istedi, kart0 koruması doğrulandı — maliyet: aktif kart/Wallet hakkı18–19 tamamlanana kadar yok.
+Final: Ruling:20 tam sonuç yayını ve yayın rızası gelecekteki görevdir —16–17 hiçbir kişisel sonucu yayımlamaz — maliyet: yeni tam oyun sonuçları henüz açılamaz.
+Final: Ruling:21 outbox worker ve stale-job revision ileriki görevdir — bu tur yeni worker yok — maliyet: ileride sağlayıcı işleri worker kurulana kadar işlenmez.
+Final: Ruling:22 Apple/Google Wallet sağlayıcı teslimi gelecekteki görevdir — bu tur sağlayıcı nesnesi ve kart oluşturmaz — maliyet: Wallet sunulamaz.
+Final: Ruling:25 Turnstile/CDN sertleştirmesi ileriki görevdir — mevcut CSRF/rate limit korunur — maliyet: tam üretim bot/CDN katmanı henüz kurulmadı.
+Final: Ruling: bağlı UluJam verisinin fiziksel silinmesi/production retention scheduler/yedek yok etme yaşam döngüsü dağıtım işinde yapılır — bu tur expired read/assignment kapalı, gerçek kişisel veri0 — maliyet: fiziksel temizleme hazır olmadan gerçek kişisel veri toplanmamalıdır.
+Final: Ruling: sayfalar arası global öneri optimumu amaçlanmaz — bütün adaylara erişim düzeltildi; sayfa içinde deterministik sıralama sınırı korunur — maliyet: en güçlü aday başka sayfada olabilir.
+Final: Ruling: UluJam waitlist için atomik409 politikası bu turda korunur — hiçbir bekleme kaydı takım/kart yaratmaz, generic waitlist çalışır — maliyet: özel başvuru waitlist ürün kararı gerekir.
+Final: Ruling: Sites yayını henüz yapılmaz — kullanıcıya genel önizleme/tam Node uygulaması kapsamı soruldu, yanıt gelmedi; mimari kullanıcı isteğiyle korunur — maliyet: yayın URL'si bu turda verilemez.
+Final: Ruling: gerçek sunucu kapasitesi/sır rotasyonu operasyonu/hukuki metin onayı bu turda doğrulanmış sayılmaz — yerel doğrulama ve mevcut kurum gereksinimi bu dış işleri kanıtlamaz — maliyet: gerçek üretim kabulü sonraki dağıtımda zorunlu.
+Final: Ruling: değişmemiş arşiv/countdown kodu ve bütün generated snapshot içerikleri bağımsız source review kapsamı dışında; journal/DDL alignment incelendi — bu tur regresyon süiti mevcut sayfaları test eder — maliyet: derin eski kod denetimi ayrıca gerekir.
+İlk birlikte ağır test koşusunun timeout'undan kalan bu turun2 pasif test DB'si temizlendi; son veri kontrolünde42tablo/10editoryal kayıt/kişisel0/testDB0/media0. Migration tekrarlandı ve no changes; source/browser/standalone/staged secret taraması0.
+Son kabul: iki Important bulgu RED→GREEN; tüm süit204/204, üretimTLS E2E40/40 (altıncı aday details açılıp atandı/geri alındı, axe0), typecheck/lint/build başarılı. Tek review/fix pass kapandı; Minor1 ertelendi. Yerel geliştirme dalında kayıt korunur; Sites sorusu bekliyor. Görev16–17 tamamlandı,18'e başlanmadı.
