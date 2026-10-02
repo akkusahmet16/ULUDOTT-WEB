@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (- [ ]) syntax for tracking. The user requested file-by-file review with the assistant; do not delegate implementation.
 
-Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–10 tamamlandı; sıradaki adım Görev 11. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
+Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–11 tamamlandı; sıradaki adım Görev 12. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
 
 **Goal:** Uludott topluluk sitesi, genel etkinlik/form/duyuru/link yönetimi, UluJam takım ve onay akışları, 2026 arşivi, 2027 “Yakında” alanı, derece oyunları ve onay sonrası Wallet kartlarını sıfırdan güvenli ve sürdürülebilir biçimde üretmek.
 
@@ -191,9 +191,9 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Arayüz:** Üretir: createDraftForm(actor,eventId,settings), saveDraftForm(actor,formId,definition,expectedRevision), publishForm(actor,formId,expectedRevision), closeForm(actor,formId).
 
-- [ ] Yetkisiz editör, eksik zorunlu ayar, taslak önizleme, yeni sürüm bildirimi, yayımlama/duraklatma/kapatma ve tarih penceresi testlerini yaz.
-- [ ] Alan ekleme/sıralama/silme, etiket/yardımcı metin/kurallar, mobil-masaüstü önizleme, kapasite, tekrar politikası, bekleme listesi ve teşekkür metnini uygula.
-- [ ] Dosya alanı kontrolünü arayüzde etkin gösterme; Playwright, klavye ve sunucu yetki testlerini geçir; değişen dosyaları inceleyip commit et.
+- [x] Yetkisiz editör, eksik zorunlu ayar, taslak önizleme, yeni sürüm bildirimi, yayımlama/duraklatma/kapatma ve tarih penceresi testlerini yaz.
+- [x] Alan ekleme/sıralama/silme, etiket/yardımcı metin/kurallar, mobil-masaüstü önizleme, kapasite, tekrar politikası, bekleme listesi ve teşekkür metnini uygula.
+- [x] Dosya alanı kontrolünü arayüzde etkin gösterme; Playwright, klavye ve sunucu yetki testlerini geçir; değişen dosyaları inceleyip commit et.
 
 ### Görev 12 — açık form gönderimi, makbuz ve kapasite
 

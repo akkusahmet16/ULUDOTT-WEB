@@ -27,6 +27,11 @@ export default async function AdminPage() {
               <Link href="/admin/galeri">Galeri yönetimi</Link>
             </p>
           )}
+          {session.actor.roles.includes("event_manager") && (
+            <p>
+              <Link href="/admin/formlar">Form yönetimi</Link>
+            </p>
+          )}
           <SessionActions />
         </>
       ) : (

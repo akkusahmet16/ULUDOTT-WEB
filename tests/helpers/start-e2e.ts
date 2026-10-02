@@ -66,7 +66,9 @@ try {
   await local.sql`insert into admins(id,email,password_hash,mfa_secret_encrypted) values(${id},'admin-e2e@test.invalid',${await hashPassword("E2E-only-password-long-42")},${encryptMfaSecret("JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP", id)})`;
   await local.sql`insert into admin_roles(admin_id,role) values(${id},'system_admin')`;
   await local.sql`insert into admin_roles(admin_id,role) values(${id},'content_editor')`;
-  await local.sql`update admins set recovery_code_hashes=${local.sql.json([tokenHash("11111111111111111111111111111111"), tokenHash("22222222222222222222222222222222"), tokenHash("33333333333333333333333333333333"), tokenHash("44444444444444444444444444444444"), tokenHash("55555555555555555555555555555555")])} where id=${id}`;
+  await local.sql`insert into admin_roles(admin_id,role) values(${id},'event_manager')`;
+  await local.sql`insert into admin_event_scopes(admin_id,event_id) select ${id},id from events`;
+  await local.sql`update admins set recovery_code_hashes=${local.sql.json([tokenHash("11111111111111111111111111111111"), tokenHash("22222222222222222222222222222222"), tokenHash("33333333333333333333333333333333"), tokenHash("44444444444444444444444444444444"), tokenHash("55555555555555555555555555555555"), tokenHash("66666666666666666666666666666666")])} where id=${id}`;
   await closeDatabase();
   if (process.env.ULUDOTT_E2E_PRODUCTION === "1") {
     productionDir = await mkdtemp(join(tmpdir(), "uludott-standalone-"));

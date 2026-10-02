@@ -1,6 +1,7 @@
 import "server-only";
 import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
+import type { DbTx } from "../../../lib/database/transaction.ts";
 import type { Database } from "../../../lib/database/client.ts";
 import {
   forms,
@@ -60,7 +61,7 @@ function version(row: typeof formVersions.$inferSelect): FormVersion {
 }
 // Internal repository only. Actor permissions and audit are bound by the task 11 service.
 export async function createDraftVersion(
-  db: Database,
+  db: Database | DbTx,
   formId: string,
   input: unknown,
 ): Promise<FormVersion> {
@@ -88,7 +89,7 @@ export async function createDraftVersion(
   });
 }
 export async function publishStoredVersion(
-  db: Database,
+  db: Database | DbTx,
   id: string,
 ): Promise<FormVersion> {
   z.uuid().parse(id);
@@ -135,7 +136,7 @@ export async function publishStoredVersion(
   });
 }
 export async function readFormVersion(
-  db: Database,
+  db: Database | DbTx,
   id: string,
 ): Promise<FormVersion> {
   z.uuid().parse(id);

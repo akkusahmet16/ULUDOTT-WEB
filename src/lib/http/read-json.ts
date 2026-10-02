@@ -1,5 +1,5 @@
 import "server-only";
-export async function readJson(req: Request) {
+export async function readJson(req: Request, maxBytes = 32 * 1024) {
   if (!req.headers.get("content-type")?.startsWith("application/json"))
     throw Error("Geçersiz istek");
   const r = req.body?.getReader();
@@ -17,7 +17,7 @@ export async function readJson(req: Request) {
       if (expired) throw Error("İstek süresi aşıldı");
       if (done) break;
       total += value.byteLength;
-      if (total > 32 * 1024) {
+      if (total > maxBytes) {
         await r.cancel();
         throw Error("İstek çok büyük");
       }

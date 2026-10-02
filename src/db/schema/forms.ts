@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
   type AnyPgColumn,
+  type PgTableExtraConfigValue,
   pgTable,
   text,
   uuid,
@@ -26,14 +27,27 @@ export const forms = pgTable(
     opensAt: instant("opens_at"),
     closesAt: instant("closes_at"),
     capacity: integer("capacity"),
+    settings: jsonb("settings").default({}).notNull(),
+    draftVersionId: uuid("draft_version_id"),
+    currentVersionId: uuid("current_version_id"),
     revision: integer("revision").default(1).notNull(),
     createdAt: createdAt(),
   },
-  (t) => [
+  (t): PgTableExtraConfigValue[] => [
+    foreignKey({
+      name: "form_draft_version_fk",
+      columns: [t.id, t.draftVersionId],
+      foreignColumns: [formVersions.formId, formVersions.id],
+    }),
+    foreignKey({
+      name: "form_current_version_fk",
+      columns: [t.id, t.currentVersionId],
+      foreignColumns: [formVersions.formId, formVersions.id],
+    }),
     unique("form_event_identity_unique").on(t.eventId, t.id),
     check(
       "form_status",
-      sql`${t.status} IN ('draft','published','closed','archived')`,
+      sql`${t.status} IN ('draft','published','paused','closed','archived')`,
     ),
     check(
       "form_window",

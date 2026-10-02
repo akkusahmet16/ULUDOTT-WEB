@@ -102,3 +102,8 @@ Takım kapasite kilidi/constraint trigger, tam NFKC Türkçe isim normalizasyonu
 ## Görev 10 — form sürümü mühürleme
 
 0007_form_versioning custom/journal migration tablo sayısını değiştirmez (42). form_versions snapshot ve form_fields/form_rules çocukları published_at sonrası trigger'larla değişmez. Child mutasyonu version parent'ını kilitler; yayınlama repository'si de aynı kilitle aynaların tutarlılığını doğrular. versionId+fieldKey composite PK/FK geçmiş cevapları korur; yeni etiket eski yanıtı değiştirmez. Actor servis/panel Görev 11, gerçek submission transaction Görev 12 kapsamıdır. Ayrıntılar docs/operations/form-definitions.md.
+
+
+## Görev 11 form yönetimi
+
+0008_form_settings forms içine settings JSONB, draft/current version pointer ve paused ekler. Composite FK (forms.id,versionId) → (form_versions.form_id,id) başka forma bağlantıyı reddeder. 42 tablo; form mutation scoped forms.write/revision/audit transaction kullanır.

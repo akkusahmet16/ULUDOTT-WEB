@@ -2,7 +2,7 @@
 
 GitHub deposu: [akkusahmet16/ULUDOTT-WEB](https://github.com/akkusahmet16/ULUDOTT-WEB).
 
-Üretim platformunun adım adım geliştirildiği depo. **Görev 1–10 tamamlandı**: çalışma ortamı, veritabanı, yönetici kimliği, tasarım sistemi, özel medya, etkinlik/duyuru yayın akışı, bağlantı merkezi ve 2026 derece bağlantıları hazır. UluJam arşivi/2027 yakında ve mini oyunlar tamamlandı. Form şeması, koşul motoru ve değişmez sürümler hazır. Sıradaki adım Görev 11 form yönetim paneli; başvuru ve Wallet özellikleri henüz uygulanmadı. Üretime hazır değildir.
+Üretim platformunun adım adım geliştirildiği depo. **Görev 1–11 tamamlandı**: çalışma ortamı, veritabanı, yönetici kimliği, tasarım sistemi, özel medya, etkinlik/duyuru yayın akışı, bağlantı merkezi ve 2026 derece bağlantıları hazır. UluJam arşivi/2027 yakında ve mini oyunlar tamamlandı. Form şeması, koşul motoru ve değişmez sürümler hazır. Form yönetim paneli hazır. Sıradaki adım Görev 12 açık form gönderimi; başvuru ve Wallet özellikleri henüz uygulanmadı. Üretime hazır değildir.
 
 ## Önce okunacak belgeler
 
@@ -67,7 +67,7 @@ Ham `Media` ve `Uludott Logo Pack` varlıkları yerinde korunur, depoya alınmaz
 
 ## Şu an açık kalanlar
 
-Görev 1–10 tamamlandı. Yönetici kimliği, MFA, oturum/rol altyapısı, ortak arayüz, medya, etkinlik/duyuru yayın akışı, bağlantı merkezi ve 2026 derece bağlantıları hazır; UluJam arşivi/2027 yakında ve mini oyunlar hazır; form şeması/koşul motoru/değişmez sürümler hazır; sonraki adım Görev 11 form yönetim paneli. Sonraki ürün görevleri henüz uygulanmadı. Hukuk, gerçek etkinlik bilgileri, bildirim sağlayıcısı, Wallet hesap/sertifika/cihaz ve canlı hosting kabulü ayrı bağımlılıklardır. Ayrıntılı durum ilerleme raporundadır.
+Görev 1–11 tamamlandı. Yönetici kimliği, MFA, oturum/rol altyapısı, ortak arayüz, medya, etkinlik/duyuru yayın akışı, bağlantı merkezi ve 2026 derece bağlantıları hazır; UluJam arşivi/2027 yakında ve mini oyunlar hazır; form şeması/koşul motoru/değişmez sürümler hazır; form yönetimi hazır; sonraki adım Görev 12 açık form gönderimi. Sonraki ürün görevleri henüz uygulanmadı. Hukuk, gerçek etkinlik bilgileri, bildirim sağlayıcısı, Wallet hesap/sertifika/cihaz ve canlı hosting kabulü ayrı bağımlılıklardır. Ayrıntılı durum ilerleme raporundadır.
 
 Yönetici girişi `/admin`; ilk kişi kurulumu ve izin matrisi: [Yönetici kimliği](docs/operations/admin-auth.md).
 
@@ -82,3 +82,5 @@ Bağlantı merkezi `/linkler`, yönetim `/admin/linkler`; doğrulanmış adresle
 UluJam yılları için `pnpm db:seed:ulujam` 2026 editoryal bağlantılarını ve 2027 tarihsiz taslağını idempotent yükler. [Arşiv ve galeri işletme rehberi](docs/operations/ulujam-archive.md), [Aşama 1 kabulü](docs/operations/phase-1-acceptance.md).
 
 [Form tanımları ve sürümleme sözleşmesi](docs/operations/form-definitions.md). Görev 10 çekirdek motoru sağlar; form yönetimi ve canlı başvuru kabulü sonraki adımlardadır.
+
+[Form yönetim rehberi](docs/operations/form-management.md).

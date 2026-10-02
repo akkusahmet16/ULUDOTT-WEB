@@ -4,7 +4,7 @@ Plan: `docs/design/2026-10-02-uygulama-plani.md`
 Mimari: `docs/design/2026-10-01-mimari-oneri.md`
 Başlangıç: 2 Ekim 2026. Kullanıcı planın yürütülmesine izin verdi.
 
-**Güncel durum: Görev 1–10 tamamlandı. Aşama 1 kabul edildi; sıradaki adım Görev 11.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 10 kapanışıdır.
+**Güncel durum: Görev 1–11 tamamlandı. Görev 12 ve ardından 13 yürütülecek.** Aşağıdaki önceki açık durumlar çalışma geçmişidir; son kabul kaydı Görev 10 kapanışıdır.
 
 ## Çalışma disiplini
 
@@ -290,3 +290,19 @@ Kullanıcı https://github.com/akkusahmet16/ULUDOTT-WEB deposunun temizlenip bu 
 Yayın öncesi yeni proje HEAD geçmişindeki 306 blob tarandı: gerçek env sırları/private-key içerik eşleşmesi 0, yasak env/anahtar/Wallet/raw medya yolu 0. pnpm test tekrar 141/141 geçti (13 dosya, 8.68 sn). gh CLI yoktu; mevcut osxkeychain Git yetkilendirmesiyle ek kurulum gerekmeksizin aktarım yapıldı.
 
 Tam eski SHA'ya bağlı force-with-lease kullanılarak origin/main 9f5d4d0'dan 42475dd'ye başarıyla değiştirildi. Projenin Görev 1–10 commit geçmişi korundu, eski repo dosyaları main ağacından çıktı. Bu aktarım kaydı ayrı docs commit ile normal push edilir. .env.local, sırlar, node_modules/build çıktısı ve ham medya gönderilmedi. Bu işlem GitHub kaynak aktarımıdır; canlı VDS deployment değildir. Görev 11 henüz başlatılmadı.
+
+
+## Görev 11–13 başlangıç — 2 Ekim 2026
+
+Başlangıç b731d00, çalışma ağacı temiz. executing-plans ile 11→12→13 inline yürütülür; her görev ayrı RED/GREEN/inceleme/commit kapısından geçer. Next page/route/server-client belgeleri okundu: async params/cookies, GET dinamik/no-store, sunucu servisleri server-only.
+
+Ruling: genel form mutlaka bir etkinliğe bağlı olur; forms.write yalnız event_manager+eventScopes, content_editor veya system_admin tek başına form/başvuru PII yetkisi almaz — mevcut izin matrisine uyar; maliyet: bağımsız etkinliksiz form desteklenmez. Ayarlar formda saklanır; published/draft version FK'leri aynı form kimliğine composite bağlanır. Yayın için başlangıç tarihi zorunlu, bitiş opsiyonel; teşekkür metni zorunlu; bekleme listesi, tekrar politikası ve 1–3650 gün saklama ayarı vardır. Görev 12'de waitlisted ayrı durum olacak; count yalnız received/pending/approved. Preview taslak yanıt göndermez. Görev 13'te veri silme receipt ve idempotency cevabını da iptal eder; audit yalnız metadata.
+
+Görev 11 RED 3/3 PG stub, sonra 3/3 GREEN. İlk fixture event_kind community geçersizdi; general düzeltildi, izin/şema gevşetilmedi. Composite form-version FK döngüsünde Drizzle extra-config return type açık yazılarak TS inference düzeltildi. E2E ilk 1 failed/1 passed, form sayfaları eksik; şimdi rotalar ve panel bağlandı. API gövde sınırı form için 128 KiB, definition validator 100 KB kalır.
+
+Görev 11 odak E2E 2/2 GREEN (12 sn); tüm Vitest 144/144; typecheck/lint/build başarılı. 0008 SQL incelendi; DB migration iki koşu ve db:check geçti. UI, alan/config, renderer/preview, async page/route ve server scoped servis incelendi. Birleşik koşullar UI içinde korunur; bu arayüz tek yaprak koşulu düzenler. Production tarayıcı ve sır/veri taraması kapanışta kontrol edilir.
+
+
+### Görev 11 kapanış
+
+144/144 Vitest, 29/29 production E2E (14.3 sn), 2/2 odak dev E2E; typecheck/lint/build/db:check ve iki migrate başarılı. Son kontrol 42 tablo, 10 editoryal satır, 0 test DB/medya nesnesi; PII tabloları boş. Source/browser/standalone sır eşleşmesi 0; yasak build dosyası 0. 0008 şema/migration/metadata, form servis/HTTP/scoped izin/audit, helperText/repository tx desteği, bounded JSON, UI/settings/fields/preview/builder, admin route/menu, PG/E2E ve fixture değişiklikleri dosya bazında incelendi. Birleşik koşul UI sınırlaması rehberde açık; mevcut gruplar korunur. Alan kaydetme yeni draft version oluşturur, eski published version değişmez. Plan kutuları tamamlandı; sonraki Görev 12.

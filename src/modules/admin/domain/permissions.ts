@@ -15,6 +15,7 @@ const globalPermissions: Record<string, readonly string[]> = {
   "system.read": ["system_admin"],
 };
 const eventPermissions = new Set([
+  "forms.write",
   "publication.write",
   "applications.read",
   "applications.write",

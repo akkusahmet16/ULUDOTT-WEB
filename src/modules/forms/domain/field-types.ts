@@ -33,6 +33,7 @@ export const fieldSchema = z.strictObject({
   id: fieldIdSchema,
   type: z.enum(fieldTypes),
   label: z.string().trim().min(1).max(160),
+  helpText: z.string().trim().max(500).optional(),
   required: z.boolean().default(false),
   options: z
     .array(

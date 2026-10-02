@@ -28,6 +28,7 @@ const changesSchema = z.strictObject({
       "active",
       "revoked",
       "closed",
+      "paused",
     ])
     .optional(),
   changedFields: z
@@ -85,13 +86,11 @@ export async function appendAudit(
     action.length > 100
   )
     throw new Error("Geçersiz denetim kimliği veya eylemi.");
-  await tx
-    .insert(auditLogs)
-    .values({
-      actorId: actor.adminId,
-      action,
-      objectType: target.data.type,
-      objectId: target.data.id,
-      changes: changes.data,
-    });
+  await tx.insert(auditLogs).values({
+    actorId: actor.adminId,
+    action,
+    objectType: target.data.type,
+    objectId: target.data.id,
+    changes: changes.data,
+  });
 }
