@@ -3,7 +3,11 @@ import {
   saveDraftForm,
   publishForm,
 } from "../../src/modules/forms/application/form-service.ts";
-import { buildUlujamFormDefinition } from "../../src/modules/applications/domain/ulujam-input.ts";
+import { submitUlujam } from "../../src/modules/applications/application/submit-ulujam.ts";
+import {
+  buildUlujamFormDefinition,
+  ulujamFields as u,
+} from "../../src/modules/applications/domain/ulujam-input.ts";
 import { seedCoffeeTalkDraft } from "../../src/db/seeds/development/coffee-talk-draft.ts";
 import { submitForm } from "../../src/modules/forms/application/submit-form.ts";
 import { randomUUID } from "node:crypto";
@@ -77,7 +81,7 @@ try {
   await local.sql`insert into admin_roles(admin_id,role) values(${id},'content_editor')`;
   await local.sql`insert into admin_roles(admin_id,role) values(${id},'event_manager')`;
   await local.sql`insert into admin_event_scopes(admin_id,event_id) select ${id},id from events`;
-  await local.sql`update admins set recovery_code_hashes=${local.sql.json([tokenHash("11111111111111111111111111111111"), tokenHash("22222222222222222222222222222222"), tokenHash("33333333333333333333333333333333"), tokenHash("44444444444444444444444444444444"), tokenHash("55555555555555555555555555555555"), tokenHash("66666666666666666666666666666666"), tokenHash("77777777777777777777777777777777"), tokenHash("88888888888888888888888888888888"), tokenHash("99999999999999999999999999999999"), tokenHash("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")])} where id=${id}`;
+  await local.sql`update admins set recovery_code_hashes=${local.sql.json([tokenHash("11111111111111111111111111111111"), tokenHash("22222222222222222222222222222222"), tokenHash("33333333333333333333333333333333"), tokenHash("44444444444444444444444444444444"), tokenHash("55555555555555555555555555555555"), tokenHash("66666666666666666666666666666666"), tokenHash("77777777777777777777777777777777"), tokenHash("88888888888888888888888888888888"), tokenHash("99999999999999999999999999999999"), tokenHash("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),tokenHash("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")])} where id=${id}`;
   const [scopeEvent] =
     await local.sql`select event_id from event_years where year=2027`;
   await local.sql`insert into teams(id,event_id,name,normalized_name,expected_size) values('15000000-0000-4000-8000-000000000090',${scopeEvent.event_id},'DEMO önizleme takımı','demo önizleme takımı',3)`;
@@ -102,7 +106,7 @@ try {
       slug: "e2e-ulujam",
       opensAt: "2020-01-01T00:00:00Z",
       closesAt: null,
-      capacity: 10,
+      capacity: 30,
       waitlist: false,
       duplicatePolicy: "reject",
       thankYou: "DEMO başvuru alındı.",
@@ -192,6 +196,40 @@ try {
   );
   await publishForm(formActor, adminForm.id, 2);
   await submitForm("e2e-admin", { [adminField]: "=1+1" }, randomUUID(), {});
+  const [registrationVersion] =
+    await local.sql`select current_version_id from forms where id=${registrationForm.id}`;
+  await submitUlujam(
+    {
+      slug: "e2e-ulujam",
+      versionId: registrationVersion.current_version_id,
+      answers: {
+        [u.fullName]: "DEMO onay üyesi",
+        [u.email]: "approval-e2e@test.invalid",
+        [u.phone]: "+905551234567",
+        [u.mode]: "new",
+        [u.skills]: ["software"],
+        [u.levels.software]: 3,
+        [u.teamName]: "DEMO onay takımı",
+        [u.expectedSize]: 2,
+      },
+    },
+    randomUUID(),
+  );
+  await submitUlujam(
+    {
+      slug: "e2e-ulujam",
+      versionId: registrationVersion.current_version_id,
+      answers: {
+        [u.fullName]: "DEMO solo onay",
+        [u.email]: "solo-approval-e2e@test.invalid",
+        [u.phone]: "+905551234567",
+        [u.mode]: "solo",
+        [u.skills]: ["software"],
+        [u.levels.software]: 3,
+      },
+    },
+    randomUUID(),
+  );
   const matchingTeam = "ffffffff-0000-4000-8000-000000000001",
     matchingPerson = randomUUID();
   await local.sql`insert into teams(id,event_id,name,normalized_name,expected_size) values(${matchingTeam},${registrationEvent},'DEMO eşleştirme takımı','demo eşleştirme takımı',2)`;

@@ -1,3 +1,4 @@
+import { refreshApplicationCards } from "../../cards/application/card-revision.ts";
 import "server-only";
 import { z } from "zod";
 import { eq, and, isNull, sql, inArray } from "drizzle-orm";
@@ -125,6 +126,7 @@ async function changeAssignment(
     let revision = target.rosterRevision + 1;
     if (!undo)
       revision = (await addMember(tx, teamId, participantId)).rosterRevision;
+    await refreshApplicationCards(tx, [participantId]);
     await appendAudit(
       tx,
       actor,

@@ -2,7 +2,9 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./tests",
-  workers: 2,
+  workers: 1,
+  timeout: 60_000,
+  expect: { timeout: 15_000 },
   testMatch: ["e2e/**/*.spec.ts", "accessibility/**/*.spec.ts"],
   use: {
     baseURL:

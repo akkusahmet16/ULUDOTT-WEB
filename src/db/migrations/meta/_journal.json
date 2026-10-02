@@ -92,6 +92,20 @@
       "when": 1790963569416,
       "tag": "0012_team_token",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1790966934073,
+      "tag": "0013_curvy_masque",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1790967219963,
+      "tag": "0014_special_silver_sable",
+      "breakpoints": true
     }
   ]
 }

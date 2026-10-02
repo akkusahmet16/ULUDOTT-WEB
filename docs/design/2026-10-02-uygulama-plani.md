@@ -269,9 +269,9 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Arayüz:** Üretir: approveRoster(actor,teamId,expectedRosterRevision), requestRosterChanges(actor,teamId,reason), rejectTeam(actor,teamId,reason), approveSolo(actor,participantId). Bütün komutlar audit ve kart revizyonunu transaction içinde yazar.
 
-- [ ] Bekleyen/approved/rejected/changes_requested geçişleri, yetkisiz onay reddi, eski revision çatışması ve geç gelen üye için testleri yaz.
-- [ ] Onay kuyruğunda gerçek/beklenen kişi sayısı, beceriler, etkilenecek kart sayısı ve gerekçeli karar ekranını uygula.
-- [ ] Onaylı eski üyelerin hakkı korunurken yeni üyenin beklediğini; solo için sahte takım açılmadan onay verildiğini doğrula, dosyaları inceleyip commit et.
+- [x] Bekleyen/approved/rejected/changes_requested geçişleri, yetkisiz onay reddi, eski revision çatışması ve geç gelen üye için testleri yaz.
+- [x] Onay kuyruğunda gerçek/beklenen kişi sayısı, beceriler, etkilenecek kart sayısı ve gerekçeli karar ekranını uygula.
+- [x] Onaylı eski üyelerin hakkı korunurken yeni üyenin beklediğini; solo için sahte takım açılmadan onay verildiğini doğrula, dosyaları inceleyip commit et.
 
 ### Görev 19 — makbuz, bireysel web kartı ve takım kart özetleri
 
