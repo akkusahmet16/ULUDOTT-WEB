@@ -331,9 +331,11 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 - [x] Sunucuda imzalı ekleme bağlantısı, Generic Class/nesne, derece güncellemesi, sağlayıcı hata kaydı ve demo/yayın erişimi durumunu uygula.
 - [ ] Yetkili test Google hesabında gerçek ekleme/güncelleme kanıtı al; yayın erişimi yoksa herkese açık kabulü açıkça beklemede bırak; dosyaları ve sır taramasını kontrol edip commit et.
 
-**Dış kabul bekliyor (3 Ekim2026):** Yerel kod/protokol/DB testleri ve paket sır taraması tamam; gerçek issuer/service account/test hesabı, gerçek Google ekleme/güncelleme ve yayın erişimi kanıtı henüz yok. Üçüncü kutu açık tutulur.
+**Dış kabul bekliyor (3 Ekim2026):** Yerel kod/protokol/DB testleri ve paket sır taraması tamam; Kullanıcı hesabı ve API erişiminin hazır olduğunu bildirdi; yerel issuer ID/service-account dosya yolu henüz tanımlı değil, test hesabı/modu girdileri istendi. Gerçek ekleme/güncelleme ve yayın erişimi kanıtı henüz yok. Üçüncü kutu açık tutulur.
 
 ### Görev 24 — Apple Wallet pass ve güncelleme servisi
+
+**Kullanıcı kararı —3 Ekim2026:** Görev kapsamı gözden geçirildi. Ücretli Apple Developer hesabı bulunmadığından Apple Wallet uygulaması ve gerçek cihaz kabulü ertelendi. Aşağıdaki kutular açık kalır; görev tamamlandı sayılmaz. Sertifika/Pass Type ID/APNs ve iPhone testi sağlandığında devam edilir. Google Wallet kurulumu Apple hesabını beklemez.
 
 **Dosyalar:** Oluştur: src/modules/wallet/apple/{apple-pass.ts,signing.ts,registration-service.ts,apple-adapter.ts}, src/app/api/wallet/apple/[cardToken]/route.ts, src/app/api/apple/v1/devices/[deviceId]/registrations/[passTypeId]/{route.ts,[serial]/route.ts}, src/app/api/apple/v1/passes/[passTypeId]/[serial]/route.ts, src/app/api/apple/v1/log/route.ts, tests/integration/apple-pass.test.ts, tests/integration/apple-registration.test.ts, docs/operations/apple-wallet.md.
 

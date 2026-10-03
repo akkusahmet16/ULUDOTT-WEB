@@ -4,7 +4,7 @@
 
 Sunucu adapter'ı, gerçek PostgreSQL hak kontrolü, RS256 OAuth/saveJWT, Generic Class/Object oluşturma/güncelleme/iptal, kararlı Object ID ve eski iş koruması uygulanmıştır. Yerel protokol testinde anahtar runtime üretilir ve dış ağ yerine kontrollü HTTP transport kullanılır. Bu, Google hesabında kart eklendiği anlamına gelmez.
 
-**Gerçek issuer/service account/test kullanıcı hesabı ve ekleme/güncelleme kanıtı sağlanmadı. Görev23 dış kabulü ve herkese açık yayın beklemede.** Eski Wallet secrets dosyaları okunmaz. Google demo yalnız atanmış test/yetkili hesaplarla denenebilir; herkese açık yayın erişimi ayrıca gerekir: [Google yayın erişimi](https://developers.google.com/wallet/generic/test-and-go-live/request-publishing-access).
+**3 Ekim2026 güncelleme:** Kullanıcı Google hesabı ve API erişiminin hazır olduğunu bildirdi. Yerel issuer ID/servis hesabı dosya yolu tanımlı değil; güvenli dosya yolu, issuer modu ve test hesabı bilgisi istendi. Gerçek ekleme/güncelleme kanıtı henüz alınmadığından Görev23 dış kabulü ve herkese açık yayın beklemede. Eski Wallet secrets dosyaları okunmaz. Google demo yalnız atanmış test/yetkili hesaplarla denenebilir; herkese açık yayın erişimi ayrıca gerekir: [Google yayın erişimi](https://developers.google.com/wallet/generic/test-and-go-live/request-publishing-access).
 
 ## Yapılandırma
 
