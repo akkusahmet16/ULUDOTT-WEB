@@ -467,3 +467,12 @@ Kullanıcı ilk uygulamanın tasarımını reddetti; güncel Rockstar GTA VI say
 - [x] Mevcut iki oyun doğrudan sayfada: ilk etkileşimle oynama, yeniden deneme; rastgelelik sadece oturumun mola sırası/yerine etki eder, gezinmeyi kesmez.
 - [x] Gerçek referans oran/font/renk/medya yerleşimi ve kaydırma hareketleri; mobil/reduced-motion/QR korunur.
 - [x] Regresyon RED/GREEN, tam CI, görsel karşılaştırma, bağımsız inceleme; rapor/Git kaydı ve yerel yeniden açılış.
+
+## Sites tasarım önizlemesi — 4 Ekim 2026
+
+Kullanıcı Sites yayınını istedi, sunucu uyumsuzluğu açıklanması ardından açıkça tasarım önizlemesini seçti. Tam uygulama mimarisi değiştirilmez. Ayrı statik checkout ve Sites kaynak deposu kullanılır; ana uygulama verisi, sırları, özel sayfa/API/worker içeriği taşınmaz.
+
+- [x] Sekiz genel sayfanın kaynak322a458 görünümleri; yerel referans font/görseller, menü ve iki oyun.
+- [x] Yönetim bağlantısı giriş/form yerine önizleme açıklaması; bütün sayfalarda kapsam bildirimi.
+- [x] Yerel asset/rota doğrulama, script syntax, kart eşleştirme/kapatma ve yıldız tamamlanma, menü/Escape.
+- [x] Kaynak push/archive/native private publication succeeded; bağlantı, rapor ve yerel tam uygulama açık.

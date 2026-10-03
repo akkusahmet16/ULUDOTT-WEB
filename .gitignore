@@ -20,3 +20,6 @@ Wallet secrets/
 # Kaynak medya yalnızca doğrulanmış türevler olarak uygulamaya alınır.
 /Media/
 /Uludott Logo Pack/
+
+# Independent Sites preview has its own source repository.
+/sites-preview/

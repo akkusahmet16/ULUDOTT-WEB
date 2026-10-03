@@ -671,6 +671,16 @@ Veri denetimi: applications/teams/cards/passes/credits0; historicalPreserved tru
 
 Yerel yeniden açılış: web74107/worker74119 doğru proje cwd, session46808/63901; /,/ulujam,/admin HTTP200. Git deneyi codex/cinematic-theme üzerinde kaydedilir; GitHub yedek backup/theme-before-20261003 ve theme-before-20261003 korunur. Kullanıcı tercihine göre önceki temaya dönülebilir.
 
+## Sites tasarım önizlemesi — 4 Ekim 2026
+
+Kullanıcı yayın kapsamını açıkça tasarım önizlemesi seçti. Sites hosting/building portable akışı okundu. Web74107/worker74119 doğru cwd sonrası durduruldu; kaynak322a458 uygulama genel sayfaları yakalamak için web yeniden açıldı. Ayrı `sites-preview/` checkout (ana Git ignore, kendi Sites kaynak deposu), static.directory dist. Sır/env/özel API/veritabanı/native paket yok. Sekiz genel sayfa ve admin açıklaması9 HTML,4 font ve referans görseller. Next hydration/HMR/RSC scriptleri çıkarıldı; menü/Escape/odak/kaydırma kilidi ve oyun kuralları statik etkileşimlerle korunur. İlk/ikinci mola sırası ve bölüm aralığı her açılışta bir kez seçilir. Bütün sayfalarda yönetim/başvuru/Wallet yok bildirimi bulunur. QR/başvuru/giriş özelliği varmış izlenimi yaratılmaz.
+
+Doğrulama:9 HTML/11asset; bütün yerel href/src mevcut; form/server script/localhost/optimizer URL0; preview.js syntax geçti. Gerçek tarayıcıda yanlış eşleşme/kartları kapat/doğru3çift tamamlandı, yıldız5/5 tamamlandı; menü8bağlantı/Escape geçti. Önizleme kaynak pushSHA c4df10f1696269f84c919c68e4d8c329899c52cf; site workflow archive doğrulandı. Native save_version_and_deploy_private: succeeded, env_revision0. Otomasyon yok; statik tasarım önizlemesi manuel güncellenir.
+
+Sites project_id `appgprj_6ac178c5619c8191af1de280c6a4393f`; version `appgprj_6ac178c5619c8191af1de280c6a4393f~appgver_2248ded6ae1c8191aa7d95f81d39a7e6`; deployment `appgdep_6ac179be12888191a7d339b45fd5e8d2`. Başarılı URL: https://uludott-tasarim-onizleme.akkusahmet.chatgpt.site — owner-private, herkese açık değil. Codex panelinde açılış istendi (queued). Özel uygulama altyapısı ve Wallet kuralları değişmedi; yerel tam uygulama sürer. Temsilî yerel yayın paketi ekranı `.local/sites-preview-final.png`.
+
+Yerel son durum: web74887/worker75313 doğru proje cwd; session58769/62629; HTTP200. Geçici statik kontrol sunucusu75074 durduruldu. Ana uygulama322a458 kaynakları değişmedi; Sites paketi ayrı kaynak deposunda temiz. Plan/rapor ve ignore kaydı ana Git dalına eklenir.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.
