@@ -307,9 +307,9 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Arayüz:** Görev 2'deki enqueue(tx,type,aggregateId,revision,payload) yazma sözleşmesini tüketir; claimJobs(workerId,limit), completeJob(jobId), retryOrDeadLetter(jobId,error) üretir. Worker web işlemiyle aynı repodan ayrı süreç olarak çalışır.
 
-- [ ] Transaction geri alındığında iş kalmaması, aynı işin tekrar teslimi, lease süresi bitmesi, azami deneme/dead-letter ve eski revision'ın güncel sonucu ezmemesi testlerini yaz.
-- [ ] Kısıtlı exponential backoff/jitter, idempotent handler ve yetkili manuel yeniden denemeyi uygula; iş payload'ında sır/telefon taşımamayı denetle.
-- [ ] İşçi kapalıyken temel başvuru/yayın işleminin tutarlı kaldığını ve açılınca kuyruğun işlendiğini doğrula; dosyaları inceleyip commit et.
+- [x] Transaction geri alındığında iş kalmaması, aynı işin tekrar teslimi, lease süresi bitmesi, azami deneme/dead-letter ve eski revision'ın güncel sonucu ezmemesi testlerini yaz.
+- [x] Kısıtlı exponential backoff/jitter, idempotent handler ve yetkili manuel yeniden denemeyi uygula; iş payload'ında sır/telefon taşımamayı denetle.
+- [x] İşçi kapalıyken temel başvuru/yayın işleminin tutarlı kaldığını ve açılınca kuyruğun işlendiğini doğrula; dosyaları inceleyip commit et.
 
 ### Görev 22 — ortak Wallet uygunluğu ve sağlayıcı durumu
 

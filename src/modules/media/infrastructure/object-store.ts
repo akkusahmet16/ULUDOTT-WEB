@@ -47,7 +47,9 @@ export async function readPrivate(key: string): Promise<Buffer> {
 export async function removePrivate(key: string) {
   const { bucket, s3 } = client();
   try {
-    await s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
+    await s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }), {
+      abortSignal: AbortSignal.timeout(20_000),
+    });
   } finally {
     s3.destroy();
   }
