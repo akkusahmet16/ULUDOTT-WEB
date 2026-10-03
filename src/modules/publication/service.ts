@@ -14,6 +14,7 @@ import {
   type PublicContent,
 } from "./domain.ts";
 import { find, all, write, table, record } from "./repository.ts";
+import { refreshApplicationCards } from "../cards/application/card-revision.ts";
 const checkRevision = (row: ContentRecord, revision: unknown) => {
   if (
     !z.int().positive().safeParse(revision).success ||
@@ -121,6 +122,15 @@ export async function save(
     )
       throw Error("Yayın için tarih ve konum gerekli");
     const result = await write(tx, type, data, id);
+    if (type === "event" && current && current.title !== result.title) {
+      const affected = await tx.execute(
+        sql`select id from applications where event_id=${result.id}::uuid order by id`,
+      );
+      await refreshApplicationCards(
+        tx,
+        affected.map((row) => String(row.id)),
+      );
+    }
     if (type === "event" && "featuredPosition" in data) {
       await tx.execute(
         sql`delete from featured_slots where event_id=${result.id}`,

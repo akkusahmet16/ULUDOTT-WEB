@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (- [ ]) syntax for tracking. The user requested file-by-file review with the assistant; do not delegate implementation.
 
-Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–13 tamamlandı; sıradaki adım Görev 14. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
+Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–22 tamamlandı; Görev 23 yerel uygulaması tamam, gerçek Google dış kabulü bekliyor; sıradaki kod görevi 24. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
 
 **Goal:** Uludott topluluk sitesi, genel etkinlik/form/duyuru/link yönetimi, UluJam takım ve onay akışları, 2026 arşivi, 2027 “Yakında” alanı, derece oyunları ve onay sonrası Wallet kartlarını sıfırdan güvenli ve sürdürülebilir biçimde üretmek.
 

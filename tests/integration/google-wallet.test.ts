@@ -290,3 +290,121 @@ it("Slow first provider job does not consume the unstarted jobs leases", async (
     await x.cleanup();
   }
 });
+
+it("Configuration outage keeps remote revocation retryable until configuration is restored", async () => {
+  const x = await ulujamFixture(),
+    p = await googleProtocol();
+  try {
+    const r = await submitUlujam(x.input("solo"), randomUUID());
+    const [a] =
+      await x.sql`select id from applications where submission_id=${r.id}`;
+    await approveSolo(x.actor, a.id, 1);
+    await requestGooglePass(r.card!.token);
+    await processBatch("outage", 50);
+    const [pass] = await x.sql`select object_id from wallet_passes`;
+    process.env.GOOGLE_WALLET_MODE = "disabled";
+    await x.sql`update applications set status='withdrawn' where id=${a.id}`;
+    await reconcileWalletBatch();
+    await processBatch("outage", 50);
+    expect(p.objects.get(pass.object_id)?.state).toBe("ACTIVE");
+    expect(
+      (
+        await x.sql`select status,last_error_code,provider_state from wallet_passes`
+      )[0],
+    ).toMatchObject({
+      status: "revoked",
+      last_error_code: "GOOGLE_CONFIG_UNAVAILABLE",
+      provider_state: "active",
+    });
+    expect(
+      (
+        await x.sql`select count(*)::int n from outbox where status='pending'`
+      )[0].n,
+    ).toBe(1);
+    const requests = p.requests();
+    await reconcileWalletBatch();
+    await processBatch("outage", 50);
+    expect(p.requests()).toBe(requests);
+    process.env.GOOGLE_WALLET_MODE = "demo";
+    await x.sql`update outbox set available_at=now() where status='pending'`;
+    await processBatch("outage", 50);
+    expect(p.objects.get(pass.object_id)?.state).toBe("INACTIVE");
+    expect(
+      (
+        await x.sql`select status,provider_state,last_error_code from wallet_passes`
+      )[0],
+    ).toMatchObject({
+      status: "revoked",
+      provider_state: "revoked",
+      last_error_code: null,
+    });
+    expect(
+      (
+        await x.sql`select count(*)::int n from outbox where status!='completed'`
+      )[0].n,
+    ).toBe(0);
+  } finally {
+    await p.cleanup();
+    await x.cleanup();
+  }
+});
+
+it("Event title edit invalidates current cards and updates the same Google object", async () => {
+  const x = await ulujamFixture(),
+    p = await googleProtocol();
+  try {
+    const { save, preview } =
+      await import("../../src/modules/publication/service");
+    const r = await submitUlujam(x.input("solo"), randomUUID());
+    const [a] =
+      await x.sql`select id from applications where submission_id=${r.id}`;
+    await approveSolo(x.actor, a.id, 1);
+    await requestGooglePass(r.card!.token);
+    await processBatch("title", 50);
+    const [pass] =
+      await x.sql`select object_id,synced_revision from wallet_passes`;
+    const e = await preview("event", x.eventId, x.actor);
+    await save(
+      "event",
+      x.actor,
+      {
+        title: "DEMO corrected title",
+        slug: e.slug,
+        kind: "ulujam",
+        startsAt: e.startsAt,
+        location: e.location,
+      },
+      e.id,
+      e.revision,
+    );
+    await processBatch("title", 50);
+    expect(p.objects.size).toBe(1);
+    expect(p.objects.get(pass.object_id)?.subheader).toMatchObject({
+      defaultValue: { value: "DEMO corrected title" },
+    });
+    expect(
+      (await x.sql`select synced_revision from wallet_passes`)[0]
+        .synced_revision,
+    ).toBe(pass.synced_revision + 1);
+  } finally {
+    await p.cleanup();
+    await x.cleanup();
+  }
+});
+
+it("External key boundary rejects repository child directories beginning with two dots", async () => {
+  const p = await googleProtocol();
+  const { mkdtemp, copyFile, chmod, rm } = await import("node:fs/promises");
+  const { join } = await import("node:path");
+  const dir = await mkdtemp(join(process.cwd(), "..credentials-"));
+  try {
+    const file = join(dir, "synthetic.json");
+    await copyFile(process.env.GOOGLE_WALLET_CREDENTIALS_FILE!, file);
+    await chmod(file, 0o600);
+    process.env.GOOGLE_WALLET_CREDENTIALS_FILE = file;
+    expect(() => loadGoogleConfig()).toThrow("GOOGLE_CONFIG_UNAVAILABLE");
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+    await p.cleanup();
+  }
+});

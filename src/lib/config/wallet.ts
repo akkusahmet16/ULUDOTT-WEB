@@ -1,6 +1,6 @@
 import "server-only";
 import { readFileSync, statSync, realpathSync } from "node:fs";
-import { resolve, relative, isAbsolute } from "node:path";
+import { resolve, relative, isAbsolute, sep } from "node:path";
 import { createPrivateKey } from "node:crypto";
 import { z } from "zod";
 import { loadServerConfig } from "./server.ts";
@@ -42,7 +42,11 @@ export function loadGoogleConfig(): GoogleConfig {
     if (!isAbsolute(input)) throw Error("path");
     const file = realpathSync(input),
       inside = relative(resolve(process.cwd()), file);
-    if (!inside.startsWith("..") && !isAbsolute(inside))
+    if (
+      inside !== ".." &&
+      !inside.startsWith(".." + sep) &&
+      !isAbsolute(inside)
+    )
       throw Error("repository");
     const stat = statSync(file);
     if (!stat.isFile() || stat.size > 65536 || (stat.mode & 0o077) !== 0)

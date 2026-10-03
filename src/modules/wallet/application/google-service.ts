@@ -52,7 +52,7 @@ export async function syncGooglePass(
   const pass = (await readPasses(card.id, tx)).find(
     (p) => p.provider === "google",
   );
-  if (!pass || googleReadiness() === "unconfigured") return null;
+  if (!pass) return null;
   // Known applied revision/state avoids issuing a historical update on duplicate delivery.
   if (
     card.status === "active" &&
@@ -97,7 +97,7 @@ export async function syncGooglePass(
           ? "GOOGLE_CONFIG_UNAVAILABLE"
           : "GOOGLE_UNAVAILABLE";
     await tx.execute(
-      sql`update wallet_passes set status=${card.status === "active" ? "failed" : "revoked"},last_error_code=${code},updated_at=clock_timestamp() where id=${pass.id}::uuid`,
+      sql`update wallet_passes set status=${card.status === "active" ? (code === "GOOGLE_CONFIG_UNAVAILABLE" ? "pending" : "failed") : "revoked"},last_error_code=${code},updated_at=clock_timestamp() where id=${pass.id}::uuid`,
     );
     return code;
   }

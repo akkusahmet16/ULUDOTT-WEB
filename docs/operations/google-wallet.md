@@ -33,3 +33,7 @@ HTTP timeout sonrası uzak sonucun kesinliği garanti edilemez; iş güncel DB p
 Gerçek kabul için: yetkili demo hesabında onaylı katılım ile ekle; aynı Object ID üzerinde derece/QR güncellemesini gözle doğrula; ret/iptalde INACTIVE görünümünü doğrula; onaysız doğrudan API403'ü doğrula. Kanıta issuer modu, test zamanı, maskelenmiş Object ID ve anahtar/QR/bireysel token içermeyen görüntü yaz. Yayın erişimi yoksa herkese açık satır beklemede kalır. Kanıt gelmeden görev23 üçüncü kutusu kapanmaz.
 
 Resmî protokol kaynakları: [GenericObject](https://developers.google.com/wallet/reference/rest/v1/genericobject), [GenericClass](https://developers.google.com/wallet/reference/rest/v1/genericclass), [Save JWT](https://developers.google.com/wallet/generic/use-cases/jwt), [Service-account OAuth](https://developers.google.com/identity/protocols/oauth2/service-account).
+
+## Yapılandırma kesintisi ve etkinlik adı değişimi
+
+Google yapılandırması yokken gereken uzak güncelleme/iptal tamamlandı sayılmaz: `GOOGLE_CONFIG_UNAVAILABLE` saklanır, outbox bounded backoff ile yeniden dener. Yerel kart iptal edilmişken uzak pass geçici olarak ACTIVE kalabilir. Beş deneme sonrası dead-letter oluşursa yapılandırmayı geri getirip yetkili retry endpoint'iyle işi yeniden açın; restore tek başına dead işi açmaz. Sweep retry zamanını aşmaz. Zaten uygulanmış aynı revision/state gereksiz tekrar gönderilmez. Etkinlik adı panelde değiştiğinde aynı transaction ilgili card revision'larını artırıp card.changed yazar; aynı Google Object ID güncellenir.
