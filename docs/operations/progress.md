@@ -633,6 +633,16 @@ Son yük tekrarı harness1/1,32.69s;4senaryo kontrolü geçti.120başvuru/20bekl
 
 Yerel yeniden açılış: web61898/worker61914 cwd doğrulandı; /,/ulujam,/admin HTTP200. Oturumlar web44463/worker27590. Sonraki görev başlangıcında bu PID'lerin çalışma dizinini doğrulayarak durdur. Değişiklikler belge/kabul kayıtlarıdır; yeni üretim davranışı eklenmedi. Yerel commit; dışpush/merge/VDSdeploy yok. Sonuç: yerel otomatik doğrulama geçti, genel üretim kabulü açık; Apple ertelenmiş. Tek komut kurulum ve uzun trafik kanıtı da açık iş olarak görünür, bunlar dış hesap bahanesiyle tamamlandı sayılmaz.
 
+## Tema yenileme — GTA VI referansı, tasarım önizlemesi — 3 Ekim 2026
+
+Kullanıcı bütün sitenin görsel/animasyon temasını yenilemeyi, mevcut özellikleri eksiltmemeyi ve yeni ürün özellikleri eklememeyi istedi. İlk krem arcade önerisi yerine https://www.rockstargames.com/VI sayfasını açık referans seçti. Web/Safari dış Wallet işleri bu göreve taşınmadı; Apple ertelenmiş kalır.
+
+Plan/rapor ve mevcut ortak CSS, header/footer, ana sayfa, admin ve web kartı incelendi. Başlangıçta port3000 ve worker süreci bulunmadı; önceki61898/61914 çalışmıyordu. Next yerel CSS/font rehberleri okundu. Referans in-app browser'da açılış ve ikinci sinematik bölümle görsel olarak incelendi; koyu gece zemini, pembe pill, krem yoğun tipografi, ArtDeco font aileleri ve büyük görsel düzeni görüldü. Özel font dosyaları veya Rockstar medya dosyaları indirilmedi.
+
+Brainstorming bounded yolunda revize görsel tasarımın kullanıcı incelemesi bekleniyor; ürün kodu henüz değişmedi. Built-in imagegen ile yalnız tasarım önizlemesi üretildi; özgün oyun üretimi/atölye ve hayalî dünya illüstrasyonudur, gerçek topluluk fotoğrafı değildir. Önizleme `/Users/taklalie60/.codex/generated_images/01a0f90e-8cbb-7402-8157-9daed55c84ba/exec-84879df3-781d-4540-9fba-5747200272cd.png`; siteye yerleştirilmedi. Yeni yön onaylanınca ortak tema ve mevcut genel/özel/admin ekranları değiştirilir; rota, veri, yetki, form ve Wallet iş kuralları korunur. Hareket azaltma, mobil, klavye ve regresyon testleri zorunlu. Video için öneri: sessiz15–25sn oyun üretim/etkinlik montajı,1920x1080MP4/WebM ve mobil9:16kırpım, poster; gerçek kayıt sağlanmadığı için videolu/sahte oynatıcı eklenmez.
+
+Yerel önizleme kapanışı: ilk açılışta PostgreSQL kapalı olduğundan HTTP500/worker unavailable görüldü. Ürüne dokunmadan mevcut Colima uludott profili ve var olan Compose PostgreSQL/Garage servisleri yeniden açıldı; veri silme/migration/seed yok. Web65360/worker65615 cwd doğrulandı, ana sayfa200. Oturumlar web95963/worker84412; sonraki uygulama başlangıcında bu süreçleri doğrulayıp durdur. Henüz tema uygulanmadı; mevcut site yeniden çalışır.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.
