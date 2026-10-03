@@ -1,0 +1,45 @@
+name: Acceptance
+on:
+  pull_request:
+  push:
+    branches: [main, development/bootstrap, 'codex/**']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: acceptance-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.21.0
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec node scripts/prepare-ci.ts
+      - run: docker compose --env-file .env.local up -d --wait
+      - run: pnpm exec playwright install --with-deps chromium
+      - uses: grafana/setup-k6-action@v1
+        with:
+          k6-version: 2.3.0
+      - run: pnpm ci:check
+      - run: pnpm test:load
+      - name: Remove ephemeral services
+        if: always()
+        run: docker compose --env-file .env.local down -v
+  package:
+    needs: verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build web image after acceptance
+        run: docker build --target runtime -t uludott-web:acceptance .
+# No automatic publication: domain/VDS/production approvals are separate.

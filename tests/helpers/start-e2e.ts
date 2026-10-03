@@ -1,3 +1,5 @@
+import sharp from "sharp";
+import { putPrivate } from "../../src/modules/media/infrastructure/object-store.ts";
 import {
   createDraftForm,
   saveDraftForm,
@@ -248,6 +250,22 @@ try {
     await local.sql`insert into teams(id,event_id,name,normalized_name,expected_size) values(${candidateId},${registrationEvent},${"DEMO aday " + candidate},${"demo aday " + candidate},2)`;
   }
   await local.sql`insert into application_skills(application_id,skill,level) values(${matchingPerson},'visual_art',4)`;
+  if (process.env.ULUDOTT_LOAD === "1") {
+    const event = randomUUID(),
+      asset = randomUUID(),
+      variant = randomUUID(),
+      key = "load-test/" + randomUUID() + ".webp";
+    const image = await sharp({
+      create: { width: 64, height: 64, channels: 3, background: "#19202b" },
+    })
+      .webp()
+      .toBuffer();
+    await putPrivate(key, image, "image/webp");
+    await local.sql`insert into media_assets(id,original_key,mime_type,byte_size,status,alt_text) values(${asset},${key},'image/webp',${image.length},'ready','DEMO yük afişi')`;
+    await local.sql`insert into media_variants(id,asset_id,purpose,object_key,width,height,mime_type,published_at) values(${variant},${asset},'card',${key},64,64,'image/webp',now())`;
+    await local.sql`insert into events(id,title,slug,kind,status,starts_at,location,publish_at,media_id) values(${event},'DEMO yük etkinliği','demo-load-event','general','published','2030-01-01','DEMO','2020-01-01',${asset})`;
+    await local.sql`insert into featured_slots(event_id,position,media_id) values(${event},0,${asset})`;
+  }
   await closeDatabase();
   if (process.env.ULUDOTT_E2E_PRODUCTION === "1") {
     productionDir = await mkdtemp(join(tmpdir(), "uludott-standalone-"));

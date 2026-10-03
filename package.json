@@ -21,7 +21,7 @@
     "test": "vitest run",
     "test:integration": "vitest run tests/integration",
     "test:e2e": "playwright test",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "lint": "eslint . --max-warnings=0",
     "build": "next build",
     "db:migrate": "node --env-file-if-exists=.env.local --conditions=react-server scripts/migrate.ts",
@@ -33,7 +33,10 @@
     "db:seed:ulujam": "node --env-file-if-exists=.env.local --conditions=react-server scripts/seed-ulujam-years.ts",
     "submissions:purge": "node --env-file-if-exists=.env.local --conditions=react-server scripts/purge-submissions.ts",
     "worker": "node --env-file-if-exists=.env.local --conditions=react-server src/worker/main.ts",
-    "security:wallet": "node --env-file-if-exists=.env.local --conditions=react-server scripts/check-wallet-package.ts"
+    "security:wallet": "node --env-file-if-exists=.env.local --conditions=react-server scripts/check-wallet-package.ts",
+    "security:source": "node --env-file-if-exists=.env.local scripts/check-secrets.ts",
+    "ci:check": "bash scripts/ci-check.sh",
+    "test:load": "bash scripts/run-load.sh"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.1144.0",

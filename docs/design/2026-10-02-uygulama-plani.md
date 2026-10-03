@@ -390,9 +390,11 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Arayüz:** pnpm typecheck, pnpm lint, pnpm test, pnpm test:integration, pnpm test:e2e, pnpm build ve k6 senaryoları CI/yerel kabul komutlarıdır.
 
-- [ ] CI'ya typecheck, lint, birim/entegrasyon/e2e, migration, bağımlılık ve sır taramasını bağla; başarısız kontrolde dağıtımın durduğunu doğrula.
-- [ ] Ana sayfa/afiş, yoğun form gönderimi, aynı son takım kontenjanı, admin listeleme ve Wallet kuyruğu için yük/stres senaryolarını çalıştır; p95/p99, hata, veri kaybı ve toparlanmayı raporla.
+- [x] CI'ya typecheck, lint, birim/entegrasyon/e2e, migration, bağımlılık ve sır taramasını bağla; başarısız kontrolde dağıtımın durduğunu doğrula.
+- [x] Ana sayfa/afiş, yoğun form gönderimi, aynı son takım kontenjanı, admin listeleme ve Wallet kuyruğu için yük/stres senaryolarını çalıştır; p95/p99, hata, veri kaybı ve toparlanmayı raporla.
 - [ ] Yetkili kapsamda güvenlik testi ve manuel klavye/ekran okuyucu incelemesi yap; kritik bulguları düzeltip tekrar test et. Dış pentest yapılmadıysa “geçti” yazma; açık bağımlılık olarak bırak.
+
+Yerel CI/yük/güvenlik ve manuel klavye kanıtı raporlarda. Gerçek VoiceOver/NVDA incelemesi ve bağımsız dış pentest bekliyor; üçüncü kutu bu nedenle açık.
 
 ### Görev 29 — dağıtım, yedek, geri dönüş ve geliştirici rehberi
 

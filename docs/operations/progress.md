@@ -595,6 +595,14 @@ Tek bağımsız son incelemede iki önemli bulgu (eski üyelik temizliğinin can
 
 Yerel son kontrol: web yeniden açıldı (PID53739, port3000), UluJam ve admin HTTP200; worker PID53787 çalışıyor. Ana DB kişi/takım/kart/pass/künye 0; test DB0, test medya0; 2026 arşivi korundu. Çalışan oturumlar web74430 ve worker57136. Dış dağıtım/push yapılmadı.
 
+## Görev 28–29 başlangıcı — 3 Ekim 2026
+
+BASE33dae64; plan/global kısıt/spec ve rapor okundu. Cwd doğrulanan web53739/worker53787 durduruldu. Mevcut development/bootstrap çalışma alanı korunur; uygulama değişiklikleri tek yürütücüyle yapılır. Ruling: trafik/SLO, VDS erişimi, domain/CDN, hukuk ve dış pentest girdileri olmadan yerel doğruluk kontrolleri ile ölçülen performans ayrı raporlanır; hedef kapasite veya üretim/pentest kabulü uydurulmaz. Task28 k6 kurulumu yetkili eksik araç kurulumu kapsamında başlatıldı. Testler izole DB ve sentetik kişi/sağlayıcı kullanır; gerçek Google issuer'a veya internetteki başka hedeflere yük gönderilmez. Görev29 gerçek PostgreSQL+S3 test verisiyle dump/restore ve temiz kurulum provasını yapacak. Maliyet: yerel sonuçlar VDS 4GB/2CPU kapasitesini kanıtlamaz. Wallet “Geldi” akışı son inceleme maddesi olarak korunur.
+
+## Görev 28 yerel teslim — 3 Ekim 2026
+
+CI fail-stop testi RED→GREEN1/1; tam CI zinciri45dosya267/267, üretimTLS50/50, type/lint/migration/build temiz, audit0, source455ve Wallet2771dosyada sır/forbidden0. CI workflow GitHub runner üzerinde henüz çalıştırılmadı; yerelde aynı zincir çalıştı. k6 kuruldu; son izole yük testi1/1 geçti: form120kayıt/20beklenen429; takım12kabul/12beklenen409; fazlaüye0; Wallet16aktif/0bitmemişiş. Fixture eventkind/batch/capacity/include ve tek tur toparlanma varsayımları uygulama kontrolleri korunarak düzeltildi. Raporlar load-report/security-test-report/accessibility-report ve pentest-scope. Gerçek ekran okuyucu/dış pentest bağımlılıkları açık.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.

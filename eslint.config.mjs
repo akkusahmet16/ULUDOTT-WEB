@@ -9,5 +9,5 @@ export default defineConfig([
     plugins: { "@next/next": nextPlugin },
     rules: { ...nextPlugin.configs.recommended.rules, ...nextPlugin.configs["core-web-vitals"].rules },
   },
-  globalIgnores([".next/**", ".local/**", "node_modules/**", "next-env.d.ts", "test-results/**", "playwright-report/**"]),
+  globalIgnores(["tests/load/*.js",".next/**", ".local/**", "node_modules/**", "next-env.d.ts", "test-results/**", "playwright-report/**"]),
 ]);
