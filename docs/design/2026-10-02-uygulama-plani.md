@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (- [ ]) syntax for tracking. The user requested file-by-file review with the assistant; do not delegate implementation.
 
-Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–23 tamamlandı (Google demo kabulü dahil); Google genel yayın erişimi bekliyor. Görev24 Apple Wallet kullanıcı kararıyla ertelendi; Görev25 birleşik yönetim paneli tamamlandı; sıradaki uygulanabilir kod görevi26. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
+Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–23 tamamlandı (Google demo kabulü dahil); Google genel yayın erişimi bekliyor. Görev24 Apple Wallet kullanıcı kararıyla ertelendi; Görev25 birleşik yönetim paneli ve Görev26–27 güvenlik/veri yaşam döngüsü tamamlandı; sıradaki uygulanabilir kod görevi28. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
 
 **Goal:** Uludott topluluk sitesi, genel etkinlik/form/duyuru/link yönetimi, UluJam takım ve onay akışları, 2026 arşivi, 2027 “Yakında” alanı, derece oyunları ve onay sonrası Wallet kartlarını sıfırdan güvenli ve sürdürülebilir biçimde üretmek.
 
@@ -380,9 +380,9 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Arayüz:** Üretir: exportPersonData(actorOrVerifiedRequester,personId), correctPersonData(actorOrVerifiedRequester,personId,changes), deleteOrAnonymizeExpired(now), recordConsent(version,scope,subjectId,at).
 
-- [ ] Rıza sürümü/zamanı, etkinlik kapsamında veri erişimi, süresi dolan kaydın silinmesi/anonimleştirilmesi ve audit'te sır kalmaması testlerini yaz.
-- [ ] Veri haritası, saklama ve olay müdahale yönergesini hazırla; hukuk uzmanının onaylamadığı metni canlı hukuki beyan olarak yayımlama.
-- [ ] Gerçek kişi verisiyle olmayan testleri geçir; hak taleplerinin güvenli doğrulama adımlarını ve dosyaları inceleyip commit et.
+- [x] Rıza sürümü/zamanı, etkinlik kapsamında veri erişimi, süresi dolan kaydın silinmesi/anonimleştirilmesi ve audit'te sır kalmaması testlerini yaz.
+- [x] Veri haritası, saklama ve olay müdahale yönergesini hazırla; hukuk uzmanının onaylamadığı metni canlı hukuki beyan olarak yayımlama.
+- [x] Gerçek kişi verisiyle olmayan testleri geçir; hak taleplerinin güvenli doğrulama adımlarını ve dosyaları inceleyip commit et.
 
 ### Görev 28 — CI, yük/stres, pentest ve erişilebilirlik kabulü
 

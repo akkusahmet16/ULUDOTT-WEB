@@ -30,6 +30,7 @@ export const applications = pgTable(
     phone: text("phone").notNull(),
     mode: text("mode").notNull(),
     status: text("status").default("pending").notNull(),
+    erasedAt: instant("erased_at"),
     skillDescription: text("skill_description"),
     reviewNote: text("review_note"),
     tokenHash: text("token_hash").unique(),

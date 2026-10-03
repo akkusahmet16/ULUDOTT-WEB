@@ -117,3 +117,22 @@ export const rateLimits = pgTable(
     index("rate_limits_expiry_idx").on(t.expiresAt),
   ],
 );
+
+// Retention worker has no human admin identity. Keep only aggregate operation evidence.
+export const retentionRuns = pgTable(
+  "retention_runs",
+  {
+    id: id(),
+    completedAt: instant("completed_at").defaultNow().notNull(),
+    deleted: integer("deleted").notNull(),
+    anonymized: integer("anonymized").notNull(),
+    pendingRevocations: integer("pending_revocations").notNull(),
+  },
+  (t) => [
+    check(
+      "retention_counts",
+      sql`${t.deleted}>=0 AND ${t.anonymized}>=0 AND ${t.pendingRevocations}>=0`,
+    ),
+    index("retention_runs_time_idx").on(t.completedAt),
+  ],
+);

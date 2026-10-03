@@ -84,16 +84,48 @@ export class GoogleWalletAdapter {
     );
     return "https://pay.google.com/gp/v/save/" + jwt;
   }
-  async deactivatePass(objectId: string) {
+  async deactivatePass(objectId: string, redact = false) {
     if (!objectId.startsWith(this.config.issuerId + "."))
       throw new GoogleWalletError("GOOGLE_IDENTITY_CHANGED");
     const r = await this.client.request("genericObject", "PATCH", objectId, {
       state: "INACTIVE",
+      ...(redact
+        ? {
+            header: {
+              defaultValue: {
+                language: "tr-TR",
+                value: "Katılım kaydı kaldırıldı",
+              },
+            },
+            subheader: {
+              defaultValue: { language: "tr-TR", value: "Uludott" },
+            },
+            barcode: null,
+            textModulesData: [],
+          }
+        : {}),
     });
     if (
       r.data.id !== objectId ||
       (r.data.state !== "INACTIVE" && r.data.state !== "inactive")
     )
       throw new GoogleWalletError("GOOGLE_PROTOCOL");
+    if (redact) {
+      const clean = z
+        .object({
+          header: z.object({
+            defaultValue: z.object({
+              value: z.literal("Katılım kaydı kaldırıldı"),
+            }),
+          }),
+          subheader: z.object({
+            defaultValue: z.object({ value: z.literal("Uludott") }),
+          }),
+          barcode: z.null().optional(),
+          textModulesData: z.array(z.unknown()).max(0).optional(),
+        })
+        .safeParse(r.data);
+      if (!clean.success) throw new GoogleWalletError("GOOGLE_PROTOCOL");
+    }
   }
 }

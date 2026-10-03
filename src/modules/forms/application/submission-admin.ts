@@ -284,8 +284,9 @@ export async function correctSubmission(
   id: string,
   input: unknown,
   revision: number,
+  existingTx?: DbTx,
 ) {
-  return withTransaction(async (tx) => {
+  const work = async (tx: DbTx) => {
     const { s, form } = await locked(
         tx,
         actor,
@@ -331,16 +332,14 @@ export async function correctSubmission(
       .delete(submissionAnswers)
       .where(eq(submissionAnswers.submissionId, id));
     if (Object.keys(answers).length)
-      await tx
-        .insert(submissionAnswers)
-        .values(
-          Object.entries(answers).map(([fieldKey, value]) => ({
-            submissionId: id,
-            versionId: s.versionId,
-            fieldKey,
-            value,
-          })),
-        );
+      await tx.insert(submissionAnswers).values(
+        Object.entries(answers).map(([fieldKey, value]) => ({
+          submissionId: id,
+          versionId: s.versionId,
+          fieldKey,
+          value,
+        })),
+      );
     await tx
       .update(submissions)
       .set({ email, revision: s.revision + 1 })
@@ -353,7 +352,8 @@ export async function correctSubmission(
       { revision: s.revision + 1, changedFields: ["formVersion", "email"] },
     );
     return { id, revision: s.revision + 1 };
-  });
+  };
+  return existingTx ? work(existingTx) : withTransaction(work);
 }
 async function linked(tx: DbTx, id: string) {
   return (

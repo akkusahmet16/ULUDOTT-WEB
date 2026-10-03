@@ -141,6 +141,20 @@
       "when": 1791019194874,
       "tag": "0019_legal_kabuki",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1791040217090,
+      "tag": "0020_damp_rumiko_fujikawa",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1791040336597,
+      "tag": "0021_high_yellow_claw",
+      "breakpoints": true
     }
   ]
 }

@@ -8,7 +8,7 @@ import {
 } from "../../src/modules/games/application/game-service";
 import { approvePublicationName } from "../../src/modules/games/application/credit-consent-service";
 import { processBatch } from "../../src/worker/handlers";
-import { it, expect } from "vitest";
+import { it, expect, vi } from "vitest";
 import { randomUUID, verify } from "node:crypto";
 import { googleProtocol } from "../helpers/google-protocol";
 import { ulujamFixture } from "../helpers/ulujam-fixture";
@@ -466,6 +466,48 @@ it("State acknowledgement accepts only documented active/inactive aliases", asyn
         "GOOGLE_PROTOCOL",
       );
     }
+  } finally {
+    await p.cleanup();
+  }
+});
+
+it("Privacy revocation clears remote name, team and QR", async () => {
+  const p = await googleProtocol();
+  try {
+    const adapter = new GoogleWalletAdapter(loadGoogleConfig());
+    const id = await adapter.upsertPass(card, 7);
+    await adapter.deactivatePass(id, true);
+    const object = p.objects.get(id);
+    expect(object?.state).toBe("INACTIVE");
+    expect(JSON.stringify(object)).not.toContain(card.name);
+    expect(JSON.stringify(object)).not.toContain(card.teamName);
+    expect(object?.barcode).toBeNull();
+    expect(object?.textModulesData).toEqual([]);
+  } finally {
+    await p.cleanup();
+  }
+});
+
+it("Privacy revocation rejects acknowledgement retaining personal fields", async () => {
+  const p = await googleProtocol();
+  try {
+    const config = loadGoogleConfig();
+    const client = new GoogleClient(config);
+    const id = "123456789.uludott_15000000000040008000000000000123";
+    vi.spyOn(client, "request").mockResolvedValue({
+      conflict: false,
+      data: {
+        id,
+        state: "INACTIVE",
+        header: { defaultValue: { value: card.name } },
+        barcode: { value: card.checkinToken },
+        textModulesData: [{ body: card.teamName }],
+      },
+    });
+    const adapter = new GoogleWalletAdapter(config, client);
+    await expect(adapter.deactivatePass(id, true)).rejects.toThrow(
+      "GOOGLE_PROTOCOL",
+    );
   } finally {
     await p.cleanup();
   }

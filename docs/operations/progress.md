@@ -578,6 +578,23 @@ Görev25 tamamlandı: ortak role göre yönetim navigasyonu, scoped dashboard, g
 
 Görev26 uygulama kapsamı tamamlandı: nonce CSP/root dinamik HTML, private cache/referrer/frame/HSTS, edge yöntem/gövde/origin-secret gate, paylaşımlı atomik PG rate, required Turnstile server+widget, HTTPS URL politikası. 7 plan güvenlik dosyası+Turnstile testleri mevcut. İlk lint PublicForm widget JSX bağlantısının atlandığını yakaladı; bileşen eklendi ve eksik sitekey UI testi eklendi. Finalfull43dosya255/255(.local/task26-full-final.log),lint temiz,build/typecheck temiz(.local/task26-build-final.log,.local/task26-types.log); üretim bağımlılıkaudit0; gerçek Walletkeytarama2749files0secret/0forbidden(.local/task26-secrets.log). E2E49existingpass+1newCSPfail(.local/task26-e2e.log); DevTools evaluation ayrıcalıklı olduğu için parser-based saldırı probe ile düzeltildi, finaltargetedCSP1/1(.local/task26-csp-final.log). 345ASVS5.0.0 kimlik envanteri docs/security/asvs-matrix.md: aile kanıtı sertifika değildir, madde bazlı manuel/dağıtım kontrolü durumları açık; WebRTC/SAML/LDAP vb mevcut olmayan mekanizma N/A. CDN tenant/gerçek firewall/botwidget domain kabulü docs/security/waf-rules.md içinde yayın bağımlılığı, kuruldu/geçti sayılmaz. Tehdit modeli docs/security/threat-model.md. Ortamın uygulanabilir kod kontrolleri tamam; dış kabul28/29'a taşınır.
 
+## Görev 27 — veri hakları ve saklama (3 Ekim 2026, tamamlandı)
+
+- Sunucu içi kişi erişimi/düzeltme, beş dakikalık kişiye bağlı işletmen doğrulaması, rıza sürümü/ilk zaman/geri çekilme denetimi eklendi. Halka açık JSON doğrulama veya onaysız hukuk metni yayımlanmadı.
+- Worker süre sonu yanıt/rıza silme, bağlı kişi alanlarını temizleme, üyelik/yayın adı/token iptali ve Wallet iptal kuyruğunu çalıştırır. UUID/sağlayıcı teknik iptal kayıtları korunur; tam anonimlik/cihazdan silinme iddiası yoktur. Rıza/saklama hukuk kararı, gerçek sağlayıcı alan temizliği ve yedek rotasyonu canlı kabul girdisidir.
+- Kırmızı test: yeni servisler eksik; ardından Date SQL parametresi testi hatası ISO timestamptz ile düzeltildi. Rıza testindeki zorunlu alan doğrulaması yerine isteğe bağlı rıza kullanılarak gerçek düzeltme yasağı ölçüldü. Google kişisel alan temizleme kapalıyken RED, açıkken GREEN görüldü. İki hedef dosyada 18/18 test geçti. Düzeltmede beceri açıklaması da bağlı başvuruya eşitlendi.
+- Dosyalar: privacy-data-map, retention, incident-response ve data-rights iç yönergeleri. Tam regresyon ve birleşik inceleme tamamlandı.
+
+### Görev 26–27 birleşik inceleme düzeltmeleri
+
+Tek bağımsız son incelemede iki önemli bulgu (eski üyelik temizliğinin canlı takım durumunu değiştirmesi ve gizlilik nedeniyle oyun yayından kalkınca Wallet derece sürümünün yenilenmesi) testle yeniden üretildi ve düzeltildi. Dolu takım kararı korunur, tarihî üyelik canlı kadroyu değiştirmez; oyunun takım kartı bağımsız güncellenir. Küçük audit doğruluk bulgusunda gerçekte değişmeyen ad/e-posta/telefon listesini yazmak yerine nötr revision metadata kullanıldı. Sağlayıcının INACTIVE cevabında kişisel alanlar kalırsa iptal kabulünün reddi de RED→GREEN doğrulandı. Üç hedef dosya 39/39 geçti. İlk genel testte yeni retention_runs tablosunun beklenen şema listesine eklenmemesi 261/262 sonucuna yol açtı; liste düzeltildi. Kullanılan takım testi önce formda yayımlanmamış seçim yüzünden hedef dışı hataya düştü; izole mevcut üyelik kurularak gerçek kadro davranışı ölçüldü. Migration 0020–0021 yerel DB'ye seed olmadan uygulandı. Son genel kabul sürüyor.
+
+### Görev 26–27 son kabul
+
+44 dosyada 266/266 birim/entegrasyon, üretim TLS üzerinde 50/50 tarayıcı testi geçti. Lint/typecheck/build/migration kontrolü temiz. Worker --once başarılı. 2759 dosyada gerçek anahtar taraması 0; genel kaynak/build/stage sır taraması 0. Bağımlılıklar değişmedi, Görev26 üretim audit tüm seviyelerde 0. Görev27 plan kutuları kapandı; sonraki görev28. Ayrıntı: docs/operations/tasks-26-27-acceptance.md. Canlı CDN/Turnstile, hukuk/saklama kararları ve gerçek sağlayıcı/cihaz silinme kabulü açık dış bağımlılıktır. Testler gerçek kişi verisi kullanmadı; kişisel başlangıç kayıtları sıfır, 2026 editoryal arşivi korundu.
+
+Yerel son kontrol: web yeniden açıldı (PID53739, port3000), UluJam ve admin HTTP200; worker PID53787 çalışıyor. Ana DB kişi/takım/kart/pass/künye 0; test DB0, test medya0; 2026 arşivi korundu. Çalışan oturumlar web74430 ve worker57136. Dış dağıtım/push yapılmadı.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.

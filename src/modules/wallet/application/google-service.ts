@@ -83,7 +83,7 @@ export async function syncGooglePass(
         await googleCardProjection(tx, card),
         card.revision,
       );
-    else await adapter.deactivatePass(id);
+    else await adapter.deactivatePass(id, card.erased);
     await tx.execute(
       sql`update wallet_passes set status=${card.status === "active" ? "ready" : "revoked"},provider_state=${card.status === "active" ? "active" : "revoked"},revision=${card.revision},synced_revision=${card.revision},last_error_code=null,updated_at=clock_timestamp() where id=${pass.id}::uuid`,
     );

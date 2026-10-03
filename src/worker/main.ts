@@ -1,3 +1,4 @@
+import { deleteOrAnonymizeExpired } from "./retention.ts";
 import { randomUUID } from "node:crypto";
 import { setTimeout } from "node:timers/promises";
 import { closeDatabase } from "../lib/database/client.ts";
@@ -6,6 +7,7 @@ import { processBatch } from "./handlers.ts";
 const workerId = "worker-" + randomUUID();
 let stopping = false;
 let sweepCursor: string | undefined;
+let nextRetention = 0;
 process.on("SIGTERM", () => {
   stopping = true;
 });
@@ -14,6 +16,10 @@ process.on("SIGINT", () => {
 });
 try {
   do {
+    if (Date.now() >= nextRetention) {
+      const result = await deleteOrAnonymizeExpired(new Date());
+      nextRetention = Date.now() + (result.deleted === 25 ? 60000 : 900000);
+    }
     await processBatch(workerId, 5);
     sweepCursor = await reconcileWalletBatch(sweepCursor);
     if (process.argv.includes("--once")) break;
