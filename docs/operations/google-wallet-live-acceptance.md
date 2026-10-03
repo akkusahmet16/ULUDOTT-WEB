@@ -29,3 +29,5 @@ Gerçek200yanıt `state=active` döndürdü; ilk adapter uppercase kontrolü GOO
 ## Açık kabul sınırları
 
 Google konsolu demo modunda; yayın erişimi isteği bu tur gönderilmedi. Yayın yetkisi ve gerçek dağıtım/origin sağlanmadan herkese açık Wallet kullanımına hazır denmez. Apple sertifika/Developer/iPhone24 ertelendi. VDS kapasite, canlı proxy/CDN kayıtları, Android/offline teslim ve key yedek/rotation ayrı işletme kabulüdür.5sentetik Class metadata kaydı sağlayıcıda kalır; sentetik Object'ler INACTIVE, gerçek kullanıcı kişisel verisi değildir.
+
+Kapanış: anaDBkişisel5tablo0,2026arşivpreserved/testDB0/media0(.local/google-setup-data.log). Geçici3201redirect kapatıldı. Sitepreview1848/listener43658,worker29091/PID43680 açık; /ulujam200 ve preview sonrası typecheck temiz. Source commit1209b75,Gitignored runtime key/env ve .local kanıtlar dışındaki değişiklikler commit edildi; push/merge yok.
