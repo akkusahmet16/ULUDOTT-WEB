@@ -20,7 +20,11 @@ Final tek inceleme4e43097..1f9b5bb: Critical0/Important2/Minor1; üçü tek RED�
 - Typecheck/lint temiz: `.local/task23-review-types.log`, `.local/task23-review-lint.log`.
 - Final production build ve sentetik dış RSA key taraması2708dosya/secretHits0/forbiddenFiles0: `.local/task23-review-build.log`.
 - HEIC negatif paket probu scanner'ın yasak dosyayı gerçekten reddettiğini gösterir: `.local/task23-package-negative.log`.
-- Production TLS E2E ve ana DB/media temizliği kapanışta progress.md'ye yazılır.
+- Final production TLS E2E47/47(40.5s): `.local/task23-review-e2e.log`.
+- Ana DB kişisel applications/teams/cards/passes/credits0; historicalPreserved=true,testDatabases0,mediaObjects0: `.local/task23-review-data.log`.
+- Yerel preview `/ulujam` ve `/oyunlar`200; Wallet CSRF'siz POST403/GET405, geçersiz özel kart404; probe token dev logunda yok. Preview sonrası typecheck temiz.
+- Açık süreçler: preview session70824/master40807/listener40813; worker session57884/PID40827. Sonraki görev başında önce cwd doğrula, yalnız bu proje preview/worker süreçlerini SIGTERM ile durdur; görev sonunda yeniden başlat. Loglar `.local/local-preview.log`, `.local/local-worker.log`.
+- Commitler24bfa95,3e93c11,fd1c993,1f9b5bb,a668f58; kapanış dokümanı ayrı commit. Push/merge yapılmadı.
 
 ## Kararlar ve maliyetleri (bu tur, kronolojik)
 
