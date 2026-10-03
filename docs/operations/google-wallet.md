@@ -37,3 +37,9 @@ Resmî protokol kaynakları: [GenericObject](https://developers.google.com/walle
 ## Yapılandırma kesintisi ve etkinlik adı değişimi
 
 Google yapılandırması yokken gereken uzak güncelleme/iptal tamamlandı sayılmaz: `GOOGLE_CONFIG_UNAVAILABLE` saklanır, outbox bounded backoff ile yeniden dener. Yerel kart iptal edilmişken uzak pass geçici olarak ACTIVE kalabilir. Beş deneme sonrası dead-letter oluşursa yapılandırmayı geri getirip yetkili retry endpoint'iyle işi yeniden açın; restore tek başına dead işi açmaz. Sweep retry zamanını aşmaz. Zaten uygulanmış aynı revision/state gereksiz tekrar gönderilmez. Etkinlik adı panelde değiştiğinde aynı transaction ilgili card revision'larını artırıp card.changed yazar; aynı Google Object ID güncellenir.
+
+## Safari konsol kontrolü —3 Ekim2026
+
+Kullanıcının Safari yetkisiyle Uludott topluluk hesabının Wallet konsolu incelendi. Issuer ID sonu8403, mevcut Generic sınıflar etkin, durum demo; yayın erişimi isteği henüz tamamlanmamış. Bir demo test hesabı kayıtlı. `uludott-ulujam-wallet` Cloud projesindeki UluJam Wallet issuer servis hesabı etkin ve Wallet konsolunda Geliştirici yetkisine sahip;1 Ekim2026 tarihli mevcut anahtar aktif görünüyor. Bu gözlem gerçek uygulama OAuth/API başarısı veya cihaza kart ekleme kanıtı değildir.
+
+Mevcut anahtarın JSON kopyası indirilenler klasöründe bulunmadı; eski Wallet secrets içerikleri okunmadı. Safari'de yeni JSON anahtar oluşturma son ekranı hazırlandı, Create tıklanmadı. Yeni kalıcı erişim kimliği oluşturma için bilgisayar kullanım kuralı nedeniyle kullanıcı onayı istendi; alternatif mevcut JSON dosya yolu. Yetki veya anahtar silme işlemi yapılmadı, yayın erişimi isteği gönderilmedi. Güvenli dosya sağlanınca server-only konfigürasyon/OAuth/Generic nesne ve gerçek test hesabı kabulü sürdürülür.
