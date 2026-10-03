@@ -621,6 +621,18 @@ README, mimari/ER/karar, rota/rol, altı değişiklik yolu, deploy/backup/rollba
 
 Yerel kapanış: anaDB applications/teams/cards/passes/credits0, historicalPreservedtrue, testDatabases0, mediaObjects0(.local/task29-data-audit.log). Web60356/worker60370 yeniden açıldı; cwd doğrulandı, /, /ulujam ve /admin HTTP200. Oturumlar web73654/worker46537; sonraki görev başlangıcında bu süreçleri çalışma dizinini kontrol ederek durdur. Next dev ürettiği next-env.d.ts importu bu çalışma biçimiyle kayda alınır; CI typegen temiz checkout tiplerini üretir.
 
+## Aşama 5 / tüm ürün son kabul incelemesi — 3 Ekim 2026
+
+Başlangıç BASE da23101. Plan ve rapor her işlem öncesi okundu; çalışma dizini doğrulanan web60356/worker60370 durduruldu. Apple24 kullanıcı kararıyla ertelenmiş kalır. Orijinal istemin 1–23 bölümleri ve teslim/kabul koşulları yeniden okundu.
+
+Yeni CI48dosya270/270, üretimTLS E2E50/50; tür/lint/migration/build/audit temiz. Kaynak475/üretim2794dosya sır0/yasak0. `.local/final-gate-ci.log`. Kapsam matrisi görev16/17/19/21/22 gerçek planla düzeltildi; kullanıcı yolculukları/tasarım/kapsam belgeleri ve öncelik-gerekçe-kapanış koşullu açık iş listesi eklendi. Küresel üretim kabulü açık: gerçek ekran okuyucu/pentest, hukuk rotaları/metni, canlı izleme/dağıtım/SLO/uzun trafik ve tek komut kurulum kanıtı yok; yerel geçti sonucu bunları kapatmaz.
+
+Kullanıcı diğer dış kabul kanıtlarını bilmediğini belirtti. Google başvurusunu göndermeye işlem anında onay verdi. Safari topluluk konsolunda 7 etkin sınıf ve demo durumu görüldü; UluJam Generic Pass kullanım amacı açıklanıp yayın erişimi talebi gönderildi. Sonuç3/3 adım,2–3gün yanıt bildirimi; hâlâ demo. Kanıt `.local/final-gate-google-submitted.png` Gitignored. Herkese açık yetki/Android/offline kabulü henüz yok; mod demo korunur. Anahtar/rol/sınıf değişimi yapılmadı.
+
+Son yük tekrarı harness1/1,32.69s;4senaryo kontrolü geçti.120başvuru/20beklenen429,12sonkoltuk başarı/12beklenen409,16activepass/unfinished0/overfull0; ölçümler load-report.md'de. `.local/final-gate-data.log`: ana kişisel5tablo0, historicalPreservedtrue/testDB0/media0. Belgeler sonrası kaynak478dosya sır0/yasak0;29görev sırası ve yeni belge bağları doğrulandı, eksik bağ0. Wallet ek gereksinimi raporun en sonunda korunur.
+
+Yerel yeniden açılış: web61898/worker61914 cwd doğrulandı; /,/ulujam,/admin HTTP200. Oturumlar web44463/worker27590. Sonraki görev başlangıcında bu PID'lerin çalışma dizinini doğrulayarak durdur. Değişiklikler belge/kabul kayıtlarıdır; yeni üretim davranışı eklenmedi. Yerel commit; dışpush/merge/VDSdeploy yok. Sonuç: yerel otomatik doğrulama geçti, genel üretim kabulü açık; Apple ertelenmiş. Tek komut kurulum ve uzun trafik kanıtı da açık iş olarak görünür, bunlar dış hesap bahanesiyle tamamlandı sayılmaz.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.

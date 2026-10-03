@@ -36,3 +36,9 @@ Tekrar: `pnpm build` ardından `pnpm test:load`. CI aynı senaryoyu çalıştır
 [k6 metrik tanımları](https://grafana.com/docs/k6/latest/using-k6/metrics/reference/).
 
 Son incelemeden sonra hedef sabit loopback ve fetch redirect:error ile sınırlandı; dış URL override etkisiz. Regresyon RED→GREEN ve dört k6 senaryosu yeniden geçti.
+
+## Son kabul tekrar ölçümü — 3 Ekim 2026
+
+`.local/final-gate-load.log`: harness1/1 geçti,32.69s; aynı dört yerel senaryo ve kapsam sınırları. Yeni p95/p99(ms): genel83.74/103.23; form128.57/193.34; takım yarışı198.76/223.68; Wallet queue broker1096.51/1122.76. Wallet broker gecikmesi gerçek Google API gecikmesi değildir.
+
+Genel1662 kontrol geçti; formlarda120kalıcı kayıt+20beklenen429, yönetici sorgularıyla280kontrol; takım yarışında12başarı+12beklenen409; kuyrukta16activepass/unfinished0, taşan takım0. Form/yarış ham HTTP hata oranı beklenen429/409 içerir; veri tutarlılığı kontrolleri100%. Kuyruk lease/backoff hızlandırması ve fake sağlayıcı gerçek toparlanma SLA'sı değildir. Uzun süreli trafik, VDS ve bütçeden türetilmiş SLO henüz kabul edilmedi. Ölçüm sonrası anaDBkişisel0/testDB0/media0, tarihsel kayıtlar korunmuş (`.local/final-gate-data.log`).

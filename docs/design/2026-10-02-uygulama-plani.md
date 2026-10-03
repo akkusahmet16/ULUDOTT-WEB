@@ -331,7 +331,7 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 - [x] Sunucuda imzalı ekleme bağlantısı, Generic Class/nesne, derece güncellemesi, sağlayıcı hata kaydı ve demo/yayın erişimi durumunu uygula.
 - [x] Yetkili test Google hesabında gerçek ekleme/güncelleme kanıtı al; yayın erişimi yoksa herkese açık kabulü açıkça beklemede bırak; dosyaları ve sır taramasını kontrol edip commit et.
 
-**Demo kabulü tamam (3 Ekim2026):** Onaylanan yeni servis hesabı anahtarı depo dışında0600 izinle kuruldu. Gerçek OAuth/Generic API nesne oluşturma, aynı Object ID üzerinde QR/derece güncelleme ve INACTIVE iptali doğrulandı. Safari'de kayıtlı test Google hesabına kart eklendi; aynı kartta2.sıra/revision4 görüldü. Kanıt docs/operations/google-wallet-live-acceptance.md. Google genel yayın erişimi istenmedi/alınmadı; herkese açık kullanım beklemede. Android cihaz/offline teslim ayrıca denenmedi.
+**Demo kabulü tamam (3 Ekim2026):** Onaylanan yeni servis hesabı anahtarı depo dışında0600 izinle kuruldu. Gerçek OAuth/Generic API nesne oluşturma, aynı Object ID üzerinde QR/derece güncelleme ve INACTIVE iptali doğrulandı. Safari'de kayıtlı test Google hesabına kart eklendi; aynı kartta2.sıra/revision4 görüldü. Kanıt docs/operations/google-wallet-live-acceptance.md. Google genel yayın erişimi 3 Ekim2026 kullanıcı onayıyla istendi; sağlayıcı onayı henüz alınmadı; herkese açık kullanım beklemede. Android cihaz/offline teslim ayrıca denenmedi.
 
 ### Görev 24 — Apple Wallet pass ve güncelleme servisi
 
@@ -410,8 +410,11 @@ Yerel CI/yük/güvenlik ve manuel klavye kanıtı raporlarda. Gerçek VoiceOver/
 
 - [ ] Mimari önerinin her gereksinimi bu plandaki bir göreve ve çalışan/test edilmiş çıktıya eşlenmiştir; atlanan veya kapsam dışı bırakılan madde yoktur.
 - [x] Ürün/API/rol haritası, ER diyagramı, mobil/erişilebilirlik, güvenlik ve stres raporları, yedek restore kanıtı ve açık risk listesi tamamdır.
-- [ ] Google Wallet herkese açık yayın ve Apple Wallet gerçek cihaz güncellemesi yalnızca sağlayıcı onay/sertifika kanıtı varsa “tamamlandı” işaretlenir.
+- [ ] Google Wallet herkese açık yayın ve gerçek Android cihaz kabulü: başvuru 3 Ekim2026 gönderildi; sağlayıcı onayı/cihaz kanıtı bekliyor.
+- [ ] Apple Wallet gerçek cihaz güncellemesi: kullanıcı kararıyla ertelendi; ücretli hesap/sertifika kanıtı olmadan tamamlandı sayılmaz.
 - [x] Kullanıcıya teslim raporunda her aşamanın değişen dosyaları, test çıktıları, açık bağımlılıkları ve yayımlama durumu ayrı gösterilir.
+
+Son inceleme: [kabul kararı](../operations/final-acceptance.md) ve [ayrıntılı kapsam denetimi](../operations/requirement-coverage.md). Yerel otomatik testler geçti; açık bağımlılıklar nedeniyle genel üretim kabulü henüz kapanmadı.
 
 ## Kapsam eşleme tablosu
 
