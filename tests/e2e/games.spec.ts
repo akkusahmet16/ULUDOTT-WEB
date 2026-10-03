@@ -13,7 +13,7 @@ test("2026 oyun editörü, gerçek yapımcı onayı, finalist, tam yayın ve ger
     .getByLabel("Doğrulama veya kurtarma kodu")
     .fill("dddddddddddddddddddddddddddddddd");
   await page.getByRole("button", { name: "Giriş yap", exact: true }).click();
-  await page.getByRole("link", { name: "Oyun yönetimi", exact: true }).click();
+  await page.getByRole("link", { name: "Oyunlar", exact: true }).click();
   await page
     .getByRole("link", { name: /Adsız arşiv oyunu · https:\/\/subzero-41/ })
     .click();

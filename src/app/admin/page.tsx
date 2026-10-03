@@ -1,7 +1,8 @@
 import { cookies } from "next/headers";
 import { SESSION_COOKIE, resolveSession } from "../../lib/auth/session";
 import { LoginForm, SessionActions } from "../../modules/admin/ui/login-form";
-import Link from "next/link";
+import { getDashboard } from "../../modules/admin/application/dashboard-service";
+import { Dashboard } from "../../modules/admin/ui/dashboard";
 export default async function AdminPage() {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   const session = token ? await resolveSession(token) : null;
@@ -12,36 +13,7 @@ export default async function AdminPage() {
         <>
           <p>Yönetim oturumu açık.</p>
 
-          {session.actor.roles.some((role) =>
-            ["content_editor", "event_manager"].includes(role),
-          ) && (
-            <p>
-              <Link href="/admin/medya">Medya yönetimi</Link>
-              {" · "}
-              <Link href="/admin/etkinlikler">Etkinlik yönetimi</Link>
-              {" · "}
-              <Link href="/admin/duyurular">Duyuru yönetimi</Link>
-              {" · "}
-              <Link href="/admin/linkler">Bağlantı yönetimi</Link>
-              {" · "}
-              <Link href="/admin/galeri">Galeri yönetimi</Link>
-              {" · "}
-              <Link href="/admin/oyunlar">Oyun yönetimi</Link>
-            </p>
-          )}
-          {session.actor.roles.includes("event_manager") && (
-            <p>
-              <Link href="/admin/formlar">Form yönetimi</Link>
-              {" · "}
-              <Link href="/admin/basvurular">Başvuru yönetimi</Link>
-              {" · "}
-              <Link href="/admin/takim-arayanlar">Takım arayanlar</Link>
-              {" · "}
-              <Link href="/admin/takim-onaylari">Takım onayları</Link>
-              {" · "}
-              <Link href="/admin/check-in">Giriş QR kontrolü</Link>
-            </p>
-          )}
+          <Dashboard view={await getDashboard(session.actor)} />
           <SessionActions />
         </>
       ) : (

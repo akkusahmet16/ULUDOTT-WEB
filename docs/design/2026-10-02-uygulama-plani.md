@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (- [ ]) syntax for tracking. The user requested file-by-file review with the assistant; do not delegate implementation.
 
-Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–23 tamamlandı (Google demo kabulü dahil); Google genel yayın erişimi bekliyor. Görev24 Apple Wallet kullanıcı kararıyla ertelendi; sıradaki uygulanabilir kod görevi25. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
+Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–23 tamamlandı (Google demo kabulü dahil); Google genel yayın erişimi bekliyor. Görev24 Apple Wallet kullanıcı kararıyla ertelendi; Görev25 birleşik yönetim paneli tamamlandı; sıradaki uygulanabilir kod görevi26. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
 
 **Goal:** Uludott topluluk sitesi, genel etkinlik/form/duyuru/link yönetimi, UluJam takım ve onay akışları, 2026 arşivi, 2027 “Yakında” alanı, derece oyunları ve onay sonrası Wallet kartlarını sıfırdan güvenli ve sürdürülebilir biçimde üretmek.
 
@@ -360,9 +360,9 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Arayüz:** Üretir: getDashboard(actor,eventScope): DashboardView; getSystemStatus(actor): IntegrationStatus. Kişisel veri sayıları etkinlik kapsamına göre verilir.
 
-- [ ] Yaklaşan etkinlik, açık form, yeni başvuru, takım onayı, dolu kontenjan, başarısız Wallet işi ve zamanlanmış duyuru için kapsam/boş durum testlerini yaz.
-- [ ] Panel modüllerini tek navigasyonda birleştir; başarı/hata/yüklenme, arama/filtre ve kritik işlem etki önizlemesini uygula.
-- [ ] Editörün sistem sırlarını veya yetkisiz etkinlik başvurularını görmediğini kontrol et; mobil yönetim akışını ve dosyaları inceleyip commit et.
+- [x] Yaklaşan etkinlik, açık form, yeni başvuru, takım onayı, dolu kontenjan, başarısız Wallet işi ve zamanlanmış duyuru için kapsam/boş durum testlerini yaz.
+- [x] Panel modüllerini tek navigasyonda birleştir; başarı/hata/yüklenme, arama/filtre ve kritik işlem etki önizlemesini uygula.
+- [x] Editörün sistem sırlarını veya yetkisiz etkinlik başvurularını görmediğini kontrol et; mobil yönetim akışını ve dosyaları inceleyip commit et.
 
 ### Görev 26 — güvenlik sertleştirme ve kötüye kullanım kontrolleri
 

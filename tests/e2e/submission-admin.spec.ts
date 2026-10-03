@@ -15,7 +15,7 @@ test("başvuru arama, sürümlü düzeltme, durum, güvenli indirme ve silme", a
   await page.getByRole("button", { name: "Giriş yap", exact: true }).click();
   await expect(page.getByText("Yönetim oturumu açık.")).toBeVisible();
   await page
-    .getByRole("link", { name: "Başvuru yönetimi", exact: true })
+    .getByRole("link", { name: "Başvurular", exact: true })
     .click();
   await page
     .getByLabel("Form", { exact: true })
