@@ -8,6 +8,18 @@ const config: NextConfig = {
     },
     serverFunctions: false,
   },
+  outputFileTracingExcludes: {
+    "/*": [
+      "./Media/**/*",
+      "./Uludott Logo Pack/**/*",
+      "./Wallet secrets/**/*",
+      "./.env*",
+      "./.local/**/*",
+      "./.superpowers/**/*",
+      "./.worktrees/**/*",
+      "./**/*.{pem,key,p12,pfx,pkpass,heic,HEIC}",
+    ],
+  },
   outputFileTracingIncludes: {
     "/api/admin/media": [
       "./node_modules/sharp/**/*",

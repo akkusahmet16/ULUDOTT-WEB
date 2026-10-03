@@ -7,7 +7,8 @@ if (googleReadiness() !== "unconfigured") {
   sensitive.push(c.privateKey, c.privateKey.split("\n")[1], c.clientEmail);
 }
 let files = 0,
-  hits = 0;
+  hits = 0,
+  forbiddenFiles = 0;
 async function scan(dir: string) {
   for (const name of await readdir(dir)) {
     const path = join(dir, name),
@@ -16,6 +17,14 @@ async function scan(dir: string) {
     if (stat.isDirectory()) await scan(path);
     else if (stat.isFile()) {
       files++;
+      if (
+        name.startsWith(".env") ||
+        /\.(pem|key|p12|pfx|pkpass|heic)$/i.test(name) ||
+        /\/(Media|Wallet secrets|\.local|\.superpowers|\.worktrees)\//.test(
+          path,
+        )
+      )
+        forbiddenFiles++;
       const bytes = await readFile(path);
       if (
         sensitive.some(
@@ -31,5 +40,5 @@ async function scan(dir: string) {
 }
 await scan(".next/static");
 await scan(".next/standalone");
-console.log(JSON.stringify({ files, secretHits: hits }));
-if (hits) process.exitCode = 1;
+console.log(JSON.stringify({ files, secretHits: hits, forbiddenFiles }));
+if (hits || forbiddenFiles) process.exitCode = 1;
