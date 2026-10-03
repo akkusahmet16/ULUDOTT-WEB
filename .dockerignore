@@ -9,3 +9,10 @@
 !src/**
 !public/
 !public/**
+
+!scripts/
+!scripts/migrate.ts
+!scripts/check-config.ts
+!scripts/admin-bootstrap.ts
+!scripts/seed-2026.ts
+!scripts/seed-ulujam-years.ts

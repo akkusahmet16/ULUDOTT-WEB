@@ -603,6 +603,24 @@ BASE33dae64; plan/global kısıt/spec ve rapor okundu. Cwd doğrulanan web53739/
 
 CI fail-stop testi RED→GREEN1/1; tam CI zinciri45dosya267/267, üretimTLS50/50, type/lint/migration/build temiz, audit0, source455ve Wallet2771dosyada sır/forbidden0. CI workflow GitHub runner üzerinde henüz çalıştırılmadı; yerelde aynı zincir çalıştı. k6 kuruldu; son izole yük testi1/1 geçti: form120kayıt/20beklenen429; takım12kabul/12beklenen409; fazlaüye0; Wallet16aktif/0bitmemişiş. Fixture eventkind/batch/capacity/include ve tek tur toparlanma varsayımları uygulama kontrolleri korunarak düzeltildi. Raporlar load-report/security-test-report/accessibility-report ve pentest-scope. Gerçek ekran okuyucu/dış pentest bağımlılıkları açık.
 
+## Görev 29 başlangıcı — 3 Ekim 2026
+
+Görev28 commit623487c; yerel web57749/worker57770 başlatıldı, ana sayfa200 doğrulandı; cwd kontrolünden sonra Görev29 başlangıcında durduruldu. Ruling: mevcut onaylı checkout üzerinde; canlı sağlayıcı seçimi kullanıcı girdisine kadar açık. Tatbikat yalnız UUID test DB ve sentetik S3 anahtarlarını kullanacak; kişisel test dump geçici0700dizinde/0600dosyada tutulup silinecek.
+
+## Görev 28–29 tek son inceleme
+
+İki Important: kaynak taramasında JSON-escaped PEM kaçışı ve loadbroker publicURL override/redirect dış hedef riski. Sentetik testlerle RED2/2 doğrulandı; sabit yerelorigin+redirecterror ve escapednewline normalizasyonuyla kapatılır. İncelemenin Minor mimari iddiası yeniden Important derecelendi: gerçek ilk GoogleSave provider çağrısı kart transaction içinde ve web isteğinde; kapasite/lock planını etkilediği için belge düzeltmesi teslim için gerekli. Mevcut Wallet davranışı refactor edilmedi; mimari/karar rehberi gerçekle eşlendi. Ertelenen minor yok.
+
+## Görev 29 yerel teslim — 3 Ekim 2026
+
+Node worker hedefi yok RED→Dockerworkerbuild GREEN; ayrı web/worker image nonroot. Gerçek image smoke: temiz izoleDB, worker--once passed; web4route200/nonroot. Worker image21.369dosya secret0/forbidden0. PGdump/restore43tablonun tüm satır/count hashleri ve S3iki nesne bytehash eşit; editoryalseed iki kez3oyun, temizkişisel0. Snapshot126.632byte, ilkprova kurulum+snapshot1,586sn/restore0,530sn, kayıp0; canlıRPO/RTO değildir. İlkfixture participants isimli olmayan tablo varsayımı düzeltildi; gerçek şema43tabloyla eşlendi. Geçici kişiseldump0700/0600silindi.
+
+Tek son inceleme: Important2 guard RED→GREEN2/2, mimari yanlış synchronous-provider iddiası kapasite etkisi nedeniyle Important'a yükseltilip belge düzeltildi; minor(deferred) yok. İlkfinal typecheck yeni sentetik test subprocess env'inde required NODE_ENV eksikliğiyle durdu; yalnız testenv NODE_ENV=test düzeltildi. Ardından tam kabul48dosya270/270; üretimTLS50/50(52,4sn), type/lint/migration/build temiz; prod audit0; source475dosya0secret/0forbidden, gerçek Walletstatic/standalone2794dosya0secret/0forbidden. Dört k6senaryosu son guard değişikliğiyle1/1 tekrar geçti(30,68sn); kayıp/çiftkayıt/fazlaüye/bitmemişiş0. Sonkanıt .local/task29-ci-accepted.log ve task29-load-final.log.
+
+README, mimari/ER/karar, rota/rol, altı değişiklik yolu, deploy/backup/rollback/bootstrap/events/forms/links/teams/wallet rehberleri incelendi; belge bağlarında eksik0. docs/operations/final-acceptance.md bütün29görev/aşama/gereksinim/kanıt/açık bağımlılıklarını eşler; Apple24, Googlepublic/device, hukuk/email/alarm, gerçek ekran okuyucu/dışpentest, VDS/domain/CDN/bütçe/region/trafik/RPO/RTO açık. Sağlayıcı seçimi yapılmadı. WalletGeldi gereksinimi raporun en altında korunur. Mevcut development/bootstrap dalı yerelde korunur; dışpush/merge/deploy yok.
+
+Yerel kapanış: anaDB applications/teams/cards/passes/credits0, historicalPreservedtrue, testDatabases0, mediaObjects0(.local/task29-data-audit.log). Web60356/worker60370 yeniden açıldı; cwd doğrulandı, /, /ulujam ve /admin HTTP200. Oturumlar web73654/worker46537; sonraki görev başlangıcında bu süreçleri çalışma dizinini kontrol ederek durdur. Next dev ürettiği next-env.d.ts importu bu çalışma biçimiyle kayda alınır; CI typegen temiz checkout tiplerini üretir.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.

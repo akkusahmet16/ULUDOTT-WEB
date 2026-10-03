@@ -402,16 +402,16 @@ Yerel CI/yük/güvenlik ve manuel klavye kanıtı raporlarda. Gerçek VoiceOver/
 
 **Arayüz:** Aynı repo web ve worker süreçlerini ayrı dağıtır; migration ve medya yedeği eşlenir; gizli değişkenler güvenli ortamdan sağlanır.
 
-- [ ] Geliştirme/test/canlı ortam ayrımı, boş DB migration, editoryal 2026 seed'i, smoke test ve geri dönüş komutlarını belgele; yerelde temiz kurulum prova et.
-- [ ] Yedek alma/geri yükleme tatbikatını gerçek test ortamında yap; RPO/RTO, maliyet, veri bölgesi ve trafik hedefleri netleşmeden üretim sağlayıcısını kesinleştirme.
-- [ ] “Bir form alanını, rengi, etkinliği, linki, takım kuralını ve Wallet kartını nereden değiştiririm?” rehberini yeni geliştirici gözünden uygula; bütün dosyaları incele ve son kabul matrisiyle eşleştir.
+- [x] Geliştirme/test/canlı ortam ayrımı, boş DB migration, editoryal 2026 seed'i, smoke test ve geri dönüş komutlarını belgele; yerelde temiz kurulum prova et.
+- [x] Yedek alma/geri yükleme tatbikatını gerçek test ortamında yap; RPO/RTO, maliyet, veri bölgesi ve trafik hedefleri netleşmeden üretim sağlayıcısını kesinleştirme.
+- [x] “Bir form alanını, rengi, etkinliği, linki, takım kuralını ve Wallet kartını nereden değiştiririm?” rehberini yeni geliştirici gözünden uygula; bütün dosyaları incele ve son kabul matrisiyle eşleştir.
 
 ### Aşama 5 ve tüm ürün için son kabul kapısı
 
 - [ ] Mimari önerinin her gereksinimi bu plandaki bir göreve ve çalışan/test edilmiş çıktıya eşlenmiştir; atlanan veya kapsam dışı bırakılan madde yoktur.
-- [ ] Ürün/API/rol haritası, ER diyagramı, mobil/erişilebilirlik, güvenlik ve stres raporları, yedek restore kanıtı ve açık risk listesi tamamdır.
+- [x] Ürün/API/rol haritası, ER diyagramı, mobil/erişilebilirlik, güvenlik ve stres raporları, yedek restore kanıtı ve açık risk listesi tamamdır.
 - [ ] Google Wallet herkese açık yayın ve Apple Wallet gerçek cihaz güncellemesi yalnızca sağlayıcı onay/sertifika kanıtı varsa “tamamlandı” işaretlenir.
-- [ ] Kullanıcıya teslim raporunda her aşamanın değişen dosyaları, test çıktıları, açık bağımlılıkları ve yayımlama durumu ayrı gösterilir.
+- [x] Kullanıcıya teslim raporunda her aşamanın değişen dosyaları, test çıktıları, açık bağımlılıkları ve yayımlama durumu ayrı gösterilir.
 
 ## Kapsam eşleme tablosu
 
@@ -442,3 +442,5 @@ Yerel CI/yük/güvenlik ve manuel klavye kanıtı raporlarda. Gerçek VoiceOver/
 2027 tarihi, Coffee Talk ve diğer gerçek etkinliklerin tarih/konumu, doğrulanmış sosyal bağlantılar, 2026 görselleri/finalistleri/yapımcı yayın adları, veri sorumlusu ve hukuk metinleri, domain/bütçe/veri bölgesi/trafik hedefleri, Google issuer yayın erişimi ve Apple Developer kimlikleri ayrı girdilerdir. Bu bilgiler olmadan ilgili canlı içerik/Wallet kabulü tamamlandı sayılamaz. Yerel mimari, panel ve boş durum çalışması sürer; bilgi uydurulmaz.
 
 Planın dışına çıkılması, bir görevin atlanması veya yeni özellik eklenmesi gerekiyorsa değişiklik önce bu dosyada ve mimari öneride açıklanır. Dosya dosya inceleme ve kullanıcıya raporlama bundan sonraki uygulama turlarının zorunlu çalışma biçimidir.
+
+Görev 29 yerel teslim kanıtı: docs/operations/final-acceptance.md ve backup-restore.md. Belge/rapor kutuları tamam; ürünün çalışan dış sağlayıcı ve canlı kabul kapıları açık bağımlılıklar çözülmeden kapanmaz.

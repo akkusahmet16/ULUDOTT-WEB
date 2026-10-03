@@ -42,4 +42,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build web image after acceptance
         run: docker build --target runtime -t uludott-web:acceptance .
+      - name: Build independent worker image
+        run: docker build --target worker -t uludott-worker:acceptance .
 # No automatic publication: domain/VDS/production approvals are separate.

@@ -1,3 +1,4 @@
+import { fetchLocalPublic } from "./local-public";
 import { it, expect } from "vitest";
 import { createServer } from "node:http";
 import { promisify } from "node:util";
@@ -105,13 +106,11 @@ it("isolated k6 correctness and recovery acceptance", async () => {
       try {
         let status = 200;
         if (url.pathname === "/public") {
-          const result = await realFetch(
-            process.env.LOAD_PUBLIC_URL || "http://127.0.0.1:3100/",
-          );
+          const result = await fetchLocalPublic("/", realFetch);
           const text = await result.text();
           const imagePath = text.match(/src="(\/media\/[^"?]+)"/)?.[1];
           const image = imagePath
-            ? await realFetch("http://127.0.0.1:3100" + imagePath)
+            ? await fetchLocalPublic(imagePath, realFetch)
             : null;
           status =
             result.status === 200 &&
@@ -254,7 +253,9 @@ it("isolated k6 correctness and recovery acceptance", async () => {
       await x.sql`select count(*)::int n from outbox where status in ('pending','processing','dead')`;
     expect(queue.n).toBe(0);
     expect(queueObservations[1].pending).toBeGreaterThan(0);
-    expect(queueObservations.some((item) => item.phase >= 2 && item.pending === 0)).toBe(true);
+    expect(
+      queueObservations.some((item) => item.phase >= 2 && item.pending === 0),
+    ).toBe(true);
     await writeFile(
       ".local/task28-load/invariants.json",
       JSON.stringify(

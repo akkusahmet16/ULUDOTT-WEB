@@ -1,17 +1,14 @@
 # Uludott Web
 
-GitHub deposu: [akkusahmet16/ULUDOTT-WEB](https://github.com/akkusahmet16/ULUDOTT-WEB).
+Repo: [akkusahmet16/ULUDOTT-WEB](https://github.com/akkusahmet16/ULUDOTT-WEB).
 
-Üretim platformunun adım adım geliştirildiği depo. **Görev 1–15 tamamlandı**: çalışma ortamı, veritabanı, yönetici kimliği, tasarım sistemi, özel medya, etkinlik/duyuru yayın akışı, bağlantı merkezi ve 2026 derece bağlantıları hazır. UluJam arşivi/2027 yakında ve mini oyunlar tamamlandı. Form şeması, koşul motoru ve değişmez sürümler hazır. Form yönetim paneli hazır. Açık form gönderimi ve makbuz hazır. Etkinlik kapsamlı başvuru yönetimi, güvenli CSV/XLSX, düzeltme/silme ve saklama süresi temizliği hazır. Coffee Talk site içi başvuru ve kapanış akışı doğrulandı. UluJam özel form tanımı, dört mod, beceri/seviye doğrulaması ve yetkili önizlemesi hazır. Sıradaki adım Görev 16 atomik UluJam başvuru/takım işlemleri; takım kayıt ve Wallet özellikleri henüz uygulanmadı. Üretime hazır değildir.
+Görev 1–23 ve 25–27 yerel uygulama teslimleri mevcut;28 CI/yük/güvenlik otomasyonu ve29 dağıtım/restore/geliştirici rehberi bu teslimdedir. Apple Görev 24 kullanıcı kararıyla ertelendi. Gerçek ekran okuyucu/dış pentest, Google public/device, hukuk ve canlı VDS/domain kabulü açık. Site şu an yerelde; [son kabul matrisi](docs/operations/final-acceptance.md) açık işleri ve bütün aşamaları gösterir.
 
-## Önce okunacak belgeler
+## Önce okunacaklar
 
-- [Uygulama planı](docs/design/2026-10-02-uygulama-plani.md)
-- [İlerleme ve test raporu](docs/operations/progress.md)
-- [Başvuru yönetimi ve veri yaşam döngüsü](docs/operations/submissions.md)
-- [Mimari](docs/design/2026-10-01-mimari-oneri.md)
+Her işlem öncesi [uygulama planı](docs/design/2026-10-02-uygulama-plani.md) ve [ilerleme raporu](docs/operations/progress.md) okunur. İş başında yerel web/worker cwd doğrulanıp durdurulur, iş sonunda yeniden başlatılır. Next rehberleri kurulu `node_modules/next/dist/docs/` içinden okunur.
 
-Her işlem öncesi plan ve rapor okunur. Tamamlanma, test ve dosya inceleme kanıtıyla işaretlenir.
+[Mimari](docs/architecture/overview.md) · [ER](docs/architecture/er-diagram.md) · [kararlar](docs/architecture/decision-log.md) · [rota/API](docs/product/routes.md) · [roller](docs/product/roles.md) · [değişiklik rehberi](docs/product/change-guide.md).
 
 ## Araçlar ve kurulum
 
@@ -44,46 +41,31 @@ Uygulama: http://127.0.0.1:3000 . Yerel PostgreSQL: 127.0.0.1:5432. S3 uyumlu Ga
 
 `config:check` yalnızca ayarları doğrular; servislerin erişilebilir olduğunu kanıtlamaz. Ana sayfa ve yayın listeleri artık DB okur; PostgreSQL servisi gerekir. Boş DB kabulü ayrıca entegrasyon testleriyle doğrulanır.
 
-## Kontroller
+## Veri ve çalışma
 
 ```sh
-pnpm test
-pnpm test:integration
-pnpm typecheck
-pnpm lint
-pnpm exec playwright install chromium
-pnpm test:e2e
-pnpm build
+pnpm db:migrate
+pnpm db:seed:2026
+# Tarihsiz 2027 taslağı da isteniyorsa: pnpm db:seed:ulujam
+pnpm dev
+# Ayrı terminal:
+pnpm worker
 ```
 
-Vitest yapılandırma yanında gerçek PostgreSQL bağlantısını ve S3 yükle/oku/sil ile anonim erişim reddini kontrol eder. Entegrasyon testleri çalışan yerel servisler ve `.env.local` gerektirir; servis yoksa testler atlanmaz, başarısız olur. Playwright kendi izole Next sunucusunu 3100 portunda açar/kapatır. Üretim build'inden sonra `pnpm start` kullanılabilir. Docker build: `docker build -t uludott-web:local .` (yerel ARM Linux konteynerinde doğrulandı).
+Migration 43 public tabloyu boş açar; seed yalnız 3 verilen 2026 URL/ödül ve editoryal ilişkiler, kişi/takım/kart yaratmaz. Admin varsayılan parola yok: [bootstrap](docs/operations/admin-bootstrap.md). Test verileri yalnız izole UUID DB/S3 anahtarlarında; entegrasyon testleri servis yoksa atlanmaz.
 
-`pnpm db:migrate` Drizzle migration'larını uygular, seed çalıştırmaz. 42 tabloyu kuran migration dosyaları hazırdır; komut gerçek PostgreSQL üzerinde iki kez başarıyla çalıştırıldı. `pnpm db:generate` yeni migration üretir, `pnpm db:check` metadata tutarlılığını kontrol eder. Üretilen SQL uygulanmadan önce incelenir; migration dağıtımda tek süreçten çalıştırılır. [ER diyagramı ve şema kararları](docs/architecture/database.md) burada kayıtlıdır. 2026 editoryal derece bağlantıları migration'dan ayrı `pnpm db:seed:2026` ile yüklenir; tekrar çalıştırılabilir ve kişi/takım oluşturmaz.
+## Doğrulama
 
-## Sırlar ve kaynak varlıklar
+```sh
+pnpm ci:check
+pnpm test:integration
+pnpm test:load
+```
 
-Wallet klasörü içeriği okunmadan `/Users/taklalie60/.uludott-secrets/web-v0.1/Wallet secrets` konumuna taşındı. Üst dizinler 0700; klasör Git ve Docker bağlamının dışında. Bu makineye özel yol uygulama tarafından okunmaz ve entegrasyon çalıştığı anlamına gelmez.
+`ci:check`: typegen/ts, lint, migration metadata, birim+gerçek PG/S3 entegrasyon+restore, build, üretim TLS Playwright/axe, production audit ve kaynak/Wallet paket sır taraması. Playwright chromium gerekir: `pnpm exec playwright install chromium`; k6 yük aracı ayrıca kuruludur. CI workflow aynı zincir ve k6'ı çalıştırır, başarısız verify paket işini durdurur; otomatik canlı deploy yok. [Yük](docs/operations/load-report.md), [güvenlik](docs/operations/security-test-report.md), [erişilebilirlik](docs/operations/accessibility-report.md).
 
-Ham `Media` ve `Uludott Logo Pack` varlıkları yerinde korunur, depoya alınmaz. İlgili görevlerde doğrulanmış ve optimize türevler kullanılır. `.dockerignore` allowlist'i sırlar, ham medya, yerel env ve raporları build bağlamından dışlar.
+## İşletme rehberleri
 
-## Şu an açık kalanlar
+[Deploy/ortam](docs/operations/deploy.md) · [eşlenmiş yedek/restore](docs/operations/backup-restore.md) · [rollback](docs/operations/rollback.md) · [etkinlik/afiş](docs/operations/events.md) · [form/başvuru/export](docs/operations/forms.md) · [linkler](docs/operations/links.md) · [takımlar](docs/operations/teams.md) · [Wallet](docs/operations/wallet.md) · [veri hakları](docs/operations/data-rights.md) · [VDS değerlendirmesi](docs/operations/vds-assessment.md).
 
-Görev 1–15 tamamlandı. Yönetici kimliği, MFA, oturum/rol altyapısı, ortak arayüz, medya, etkinlik/duyuru yayın akışı, bağlantı merkezi ve 2026 derece bağlantıları hazır; UluJam arşivi/2027 yakında ve mini oyunlar hazır; form şeması/koşul motoru/değişmez sürümler hazır; form yönetimi hazır; açık form/makbuz hazır; sonraki adım Görev 13 başvuru yönetimi. Sonraki ürün görevleri henüz uygulanmadı. Hukuk, gerçek etkinlik bilgileri, bildirim sağlayıcısı, Wallet hesap/sertifika/cihaz ve canlı hosting kabulü ayrı bağımlılıklardır. Ayrıntılı durum ilerleme raporundadır.
-
-Yönetici girişi `/admin`; ilk kişi kurulumu ve izin matrisi: [Yönetici kimliği](docs/operations/admin-auth.md).
-
-Medya kütüphanesi `/admin/medya`; sınırlar ve yayın/silme davranışı: [Medya işletme rehberi](docs/operations/media.md).
-
-Etkinlik/duyuru panelleri `/admin/etkinlikler` ve `/admin/duyurular`; yayın kuralları, izinler ve form CTA bağımlılığı: [Yayın rehberi](docs/operations/publication.md).
-
-Bağlantı merkezi `/linkler`, yönetim `/admin/linkler`; doğrulanmış adresler, sıralama, zaman penceresi, kopyalama ve QR: [Bağlantı rehberi](docs/operations/links.md).
-
-2026 ilk üç sonuç `/oyunlar`; seed, boş alanlar ve yeni yıl istisnasının sınırı: [Tarihî sonuç rehberi](docs/operations/historical-results.md).
-
-UluJam yılları için `pnpm db:seed:ulujam` 2026 editoryal bağlantılarını ve 2027 tarihsiz taslağını idempotent yükler. [Arşiv ve galeri işletme rehberi](docs/operations/ulujam-archive.md), [Aşama 1 kabulü](docs/operations/phase-1-acceptance.md).
-
-[Form tanımları ve sürümleme sözleşmesi](docs/operations/form-definitions.md). Görev 10 çekirdek motoru sağlar; form yönetimi ve canlı başvuru kabulü sonraki adımlardadır.
-
-[Form yönetim rehberi](docs/operations/form-management.md).
-
-[Açık form ve makbuz rehberi](docs/operations/form-submission.md).
+Docker: `docker build --target runtime -t uludott-web:local .` ve `docker build --target worker -t uludott-worker:local .`; her ikisi nonroot, web/worker ayrı süreç. Sırlar runtime env/read-only mount ile, image içine girmez. `.dockerignore`allowlist yerel env, ham Media, log/testdump/anahtarları dışlar. Kaynak varlıklar ve eski Wallet secret klasörü repo dışındadır; içeriği uygulama/test/rapora alınmaz.

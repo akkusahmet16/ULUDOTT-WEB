@@ -7,3 +7,5 @@ CI: scripts/ci-check.sh hata durumunda durur; ci-gate.test.ts başarısız lint 
 Son komut/sonuçlar ve ölçümler [yük raporu](load-report.md), [ilerleme](progress.md) ve [son kabul](final-acceptance.md) içinde tutulur. Bağımlılık denetimi üretim kapsamındadır; geliştirici bağımlılıkları için sıfır güvenlik açığı iddiası verilmez.
 
 Dış pentest yapılmadı. Canlı CDN/WAF false-positive, gerçek firewall/origin, domain TLS, gerçek Turnstile widget ve cihazdan Wallet silme kabulü bekler. Bu bağımlılıklar “geçti” olarak işaretlenmez. VDS gerçek CPU/RAM ve trafik hedefleri gelmeden kapasite veya DDoS dayanıklılığı iddiası verilmez.
+
+Son inceleme: JSON-escaped PEM kaynak taraması ve yük hedefinin dış URL/redirecte kaçması için sentetik RED→GREEN2/2. Worker image kaynak/script/productiondeps21.369dosya; gerçek yapılandırılmış anahtarlarla secretHits0/forbidden0; ham değer yazılmadı. Kaynak/tarayıcı/standalone taraması ve worker image kontrolleri ayrı kanıtlardır.

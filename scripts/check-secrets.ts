@@ -41,7 +41,7 @@ for (const file of new Set(files)) {
   if (
     values.some((v) => content.includes(Buffer.from(v))) ||
     /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----\s+[A-Za-z0-9+/]{64}/.test(
-      content.toString(),
+      content.toString().replace(/\\+(?:n|r)/g, "\n"),
     )
   )
     hits++;
