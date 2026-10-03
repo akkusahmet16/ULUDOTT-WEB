@@ -210,8 +210,10 @@ it("Persisted consent preserves original version/time and cannot be renewed afte
     const receipt = await submitUlujam(input, randomUUID());
     const [original] =
       await x.sql`select granted_at,text_version from consents where submission_id=${receipt.id}`;
+    // Compare consent times in the database clock domain; local clocks may lag.
+    const [clock] = await x.sql`select clock_timestamp() as at`;
     expect(
-      (await recordConsent("demo-v1", "participation", receipt.id, new Date()))
+      (await recordConsent("demo-v1", "participation", receipt.id, clock.at))
         .at,
     ).toEqual(original.granted_at);
     await expect(

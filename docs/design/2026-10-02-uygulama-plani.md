@@ -458,3 +458,12 @@ Kapsam: GTA VI resmi sayfasını renk/yerleşim/hareket referansı alarak bütü
 - [x] Tam CI ve gerçek tarayıcı görsel/mobil kontrolünü tamamla; branch incelemesi, git kaydı ve yerel web/worker yeniden açılışı.
 
 İnceleme odağı: özellik/CTA kaybı, panel mobil taşması, QR filtre/kontrast, menü klavye kullanımı, animasyon kapalıyken görünür içerik ve dış kaynak/sır sızıntısı.
+
+## Referans klonu ve sayfaya gömülü oyunlar — 4 Ekim 2026
+
+Kullanıcı ilk uygulamanın tasarımını reddetti; güncel Rockstar GTA VI sayfasının klonunu, menüsüz ana sayfa haritasını ve mevcut iki oyunun başlat ekranı olmadan doğal/rastgele bölüm molası olarak yerleşmesini açıkça istedi. Önceki Git yedeğiyle deneme onayı sürer. Mimari/API/veri/yetki/Wallet değişmez; oyunun sunumu için önceki özellik-eklememe sınırı kullanıcı tarafından genişletildi. Mevcut UI akışlarının sınırlı yeniden düzenlemesi; yeni altyapı yok. Referans canlı tarayıcıda açılış kolajı, iki medya paneli ve büyük yönlendirme bölümleri olarak incelendi. Yapay üretim görsel yok. Yerel klon denemesi için resmi referansın gerçek görselleri ve fontları kaynak atıflarıyla kullanılır; bunlar Uludott'a ait etkinlik/kişi görüntüsü olarak sunulmaz.
+
+- [x] Menü kullanmadan bütün genel ana bölümlere ve görünür yayınlı içeriklere giriş; özel token sayfaları ve yetkili admin bölümleri erişim kurallarını korur.
+- [x] Mevcut iki oyun doğrudan sayfada: ilk etkileşimle oynama, yeniden deneme; rastgelelik sadece oturumun mola sırası/yerine etki eder, gezinmeyi kesmez.
+- [x] Gerçek referans oran/font/renk/medya yerleşimi ve kaydırma hareketleri; mobil/reduced-motion/QR korunur.
+- [x] Regresyon RED/GREEN, tam CI, görsel karşılaştırma, bağımsız inceleme; rapor/Git kaydı ve yerel yeniden açılış.

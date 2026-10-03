@@ -21,7 +21,6 @@ test("2027 boş tarih, 2026 arşivi ve isteğe bağlı oyunlar", async ({
     archive.getByText("Finalist oyunları henüz yayımlanmadı."),
   ).toBeVisible();
   const star = page.getByRole("region", { name: "Yıldız yakalama" });
-  await star.getByRole("button", { name: "Başlat", exact: true }).click();
   const target = star.getByRole("button", {
     name: "Yıldızı yakala",
     exact: true,
@@ -35,7 +34,6 @@ test("2027 boş tarih, 2026 arşivi ve isteğe bağlı oyunlar", async ({
   await expect(star.getByRole("status")).toContainText("5 / 5");
   await expect(target).toBeDisabled();
   const memory = page.getByRole("region", { name: "Hafıza eşleştirme" });
-  await memory.getByRole("button", { name: "Başlat", exact: true }).click();
   await memory
     .getByRole("button", { name: "Kart 1: kapalı", exact: true })
     .tap();
@@ -90,7 +88,9 @@ test("galeri yönetim slotları ve medya listesi erişilebilir", async ({
   await page.getByRole("button", { name: "Giriş yap", exact: true }).click();
   await expect(page.getByText("Yönetim oturumu açık.")).toBeVisible();
   await page.goto("/admin/galeri");
-  await expect(page.getByRole("combobox", { name: "Arşiv medyası", exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("combobox", { name: "Arşiv medyası", exact: true }),
+  ).toBeVisible();
   await page
     .getByRole("button", { name: "Galeri slotunu kaydet", exact: true })
     .click();

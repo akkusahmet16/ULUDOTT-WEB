@@ -5,8 +5,7 @@ import { flipCard, matchCards } from "./game-logic";
 const deck = [1, 2, 3, 2, 1, 3],
   symbols = ["", "★", "●", "◆"];
 export function PairMatch() {
-  const [active, setActive] = useState(false),
-    [open, setOpen] = useState<number[]>([]),
+  const [open, setOpen] = useState<number[]>([]),
     [matched, setMatched] = useState<number[]>([]);
   function flip(index: number) {
     const next = flipCard(open, matched, index, deck);
@@ -16,7 +15,7 @@ export function PairMatch() {
     } else setOpen(next);
   }
   return (
-    <section aria-label="Hafıza eşleştirme" className="card">
+    <section aria-label="Hafıza eşleştirme" className="game-break memory-break">
       <h3>Hafıza eşleştirme</h3>
       <p>
         Altı karttaki üç çifti bul. Kartları tıkla, dokun veya Enter/Boşluk ile
@@ -24,12 +23,11 @@ export function PairMatch() {
       </p>
       <Button
         onClick={() => {
-          setActive(true);
           setOpen([]);
           setMatched([]);
         }}
       >
-        Başlat
+        Yeniden oyna
       </Button>
       <p role="status">
         {matched.length / 2} / 3{" "}
@@ -39,24 +37,22 @@ export function PairMatch() {
             ? "Eşleşmedi. Kartları kapatıp yeniden deneyin."
             : ""}
       </p>
-      {active && (
-        <div className="memory-board">
-          {deck.map((symbol, i) => {
-            const visible = open.includes(i) || matched.includes(i);
-            return (
-              <button
-                className="button"
-                key={i}
-                aria-label={`Kart ${i + 1}: ${visible ? symbols[symbol] : "kapalı"}`}
-                disabled={matched.includes(i) || open.length === 2}
-                onClick={() => flip(i)}
-              >
-                {visible ? symbols[symbol] : "?"}
-              </button>
-            );
-          })}
-        </div>
-      )}
+      <div className="memory-board">
+        {deck.map((symbol, i) => {
+          const visible = open.includes(i) || matched.includes(i);
+          return (
+            <button
+              className="button"
+              key={i}
+              aria-label={`Kart ${i + 1}: ${visible ? symbols[symbol] : "kapalı"}`}
+              disabled={matched.includes(i) || open.length === 2}
+              onClick={() => flip(i)}
+            >
+              {visible ? symbols[symbol] : "?"}
+            </button>
+          );
+        })}
+      </div>
       {open.length === 2 && (
         <Button onClick={() => setOpen([])}>Kartları kapat</Button>
       )}

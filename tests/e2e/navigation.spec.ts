@@ -62,7 +62,9 @@ for (const width of [390, 768, 1440])
 test("ana sayfa CTA hedefleri ve logo geçerli", async ({ page }) => {
   await page.goto("/");
   for (const label of ["Topluluğu tanı", "UluJam’i keşfet", "Destek ol"]) {
-    const link = page.getByRole("main").getByRole("link", { name: label });
+    const link = page
+      .getByRole("main")
+      .getByRole("link", { name: label, exact: true });
     const url = await link.getAttribute("href");
     expect((await page.request.get(url!)).status()).toBe(200);
   }
@@ -84,7 +86,9 @@ test("hareket azaltıldığında içerik ve gezinme kullanılabilir", async ({
   await expect(title).toBeVisible();
   await expect(title).toHaveCSS("animation-name", "none");
   await expect(
-    page.getByRole("main").getByRole("link", { name: "Topluluğu tanı" }),
+    page
+      .getByRole("main")
+      .getByRole("link", { name: "Topluluğu tanı", exact: true }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Menü", exact: true }).click();
   await expect(

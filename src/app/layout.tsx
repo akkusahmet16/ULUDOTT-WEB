@@ -5,13 +5,16 @@ import type { ReactNode } from "react";
 import localFont from "next/font/local";
 
 const bodyFont = localFont({
-  src: "../styles/fonts/Outfit.ttf",
+  src: [
+    { path: "../styles/fonts/ArtDeco-Regular.woff", weight: "400" },
+    { path: "../styles/fonts/ArtDeco-Medium.woff", weight: "500" },
+    { path: "../styles/fonts/ArtDeco-Bold.woff", weight: "700" },
+  ],
   variable: "--font-body",
-  weight: "100 900",
   display: "swap",
 });
 const displayFont = localFont({
-  src: "../styles/fonts/BarlowCondensed-Bold.ttf",
+  src: "../styles/fonts/ArtDeco-CondensedBold.woff",
   variable: "--font-display",
   weight: "700",
   display: "swap",

@@ -1,4 +1,14 @@
 import Link from "next/link";
+const destinations = [
+  ["/hakkimizda", "Hakkımızda"],
+  ["/ulujam", "UluJam"],
+  ["/etkinlikler", "Etkinlikler"],
+  ["/duyurular", "Duyurular"],
+  ["/oyunlar", "Oyunlar"],
+  ["/linkler", "Bağlantılar"],
+  ["/destek", "Destek"],
+  ["/admin", "Yönetim"],
+] as const;
 export function Footer() {
   return (
     <footer className="site-footer">
@@ -8,9 +18,13 @@ export function Footer() {
           <p>Dijital Oyun Tasarım Topluluğu</p>
         </div>
         <div>
-          <Link href="/hakkimizda">Hakkımızda</Link>
-          {" · "}
-          <Link href="/destek">Destek</Link>
+          <nav className="footer-map" aria-label="Site haritası">
+            {destinations.map(([href, label]) => (
+              <Link key={href} href={href}>
+                {label}
+              </Link>
+            ))}
+          </nav>
           <p>Oyunlar, fikirler ve birlikte üretmek.</p>
         </div>
       </div>
