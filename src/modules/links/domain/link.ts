@@ -1,3 +1,4 @@
+import { validateExternalUrl } from "../../../lib/security/url-policy.ts";
 import { z } from "zod";
 export const icons = {
   link: "↗",
@@ -25,10 +26,8 @@ export function validLinkUrl(value: string) {
   )
     return true;
   try {
-    const u = new URL(value);
-    return (
-      u.protocol === "https:" && !u.username && !u.password && !!u.hostname
-    );
+    validateExternalUrl(value, "link");
+    return true;
   } catch {
     return false;
   }

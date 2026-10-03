@@ -1,0 +1,11 @@
+# Tehdit modeli — yerel uygulama sınırı
+
+Korunan varlıklar: kişi/başvuru yanıtları ve rıza, takım erişim yetenekleri, yönetici MFA/oturumları, Wallet/check-in kimlikleri, medya deposu ve sağlayıcı servis anahtarı. Saldırganlar: anonim bot, başka takım/katılımcı, yetkisiz etkinlik yöneticisi, içerik editörü ve ele geçirilmiş yönetici oturumu.
+
+Güven sınırları: tarayıcı→HTTP; edge→origin; oturum→RBAC/etkinlik; DB transaction→outbox→worker→Google; özel medya→yayın varyantı. Kullanıcı girdisi SQL'e birleştirilmez; Zod/UUID ve body byte sınırı önce uygulanır. Capability linklerinin kendisi yetkidir: URL/referrer/log/build sızıntısı önlenir, token SHA256 tutulur, replay şifrelenir, scope'lar ayrı doğrulanır. Wallet özel linkleri yerine opaque check-in kimliği kullanır.
+
+Kontroller: nonce ve strict-dynamic script CSP (üretimde unsafe-inline/unsafe-eval script yok); style-src unsafe-inline mevcut React stilleri için belgeli istisna, script izni vermez. HTML nonce cache paylaşılmaz. Private no-store/no-referrer/noindex, nosniff/frame-ancestors DENY, HTTPS üretim HSTS (henüz alan adı/preload veya includeSubDomains kararı verilmedi). MFA replay koruması, CSRF origin+imza+session binding, atomik PostgreSQL limitleri, isteğe bağlı required Turnstile siteverify/action/hostname, fail-closed provider/config. Medya magic byte/MIME ve gerçek decoder piksel sınırı; metin React tarafından kaçırılır, CSV/XLSX hücre enjeksiyonu engellenir.
+
+İlk katman edgeDecision DB'ye gitmeden yöntem/gövde/opsiyonel origin header kontrolü yapar; gerçek CDN rate/managed-WAF ve ağ firewall VDS kabulünde aktive edilir. x-forwarded-for/CF-Connecting-IP doğrudan kullanıcıdan güvenilir kabul edilmez; mevcut uygulama global ve doğrulanmış kimlik bazlı DB limitleri kullanır. SHA256 rate kimliği ham e-posta/parola taşımaz. Origin header tek başına firewall değildir.
+
+Açık sınırlar: bot disabled yerelde gerçek bot koruması iddia edilmez; DDoS ve CDN false-positive kabulü gerçek hostta yapılacak; dış pentest yok; ASVS aile kanıtı tam madde sertifikası değil. Appletask24 ve check-in “Geldi” final maddesi ertelendi. Paylaşımlı global limit eşikleri yoğun etkinlikte normal trafiği etkileyebilir; görev28 yük ölçümü ile ayarlanacak. Nonce dinamik HTML CPU maliyeti de aynı kabulde ölçülecek.

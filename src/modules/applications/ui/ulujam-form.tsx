@@ -1,4 +1,5 @@
 "use client";
+import { BotChallenge, type BotConfig } from "../../forms/ui/bot-challenge";
 import { useState, useRef } from "react";
 import { z } from "zod";
 import { FormFields } from "../../forms/ui/form-fields";
@@ -20,11 +21,13 @@ import type { UlujamReceipt } from "../application/submit-ulujam";
 import type { Skill } from "../../matching/domain/skills";
 export function UlujamForm({
   eventId,
+  botConfig,
   definition,
   publicForm,
   teamOptions,
 }: {
   eventId: string;
+  botConfig?: BotConfig;
   definition: ValidFormDefinition;
   publicForm?: { slug: string; versionId: string };
   teamOptions?: { items: TeamOption[]; nextCursor: string | null };
@@ -38,6 +41,8 @@ export function UlujamForm({
     [errors, setErrors] = useState<Record<string, string>>({}),
     [busy, setBusy] = useState(false),
     [receipt, setReceipt] = useState<UlujamReceipt | null>(null);
+  const [botToken, setBotToken] = useState(""),
+    [botReset, setBotReset] = useState(0);
   const key = useRef<string | null>(null);
   const rendered = publicForm
     ? {
@@ -149,6 +154,7 @@ export function UlujamForm({
     key.current ??= crypto.randomUUID();
     try {
       const result = await publicRequest("/api/ulujam/apply", {
+        botToken,
         slug: publicForm.slug,
         versionId: publicForm.versionId,
         answers,
@@ -167,6 +173,8 @@ export function UlujamForm({
           : "Gönderim tamamlanamadı. Aynı yanıtla tekrar deneyin.",
       );
     } finally {
+      setBotToken("");
+      setBotReset((n) => n + 1);
       setBusy(false);
     }
   }
@@ -325,7 +333,18 @@ export function UlujamForm({
               </div>
             </>
           )}
-          <button type="submit">
+          {publicForm && (
+            <BotChallenge
+              config={botConfig}
+              action="ulujam_apply"
+              onToken={setBotToken}
+              resetKey={botReset}
+            />
+          )}
+          <button
+            type="submit"
+            disabled={!!publicForm && botConfig?.required && !botToken}
+          >
             {busy
               ? "Gönderiliyor…"
               : publicForm

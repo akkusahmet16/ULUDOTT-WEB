@@ -1,3 +1,5 @@
+import { headers } from "next/headers";
+import { botConfiguration } from "../../../../lib/security/turnstile";
 import { notFound } from "next/navigation";
 import { getPublicForm } from "../../../../modules/forms/application/public-form-service";
 import { UlujamForm } from "../../../../modules/applications/ui/ulujam-form";
@@ -12,6 +14,10 @@ export default async function Page({
 }) {
   const { formSlug } = await params;
   const f = await getPublicForm(formSlug);
+  const botConfig = {
+    ...botConfiguration(),
+    nonce: (await headers()).get("x-nonce") ?? undefined,
+  };
   if (!f) notFound();
   return (
     <main>
@@ -19,6 +25,7 @@ export default async function Page({
       {f.state === "open" && f.version ? (
         f.eventKind === "ulujam" && f.eventId ? (
           <UlujamForm
+            botConfig={botConfig}
             eventId={f.eventId}
             definition={f.version.definition}
             publicForm={{ slug: formSlug, versionId: f.version.id }}
@@ -26,6 +33,7 @@ export default async function Page({
           />
         ) : (
           <PublicForm
+            botConfig={botConfig}
             slug={formSlug}
             versionId={f.version.id}
             definition={f.version.definition}

@@ -1,3 +1,4 @@
+import { verifyBotToken } from "../../../lib/security/turnstile.ts";
 import "server-only";
 import { z } from "zod";
 import { readJson } from "../../../lib/http/read-json.ts";
@@ -78,10 +79,18 @@ export async function teamRequest(
         password: z.string().max(128).optional(),
         idempotencyKey: z.string(),
         website: z.string().max(512).default(""),
+        botToken: z.string().max(2048).optional(),
       })
       .parse(await readJson(req, 128 * 1024));
     if (d.website) throw new SubmissionError(400, "İstek doğrulanamadı");
-    const input = {slug:d.slug,versionId:d.versionId,answers:d.answers,...(d.teamId ? {teamId:d.teamId}:{}),...(d.password ? {password:d.password}:{})};
+    await verifyBotToken(d.botToken, "ulujam_apply");
+    const input = {
+      slug: d.slug,
+      versionId: d.versionId,
+      answers: d.answers,
+      ...(d.teamId ? { teamId: d.teamId } : {}),
+      ...(d.password ? { password: d.password } : {}),
+    };
     const idempotencyKey = d.idempotencyKey;
     return Response.json(await submitUlujam(input, idempotencyKey), {
       status: 201,

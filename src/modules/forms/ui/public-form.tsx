@@ -2,6 +2,7 @@
 import { useState, useRef, type FormEvent } from "react";
 import type { ValidFormDefinition } from "../domain/form-version";
 import type { Answers } from "../domain/field-types";
+import { BotChallenge, type BotConfig } from "./bot-challenge";
 import { FormFields } from "./form-fields";
 class PublicRequestError extends Error {
   fieldErrors: Record<string, string>;
@@ -32,7 +33,9 @@ export function PublicForm({
   slug,
   versionId,
   definition,
+  botConfig,
 }: {
+  botConfig?: BotConfig;
   slug: string;
   versionId: string;
   definition: ValidFormDefinition;
@@ -46,6 +49,8 @@ export function PublicForm({
       message: string;
       status: string;
     } | null>(null);
+  const [botToken, setBotToken] = useState(""),
+    [botReset, setBotReset] = useState(0);
   const key = useRef<string | null>(null);
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -53,6 +58,7 @@ export function PublicForm({
     key.current ??= crypto.randomUUID();
     try {
       const data = await publicRequest("/api/forms/" + slug + "/submit", {
+        botToken,
         answers,
         versionId,
         idempotencyKey: key.current,
@@ -69,6 +75,8 @@ export function PublicForm({
           : "Gönderim tamamlanamadı. Aynı yanıtla tekrar deneyebilirsiniz.",
       );
     } finally {
+      setBotToken("");
+      setBotReset((n) => n + 1);
       setBusy(false);
     }
   }
@@ -108,7 +116,16 @@ export function PublicForm({
             <input name="website" tabIndex={-1} autoComplete="off" />
           </label>
         </div>
-        <button className="button" disabled={busy}>
+        <BotChallenge
+          config={botConfig}
+          action="form_submit"
+          onToken={setBotToken}
+          resetKey={botReset}
+        />
+        <button
+          className="button"
+          disabled={busy || (!!botConfig?.required && !botToken)}
+        >
           {busy ? "Gönderiliyor…" : "Başvuruyu gönder"}
         </button>
       </fieldset>

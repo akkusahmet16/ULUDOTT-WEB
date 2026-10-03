@@ -31,6 +31,8 @@ import {
 import { removePrivate } from "../../src/modules/media/infrastructure/object-store.ts";
 // Automated fixtures never use the configured live issuer.
 process.env.GOOGLE_WALLET_MODE = "disabled";
+process.env.TURNSTILE_MODE = "disabled";
+delete process.env.ORIGIN_SHARED_SECRET;
 const local = await createTestDatabase();
 let child: ReturnType<typeof spawn> | undefined;
 let cleanup: Promise<void> | undefined;

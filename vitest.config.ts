@@ -11,7 +11,7 @@ export default defineConfig({
   },
   test: {
     environment: "node",
-    env: { GOOGLE_WALLET_MODE: "disabled" },
+    env: { GOOGLE_WALLET_MODE: "disabled", TURNSTILE_MODE: "disabled" },
     maxWorkers: 1,
     testTimeout: 60000,
     hookTimeout: 30000,

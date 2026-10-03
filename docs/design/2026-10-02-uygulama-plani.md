@@ -370,9 +370,9 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Arayüz:** Üretir: requireCsrf(request), enforceRateLimit(bucket,identity), verifyBotToken(token,action), validateExternalUrl(url,policy), securityHeaders(routeClass).
 
-- [ ] Yetkisiz nesne erişimi, SQLi/XSS/CSRF, token tahmini ve sızıntısı, kötü URL/dosya, büyük gövde, yanlış cache ve Turnstile eksikliği testlerini yaz.
-- [ ] CSP/HSTS/referrer/no-store kuralları, uygulama içi sınırlama, CDN/WAF rota bazlı ilk savunma ve origin erişim kısıtını uygulanabilir ortama göre kur.
-- [ ] OWASP ASVS matrisinde her uygulanabilir maddeye test/kanıt bağla; WAF yanlış pozitiflerini dene; bağımlılık ve sır taramasını geçir, dosyaları inceleyip commit et.
+- [x] Yetkisiz nesne erişimi, SQLi/XSS/CSRF, token tahmini ve sızıntısı, kötü URL/dosya, büyük gövde, yanlış cache ve Turnstile eksikliği testlerini yaz.
+- [x] CSP/HSTS/referrer/no-store kuralları, uygulama içi sınırlama, CDN/WAF rota bazlı ilk savunma ve origin erişim kısıtını uygulanabilir ortama göre kur.
+- [x] OWASP ASVS matrisinde her uygulanabilir maddeye test/kanıt bağla; WAF yanlış pozitiflerini dene; bağımlılık ve sır taramasını geçir, dosyaları inceleyip commit et.
 
 ### Görev 27 — gizlilik, erişim kayıtları ve veri yaşam döngüsü
 
