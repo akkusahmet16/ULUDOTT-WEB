@@ -24,7 +24,7 @@ export default async function Page({
   return (
     <main>
       <WebCard card={card} />
-      <WalletActions status={await getWalletStatus(token)} />
+      <WalletActions status={await getWalletStatus(token)} cardToken={token} />
     </main>
   );
 }

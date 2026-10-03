@@ -1,8 +1,11 @@
+import { GoogleAction } from "./google-action";
 import type { getWalletStatus } from "../application/wallet-service";
 export function WalletActions({
   status,
+  cardToken,
 }: {
   status: Awaited<ReturnType<typeof getWalletStatus>>;
+  cardToken: string;
 }) {
   return (
     <section aria-labelledby="wallet-heading">
@@ -33,6 +36,9 @@ export function WalletActions({
                   ? "Tekrar deneme bekliyor"
                   : "Sağlayıcıyı bekliyor"}
           </p>
+          {status.providers.google.readiness !== "unconfigured" && (
+            <GoogleAction cardToken={cardToken} />
+          )}
           <p>Apple Wallet: Hazır değil; sertifika ve cihaz testi bekleniyor.</p>
         </>
       )}

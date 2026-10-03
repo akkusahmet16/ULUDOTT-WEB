@@ -32,7 +32,8 @@
     "db:seed:2026": "node --env-file-if-exists=.env.local --conditions=react-server scripts/seed-2026.ts",
     "db:seed:ulujam": "node --env-file-if-exists=.env.local --conditions=react-server scripts/seed-ulujam-years.ts",
     "submissions:purge": "node --env-file-if-exists=.env.local --conditions=react-server scripts/purge-submissions.ts",
-    "worker": "node --env-file-if-exists=.env.local --conditions=react-server src/worker/main.ts"
+    "worker": "node --env-file-if-exists=.env.local --conditions=react-server src/worker/main.ts",
+    "security:wallet": "node --env-file-if-exists=.env.local --conditions=react-server scripts/check-wallet-package.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.1144.0",

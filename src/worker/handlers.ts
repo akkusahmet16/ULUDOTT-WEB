@@ -25,8 +25,7 @@ async function handleJob(tx: DbTx, job: ClaimedJob) {
     await tx.execute(
       sql`update cards set status=${card.status} where id=${card.id}::uuid and revision=${card.revision}`,
     );
-    await syncCardPasses(tx, card);
-    return;
+    return await syncCardPasses(tx, card);
   }
   if (job.type === "game.credit_changed") return; // Command already enqueues each affected card revision atomically.
   if (job.type === "media.deleted") {
@@ -47,20 +46,32 @@ async function handleJob(tx: DbTx, job: ClaimedJob) {
   throw new JobError("UNKNOWN_JOB");
 }
 export async function processBatch(workerId: string, limit = 5) {
-  const jobs = await claimJobs(workerId, limit);
-  for (const job of jobs) {
+  if (!Number.isInteger(limit) || limit < 1 || limit > 50)
+    throw Error("BATCH_LIMIT");
+  let processed = 0;
+  for (let index = 0; index < limit; index++) {
+    const [job] = await claimJobs(workerId, 1);
+    if (!job) break;
+    processed++;
     try {
       await withTransaction(async (tx) => {
         const valid = await tx.execute(
           sql`select id from outbox where id=${job.id}::uuid and status='processing' and lease_owner=${job.leaseOwner} and attempts=${job.attempts} and lease_until>clock_timestamp() for update`,
         );
         if (!valid.length) throw new JobError("LEASE_LOST");
-        await handleJob(tx, job);
+        const error = await handleJob(tx, job);
+        if (error) {
+          if (
+            !(await retryOrDeadLetter(job, new JobError("PROVIDER_FAILED"), tx))
+          )
+            throw new JobError("LEASE_LOST");
+          return;
+        }
         if (!(await completeJob(job, tx))) throw new JobError("LEASE_LOST");
       });
     } catch (error) {
       await retryOrDeadLetter(job, error);
     }
   }
-  return jobs.length;
+  return processed;
 }

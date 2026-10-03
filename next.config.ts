@@ -3,7 +3,9 @@ import type { NextConfig } from "next";
 const config: NextConfig = {
   output: "standalone",
   logging: {
-    incomingRequests: { ignore: [/^\/(kart|takim|yayin-onayi)\//] },
+    incomingRequests: {
+      ignore: [/^\/(kart|takim|yayin-onayi)\//, /^\/api\/wallet\/google\//],
+    },
     serverFunctions: false,
   },
   outputFileTracingIncludes: {

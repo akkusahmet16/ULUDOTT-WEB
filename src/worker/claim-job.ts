@@ -50,10 +50,14 @@ export async function completeJob(job: ClaimedJob, tx?: DbTx) {
   );
   return rows.length === 1;
 }
-export async function retryOrDeadLetter(job: ClaimedJob, error: unknown) {
+export async function retryOrDeadLetter(
+  job: ClaimedJob,
+  error: unknown,
+  tx?: DbTx,
+) {
   const delay =
     Math.min(300, 2 ** Math.min(job.attempts, 8)) * (0.5 + Math.random() * 0.5);
-  const rows = await getDatabase().execute(
+  const rows = await (tx ?? getDatabase()).execute(
     sql`update outbox set status=${job.attempts >= MAX_ATTEMPTS ? "dead" : "pending"},available_at=clock_timestamp()+${delay}*interval '1 second',lease_owner=null,lease_until=null,last_error_code=${jobErrorCode(error)} where id=${job.id}::uuid and status='processing' and lease_owner=${job.leaseOwner} and attempts=${job.attempts} and lease_until>clock_timestamp() returning id`,
   );
   return rows.length === 1;

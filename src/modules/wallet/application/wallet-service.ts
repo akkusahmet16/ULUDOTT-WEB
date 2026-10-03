@@ -1,4 +1,5 @@
 import "server-only";
+import { syncGooglePass } from "./google-service.ts";
 import { sql } from "drizzle-orm";
 import { getDatabase } from "../../../lib/database/client.ts";
 import { z } from "zod";
@@ -80,7 +81,7 @@ export async function requestWalletPass(token: string, provider: Provider) {
     await tx.execute(
       sql`insert into wallet_passes(card_id,provider,object_id,revision) values(${card.id}::uuid,${provider},${objectId},${card.revision}) on conflict(card_id,provider) do nothing`,
     );
-    await syncCardPasses(tx, card);
+    await syncCardPasses(tx, card, false);
     await enqueue(tx, "wallet.requested", card.id, card.revision, {
       cardId: card.id,
       applicationId: card.applicationId,
@@ -98,10 +99,12 @@ export async function requestWalletPass(token: string, provider: Provider) {
 export async function syncCardPasses(
   tx: DbTx,
   card: NonNullable<Awaited<ReturnType<typeof readCard>>>,
+  sendToProvider = true,
 ) {
   await tx.execute(
     sql`update wallet_passes set revision=${card.revision},status=case when ${card.status}!='active' then 'revoked' when revision!=${card.revision} or status='revoked' then 'pending' else status end,updated_at=clock_timestamp() where card_id=${card.id}::uuid and revision<=${card.revision}`,
   );
+  return sendToProvider ? syncGooglePass(tx, card) : null;
 }
 export async function syncPassRevision(
   participantId: string,
@@ -123,6 +126,24 @@ export async function reconcileWalletBatch(cursor?: string) {
   const rows = await getDatabase().execute(
     sql`select distinct c.id,c.application_id from cards c join wallet_passes p on p.card_id=c.id where ${cursor ? sql`c.id>${cursor}::uuid` : sql`true`} order by c.id limit 20`,
   );
-  for (const r of rows) await syncPassRevision(String(r.application_id), 1);
+  for (const r of rows)
+    await withTransaction(async (tx) => {
+      const card = await lockWalletCard(tx, sql`c.id=${String(r.id)}::uuid`);
+      if (!card) return;
+      const [stored] = await tx.execute(
+        sql`select status from cards where id=${card.id}::uuid`,
+      );
+      if (stored.status !== card.status) {
+        card.revision++;
+        await tx.execute(
+          sql`update cards set status=${card.status},revision=${card.revision} where id=${card.id}::uuid`,
+        );
+        await enqueue(tx, "card.changed", card.id, card.revision, {
+          cardId: card.id,
+          applicationId: card.applicationId,
+        });
+      }
+      await syncCardPasses(tx, card, false);
+    });
   return rows.length === 20 ? String(rows.at(-1)!.id) : undefined;
 }

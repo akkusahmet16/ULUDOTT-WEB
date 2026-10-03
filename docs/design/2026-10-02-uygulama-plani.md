@@ -327,9 +327,11 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Arayüz:** Üretir: GoogleWalletAdapter.ensureClass(eventId), upsertPass(card,revision), createSaveLink(card,origin), deactivatePass(passId). Issuer ve servis anahtarı yalnızca server-only yapılandırmadan okunur.
 
-- [ ] Anahtarın istemci paketine girmemesi, onaysız kart isteğinin reddi, kararlı Object ID, 404'ün hata olması, 409/idempotent tekrar ve eski revision testlerini yaz.
-- [ ] Sunucuda imzalı ekleme bağlantısı, Generic Class/nesne, derece güncellemesi, sağlayıcı hata kaydı ve demo/yayın erişimi durumunu uygula.
+- [x] Anahtarın istemci paketine girmemesi, onaysız kart isteğinin reddi, kararlı Object ID, 404'ün hata olması, 409/idempotent tekrar ve eski revision testlerini yaz.
+- [x] Sunucuda imzalı ekleme bağlantısı, Generic Class/nesne, derece güncellemesi, sağlayıcı hata kaydı ve demo/yayın erişimi durumunu uygula.
 - [ ] Yetkili test Google hesabında gerçek ekleme/güncelleme kanıtı al; yayın erişimi yoksa herkese açık kabulü açıkça beklemede bırak; dosyaları ve sır taramasını kontrol edip commit et.
+
+**Dış kabul bekliyor (3 Ekim2026):** Yerel kod/protokol/DB testleri ve paket sır taraması tamam; gerçek issuer/service account/test hesabı, gerçek Google ekleme/güncelleme ve yayın erişimi kanıtı henüz yok. Üçüncü kutu açık tutulur.
 
 ### Görev 24 — Apple Wallet pass ve güncelleme servisi
 
