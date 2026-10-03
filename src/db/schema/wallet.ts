@@ -43,6 +43,9 @@ export const walletPasses = pgTable(
     objectId: text("object_id").notNull(),
     status: text("status").default("pending").notNull(),
     revision: integer("revision").default(1).notNull(),
+    syncedRevision: integer("synced_revision").default(0).notNull(),
+    lastErrorCode: text("last_error_code"),
+    providerState: text("provider_state").default("unknown").notNull(),
     authTokenHash: text("auth_token_hash"),
     updatedAt: instant("updated_at").defaultNow().notNull(),
   },
@@ -54,7 +57,15 @@ export const walletPasses = pgTable(
       "wallet_status",
       sql`${t.status} IN ('pending','ready','failed','revoked')`,
     ),
+    check(
+      "wallet_provider_state",
+      sql`${t.providerState} IN ('unknown','active','revoked')`,
+    ),
     check("wallet_revision", sql`${t.revision}>0`),
+    check(
+      "wallet_synced_revision",
+      sql`${t.syncedRevision}>=0 AND ${t.syncedRevision}<=${t.revision}`,
+    ),
   ],
 );
 export const appleDevices = pgTable("apple_devices", {

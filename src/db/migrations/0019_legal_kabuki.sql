@@ -1,0 +1,2 @@
+ALTER TABLE "wallet_passes" ADD COLUMN "provider_state" text DEFAULT 'unknown' NOT NULL;--> statement-breakpoint
+ALTER TABLE "wallet_passes" ADD CONSTRAINT "wallet_provider_state" CHECK ("wallet_passes"."provider_state" IN ('unknown','active','revoked'));

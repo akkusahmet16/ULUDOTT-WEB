@@ -1,13 +1,14 @@
 import "server-only";
 import { sql } from "drizzle-orm";
 import { withTransaction, type DbTx } from "../lib/database/transaction.ts";
+import { syncCardPasses } from "../modules/wallet/index.ts";
 import { readCard } from "../modules/cards/infrastructure/card-repository.ts";
 import { removePrivate } from "../modules/media/infrastructure/object-store.ts";
 import { claimJobs, completeJob, retryOrDeadLetter } from "./claim-job.ts";
 import { JobError, type ClaimedJob } from "../lib/queue/job-types.ts";
 
 async function handleJob(tx: DbTx, job: ClaimedJob) {
-  if (job.type === "card.changed") {
+  if (["card.changed", "wallet.requested"].includes(job.type)) {
     const [identity] = await tx.execute(
       sql`select a.event_id from cards c join applications a on a.id=c.application_id where c.id=${job.aggregateId}::uuid`,
     );
@@ -24,6 +25,7 @@ async function handleJob(tx: DbTx, job: ClaimedJob) {
     await tx.execute(
       sql`update cards set status=${card.status} where id=${card.id}::uuid and revision=${card.revision}`,
     );
+    await syncCardPasses(tx, card);
     return;
   }
   if (job.type === "game.credit_changed") return; // Command already enqueues each affected card revision atomically.

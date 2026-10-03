@@ -317,9 +317,9 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 **Arayüz:** Üretir: assertWalletEligible(participantId,provider): Eligibility; requestWalletPass(privateCardToken,provider): Promise<ProviderAction>; syncPassRevision(participantId,revision).
 
-- [ ] Pending/rejected/solo/seeking/geç üye/onaylı üye ve başkasının kartı için uygunluk testlerini yaz; onaysız kişinin API'yi doğrudan çağırmasının da reddedildiğini kanıtla.
-- [ ] Tek web kartı ve sağlayıcı başına tek pass kaydı, active/pending/revoked durumları, idempotent revizyon ve görünür “test/yayın bekliyor” açıklamasını uygula.
-- [ ] Onaylı takımın mevcut üyeleri ile yeni üyesinin ayrı hak durumunu, iptal sonrası kart pasifleştirme işini ve API yanıtlarını inceleyip commit et.
+- [x] Pending/rejected/solo/seeking/geç üye/onaylı üye ve başkasının kartı için uygunluk testlerini yaz; onaysız kişinin API'yi doğrudan çağırmasının da reddedildiğini kanıtla.
+- [x] Tek web kartı ve sağlayıcı başına tek pass kaydı, active/pending/revoked durumları, idempotent revizyon ve görünür “test/yayın bekliyor” açıklamasını uygula.
+- [x] Onaylı takımın mevcut üyeleri ile yeni üyesinin ayrı hak durumunu, iptal sonrası kart pasifleştirme işini ve API yanıtlarını inceleyip commit et.
 
 ### Görev 23 — Google Wallet Generic Pass
 

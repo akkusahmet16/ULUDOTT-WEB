@@ -34,6 +34,7 @@ const config: NextConfig = {
       "/kart/:path*",
       "/yayin-onayi/:path*",
       "/api/cards/:path*",
+      "/api/wallet/:path*",
       "/api/team/:path*",
       "/api/ulujam/:path*",
       "/api/forms/:path*",

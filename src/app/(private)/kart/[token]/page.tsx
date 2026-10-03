@@ -1,3 +1,5 @@
+import { getWalletStatus } from "../../../../modules/wallet";
+import { WalletActions } from "../../../../modules/wallet/ui/wallet-actions";
 import { notFound } from "next/navigation";
 import { getOwnCard } from "../../../../modules/cards/application/card-service";
 import { WebCard } from "../../../../modules/cards/ui/web-card";
@@ -22,6 +24,7 @@ export default async function Page({
   return (
     <main>
       <WebCard card={card} />
+      <WalletActions status={await getWalletStatus(token)} />
     </main>
   );
 }
