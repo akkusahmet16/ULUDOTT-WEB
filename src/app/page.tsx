@@ -8,7 +8,7 @@ export default async function HomePage() {
   const featured = await getFeaturedEvents();
   return (
     <PublicShell>
-      <section className="hero">
+      <section className="hero home-hero">
         <p className="eyebrow">Dijital oyun tasarım topluluğu</p>
         <h1>Uludott</h1>
         <h2>
@@ -45,7 +45,7 @@ export default async function HomePage() {
           )}
         </section>
       )}
-      <section className="section">
+      <section className="section home-stories">
         <div className="grid">
           <Card>
             <span className="number">01 / TOPLULUK</span>

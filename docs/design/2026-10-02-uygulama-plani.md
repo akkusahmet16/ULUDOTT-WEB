@@ -447,3 +447,14 @@ Son inceleme: [kabul kararı](../operations/final-acceptance.md) ve [ayrıntıl�
 Planın dışına çıkılması, bir görevin atlanması veya yeni özellik eklenmesi gerekiyorsa değişiklik önce bu dosyada ve mimari öneride açıklanır. Dosya dosya inceleme ve kullanıcıya raporlama bundan sonraki uygulama turlarının zorunlu çalışma biçimidir.
 
 Görev 29 yerel teslim kanıtı: docs/operations/final-acceptance.md ve backup-restore.md. Belge/rapor kutuları tamam; ürünün çalışan dış sağlayıcı ve canlı kabul kapıları açık bağımlılıklar çözülmeden kapanmaz.
+
+## Tema denemesi — kullanıcı onayı 3 Ekim 2026
+
+Kapsam: GTA VI resmi sayfasını renk/yerleşim/hareket referansı alarak bütün mevcut genel/özel/admin ekranlarını yenile; reddedilen imagegen önizlemesini kullanma. Ürün özellikleri, metinlerin bilgi doğruluğu, rota/API/veri/yetki/form/Wallet kuralları değişmez. Apple ertelenir. Görsel referans tüm kaynak varlıklarının birebir kopyalandığı anlamına gelmez; özel ArtDeco fontu yerine OFL Türkçe font, büyük tipografik açılış ve özgün CSS dekorasyonu kullanılır. Gerçek topluluk/video olmadığı için uydurma fotoğraf veya oynatıcı eklenmez.
+
+- [x] Mevcut çalışma ağacını kaydet, backup/theme-before-20261003 ve theme-before-20261003 etiketiyle geri dönüş noktası oluştur; yerel bundle doğrula.
+- [x] Menü tüm boyutlarda erişilebilir açılır düzen: mevcut linkler/CTA, Escape ve odak geri dönüşü; önce RED, sonra GREEN.
+- [x] Ortak token/font/zemin/yerleşim, genel formlar/liste/tablo/dialog, admin CSS ve özel katılımcı kartını yenile; reduced-motion ve QR okunurluğunu koru.
+- [x] Tam CI ve gerçek tarayıcı görsel/mobil kontrolünü tamamla; branch incelemesi, git kaydı ve yerel web/worker yeniden açılışı.
+
+İnceleme odağı: özellik/CTA kaybı, panel mobil taşması, QR filtre/kontrast, menü klavye kullanımı, animasyon kapalıyken görünür içerik ve dış kaynak/sır sızıntısı.

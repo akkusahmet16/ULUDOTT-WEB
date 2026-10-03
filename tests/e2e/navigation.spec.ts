@@ -5,13 +5,27 @@ for (const width of [390, 768, 1440])
     await page.goto("/");
     await page.keyboard.press("Tab");
     await expect(page.getByRole("link", { name: "İçeriğe geç" })).toBeFocused();
-    if (width >= 700)
-      await expect(page.getByRole("button", { name: "Menü" })).toBeHidden();
-    if (width < 700) {
-      const menu = page.getByRole("button", { name: "Menü" });
-      await menu.click();
-      await expect(menu).toHaveAttribute("aria-expanded", "true");
-    }
+    const menu = page.getByRole("button", { name: "Menü", exact: true });
+    await expect(menu).toBeVisible();
+    await expect(menu).toHaveAttribute("aria-expanded", "false");
+    await menu.click();
+    await expect(menu).toHaveAttribute("aria-expanded", "true");
+    const navigation = page.getByRole("navigation", { name: "Ana menü" });
+    await expect(navigation.getByRole("link")).toHaveCount(8);
+    await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
+    await navigation.getByRole("link").last().focus();
+    await page.keyboard.press("Tab");
+    await expect(
+      page.getByRole("link", { name: "Uludott ana sayfa" }),
+    ).toBeFocused();
+    await page.keyboard.press("Shift+Tab");
+    await expect(navigation.getByRole("link").last()).toBeFocused();
+    await navigation.getByRole("link").first().focus();
+    await page.keyboard.press("Escape");
+    await expect(menu).toBeFocused();
+    await expect(menu).toHaveAttribute("aria-expanded", "false");
+    await expect(navigation).toBeHidden();
+    await menu.click();
     await page
       .getByRole("navigation", { name: "Ana menü" })
       .getByRole("link", { name: "Hakkımızda" })
@@ -32,6 +46,9 @@ for (const width of [390, 768, 1440])
       ).toBe(true);
     }
     await page.goto("/");
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Uludott" }),
+    ).toHaveCSS("opacity", "1");
     await page.screenshot({
       path: `.local/task4-${width}.png`,
       fullPage: true,
@@ -55,4 +72,42 @@ test("ana sayfa CTA hedefleri ve logo geçerli", async ({ page }) => {
       .getByRole("link", { name: "Uludott ana sayfa" })
       .locator("img"),
   ).toBeVisible();
+});
+
+test("hareket azaltıldığında içerik ve gezinme kullanılabilir", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  const title = page.getByRole("heading", { level: 1, name: "Uludott" });
+  await expect(title).toBeVisible();
+  await expect(title).toHaveCSS("animation-name", "none");
+  await expect(
+    page.getByRole("main").getByRole("link", { name: "Topluluğu tanı" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Menü", exact: true }).click();
+  await expect(
+    page.getByRole("navigation", { name: "Ana menü" }),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+});
+
+test("kısa masaüstü ekranında menünün ilk ve son bağlantısı erişilebilir", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 400 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Menü", exact: true }).click();
+  const navigation = page.getByRole("navigation", { name: "Ana menü" });
+  const first = await navigation.getByRole("link").first().boundingBox();
+  const header = await page.locator(".header-inner").boundingBox();
+  expect(first!.y).toBeGreaterThanOrEqual(header!.height);
+  await navigation.getByRole("link").last().scrollIntoViewIfNeeded();
+  await expect(navigation.getByRole("link").last()).toBeInViewport();
 });

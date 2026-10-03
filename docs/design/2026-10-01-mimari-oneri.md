@@ -197,3 +197,7 @@ Kapsam bu belge içinde açıklandı; dosya alanı kapalı, Wallet harici kabul�
 ### Görev 10 uygulama netleştirmesi — 2 Ekim 2026
 
 On beş form türü ve izinli JSON AST genel altyapı olarak uygulanır. Alan/ref/answer kimlikleri küçük harf UUID, yayınlanan version snapshot ve field/rule kayıtları DB trigger'larıyla mühürlenir. Gizli referans yaprakları false; gizli alana gönderilen yanıt reddedilir. 100 alan, 100 KB JSON ve 16 yapısal derinlik sınırı küçük VDS profiline uygundur. HTTP/panel/yetki ve canlı kabul sonraki görevlerde servisle bağlanır. SQL migration mevcut Drizzle journal içinde custom 0007_form_versioning olarak yönetilir. Yeni servis/ürün bağımlılığı eklenmez.
+
+## Görsel tema değişikliği — 3 Ekim 2026
+
+Kullanıcı GTA VI resmi sayfasını görsel referans seçti; önceki arcade renk/yerleşim önerisinin yerine koyu gece mavisi, krem/pembe/şeftali tipografi, sinematik büyük boşluklar, bütün boyutlarda açılır gezinme ve hareket azaltma uyumlu dekoratif geçişler denenir. API, veri ve modül sınırları aynı kalır. Reddedilen yapay zekâ önizlemesi kullanılmaz. Lisanslı yerel fontlar ve özgün dekorasyon; gerçek etkinlik görseli/video açık içerik girdisidir.

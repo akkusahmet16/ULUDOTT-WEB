@@ -2,6 +2,20 @@ import { connection } from "next/server";
 import "../styles/tokens.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import localFont from "next/font/local";
+
+const bodyFont = localFont({
+  src: "../styles/fonts/Outfit.ttf",
+  variable: "--font-body",
+  weight: "100 900",
+  display: "swap",
+});
+const displayFont = localFont({
+  src: "../styles/fonts/BarlowCondensed-Bold.ttf",
+  variable: "--font-display",
+  weight: "700",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Uludott — Dijital Oyun Tasarım Topluluğu",
@@ -16,7 +30,7 @@ export default async function RootLayout({
 }) {
   await connection();
   return (
-    <html lang="tr">
+    <html lang="tr" className={`${bodyFont.variable} ${displayFont.variable}`}>
       <body>{children}</body>
     </html>
   );

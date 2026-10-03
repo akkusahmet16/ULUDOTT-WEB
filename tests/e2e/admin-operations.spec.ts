@@ -38,6 +38,20 @@ test("Mobile dashboard filters and critical retry preview/cancel/confirm use the
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   ).toBe(true);
+  await page.setViewportSize({ width: 320, height: 844 });
+  expect(
+    await page
+      .locator("dl dt")
+      .evaluateAll((labels) =>
+        labels.every((label) => label.scrollWidth <= label.clientWidth),
+      ),
+  ).toBe(true);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.screenshot({
     path: ".local/task25-admin-mobile.png",
     fullPage: true,

@@ -1,40 +1,45 @@
 .ticket {
   max-width: 620px;
   margin: 0 auto;
-  border: 1px solid var(--purple);
-  border-radius: var(--radius);
-  background: var(--panel);
-  padding: clamp(20px, 5vw, 48px);
+  border: 1px solid #edb2e466;
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse at 90% 0%, #8e526855, transparent 60%),
+    linear-gradient(155deg, #352643, #131425 75%);
+  padding: clamp(24px, 5vw, 48px);
   overflow-wrap: anywhere;
-  box-shadow: 0 12px 40px #0004;
+  box-shadow: 0 24px 80px #0005;
 }
 .ticket h1 {
-  font-size: clamp(32px, 7vw, 60px);
-  letter-spacing: -0.04em;
+  font-size: clamp(38px, 7vw, 72px);
 }
 .ticket h2 {
-  font-size: 28px;
+  font-size: 34px;
 }
 .brand {
-  font-family: var(--mono);
+  font: 600 12px var(--font);
   color: var(--lime);
-  letter-spacing: 0.15em;
-  border-bottom: 1px dashed var(--line);
-  padding-bottom: 20px;
+  letter-spacing: 0.2em;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 24px;
 }
 .name {
   font-size: 28px;
-  font-weight: 700;
-  color: var(--purple);
+  font-weight: 600;
+  color: var(--cream);
 }
 .ticket img {
+  display: block;
   max-width: 100%;
   height: auto;
-  border-radius: 12px;
+  border-radius: 4px;
+  background: white;
 }
 .foot {
-  font: 12px var(--mono);
-  border-top: 1px dashed var(--line);
+  font: 12px var(--font);
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
   padding-top: 24px;
-  margin-top: 24px;
+  margin-top: 30px;
 }

@@ -1,20 +1,25 @@
-# Tasarım sistemi — mevcut uygulama
+# Tasarım sistemi — sinematik tema denemesi
+
+3 Ekim 2026. Kullanıcının GTA VI resmi sayfası referansı ve Git yedeğiyle deneme onayına göre uygulanır. Mevcut özellikler, içerik, yetki ve Wallet kuralları korunur. Reddedilen görsel kullanılmaz.
 
 Kaynak `src/styles/tokens.css`, `src/components/` ve modül UI dosyalarıdır. [Değişiklik rehberi](change-guide.md), [erişilebilirlik raporu](../operations/accessibility-report.md).
 
-| Token | Değer / amaç |
-|---|---|
-| ink / panel | #1b1c20 / #25262c; zemin ve yüzey |
-| cream / muted | #f4efdf / #c0bcae; birincil ve ikincil metin |
-| purple / lime / coral | #b7a0ff / #d3fa74 / #ff9d8b; vurgu ve durum |
-| line / radius | #494a50 / 18px; çerçeve ve köşe |
-| space | clamp(20px,5vw,80px); sayfa kenarı |
-| font / mono | Arial/Helvetica/sans-serif; Courier New/monospace etiket |
+| Token                 | Değer / amaç                                                                                        |
+| --------------------- | --------------------------------------------------------------------------------------------------- |
+| ink / panel           | #0c0d1b / #18182c; gece zemini ve yüzey                                                             |
+| cream / muted         | #fff3ce / #cac4d7; birincil ve ikincil metin                                                        |
+| purple / lime / coral | #edb2e4 / #f6b6cb / #ffbd9e; lila, pembe ve şeftali vurgu; eski token adları uyumluluk için korunur |
+| line / radius         | #51495f / 4px; çerçeve ve temel köşe                                                                |
+| space                 | clamp(22px,6vw,100px); sayfa kenarı                                                                 |
+| font / heading        | Yerel Outfit / Barlow Condensed Bold; Türkçe destekli OFL fontlar                                   |
+| motion / ease         | 600ms / cubic-bezier(.22,1,.36,1)                                                                   |
 
-Başlıklar h1 clamp48–120px, h2 clamp30–52px; gövde line-height1.6 ve 65ch metin genişliği. Ana içerik en fazla1360px. Renk/odak temel dosyada, modül bileşenleri kendi CSS'inde yönetilir. Her boşluk/animasyon değeri henüz ayrı token değildir; bu belge mevcut uygulamayı anlatır, tüm değerlerin merkezileştiği iddiası değildir.
+Fontlar `src/styles/fonts/` altında lisanslarıyla paketlenir; ziyaret sırasında harici font servisi kullanılmaz. Rockstar özel fontu kopyalanmaz. Ana sayfa büyük tipografik açılış, özgün vektör günbatımı (`public/theme/horizon.svg`) ve mevcut üç içerik kartını kullanır. Genel sayfalar, formlar, listeler, tablolar, dialoglar, yönetim ekranları ve özel katılımcı kartı aynı renk/yazı sistemiyle güncellenir. İçerik ve eylem hedefleri değişmez.
 
-Genel parçalar: marka/başlık/altbilgi, atlama bağlantısı, mobil menü, button/card/grid/tag; alan/yardımcı metin/hata, dialog, etkinlik afişi/CTA, link ve QR, UluJam bilet/kart, arcade panoları. Gerçek logo ve görseller yönetilebilir medya akışından gelir; bilinmeyen fotoğraf yerine uygun boş durum vardır. Wallet sağlayıcısı kendi platform sınırları içinde renk/logo/bilgi sırası taşır; Apple görünümü ertelenmiştir.
+Menü bütün ekranlarda açılır; mevcut sekiz bağlantıyı korur, Escape ile kapanır ve odağı düğmeye döndürür. Açıkken sayfa kaydırması durur. Masaüstünde iki, dar ekranda bir sütun kullanılır. Formlar ve tablolar dar ekranda taşmadan kullanılmalıdır. Dokunma hedefleri temel kontrollerde en az48px; görünür odak şeftali3px çizgidir. Katılımcı/link QR alanları beyaz zeminde filtresiz kalır.
 
-900px altında grid tek sütun; 699px altında menü açılır, başlık ve bölümlerin boşlukları küçülür; 700–1100px arası başlık/nav sarılır. Form önizlemesi mobil390px ve masaüstü olarak sunulur. Temel kontroller en az44px dokunma alanını hedefler. Görünür odak lime3px+5px offset; reduced-motion durumunda animasyon/transition kaldırılır. Dialog odak, alan etiketleri, hata açıklaması ve alternatif metin testleri önemlidir.
+Hareketler açılışta yumuşak yükselme/yakınlaşma ve destekleyen tarayıcılarda kaydırma ile bölüm girişidir. Reduced-motion tercihinde animasyon ve geçişler kapanır; içerik görünür kalır. Gerçek ekran okuyucu kabulünün tamamlandığı iddia edilmez.
 
-Otomatik axe, klavye ve mobil tarayıcı kanıtı rapordadır. Bütün WCAG2.2AA koşullarının gerçek ekran okuyucuda doğrulandığı iddia edilmez; bu kabul açık. Yeni bileşen, tüm boş/yüklenme/hata/erişim reddi durumları ve ilgili modül testleriyle değerlendirilir.
+Daha sinematik bir açılış için topluluğa ait 8–12 saniyelik sessiz, döngüye uygun oyun geliştirme/game-jam videosu (1920×1080, mobil için dikey kırpım) ve aynı kareden bir poster görseli uygun olur. Bölüm geçişleri için özgün oyun/etkinlik görselleri önerilir. Bu varlıklar sağlanmadığı için sahte fotoğraf, video oynatıcı veya yeni ürün özelliği eklenmez.
+
+Geri dönüş: GitHub ve yerelde `backup/theme-before-20261003` dalı, `theme-before-20261003` etiketi; deney `codex/cinematic-theme` dalındadır. Kullanıcı geri dönüş isterse deney korunarak yedek dala geçilir. API/veri tabanı geri alma işlemi gerekmez; değişiklik görseldir.
