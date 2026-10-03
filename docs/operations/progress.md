@@ -562,3 +562,17 @@ Regresyon240/240 ilkfull(.local/google-setup-full.log),productionTLS47/47(.local
 Google kabul GREEN: Safari gerçekWallet test hesabında ekle +aynıcard derece2/rev4 görüldü; realOAuth/API/QRupdate/iptal tamam. ClassId/issuerId filtresiyle yalnız5DEMO/UUIDprefix probe object INACTIVE edildi(.local/google-live-cleanup2.log); eskiGoogleclass/user/key değişmedi. Sonfull240/240(.local/google-setup-final-full2.log),productionTLS47/47,typecheck/lint/build+gerçekkeyscanner2711file0hit/0forbidden temiz. Plan23 üçüncü kutu gerçek demo kabulü ile[x]; genel yayın erişimi beklemede,Android/offline denenmedi,Apple24ertelendi. Kabul raporu docs/operations/google-wallet-live-acceptance.md. Ruling: yalnız dokümante lowercase aliases kabul, otomatik harness defaultGooglemode disabled,rate test zamanı sabit — maliyet: yeni state değerleri açık protokol güncellemesi ister; gerçek API testleri ayrı kontrollü işletme akışında,production rate fixedwindow sınırı korunur.
 
 Google kurulum kapanışı: code1209b75; gerçek demo23tamam/Googlegenelyayınbekliyor/Apple24ertelendi. AnaDBapplications/teams/cards/passes/credits0,historicalPreservedtrue,testDatabases0,mediaObjects0(.local/google-setup-data.log). Tüm source/test/config/doc diff incelendi; sır taraması0. Geçici3201redirect server durduruldu. Yerelpreview session1848/listener43658,worker session29091/PID43680 demo config ile açık,/ulujam200; preview sonrasıtypecheck temiz(.local/google-setup-preview-types.log). Sonraki görev başında bu PIDlerin cwd doğrulanıp durdurulması gerekir; işi bitirince tekrar başlat. Push/merge yapılmadı.
+
+3 Ekim 2026 ek gereksinim kayıt kontrolü: yalnız rapor güncellendi; uygulama kodu değişmedi. Yerel site ve worker çalışma öncesinde durdurulup yeniden başlatıldı. Preview session91263/listener44025, worker session15039/PID44035; her iki süreç workspace doğrulandı, /ulujam HTTP200. Doküman diff kontrolü temiz; önceki uygulama testleri bu tur yeniden çalıştırılmadı.
+
+## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
+
+Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.
+
+- Sonradan geliştirilecek yetkili iOS uygulaması, katılımcının Wallet kartındaki QR kodunu okuttuğunda kişinin isim, soyisim ve takım bilgilerini alabilmeli.
+- Başarılı okutma, ilgili UluJam etkinliğinin katılımcı listesinde kişiyi kalıcı olarak **“Geldi”** durumuna geçirmeli.
+- Check-in sonrasında Wallet kartı güncellenerek üzerindeki QR kodu kaldırılmalı. Bu davranış Google Wallet ve Apple Wallet için ortak gereksinimdir; Apple uygulaması mevcut erteleme kararına bağlıdır.
+- Web yönetim paneline UluJam katılımcı listesi eklendiğinde aynı katılım kaydı orada da **“Geldi”** olarak gösterilmeli.
+- Son incelemede iOS okutma → kişi/takım bilgisi → kalıcı katılım kaydı → Wallet QR kaldırma → yönetim panelinde “Geldi” görünümü birlikte doğrulanmalı; tekrar okutma davranışı ve Wallet güncellemesinin teslimi de gözden geçirilmeli.
+
+- [ ] Bu gereksinimi proje sonunda gözden geçir ve uçtan uca kabulünü tamamla.
