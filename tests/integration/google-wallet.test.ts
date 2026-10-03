@@ -19,6 +19,7 @@ import {
 } from "../../src/modules/teams/application/approval-service";
 import { rotateCheckIn } from "../../src/modules/cards/application/check-in-service";
 import { GoogleWalletAdapter } from "../../src/modules/wallet/google/google-adapter";
+import { GoogleClient } from "../../src/modules/wallet/google/google-client";
 import { loadGoogleConfig } from "../../src/lib/config/wallet";
 import { requestGooglePass } from "../../src/modules/wallet/application/google-service";
 import {
@@ -405,6 +406,67 @@ it("External key boundary rejects repository child directories beginning with tw
     expect(() => loadGoogleConfig()).toThrow("GOOGLE_CONFIG_UNAVAILABLE");
   } finally {
     await rm(dir, { recursive: true, force: true });
+    await p.cleanup();
+  }
+});
+
+it("Google legacy lowercase state acknowledgements work for issuance and revocation", async () => {
+  const p = await googleProtocol();
+  try {
+    const config = loadGoogleConfig();
+    const transport: typeof fetch = async (input, init) => {
+      if (String(input).includes("oauth2"))
+        return Response.json({
+          access_token: "test-only",
+          token_type: "Bearer",
+          expires_in: 3600,
+        });
+      const body = JSON.parse(String(init?.body));
+      if (String(input).includes("genericClass")) return Response.json(body);
+      return Response.json({
+        ...body,
+        id: body.id ?? decodeURIComponent(String(input).split("/").at(-1)!),
+        state: body.state === "ACTIVE" ? "active" : "inactive",
+      });
+    };
+    const adapter = new GoogleWalletAdapter(
+      config,
+      new GoogleClient(config, transport),
+    );
+    const id = await adapter.upsertPass(card, card.revision);
+    await adapter.deactivatePass(id);
+  } finally {
+    await p.cleanup();
+  }
+});
+
+it("State acknowledgement accepts only documented active/inactive aliases", async () => {
+  const p = await googleProtocol();
+  try {
+    const config = loadGoogleConfig();
+    for (const state of ["AcTiVe", "EXPIRED", true, null]) {
+      const transport: typeof fetch = async (input, init) => {
+        if (String(input).includes("oauth2"))
+          return Response.json({
+            access_token: "test-only",
+            token_type: "Bearer",
+            expires_in: 3600,
+          });
+        const body = JSON.parse(String(init?.body));
+        return Response.json({
+          ...body,
+          ...(String(input).includes("genericObject") ? { state } : {}),
+        });
+      };
+      const adapter = new GoogleWalletAdapter(
+        config,
+        new GoogleClient(config, transport),
+      );
+      await expect(adapter.upsertPass(card, card.revision)).rejects.toThrow(
+        "GOOGLE_PROTOCOL",
+      );
+    }
+  } finally {
     await p.cleanup();
   }
 });

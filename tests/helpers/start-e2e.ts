@@ -29,6 +29,8 @@ import {
 } from "../../src/lib/auth/crypto.ts";
 
 import { removePrivate } from "../../src/modules/media/infrastructure/object-store.ts";
+// Automated fixtures never use the configured live issuer.
+process.env.GOOGLE_WALLET_MODE = "disabled";
 const local = await createTestDatabase();
 let child: ReturnType<typeof spawn> | undefined;
 let cleanup: Promise<void> | undefined;

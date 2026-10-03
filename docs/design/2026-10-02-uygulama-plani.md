@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (- [ ]) syntax for tracking. The user requested file-by-file review with the assistant; do not delegate implementation.
 
-Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–22 tamamlandı; Görev 23 yerel uygulaması tamam, gerçek Google dış kabulü bekliyor; sıradaki kod görevi 24. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
+Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; Görev 1–23 tamamlandı (Google demo kabulü dahil); Google genel yayın erişimi bekliyor. Görev24 Apple Wallet kullanıcı kararıyla ertelendi; sıradaki uygulanabilir kod görevi25. Bu dosyadaki kutular, ilgili adım kanıtla tamamlanmadan işaretlenmez.
 
 **Goal:** Uludott topluluk sitesi, genel etkinlik/form/duyuru/link yönetimi, UluJam takım ve onay akışları, 2026 arşivi, 2027 “Yakında” alanı, derece oyunları ve onay sonrası Wallet kartlarını sıfırdan güvenli ve sürdürülebilir biçimde üretmek.
 
@@ -329,9 +329,9 @@ Görev 3 doğrudan yardımcı dosyaları: src/lib/config/auth.ts, src/lib/auth/c
 
 - [x] Anahtarın istemci paketine girmemesi, onaysız kart isteğinin reddi, kararlı Object ID, 404'ün hata olması, 409/idempotent tekrar ve eski revision testlerini yaz.
 - [x] Sunucuda imzalı ekleme bağlantısı, Generic Class/nesne, derece güncellemesi, sağlayıcı hata kaydı ve demo/yayın erişimi durumunu uygula.
-- [ ] Yetkili test Google hesabında gerçek ekleme/güncelleme kanıtı al; yayın erişimi yoksa herkese açık kabulü açıkça beklemede bırak; dosyaları ve sır taramasını kontrol edip commit et.
+- [x] Yetkili test Google hesabında gerçek ekleme/güncelleme kanıtı al; yayın erişimi yoksa herkese açık kabulü açıkça beklemede bırak; dosyaları ve sır taramasını kontrol edip commit et.
 
-**Dış kabul bekliyor (3 Ekim2026):** Yerel kod/protokol/DB testleri ve paket sır taraması tamam; Kullanıcı hesabı ve API erişiminin hazır olduğunu bildirdi; yerel issuer ID/service-account dosya yolu henüz tanımlı değil, test hesabı/modu girdileri istendi. Gerçek ekleme/güncelleme ve yayın erişimi kanıtı henüz yok. Üçüncü kutu açık tutulur.
+**Demo kabulü tamam (3 Ekim2026):** Onaylanan yeni servis hesabı anahtarı depo dışında0600 izinle kuruldu. Gerçek OAuth/Generic API nesne oluşturma, aynı Object ID üzerinde QR/derece güncelleme ve INACTIVE iptali doğrulandı. Safari'de kayıtlı test Google hesabına kart eklendi; aynı kartta2.sıra/revision4 görüldü. Kanıt docs/operations/google-wallet-live-acceptance.md. Google genel yayın erişimi istenmedi/alınmadı; herkese açık kullanım beklemede. Android cihaz/offline teslim ayrıca denenmedi.
 
 ### Görev 24 — Apple Wallet pass ve güncelleme servisi
 

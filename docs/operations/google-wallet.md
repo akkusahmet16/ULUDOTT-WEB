@@ -4,7 +4,7 @@
 
 Sunucu adapter'ı, gerçek PostgreSQL hak kontrolü, RS256 OAuth/saveJWT, Generic Class/Object oluşturma/güncelleme/iptal, kararlı Object ID ve eski iş koruması uygulanmıştır. Yerel protokol testinde anahtar runtime üretilir ve dış ağ yerine kontrollü HTTP transport kullanılır. Bu, Google hesabında kart eklendiği anlamına gelmez.
 
-**3 Ekim2026 güncelleme:** Kullanıcı Google hesabı ve API erişiminin hazır olduğunu bildirdi. Yerel issuer ID/servis hesabı dosya yolu tanımlı değil; güvenli dosya yolu, issuer modu ve test hesabı bilgisi istendi. Gerçek ekleme/güncelleme kanıtı henüz alınmadığından Görev23 dış kabulü ve herkese açık yayın beklemede. Eski Wallet secrets dosyaları okunmaz. Google demo yalnız atanmış test/yetkili hesaplarla denenebilir; herkese açık yayın erişimi ayrıca gerekir: [Google yayın erişimi](https://developers.google.com/wallet/generic/test-and-go-live/request-publishing-access).
+**3 Ekim2026 güncelleme:** Yeni JSON key kullanıcı onayıyla oluşturuldu; demo bağlantısı kuruldu. Gerçek Google hesabına ekleme ve aynı nesnede derece güncelleme Safari üzerinden doğrulandı; API iptali de geçti. [Gerçek demo kabul kanıtı](google-wallet-live-acceptance.md). Google genel yayın erişimi henüz istenmedi/alınmadı; Android/offline cihaz teslimi ayrıca denenmedi. Eski Wallet secrets dosyaları okunmaz. Google demo yalnız atanmış test/yetkili hesaplarla denenebilir; herkese açık yayın erişimi ayrıca gerekir: [Google yayın erişimi](https://developers.google.com/wallet/generic/test-and-go-live/request-publishing-access).
 
 ## Yapılandırma
 
@@ -30,7 +30,7 @@ HTTP timeout sonrası uzak sonucun kesinliği garanti edilemez; iş güncel DB p
 
 `pnpm test tests/integration/google-wallet.test.ts` yerel protokol/DB kanıtı. `pnpm security:wallet` production static/standalone paketinde yapılandırılmış Google anahtarının ve service-account kimliğinin olmadığını denetler; diğer sırlar için genel paket taraması da gereklidir. Kabulte sentetik depo dışı RSA dosya ile production build/paket sızıntı probu çalıştırılır.
 
-Gerçek kabul için: yetkili demo hesabında onaylı katılım ile ekle; aynı Object ID üzerinde derece/QR güncellemesini gözle doğrula; ret/iptalde INACTIVE görünümünü doğrula; onaysız doğrudan API403'ü doğrula. Kanıta issuer modu, test zamanı, maskelenmiş Object ID ve anahtar/QR/bireysel token içermeyen görüntü yaz. Yayın erişimi yoksa herkese açık satır beklemede kalır. Kanıt gelmeden görev23 üçüncü kutusu kapanmaz.
+Gerçek kabul için: yetkili demo hesabında onaylı katılım ile ekle; aynı Object ID üzerinde derece/QR güncellemesini gözle doğrula; ret/iptalde INACTIVE görünümünü doğrula; onaysız doğrudan API403'ü doğrula. Kanıta issuer modu, test zamanı, maskelenmiş Object ID ve anahtar/QR/bireysel token içermeyen görüntü yaz. Yayın erişimi yoksa herkese açık satır beklemede kalır. 3 Ekim2026 gerçek demo kanıtı ile görev23 üçüncü kutusu kapandı; herkese açık yayın erişimi ayrı beklemede kalır.
 
 Resmî protokol kaynakları: [GenericObject](https://developers.google.com/wallet/reference/rest/v1/genericobject), [GenericClass](https://developers.google.com/wallet/reference/rest/v1/genericclass), [Save JWT](https://developers.google.com/wallet/generic/use-cases/jwt), [Service-account OAuth](https://developers.google.com/identity/protocols/oauth2/service-account).
 
@@ -43,3 +43,7 @@ Google yapılandırması yokken gereken uzak güncelleme/iptal tamamlandı sayı
 Kullanıcının Safari yetkisiyle Uludott topluluk hesabının Wallet konsolu incelendi. Issuer ID sonu8403, mevcut Generic sınıflar etkin, durum demo; yayın erişimi isteği henüz tamamlanmamış. Bir demo test hesabı kayıtlı. `uludott-ulujam-wallet` Cloud projesindeki UluJam Wallet issuer servis hesabı etkin ve Wallet konsolunda Geliştirici yetkisine sahip;1 Ekim2026 tarihli mevcut anahtar aktif görünüyor. Bu gözlem gerçek uygulama OAuth/API başarısı veya cihaza kart ekleme kanıtı değildir.
 
 Mevcut anahtarın JSON kopyası indirilenler klasöründe bulunmadı; eski Wallet secrets içerikleri okunmadı. Safari'de yeni JSON anahtar oluşturma son ekranı hazırlandı, Create tıklanmadı. Yeni kalıcı erişim kimliği oluşturma için bilgisayar kullanım kuralı nedeniyle kullanıcı onayı istendi; alternatif mevcut JSON dosya yolu. Yetki veya anahtar silme işlemi yapılmadı, yayın erişimi isteği gönderilmedi. Güvenli dosya sağlanınca server-only konfigürasyon/OAuth/Generic nesne ve gerçek test hesabı kabulü sürdürülür.
+
+## Gerçek yanıt uyumluluğu ve otomatik test izolasyonu
+
+Google gerçek API bu kabulte `state=active` ve `inactive` legacy alias döndürdü. Adapter yalnız dokümante `ACTIVE|active` ve `INACTIVE|inactive` değerlerini doğru hedef durumda kabul eder; diğer durumlar, karışık case ve yanlış Object ID başarı değildir. İstekler uppercase gönderilir. [Resmî State enum](https://developers.google.com/wallet/reference/rest/v1/State). Vitest ve E2E harness varsayılan Google modu disabled kullanır; sentetik protocol testleri kendi demo anahtar/transport'ını açıkça kurar. Yerel gerçek demo anahtarı otomatik testlerde kullanılmaz.

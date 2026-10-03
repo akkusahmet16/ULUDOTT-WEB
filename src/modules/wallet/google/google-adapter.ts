@@ -46,7 +46,10 @@ export class GoogleWalletAdapter {
     );
     if (r.conflict)
       r = await this.client.request("genericObject", "PATCH", id, body);
-    if (r.data.id !== id || r.data.state !== "ACTIVE")
+    if (
+      r.data.id !== id ||
+      (r.data.state !== "ACTIVE" && r.data.state !== "active")
+    )
       throw new GoogleWalletError("GOOGLE_PROTOCOL");
     return id;
   }
@@ -87,7 +90,10 @@ export class GoogleWalletAdapter {
     const r = await this.client.request("genericObject", "PATCH", objectId, {
       state: "INACTIVE",
     });
-    if (r.data.id !== objectId || r.data.state !== "INACTIVE")
+    if (
+      r.data.id !== objectId ||
+      (r.data.state !== "INACTIVE" && r.data.state !== "inactive")
+    )
       throw new GoogleWalletError("GOOGLE_PROTOCOL");
   }
 }

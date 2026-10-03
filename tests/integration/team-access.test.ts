@@ -1,4 +1,4 @@
-import { it, expect } from "vitest";
+import { it, expect, vi } from "vitest";
 import { randomUUID } from "node:crypto";
 import { ulujamFixture } from "../helpers/ulujam-fixture";
 import { submitUlujam } from "../../src/modules/applications/application/submit-ulujam";
@@ -38,12 +38,15 @@ it("takım oturum izolasyonu, güçlü hash, yenileme/eski token-parola, hız li
     await expect(loginTeam(a.token, a.password)).rejects.toThrow();
     await expect(loginTeam(fresh.token, a.password)).rejects.toThrow();
     expect(await loginTeam(fresh.token, fresh.password)).toBeTruthy();
+    // Keep the rate-limit assertions in one fixed minute window.
+    vi.spyOn(Date, "now").mockReturnValue(Date.now());
     for (let i = 0; i < 12; i++)
       await loginTeam(fresh.token, "wrong").catch(() => {});
     await expect(loginTeam(fresh.token, "wrong")).rejects.toMatchObject({
       status: 429,
     });
   } finally {
+    vi.restoreAllMocks();
     await x.cleanup();
   }
 });

@@ -1,6 +1,6 @@
 # Görev21–23 kabul kaydı —3 Ekim2026
 
-21 ve22 tamamlandı. 23 yerel uygulama/protokol kabulü tamamlandı; gerçek Google issuer/test hesabı ekleme-güncelleme ve yayın erişimi kanıtı bekliyor. Planın23 üçüncü kutusu açık. Görev24 Apple Wallet bu tur uygulanmadı; Faz4 genel kabulü tamamlanmadı.
+21 ve22 tamamlandı. 23 yerel uygulama/protokol kabulünün ardından gerçek Google test hesabında ekleme/güncelleme demo kabulü de tamamlandı; planın23 üçüncü kutusu kapandı. Genel yayın erişimi bekliyor. Güncel kanıt [Google gerçek demo kabulü](google-wallet-live-acceptance.md). Görev24 Apple Wallet bu tur uygulanmadı; Faz4 genel kabulü tamamlanmadı.
 
 ## Teslim
 
