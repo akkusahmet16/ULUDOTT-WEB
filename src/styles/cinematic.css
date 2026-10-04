@@ -1175,3 +1175,66 @@ body {
     padding: 0 20px 48px;
   }
 }
+
+.people-video-track {
+  height: 400svh;
+  position: relative;
+}
+.people-video-track .people-hero {
+  position: sticky;
+  top: max(0px, calc((100dvh - 100svh) / 2));
+  height: 100svh;
+  min-height: 0;
+}
+.people-video-track .people-copy {
+  position: absolute;
+  bottom: 8svh;
+  padding: 0 7vw;
+  width: 58%;
+}
+@media (max-width: 699px) {
+  .people-video-track .people-copy {
+    bottom: 7svh;
+    width: 100%;
+    padding: 0 24px;
+    background: transparent;
+  }
+  .people-video-track .people-copy h2 {
+    font-size: clamp(36px, 8vw, 56px);
+    max-width: 14ch;
+  }
+  .people-video-track .people-quote {
+    font-size: clamp(20px, 4.5vw, 28px);
+    max-width: 28ch;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .people-video-track {
+    height: auto;
+  }
+  .people-video-track .people-hero {
+    position: relative;
+    top: auto;
+  }
+}
+@media (max-height: 500px) {
+  .people-video-track .people-copy {
+    bottom: 6svh;
+  }
+  .people-video-track .people-copy > .eyebrow {
+    font-size: 12px;
+    margin: 0;
+  }
+  .people-video-track .people-copy h2 {
+    font-size: clamp(28px, 11svh, 56px);
+    margin: 8px 0;
+  }
+  .people-video-track .people-copy .people-quote {
+    font-size: clamp(16px, 5svh, 24px);
+    margin: 10px 0;
+  }
+  .people-video-track .people-copy > p:last-child {
+    font-size: 12px;
+    margin: 8px 0;
+  }
+}

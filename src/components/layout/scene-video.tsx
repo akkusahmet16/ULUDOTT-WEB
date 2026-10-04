@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
+import { getPinnedVideoTime } from "../../../public/theme/scene-scroll.js";
 export function SceneVideo({
   src,
   poster,
@@ -29,24 +30,30 @@ export function SceneVideo({
       )
         return;
       video.pause();
-      if (!video.seeking && Math.abs(video.currentTime - target) > 0.035)
+      if (!video.seeking && Math.abs(video.currentTime - target) > 1 / 120)
         video.currentTime = target;
     };
     const update = () => {
       frame = 0;
       if (preference.matches || document.hidden) return;
-      const r = video.getBoundingClientRect();
-      const progress = Math.max(
-        0,
-        Math.min(1, (innerHeight - r.top) / (innerHeight + r.height)),
-      );
+      const hero = video.closest<HTMLElement>(".people-hero");
+      const track = video.closest<HTMLElement>(".people-video-track");
+      if (!hero || !track) return;
+      const h = hero.getBoundingClientRect(),
+        t = track.getBoundingClientRect();
+      target = getPinnedVideoTime({
+        trackTop: t.top,
+        trackHeight: t.height,
+        heroTop: h.top,
+        heroHeight: h.height,
+        viewportHeight: innerHeight,
+        duration: video.duration,
+      });
       if (near && !loaded) {
         loaded = true;
         video.preload = "auto";
         video.load();
       }
-      if (Number.isFinite(video.duration))
-        target = progress * Math.max(0, video.duration - 0.04);
       seek();
     };
     const schedule = () => {

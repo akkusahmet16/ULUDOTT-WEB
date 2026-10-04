@@ -535,3 +535,10 @@ Menü simgesinin kapalı/açık ve hover konumunda merkezde kalması. People REA
 
 - [x] Menü/üyeler/medya ve mobil kabul.
 - [x] Test, public önizleme, rapor/Git ve yerel yeniden açılış.
+
+## Ortada sabit açılış videoları — 4 Ekim 2026
+
+People açılış: ortalanmaya yaklaşırken ilk3kare; ortada video kaydırmayla ileri/geri ilerlerken sahne sabit. Son12kare kala sahne tekrar aşağı akışa girer. Wheel/touch/klavye kaydırması engellenmez; uzun sticky track sahneyi tutar. Her mevcut klip MP4 stts üzerinden60fps doğrulandı,12kare0.2sn. Reduced motion uzun track/sabitleme yok; otomatik oynatma yok.
+
+- [x] Mobil/masaüstü giriş/sabit/çıkış ve durma/geri kabulü.
+- [x] Statik eş davranış, test/inceleme/public yayın/Git/yerel açılış.

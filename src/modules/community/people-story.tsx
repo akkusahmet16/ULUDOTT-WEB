@@ -25,22 +25,24 @@ export function PeopleStory() {
           id={`people-${person.slug}`}
           aria-label={index === 0 ? "Başkan Yiğit" : person.name}
         >
-          <div className="people-hero">
-            <SceneVideo
-              src={person.videos[0]}
-              poster={person.photos[0]}
-              label={
-                person.videoReference
-                  ? `${person.name} GTA VI referans klibi`
-                  : `${person.name} açılış videosu`
-              }
-              reference={person.videoReference}
-            />
-            <div className="people-copy">
-              <p className="eyebrow">{person.role}</p>
-              <h2>{person.referenceName}</h2>
-              {person.quote && <p className="people-quote">{person.quote}</p>}
-              <p>Uludott Yönetim Kurulu</p>
+          <div className="people-video-track">
+            <div className="people-hero">
+              <SceneVideo
+                src={person.videos[0]}
+                poster={person.photos[0]}
+                label={
+                  person.videoReference
+                    ? `${person.name} GTA VI referans klibi`
+                    : `${person.name} açılış videosu`
+                }
+                reference={person.videoReference}
+              />
+              <div className="people-copy">
+                <p className="eyebrow">{person.role}</p>
+                <h2>{person.referenceName}</h2>
+                {person.quote && <p className="people-quote">{person.quote}</p>}
+                <p>Uludott Yönetim Kurulu</p>
+              </div>
             </div>
           </div>
           <div className="people-detail">

@@ -761,6 +761,17 @@ Doğrulama: Menü merkezleme390/1440 ve üye içerik sırası önce3 RED; uygula
 
 Yerel web7060/session8079 port3001 HTTP200, worker7052/session32836 doğru cwd ile yeniden açık. Port3000 diğer projeye dokunulmadı. Git codex/cinematic-theme, önceki7443603 ve özgün backup/theme-before-20261003 korunur. Apple ertelenmiş, Wallet QR gereksinimi raporun en altında kalır.
 
+## Ortada sabit açılış videoları — 4 Ekim 2026
+
+Plan/rapor, Next client rehberi, debugging/TDD/hosting okundu. Web7060/worker7052 cwd doğrulanıp durduruldu. Kök neden: video viewport boyunca geçen konumdan zaman alıyor, sticky süre yok; ilk kısmi görünürlükte başlayıp görünürlük bitiminde tamamlanıyor. Kullanıcının ortada tutulma ve son10–15karede ayrılma isteği12kare ile uygulanır. MP4 videotrack stts samplecount/time scale mevcut bütün kliplerde60fps; yeni bağımlılık gerekmez.
+
+
+Son kabul: Sekiz People açılışı400svh track içinde100svh sticky sahne. İlk3kare merkeze yaklaşan son%15girişte, ortada kaydırmayla asıl timeline; son12kare(60fps0.2sn) kalınca sticky track biter ve sahne aşağı akışa döner. İleri/geri/durma korunur, wheel/touch/klavye engellenmez; automatic play yok. Reduced motion normal yükseklik ve relative sahne, uzun boşluk yok. JS geometry hero/track sınırlarından alınır; seek yarımkare toleransı1/120sn. public/theme/scene-scroll.js tek saf timeline, uygulama importu ve statik preview module importu aynı helper. Export helper assetini ve type=module scriptini taşır. Mobil yazı alt alanda; kısa ekran500pxaltı typography/margin küçülür ve isim/görev kesilmez. Önceki1video1foto/bilgiler/menu/afişler korunur.
+
+Doğrulama: Native yeni sticky beklentisi2 RED; ilk uygulama testte evaluate içine p parametresi aktarılmadığından ReferenceError verdi, test fixture düzeltildi ve3 GREEN. Kısa ekran testi RED copytop-42.625; compact typography sonrası24production E2E+axe GREEN(31.7sn), type/lint/build exit0, pinned-production.log. Bağımsız clone_review1440×400/844×390/1440×450 gerçek font fixture ile düzeltmeyi doğruladı, açık bulgu yok. Range destekli statik aynı4test GREEN(4.1sn), native/statik giriş/sabit/son12kare/geri/durma/reduced ve tüm8sahne geometrisi. Statik9HTML/38referansasset geçerli, backend/form yok. Shared JS syntax/biçim/diff temiz. Source642/Wallet3081 dosyada secretHits0/forbiddenFiles0; önceki tracing build uyarısı değişmedi.
+
+Native Sites public aynı URLye succeeded: source8613b8fb2750a1fa6c24cda8e001d2b0f30585f3; archive.local/sites-pinned-intros-preview.tar.gz; version appgprj_6ac178c5619c8191af1de280c6a4393f~appgver_dea61cc4311881918b15a13a9c828431; deployment appgdep_6ac25b2d5b14819188c961760c8c544a. URL https://uludott-tasarim-onizleme.akkusahmet.chatgpt.site; otomasyon yok. Geçici Range8657 durduruldu. Web8597/session76816 port3001 HTTP200,worker8593/session25034 doğru cwd ile açık. Port3000 başka projeye dokunulmadı. Git codex/cinematic-theme; önceki7ff2a14 ve özgün backup/theme-before-20261003 korunur. İlgisiz iki kullanıcı README değişikliği korunur; Apple ertelenmiş, Wallet QR raporun en altında.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.
