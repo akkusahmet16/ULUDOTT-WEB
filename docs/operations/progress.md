@@ -735,6 +735,10 @@ Sites aynı owner-private proje: kaynak0635e8cb3351b6119fd59c7114ba96777cc89a5b,
 
 Yerel web1976/session36628 port3001, worker2237/session16834 yeniden açık. Port3000 diğer projeye dokunulmadı. Git codex/cinematic-theme üzerinde kaydedilir; önceki3e948c6 ve özgün backup/theme-before-20261003 geri dönüş noktaları korunur. Apple ertelenmiş; aşağıdaki Wallet gereksinimi raporun en altında kalır.
 
+## Ekiple paylaşım için herkese açık önizleme — 4 Ekim 2026
+
+Kullanıcı herkese açık yayın istedi. Plan/rapor ve Sites hosting rehberi okundu. Web1976/worker2237 cwd doğrulandı ve durduruldu. Native get_site: owner,active,custom; public kullanılabilir. sites_update_site_access(access_mode=public) başarılı: project appgprj_6ac178c5619c8191af1de280c6a4393f, policy revision2,updated_at2026-10-04T11:34:28.957483+00:00. Mevcut yayımlı sürüm ve URL korunur: https://uludott-tasarim-onizleme.akkusahmet.chatgpt.site. Kaynak/sürüm değişmediği için yeniden paketleme veya deployment gerekmedi. Bu erişim değişikliği kullanıcı tarafından açıkça yetkilendirildi. Ayrı ekip daveti/e-posta gönderilmedi. Statik tasarım önizlemesi dışında DB/API/özel yönetim/Wallet yayını yok. Yerel web/worker yeniden başlatılır; port3000 başka projeye dokunulmaz.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.

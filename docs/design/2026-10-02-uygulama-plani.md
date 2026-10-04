@@ -516,3 +516,8 @@ Son yönlendirme önceki People iki fotoğraf kabulünün yerini alır: kişi ba
 
 - [x] Dosya eşleme, People1video+1fotoğraf, tam4:5 etkinlik afişi.
 - [x] Test/bağımsız inceleme/statik yayın/Git/yerel yeniden açılış; manifest son düzene göre güncel.
+
+## Ekiple paylaşım için herkese açık önizleme — 4 Ekim 2026
+
+- [x] Kullanıcının açık talebiyle mevcut Sites önizlemesinin erişimi public yapıldı; aynı URL ve yayımlı sürüm korunur.
+- [x] Plan/rapor/Git kaydı; yerel uygulama ve worker yeniden açık.
