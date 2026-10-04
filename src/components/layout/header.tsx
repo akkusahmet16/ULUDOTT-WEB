@@ -63,15 +63,13 @@ export function Header() {
       <div className="wrap header-inner">
         <Link href="/" className="brand" aria-label="Uludott ana sayfa">
           <Image src="/brand/uludott-white.svg" alt="" width={48} height={48} />
-          <Image
-            src="/brand/uludott-white-text.png"
-            alt=""
-            className="brand-wordmark"
-            width={3000}
-            height={390}
-            unoptimized
-          />
         </Link>
+        <span className="header-page-name">
+          {links.find(
+            ([href]) =>
+              href !== "/" && (path === href || path.startsWith(href + "/")),
+          )?.[1] ?? (path === "/" ? "Ana sayfa" : "Uludott")}
+        </span>
         <button
           ref={toggle}
           className="button secondary menu-toggle"

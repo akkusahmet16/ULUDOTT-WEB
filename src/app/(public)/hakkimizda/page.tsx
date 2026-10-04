@@ -1,3 +1,4 @@
+import { PeopleStory } from "../../../modules/community/people-story";
 import Image from "next/image";
 import { PublicShell } from "../../../components/layout/public-shell";
 import { ButtonLink } from "../../../components/design-system/button";
@@ -21,44 +22,11 @@ export default function Page() {
           ederek, paylaşarak ve deneyerek ilerliyoruz.
         </p>
       </section>
-      <section
-        id="yonetim-kurulu"
-        className="people-section section"
-        aria-label="Yönetim kurulu"
-      >
-        <p className="eyebrow">People / Topluluğun insanları</p>
-        <h2>Yönetim kurulu.</h2>
-        <p className="lede">Birlikte üreten topluluğun arkasındaki ekip.</p>
-        <p className="placeholder-note">
-          Görsel yer tutucu · İsimler, görevler ve topluluk portreleri daha
-          sonra eklenecek.
-        </p>
-        <div className="people-grid">
-          {["board-1", "board-2", "board-3"].map((asset, i) => (
-            <article className="person-scene" key={asset}>
-              <span className="scene-number" aria-hidden="true">
-                0{i + 1}
-              </span>
-              <Image
-                src={`/theme/reference/${asset}.avif`}
-                alt="GTA VI referans portresi; topluluk üyesi değildir"
-                width={1600}
-                height={1600}
-                sizes="(max-width: 699px) 100vw, 33vw"
-                unoptimized
-              />
-              <div>
-                <p className="eyebrow">Yönetim kurulu / Görsel yer tutucu</p>
-                <h3>İsim eklenecek</h3>
-                <p>Görev eklenecek</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+      <PeopleStory />
       <section
         id="mekanlar"
         className="places-section section"
+        data-sky="#293646"
         aria-label="Sponsorlar ve mekânlar"
       >
         <p className="eyebrow">Places / Bir araya geldiğimiz yerler</p>

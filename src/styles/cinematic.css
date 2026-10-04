@@ -546,3 +546,518 @@ body:has(.clone-opening) .site-footer .footer-map {
     transition: none;
   }
 }
+/* Video-reference panels and layered People chapters. */
+body {
+  background: var(--scene-bg, var(--ink));
+  transition: background-color 900ms ease;
+}
+.header-page-name {
+  flex: 1;
+  border-left: 1px solid #ffffff50;
+  padding-left: 18px;
+  color: var(--cream);
+  font-size: 16px;
+}
+.story-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin: 100px 0;
+}
+.story-panels .story-panel-button {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: 22px;
+  overflow: hidden;
+  height: min(820px, 80vw);
+  background: #161c2a;
+  text-align: left;
+  color: var(--cream);
+  cursor: pointer;
+  isolation: isolate;
+}
+.story-panel-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent 35%, #080d1ee8);
+  z-index: 0;
+}
+.story-panel-button > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms var(--ease);
+}
+.story-panel-button:hover > img {
+  transform: scale(1.045);
+}
+.panel-play {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 3px solid white;
+  border-radius: 50%;
+  width: 76px;
+  height: 76px;
+  display: grid;
+  place-items: center;
+  font-size: 25px;
+  z-index: 1;
+}
+.panel-caption {
+  position: absolute;
+  inset: auto 35px 45px;
+  display: grid;
+  gap: 12px;
+  z-index: 1;
+}
+.panel-caption strong {
+  font-family: var(--heading);
+  font-size: clamp(46px, 6vw, 86px);
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+.story-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(1120px, 94vw);
+  max-height: 90svh;
+  padding: 0;
+  border: 0;
+  border-radius: 18px;
+  background: #181b2c;
+  color: var(--cream);
+  overflow: auto;
+}
+.story-dialog::backdrop {
+  background: #090a13db;
+  backdrop-filter: blur(12px);
+}
+.dialog-toolbar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  background: #181b2cf0;
+  z-index: 3;
+}
+.dialog-toolbar button {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid #fff6;
+  border-radius: 50%;
+  background: #34334b;
+  color: white;
+  font-size: 30px;
+}
+.vlog-player {
+  position: relative;
+  aspect-ratio: 16/9;
+  background: #080914;
+}
+.vlog-player iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+.vlog-player .vlog-play {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  position: relative;
+  overflow: hidden;
+  background: #141827;
+}
+.vlog-play img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.6);
+}
+.vlog-play span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 65px;
+}
+.dialog-description {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  padding: 50px;
+}
+.dialog-description h2,
+.degree-dialog-cover h2 {
+  font-size: clamp(45px, 6vw, 80px);
+  line-height: 0.95;
+}
+.dialog-description a {
+  display: inline-flex;
+  margin: 10px 15px 10px 0;
+}
+.degree-dialog-cover {
+  position: relative;
+  height: 360px;
+  overflow: hidden;
+}
+.degree-dialog-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.5);
+}
+.degree-dialog-cover h2 {
+  position: absolute;
+  inset: auto 40px 25px;
+}
+.dialog-games {
+  padding: 35px;
+}
+.people-story {
+  margin-inline: calc(50% - 50vw);
+  overflow: clip;
+}
+.people-intro {
+  max-width: 850px;
+  margin: 130px auto;
+  padding: 0 30px;
+}
+.people-intro h2 {
+  font-size: clamp(66px, 10vw, 140px);
+  line-height: 0.9;
+  color: #f8a4c8;
+}
+.people-hero {
+  position: relative;
+  min-height: 100svh;
+  isolation: isolate;
+  overflow: hidden;
+}
+.people-hero > .people-hero-bg,
+.people-hero > .people-hero-fg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.people-hero > .people-hero-bg {
+  z-index: -3;
+}
+.people-hero > .people-hero-fg {
+  z-index: -1;
+}
+.people-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: linear-gradient(90deg, #101325bb, transparent 75%);
+}
+.people-hero > .scene-video {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+}
+.people-copy {
+  padding: 22vh 7vw 15vh;
+  width: 50%;
+  position: relative;
+  z-index: 1;
+}
+.people-copy h2 {
+  font-size: clamp(64px, 9vw, 135px);
+  line-height: 0.9;
+  color: #fff2b7;
+}
+.people-copy .people-quote {
+  font-family: var(--heading);
+  font-size: clamp(25px, 3vw, 43px);
+  line-height: 1.05;
+  color: #ffd2df;
+}
+.people-copy > p:last-child {
+  max-width: 340px;
+  font-size: 14px;
+}
+.people-gallery {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 70px 20px;
+  max-width: 1400px;
+  margin: 120px auto;
+  padding: 0 6vw;
+  align-items: center;
+}
+.people-photo {
+  margin: 0;
+  grid-column: 1/9;
+}
+.people-photo:nth-child(even) {
+  grid-column: 6/13;
+  margin-top: 70px;
+}
+.people-photo:nth-child(3n) {
+  grid-column: 2/11;
+}
+.people-photo a {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  outline: 0 solid var(--lime);
+  transition: outline-width 180ms;
+}
+.people-photo a:hover,
+.people-photo a:focus-visible {
+  outline-width: 5px;
+}
+.people-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 600ms var(--ease);
+}
+.people-photo a:hover img {
+  transform: scale(1.025);
+}
+.people-photo a > span {
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+  border-radius: 50%;
+  background: var(--lime);
+  color: #101325;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+}
+.people-clip {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 5vw;
+  align-items: center;
+  padding: 50px 7vw 180px;
+}
+.people-clip h3 {
+  font-size: clamp(56px, 7vw, 100px);
+  line-height: 0.9;
+  color: #f8a4c8;
+}
+.scene-video {
+  position: relative;
+  background: #121724;
+  overflow: hidden;
+  aspect-ratio: 16/9;
+}
+.scene-video video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.people-hero .scene-video {
+  aspect-ratio: auto;
+}
+.scene-video .scene-video-toggle {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid white;
+  background: #111927dd;
+  color: white;
+}
+.scene-video-label {
+  position: absolute;
+  bottom: 18px;
+  left: 18px;
+  font-size: 11px;
+  color: white;
+  background: #111927dd;
+  padding: 4px 8px;
+}
+.game-break {
+  border: 0;
+  background: #ffffff07;
+  box-shadow: none;
+  border-radius: 24px;
+}
+.game-break .star-target {
+  transition:
+    left 140ms ease,
+    top 140ms ease,
+    transform 140ms ease;
+  min-width: 64px;
+  min-height: 64px;
+}
+.game-break .memory-board .memory-card {
+  border-radius: 12px;
+  min-height: 84px;
+}
+@media (max-width: 699px) {
+  .header-page-name {
+    font-size: 13px;
+    padding-left: 12px;
+  }
+  .story-panels {
+    gap: 18px;
+    grid-template-columns: 1fr;
+    margin: 65px 0;
+  }
+  .story-panels .story-panel-button {
+    height: 620px;
+    max-height: 85svh;
+  }
+  .panel-caption {
+    inset: auto 25px 30px;
+  }
+  .story-dialog {
+    width: 96vw;
+    max-height: 94svh;
+  }
+  .dialog-description {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 25px;
+  }
+  .degree-dialog-cover {
+    height: 260px;
+  }
+  .dialog-games {
+    padding: 20px;
+  }
+  .people-copy {
+    padding: 60svh 24px 45px;
+    width: 100%;
+    background: linear-gradient(transparent, #101325d9);
+  }
+  .people-copy h2 {
+    font-size: 72px;
+  }
+  .people-hero > .people-hero-fg {
+    object-position: 65% center;
+  }
+  .people-hero > .people-hero-bg {
+    object-position: 65% center;
+  }
+  .people-gallery {
+    gap: 40px;
+    padding: 0 20px;
+    margin: 60px 0;
+  }
+  .people-photo,
+  .people-photo:nth-child(even),
+  .people-photo:nth-child(3n) {
+    grid-column: 1/13;
+    margin-top: 0;
+  }
+  .people-clip {
+    grid-template-columns: 1fr;
+    padding: 30px 20px 100px;
+    gap: 35px;
+  }
+  .people-intro {
+    margin: 100px auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body,
+  .story-panel-button > img,
+  .people-photo img,
+  .people-photo a {
+    transition: none;
+  }
+}
+.photo-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(1400px, 96vw);
+  max-height: 96svh;
+  padding: 0;
+  border: 0;
+  background: #101322;
+  color: var(--cream);
+}
+.photo-dialog::backdrop {
+  background: #050812ed;
+}
+.photo-dialog > img {
+  width: 100%;
+  height: auto;
+  max-height: 75svh;
+  object-fit: contain;
+  display: block;
+}
+.photo-controls {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 15px;
+}
+.photo-controls button {
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+}
+.people-hero::after {
+  pointer-events: none;
+}
+.story-dialog .dialog-toolbar button:not(:disabled):hover,
+.photo-dialog .dialog-toolbar button:not(:disabled):hover,
+.story-dialog .dialog-toolbar button:focus-visible,
+.photo-dialog .dialog-toolbar button:focus-visible,
+.scene-video button.scene-video-toggle:not(:disabled):hover,
+.scene-video button.scene-video-toggle:focus-visible {
+  background: #494761;
+  color: white;
+  border-color: white;
+}
+.panel-status {
+  font-size: 13px;
+  color: var(--cream);
+}
+.people-copy {
+  pointer-events: none;
+}
+.story-dialog {
+  max-width: min(1120px, 94vw);
+}
+.photo-dialog {
+  max-width: min(1400px, 96vw);
+}
+.vlog-player .vlog-play {
+  border-radius: 0;
+}
+@media (max-width: 699px) {
+  .story-dialog {
+    max-width: 96vw;
+  }
+}
+.game-break .memory-board {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.game-break .memory-board .memory-card {
+  aspect-ratio: auto;
+  min-width: 0;
+}

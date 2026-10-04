@@ -85,3 +85,21 @@ it("Perimeter accepts Turkish text, search punctuation, RSC navigation and a val
     ),
   ).toBeNull();
 });
+it("Only public pages permit the privacy-enhanced UluJam video frame", () => {
+  expect(
+    securityHeaders("public", "abcdefghijklmnopqrstuv", true)[
+      "Content-Security-Policy"
+    ],
+  ).toContain("https://www.youtube-nocookie.com");
+  for (const route of [
+    "/admin",
+    "/kart/a",
+    "/takim/a",
+    "/api/submissions/receipt",
+  ])
+    expect(
+      securityHeaders(routeClass(route), "abcdefghijklmnopqrstuv", true)[
+        "Content-Security-Policy"
+      ],
+    ).not.toContain("youtube");
+});

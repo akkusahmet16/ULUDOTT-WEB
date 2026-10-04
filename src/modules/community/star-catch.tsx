@@ -8,10 +8,7 @@ export function StarCatch() {
   return (
     <section aria-label="Yıldız yakalama" className="game-break star-break">
       <h3>Yıldızı yakala</h3>
-      <p>
-        Beş yıldızı yakala. Yıldıza dokun, tıkla veya odaktayken Enter/Boşluk
-        kullan. Süre sınırı yok.
-      </p>
+      <p>Beş dokunuş, beş yıldız. Dokun, tıkla veya Enter/Boşluk kullan.</p>
       <Button
         onClick={() => {
           setScore(0);
@@ -34,8 +31,8 @@ export function StarCatch() {
           }}
           onClick={() => {
             if (score < 5) {
-              setScore(score + 1);
-              setPosition(nextStar(position));
+              setScore((s) => Math.min(s + 1, 5));
+              setPosition(nextStar);
             }
           }}
         >

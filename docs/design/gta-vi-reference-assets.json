@@ -1,7 +1,7 @@
 {
   "reference": "https://www.rockstargames.com/VI",
   "retrieved": "2026-10-04",
-  "usage": "User-requested local visual clone experiment; Rockstar assets are reference material, not Uludott photos or OFL fonts. No public deployment in this task.",
+  "usage": "User-requested GTA VI temporary references for the local application and owner-private Sites design preview. Not Uludott member/venue photographs. Replace with community assets later.",
   "assets": [
     {
       "name": "GTAArtDeco_Bold-s.p.0yn5.wm39fg.l.woff",
@@ -70,5 +70,419 @@
       "source": "https://www.rockstargames.com/VI/_next/static/media/Vice_City_01.135x56yoeu.6t.jpg?akim=1&imdensity=1&imwidth=2560",
       "use": "GTA VI visual placeholder, replaced later by Uludott content"
     }
-  ]
+  ],
+  "peopleReference": {
+    "reference": "https://www.rockstargames.com/VI/only-in-leonida",
+    "retrieved": "2026-10-04",
+    "media": [
+      {
+        "name": "boobie",
+        "kind": "video",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/768.05uv71g3el02a.mp4",
+        "file": "boobie.mp4",
+        "bytes": 1055149
+      },
+      {
+        "name": "brian",
+        "kind": "video",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/768.0cxn5l7ar2vpu.mp4",
+        "file": "brian.mp4",
+        "bytes": 1180326
+      },
+      {
+        "name": "cal",
+        "kind": "video",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/768.13vzg77vg93qc.mp4",
+        "file": "cal.mp4",
+        "bytes": 925669
+      },
+      {
+        "name": "dimez",
+        "kind": "video",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/768.0oyap_wezjplg.mp4",
+        "file": "dimez.mp4",
+        "bytes": 1756474
+      },
+      {
+        "name": "drequan",
+        "kind": "video",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/768.0sx7z-d93oc.h.mp4",
+        "file": "drequan.mp4",
+        "bytes": 1108036
+      },
+      {
+        "name": "jason-intro",
+        "kind": "video",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/768.0mbz4sxcar-v..mp4",
+        "file": "jason-intro.mp4",
+        "bytes": 2042289
+      },
+      {
+        "name": "jason-quote",
+        "kind": "video",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/768.0q8cuc1pm1jr4.mp4",
+        "file": "jason-quote.mp4",
+        "bytes": 1393962
+      },
+      {
+        "name": "lucia-intro",
+        "kind": "video",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/768.07w2tf_o4a3u_.mp4",
+        "file": "lucia-intro.mp4",
+        "bytes": 3215819
+      },
+      {
+        "name": "lucia-quote",
+        "kind": "video",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/768.0.frpmqgohp3y.mp4",
+        "file": "lucia-quote.mp4",
+        "bytes": 1376987
+      },
+      {
+        "name": "raul",
+        "kind": "video",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/768.0x3v.efv~az3z.mp4",
+        "file": "raul.mp4",
+        "bytes": 1985149
+      },
+      {
+        "name": "boobie-ike-01",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Boobie_Ike_01.0-wji2pg5anfs.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "boobie-ike-01.avif",
+        "bytes": 198685
+      },
+      {
+        "name": "boobie-ike-02",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Boobie_Ike_02.0sp9mtc.1cdzs.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "boobie-ike-02.avif",
+        "bytes": 178141
+      },
+      {
+        "name": "boobie-ike-03",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Boobie_Ike_03.0neka36~z25b5.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "boobie-ike-03.avif",
+        "bytes": 119653
+      },
+      {
+        "name": "boobie-ike-04",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Boobie_Ike_04.0~1fr6ijgvnzx.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "boobie-ike-04.avif",
+        "bytes": 219361
+      },
+      {
+        "name": "brian-heder-01",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Brian_Heder_01.0r.ute88os9k-.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "brian-heder-01.avif",
+        "bytes": 111299
+      },
+      {
+        "name": "brian-heder-02",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Brian_Heder_02.0kmg6iw38f-9o.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "brian-heder-02.avif",
+        "bytes": 134374
+      },
+      {
+        "name": "brian-heder-03",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Brian_Heder_03.10ntuqh2h6upf.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "brian-heder-03.avif",
+        "bytes": 136819
+      },
+      {
+        "name": "brian-heder-04",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Brian_Heder_04.0z3o0t88jw54l.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "brian-heder-04.avif",
+        "bytes": 179525
+      },
+      {
+        "name": "cal-hampton-01",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Cal_Hampton_01.0xlil231_osh4.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "cal-hampton-01.avif",
+        "bytes": 167792
+      },
+      {
+        "name": "cal-hampton-02",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Cal_Hampton_02.05r2t_mck65fe.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "cal-hampton-02.avif",
+        "bytes": 178291
+      },
+      {
+        "name": "cal-hampton-03",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Cal_Hampton_03.0.q68~pt1to9z.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "cal-hampton-03.avif",
+        "bytes": 187608
+      },
+      {
+        "name": "cal-hampton-04",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Cal_Hampton_04.0-78dep86yx2q.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "cal-hampton-04.avif",
+        "bytes": 122096
+      },
+      {
+        "name": "drequan-priest-01",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/DreQuan_Priest_01.0_0~wi-ipdj35.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "drequan-priest-01.avif",
+        "bytes": 211596
+      },
+      {
+        "name": "drequan-priest-02",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/DreQuan_Priest_02.02u69e~nkk3eo.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "drequan-priest-02.avif",
+        "bytes": 118250
+      },
+      {
+        "name": "drequan-priest-03",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/DreQuan_Priest_03.0zbl4i_x_1biu.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "drequan-priest-03.avif",
+        "bytes": 81515
+      },
+      {
+        "name": "drequan-priest-04",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/DreQuan_Priest_04.0n~kj~px_fn8t.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "drequan-priest-04.avif",
+        "bytes": 164653
+      },
+      {
+        "name": "jason-duval-01",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Jason_Duval_01.07m377xeb6jhq.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "jason-duval-01.avif",
+        "bytes": 146519
+      },
+      {
+        "name": "jason-duval-02",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Jason_Duval_02.1486~7_v40cn..jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "jason-duval-02.avif",
+        "bytes": 114718
+      },
+      {
+        "name": "jason-duval-03",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Jason_Duval_03.0-1vum7x-3vtp.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "jason-duval-03.avif",
+        "bytes": 114466
+      },
+      {
+        "name": "jason-duval-04",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Jason_Duval_04.16d-z2wa2s~bk.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "jason-duval-04.avif",
+        "bytes": 156551
+      },
+      {
+        "name": "jason-duval-05",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Jason_Duval_05.0kxp6enhvzqka.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "jason-duval-05.avif",
+        "bytes": 125961
+      },
+      {
+        "name": "jason-duval-06",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Jason_Duval_06.086o72llg6~1p.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "jason-duval-06.avif",
+        "bytes": 152422
+      },
+      {
+        "name": "lucia-caminos-01",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Lucia_Caminos_01.0a7yqvewctkfp.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "lucia-caminos-01.avif",
+        "bytes": 94442
+      },
+      {
+        "name": "lucia-caminos-02",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Lucia_Caminos_02.16n.5umvlu_48.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "lucia-caminos-02.avif",
+        "bytes": 186001
+      },
+      {
+        "name": "lucia-caminos-03",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Lucia_Caminos_03.14xgd2y_ymmeg.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "lucia-caminos-03.avif",
+        "bytes": 138922
+      },
+      {
+        "name": "lucia-caminos-04",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Lucia_Caminos_04.04kb_~4ubn3wn.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "lucia-caminos-04.avif",
+        "bytes": 89415
+      },
+      {
+        "name": "lucia-caminos-05",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Lucia_Caminos_05.0i5b7k6a7_w6p.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "lucia-caminos-05.avif",
+        "bytes": 95810
+      },
+      {
+        "name": "lucia-caminos-06",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Lucia_Caminos_06.0fxbjfk0jakb3.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "lucia-caminos-06.avif",
+        "bytes": 143436
+      },
+      {
+        "name": "raul-bautista-01",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Raul_Bautista_01.0md1ii-yrn96r.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "raul-bautista-01.avif",
+        "bytes": 83453
+      },
+      {
+        "name": "raul-bautista-02",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Raul_Bautista_02.10ddy6ogywu-t.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "raul-bautista-02.avif",
+        "bytes": 127303
+      },
+      {
+        "name": "raul-bautista-03",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Raul_Bautista_03.0-x4xbav_6c40.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "raul-bautista-03.avif",
+        "bytes": 142097
+      },
+      {
+        "name": "raul-bautista-04",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Raul_Bautista_04.0qx77gyvykvv5.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "raul-bautista-04.avif",
+        "bytes": 113633
+      },
+      {
+        "name": "real-dimez-01",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Real_Dimez_01.0djwwboo8-glx.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "real-dimez-01.avif",
+        "bytes": 171544
+      },
+      {
+        "name": "real-dimez-02",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Real_Dimez_02.1366u9.x.yp0_.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "real-dimez-02.avif",
+        "bytes": 169300
+      },
+      {
+        "name": "real-dimez-03",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Real_Dimez_03.02o2si7.op.ye.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "real-dimez-03.avif",
+        "bytes": 156461
+      },
+      {
+        "name": "real-dimez-04",
+        "kind": "image",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Real_Dimez_04.0wa3vo07lz4e2.jpg?akim=1&imdensity=1&imwidth=1600",
+        "file": "real-dimez-04.avif",
+        "bytes": 195583
+      }
+    ],
+    "layers": [
+      {
+        "contentType": "image/avif",
+        "id": "504cbf4c4338f6bd",
+        "kind": "image",
+        "name": "Hero_BG.0dwp8ucivdr~j.jpg",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Hero_BG.0dwp8ucivdr~j.jpg?akim=1&imdensity=1&imwidth=2560"
+      },
+      {
+        "contentType": "image/avif",
+        "id": "f53b501095d512ad",
+        "kind": "image",
+        "name": "Hero_FG.0p~ee~e~y9.k2.png",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Hero_FG.0p~ee~e~y9.k2.png?akim=1&imdensity=1&imwidth=2560"
+      },
+      {
+        "contentType": "image/avif",
+        "id": "e538a5f714c0bfad",
+        "kind": "image",
+        "name": "Hero_BG.0p057ifb~cbkz.jpg",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Hero_BG.0p057ifb~cbkz.jpg?akim=1&imdensity=1&imwidth=2560"
+      },
+      {
+        "contentType": "image/avif",
+        "id": "c846b26fcce369ce",
+        "kind": "image",
+        "name": "Hero_FG.0zlb-yol13~s9.png",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Hero_FG.0zlb-yol13~s9.png?akim=1&imdensity=1&imwidth=2560"
+      },
+      {
+        "contentType": "image/avif",
+        "id": "938379577db52885",
+        "kind": "image",
+        "name": "Hero_BG.00ah9g2acd7jo.jpg",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Hero_BG.00ah9g2acd7jo.jpg?akim=1&imdensity=1&imwidth=2560"
+      },
+      {
+        "contentType": "image/avif",
+        "id": "346469ff0ec4558f",
+        "kind": "image",
+        "name": "Hero_FG.0ez3jb7w2q39u.png",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Hero_FG.0ez3jb7w2q39u.png?akim=1&imdensity=1&imwidth=2560"
+      },
+      {
+        "contentType": "image/avif",
+        "id": "1449cd3f2fdbd332",
+        "kind": "image",
+        "name": "Hero_BG.0vm~96xn2g1_l.jpg",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Hero_BG.0vm~96xn2g1_l.jpg?akim=1&imdensity=1&imwidth=2560"
+      },
+      {
+        "contentType": "image/avif",
+        "id": "3ba39b641d78a3c1",
+        "kind": "image",
+        "name": "Hero_FG.0wrnrybv1hq2h.png",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Hero_FG.0wrnrybv1hq2h.png?akim=1&imdensity=1&imwidth=2560"
+      },
+      {
+        "contentType": "image/avif",
+        "id": "4ae2aab3d793cf46",
+        "kind": "image",
+        "name": "Hero_FG.0h5t5_ma41g2r.png",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Hero_FG.0h5t5_ma41g2r.png?akim=1&imdensity=1&imwidth=2560"
+      },
+      {
+        "contentType": "image/avif",
+        "id": "298ebc315eca7b7a",
+        "kind": "image",
+        "name": "Hero_BG.0xs9poewzot23.jpg",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Hero_BG.0xs9poewzot23.jpg?akim=1&imdensity=1&imwidth=2560"
+      },
+      {
+        "contentType": "image/avif",
+        "id": "5773ce11b9f46e7f",
+        "kind": "image",
+        "name": "Hero_BG.0p-kp~u8~u~-v.jpg",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Hero_BG.0p-kp~u8~u~-v.jpg?akim=1&imdensity=1&imwidth=2560"
+      },
+      {
+        "contentType": "image/avif",
+        "id": "65369e73f28bdb1c",
+        "kind": "image",
+        "name": "Hero_FG.0iv3d_u4b75k6.png",
+        "url": "https://www.rockstargames.com/VI/_next/static/media/Hero_FG.0iv3d_u4b75k6.png?akim=1&imdensity=1&imwidth=2560"
+      }
+    ]
+  }
 }

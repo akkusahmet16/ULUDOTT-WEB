@@ -26,7 +26,7 @@ export function securityHeaders(
     "Referrer-Policy":
       kind === "private" ? "no-referrer" : "strict-origin-when-cross-origin",
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
-    "Content-Security-Policy": `default-src 'self'; script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${production ? "" : " 'unsafe-eval'"}; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://challenges.cloudflare.com${production ? "" : " ws: wss:"}; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'`,
+    "Content-Security-Policy": `default-src 'self'; script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${production ? "" : " 'unsafe-eval'"}; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://challenges.cloudflare.com${production ? "" : " ws: wss:"}; frame-src https://challenges.cloudflare.com${kind === "public" ? " https://www.youtube-nocookie.com" : ""}; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'`,
   };
   if (production) result["Strict-Transport-Security"] = "max-age=31536000";
   if (kind === "private" || kind === "public")

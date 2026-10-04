@@ -12,7 +12,7 @@ for (const width of [390, 1440]) {
       page.getByRole("navigation", { name: "Ana sayfa bölüm haritası" }),
     ).toHaveCount(0);
     await expect(
-      main.locator('a[href="/oyunlar#derece-oyunlari"]'),
+      main.getByRole("button", { name: "Derece oyunlarını aç", exact: true }),
     ).toBeVisible();
     await expect(
       main.getByRole("button", { name: "Başlat", exact: true }),

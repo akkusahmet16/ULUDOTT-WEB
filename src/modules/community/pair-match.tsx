@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../../components/design-system/button";
 import { flipCard, matchCards } from "./game-logic";
 const deck = [1, 2, 3, 2, 1, 3],
@@ -7,6 +7,11 @@ const deck = [1, 2, 3, 2, 1, 3],
 export function PairMatch() {
   const [open, setOpen] = useState<number[]>([]),
     [matched, setMatched] = useState<number[]>([]);
+  useEffect(() => {
+    if (open.length !== 2) return;
+    const timer = setTimeout(() => setOpen([]), 650);
+    return () => clearTimeout(timer);
+  }, [open]);
   function flip(index: number) {
     const next = flipCard(open, matched, index, deck);
     if (matchCards(next, deck)) {
@@ -18,8 +23,8 @@ export function PairMatch() {
     <section aria-label="Hafıza eşleştirme" className="game-break memory-break">
       <h3>Hafıza eşleştirme</h3>
       <p>
-        Altı karttaki üç çifti bul. Kartları tıkla, dokun veya Enter/Boşluk ile
-        aç. Süre sınırı yok.
+        Üç çifti bul. Dokun veya Enter/Boşluk kullan. Yanlış çiftler
+        kendiliğinden kapanır.
       </p>
       <Button
         onClick={() => {
@@ -34,7 +39,7 @@ export function PairMatch() {
         {matched.length === 6
           ? "Tamamlandı!"
           : open.length === 2
-            ? "Eşleşmedi. Kartları kapatıp yeniden deneyin."
+            ? "Eşleşmedi. Yeniden dene."
             : ""}
       </p>
       <div className="memory-board">

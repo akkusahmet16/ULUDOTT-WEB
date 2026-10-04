@@ -490,3 +490,13 @@ Kullanıcı Sites yayınını istedi, sunucu uyumsuzluğu açıklanması ardınd
 - [x] Sosyal örnek kutuları ve mevcut iki oyuna çevrilme/hareket animasyonları; kurallar aynı.
 - [x] Mobil/masaüstü, hareket azaltma ve normal hareket, klavye, mevcut akışların kabulü ve bağımsız inceleme.
 - [x] Aynı özel Sites önizlemesinin etkileşimleriyle yayını succeeded; kaynak/Git kaydı ve yerel tam uygulama yeniden açıldı.
+
+## Panel pencereleri ve tam People akışı — 4 Ekim 2026
+
+Kullanıcının iki yeni kaydı ve altı maddesi: ikon/sayfa adı, UluJam vloglu pencereler, sekiz karakterin tüm fotoğraf/klip akışı, kaydırmayla renk değişimi, doğrudan mini oyun iyileştirmeleri. Gerçek kişi/kurum bilgisi uydurulmaz; GTA medyası geçici referanstır. Yanlış hafıza çifti otomatik kapanışı açık kullanıcı talebinin kapsamındadır.
+
+- [x] Native erişilebilir panel pencereleri, vlog ve gerçek derece bağlantıları.
+- [x] Sekiz sahne,36 fotoğraf,10 kaydırma klibi; mobil/reduced motion ve renk akışı.
+- [x] Mini oyun akıcılığı; test/inceleme, aynı Sites önizlemesi ve yerel yeniden açılış.
+
+Vlog oynatıcı bağlantısı kuruldu; gerçek tarayıcıda YouTube “This video is unavailable” döndürdü. Nedeni doğrulanmadı; YouTube’da izleme bağlantısı korunur. Görsel/etkileşim kabulü, sağlayıcı videosunun erişilebilir olduğu iddiası değildir.

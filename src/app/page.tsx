@@ -1,3 +1,6 @@
+import { StoryPanels } from "../components/layout/story-panels";
+import { listPublicHistoricalResults } from "../modules/games/application/historical-results";
+import { ResultCard } from "../modules/games/ui/result-card";
 import { randomInt } from "node:crypto";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,7 +13,10 @@ import { PairMatch } from "../modules/community/pair-match";
 import styles from "../styles/home.module.css";
 export const dynamic = "force-dynamic";
 export default async function HomePage() {
-  const featured = await getFeaturedEvents();
+  const [featured, results] = await Promise.all([
+    getFeaturedEvents(),
+    listPublicHistoricalResults(2026),
+  ]);
   // Choose order and section gaps once. Hydration and gameplay never reshuffle them.
   const starFirst = randomInt(2) === 0;
   const firstPauseEarly = randomInt(2) === 0;
@@ -65,51 +71,16 @@ export default async function HomePage() {
           <span aria-hidden="true">⌄</span>
         </a>
       </section>
-      <section
-        id="kesfet"
-        className={styles.features}
-        aria-label="Uludott’u keşfet"
-      >
-        <Link href="/ulujam" className={styles.feature}>
-          <Image
-            src="/theme/reference/ulujam.avif"
-            alt=""
-            width={1080}
-            height={1600}
-            sizes="(max-width: 699px) 100vw, 45vw"
-          />
-          <span className={styles.arrow} aria-hidden="true">
-            ↗
-          </span>
-          <div>
-            <span className="eyebrow">Birlikte üret</span>
-            <h2>UluJam</h2>
-            <p>Bir fikir. Bir takım. Bir oyun.</p>
-            <p>
-              Başvurular henüz açılmadı. Duyurular yayımlandığında ayrıntılar
-              paylaşılacak.
-            </p>
+      <StoryPanels
+        degreeContent={
+          <div className="grid">
+            {results.map((result) => (
+              <ResultCard key={result.id} result={result} />
+            ))}
           </div>
-        </Link>
-        <Link href="/oyunlar#derece-oyunlari" className={styles.feature}>
-          <Image
-            src="/theme/reference/community.avif"
-            alt=""
-            width={1080}
-            height={1600}
-            sizes="(max-width: 699px) 100vw, 45vw"
-          />
-          <span className={styles.arrow} aria-hidden="true">
-            ↗
-          </span>
-          <div>
-            <span className="eyebrow">UluJam 2026</span>
-            <h2>Derece oyunları</h2>
-            <p>İlk üç oyun. Üç farklı dünya.</p>
-          </div>
-        </Link>
-      </section>
-      <section className={styles.intro}>
+        }
+      />
+      <section className={styles.intro} data-sky="#24223b">
         <p className="eyebrow">Oyunlar, fikirler ve birlikte üretmek.</p>
         <h2>
           Fikirden oyuna.
@@ -125,6 +96,7 @@ export default async function HomePage() {
       <section
         className={styles.destinations}
         aria-label="Etkinlikler ve oyunlar"
+        data-sky="#17303c"
       >
         <Link
           href="/etkinlikler"
@@ -180,7 +152,11 @@ export default async function HomePage() {
         </Link>
       </section>
       {!firstPauseEarly && firstPause}
-      <section className="community-world" aria-label="People ve Places">
+      <section
+        className="community-world"
+        aria-label="People ve Places"
+        data-sky="#223b45"
+      >
         <Image
           src="/theme/reference/venue-2.avif"
           alt=""
@@ -205,7 +181,11 @@ export default async function HomePage() {
           </Link>
         </div>
       </section>
-      <section className={styles.news} aria-label="Etkinlikler ve duyurular">
+      <section
+        className={styles.news}
+        aria-label="Etkinlikler ve duyurular"
+        data-sky="#3e2b40"
+      >
         <div className={styles.sectionHeading}>
           <h2>Yaklaşan buluşmalar</h2>
           <Link href="/etkinlikler">
@@ -232,7 +212,11 @@ export default async function HomePage() {
         </Link>
       </section>
       {secondPauseEarly && secondPause}
-      <section className={styles.lastLinks} aria-label="Bağlantılar ve destek">
+      <section
+        className={styles.lastLinks}
+        aria-label="Bağlantılar ve destek"
+        data-sky="#262943"
+      >
         <Link href="/linkler">
           <span className="eyebrow">Bağlantılar</span>
           <h2>
