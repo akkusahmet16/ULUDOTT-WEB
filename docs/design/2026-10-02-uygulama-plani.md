@@ -542,3 +542,9 @@ People açılış: ortalanmaya yaklaşırken ilk3kare; ortada video kaydırmayla
 
 - [x] Mobil/masaüstü giriş/sabit/çıkış ve durma/geri kabulü.
 - [x] Statik eş davranış, test/inceleme/public yayın/Git/yerel açılış.
+
+## İlk görünürlükten12kare giriş — 4 Ekim 2026
+
+Kullanıcı giriş3kare/son%15 yerine, sahne ilk görünür alana girdiğinden ortalandığı ana kadar12kare ister. Giriş12, ortada kalan timeline, çıkışson12; tek shared helper hem uygulama hem statik.
+
+- [x] Görünürlük giriş/ortada sabit/çıkış, yayın ve yerel açılış.

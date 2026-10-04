@@ -47,15 +47,23 @@ for (const width of [390, 1440]) {
     const at = async (offset: number) => {
       await page.evaluate((y) => scrollTo(0, y), geometry.top + offset);
     };
-    await at(-90);
+    await at(-900);
     await expect
       .poll(() =>
         video.evaluate((v: HTMLVideoElement) => v.duration > 0 && !v.seeking),
       )
       .toBe(true);
-    expect(
-      await video.evaluate((v: HTMLVideoElement) => v.currentTime / v.duration),
-    ).toBeLessThan(0.05);
+    for (const [offset, time] of [
+      [-810, 0.02],
+      [-450, 0.1],
+      [-90, 0.18],
+      [0, 0.2],
+    ]) {
+      await at(offset);
+      await expect
+        .poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime))
+        .toBeCloseTo(time, 2);
+    }
     const hold = geometry.height - 900;
     for (const p of [0.25, 0.7, 0.2]) {
       await at(hold * p);
@@ -70,7 +78,7 @@ for (const width of [390, 1440]) {
         .toBeCloseTo(
           await video.evaluate(
             (v: HTMLVideoElement, progress: number) =>
-              3 / 60 + progress * (v.duration - 12 / 60 - 3 / 60),
+              12 / 60 + progress * (v.duration - 24 / 60),
             p,
           ),
           1,

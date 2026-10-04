@@ -772,6 +772,17 @@ Doğrulama: Native yeni sticky beklentisi2 RED; ilk uygulama testte evaluate iç
 
 Native Sites public aynı URLye succeeded: source8613b8fb2750a1fa6c24cda8e001d2b0f30585f3; archive.local/sites-pinned-intros-preview.tar.gz; version appgprj_6ac178c5619c8191af1de280c6a4393f~appgver_dea61cc4311881918b15a13a9c828431; deployment appgdep_6ac25b2d5b14819188c961760c8c544a. URL https://uludott-tasarim-onizleme.akkusahmet.chatgpt.site; otomasyon yok. Geçici Range8657 durduruldu. Web8597/session76816 port3001 HTTP200,worker8593/session25034 doğru cwd ile açık. Port3000 başka projeye dokunulmadı. Git codex/cinematic-theme; önceki7ff2a14 ve özgün backup/theme-before-20261003 korunur. İlgisiz iki kullanıcı README değişikliği korunur; Apple ertelenmiş, Wallet QR raporun en altında.
 
+## İlk görünürlükten12kare giriş — 4 Ekim 2026
+
+Plan/rapor ve Next client rehberi okundu; web8597/worker8593 cwd ardından durduruldu. Kullanıcı ilk görünürlükten ortalanmaya12kare ister; önceki kısa3kare giriş değişir, orta/çıkış korunur. Mobil/masaüstü görünürlük%10/%50/%90/ortada timeline kabulü testte eklenir.
+
+
+Son kabul: Shared timeline giriş lead12/60sn ve viewport alt sınırı→merkez oranı kullanır. Video henüz görünmezken0, ilk görünürlükten itibaren kaydırmayla ilk12kare, merkezde12.kare; ortada kalan timeline, çıkışson12kare değişmedi. Kısa klip güvenli lead sınırlaması korunur. Normal klipler60fps. CSS/medya/diğer özellikler değişmez.
+
+Doğrulama: Mobil390/masaüstü1440 giriş10/50/90% görünürlük0.02/0.1/0.18sn ve merkez0.2sn beklentileri önce2RED, sonra4production GREEN(23.3sn). Type/lint/build ve biçim/diff başarılı; entry12-production.log exit0. Aynı4statik test GREEN(4.6sn) entry12-static.log; ortak helper iki ortamda aynıdır. Ortada sabit/son12kare/geri/durma/reduced ve sekiz kısa ekran sahnesi korunur. Statik9HTML/38referansasset yerel yollar geçerli; backend/form yok. Yeni bağımlılık/API/DB yok.
+
+Public Sites native succeeded: sourcec8e4455fb1a8b3bbf05f03f7ddf755c404dbb402; archive.local/sites-entry12-preview.tar.gz; version appgprj_6ac178c5619c8191af1de280c6a4393f~appgver_b61356608e0c8191babf63256463124a; deployment appgdep_6ac25d3d531c81918decf869b6c4444c. URL https://uludott-tasarim-onizleme.akkusahmet.chatgpt.site, erişim public korunur; otomasyon yok. Geçici Range9579 durduruldu. Web9553/session10260 port3001 HTTP200 ve worker9555/session67009 doğru cwd ile yeniden açık; port3000 diğer projeye dokunulmadı. Git codex/cinematic-theme; önceki020082a ve özgün backup/theme-before-20261003 korunur. İlgisiz kullanıcı README değişiklikleri korunur; Apple ertelenmiş, Wallet QR en altta.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.

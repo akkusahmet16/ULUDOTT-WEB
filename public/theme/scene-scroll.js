@@ -14,11 +14,10 @@ export function getPinnedVideoTime({
   const hold = Math.max(1, trackHeight - heroHeight);
   const release = Math.max(0, duration - 12 / frameRate);
   const last = Math.max(0, duration - 1 / frameRate);
-  const lead = Math.min(3 / frameRate, release * 0.1);
+  const lead = Math.min(12 / frameRate, release * 0.5);
   if (trackTop > center)
     return (
-      lead *
-      clamp((center + heroHeight * 0.15 - trackTop) / (heroHeight * 0.15))
+      lead * clamp((viewportHeight - trackTop) / (viewportHeight - center))
     );
   if (trackTop >= center - hold)
     return lead + (release - lead) * clamp((center - trackTop) / hold);
