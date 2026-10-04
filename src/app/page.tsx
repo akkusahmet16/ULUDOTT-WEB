@@ -39,7 +39,7 @@ export default async function HomePage() {
               UluJam’i keşfet <span aria-hidden="true">↗</span>
             </Link>
             <Link href="/destek">
-              Destek ol <span aria-hidden="true">↗</span>
+              İletişim <span aria-hidden="true">↗</span>
             </Link>
           </div>
         </div>
@@ -192,29 +192,18 @@ export default async function HomePage() {
       </section>
       <section
         className={styles.lastLinks}
-        aria-label="Bağlantılar ve destek"
+        aria-label="İletişim"
         data-sky="#262943"
       >
-        <Link href="/linkler">
-          <span className="eyebrow">Bağlantılar</span>
-          <h2>
-            Topluluğa
-            <br />
-            bağlan.
-          </h2>
-          <span className={styles.cta}>
-            Tüm bağlantılar <span aria-hidden="true">→</span>
-          </span>
-        </Link>
         <Link href="/destek">
-          <span className="eyebrow">Destek</span>
+          <span className="eyebrow">İletişim</span>
           <h2>
             Birlikte
             <br />
-            daha ileri.
+            konuşalım.
           </h2>
           <span className={styles.cta}>
-            Destek ol <span aria-hidden="true">→</span>
+            İletişim <span aria-hidden="true">→</span>
           </span>
         </Link>
       </section>

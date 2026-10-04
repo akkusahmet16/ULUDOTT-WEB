@@ -783,6 +783,16 @@ Doğrulama: Mobil390/masaüstü1440 giriş10/50/90% görünürlük0.02/0.1/0.18s
 
 Public Sites native succeeded: sourcec8e4455fb1a8b3bbf05f03f7ddf755c404dbb402; archive.local/sites-entry12-preview.tar.gz; version appgprj_6ac178c5619c8191af1de280c6a4393f~appgver_b61356608e0c8191babf63256463124a; deployment appgdep_6ac25d3d531c81918decf869b6c4444c. URL https://uludott-tasarim-onizleme.akkusahmet.chatgpt.site, erişim public korunur; otomasyon yok. Geçici Range9579 durduruldu. Web9553/session10260 port3001 HTTP200 ve worker9555/session67009 doğru cwd ile yeniden açık; port3000 diğer projeye dokunulmadı. Git codex/cinematic-theme; önceki020082a ve özgün backup/theme-before-20261003 korunur. İlgisiz kullanıcı README değişiklikleri korunur; Apple ertelenmiş, Wallet QR en altta.
 
+## İletişim ve sosyal alt bölüm — 4 Ekim 2026
+
+Plan/rapor ve kurulu Next linking/notFound rehberleri okundu. Web9553/worker9555 doğru cwd ardından durduruldu. Kullanıcı ad/alan konumu istedi; yeni iletişim formu/adres uydurulmaz. Mevcut /destek URLsi korunur; /linkler direct erişimi404 olur, yeni yayımlı link hedefi olarak da kabul edilmez. Sosyal footer mevcut yayımlı dış kayıtları kullanır; gerçek bağlantı yokken3eskiörnek kompakt ve tıklanamaz. Yönetim/QR/kısa adres servisleri kaldırılmaz. İlgisiz kullanıcı README düzenlemeleri korunur.
+
+Son kabul: Header/menü, ana sayfa, footer ve /destek başlığı İletişim. Ana sayfa sonunda tek tam genişlik kart; /linkler tüm public gezinmeden kaldırıldı ve doğrudan erişim404. Domain allowlistinden de çıkarıldı. Yönetim bağlantı kayıtları, kısa adres ve QR servisleri korunur. Footer yayımlı dış bağlantıları sıralı gösterir; gerçek kayıt yokken YouTube/WhatsApp/Instagram kompakt tıklanamaz örneklerdir. 150karakter kesintisiz başlık mobilde güvenle sarılır.
+
+Doğrulama: Yeni iletişim kabulü önce2RED. Eski8menü beklentisi7olarak güncellendi. Bağımsız inceleme uzun sosyal başlıkta taşma buldu; 150karakter regresyon RED, title span ve CSS sonrası GREEN ve açık bulgu yok. Type/lint/build exit0;6link integration,71production E2E+axe(1.5dk) ve2statik mobil/masaüstü(3.8sn) başarılı. contact-final.log/contact-static.log. Source643/Wallet3088dosya secretHits0/forbiddenFiles0; mevcut build tracing uyarısı aynı. Statik8HTML/38asset geçerli; eski dist/linkler klasörü silindi, backend/form yok.
+
+Public Sites aynı URLde native succeeded: source72ee2b2fbc041d5b701766d333c5b43ee3a0ea24; archive.local/sites-contact-footer-preview.tar.gz; version appgprj_6ac178c5619c8191af1de280c6a4393f~appgver_70b2c3f7ab0c8191afae8801652e7448; deployment appgdep_6ac265db35c48191a3c1b7aabb12749a. URL https://uludott-tasarim-onizleme.akkusahmet.chatgpt.site. Erişim public korunur; otomasyon yok. Geçici statik sunucu durduruldu. Web12546/session71804 port3001 ve worker12539/session21405 doğru cwd ile açık. Git codex/cinematic-theme; önceki8270b68 ve özgün backup/theme-before-20261003 korunur. İlgisiz iki kullanıcı README değişikliği korunur. Apple ertelenmiş, Wallet QR gereksinimi en altta.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.

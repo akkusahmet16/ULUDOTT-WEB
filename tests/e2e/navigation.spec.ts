@@ -11,7 +11,7 @@ for (const width of [390, 768, 1440])
     await menu.click();
     await expect(menu).toHaveAttribute("aria-expanded", "true");
     const navigation = page.getByRole("navigation", { name: "Ana menü" });
-    await expect(navigation.getByRole("link")).toHaveCount(8);
+    await expect(navigation.getByRole("link")).toHaveCount(7);
     await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
     await navigation.getByRole("link").last().focus();
     await page.keyboard.press("Tab");
@@ -61,7 +61,7 @@ for (const width of [390, 768, 1440])
   });
 test("ana sayfa CTA hedefleri ve logo geçerli", async ({ page }) => {
   await page.goto("/");
-  for (const label of ["Topluluğu tanı", "UluJam’i keşfet", "Destek ol"]) {
+  for (const label of ["Topluluğu tanı", "UluJam’i keşfet", "İletişim"]) {
     const link = page
       .getByRole("main")
       .getByRole("link", { name: label, exact: true });

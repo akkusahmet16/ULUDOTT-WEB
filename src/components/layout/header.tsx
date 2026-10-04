@@ -11,8 +11,7 @@ const links = [
   ["/etkinlikler", "Etkinlikler"],
   ["/duyurular", "Duyurular"],
   ["/oyunlar", "Oyunlar"],
-  ["/linkler", "Bağlantılar"],
-  ["/destek", "Destek"],
+  ["/destek", "İletişim"],
 ] as const;
 export function Header() {
   const path = usePathname(),

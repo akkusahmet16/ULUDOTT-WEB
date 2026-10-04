@@ -29,12 +29,13 @@ for (const width of [390, 1440])
     await expect(
       page.getByText("Görsel yer tutucu", { exact: false }).first(),
     ).toBeVisible();
-    await page.goto("/linkler");
+    await page.goto("/");
+    const social = page
+      .getByRole("contentinfo")
+      .getByRole("navigation", { name: "Sosyal medya" });
     for (const name of ["YouTube", "WhatsApp", "Instagram"])
-      await expect(
-        page.getByRole("article", { name: `${name} örnek kutusu` }),
-      ).toBeVisible();
-    await expect(page.locator(".social-samples a")).toHaveCount(0);
+      await expect(social.getByText(name, { exact: true })).toBeAttached();
+    await expect(social.locator('a[href="#"]')).toHaveCount(0);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,

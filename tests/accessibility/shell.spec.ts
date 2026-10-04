@@ -8,7 +8,6 @@ for (const route of [
   "/admin",
   "/etkinlikler",
   "/duyurular",
-  "/linkler",
   "/oyunlar",
 ])
   test(`axe ${route}`, async ({ page }) => {

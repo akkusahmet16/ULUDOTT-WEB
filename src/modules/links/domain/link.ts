@@ -15,7 +15,6 @@ export const staticPaths = new Set([
   "/destek",
   "/etkinlikler",
   "/duyurular",
-  "/linkler",
   "/oyunlar",
 ]);
 export function validLinkUrl(value: string) {

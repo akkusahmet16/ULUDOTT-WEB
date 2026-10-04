@@ -548,3 +548,10 @@ People açılış: ortalanmaya yaklaşırken ilk3kare; ortada video kaydırmayla
 Kullanıcı giriş3kare/son%15 yerine, sahne ilk görünür alana girdiğinden ortalandığı ana kadar12kare ister. Giriş12, ortada kalan timeline, çıkışson12; tek shared helper hem uygulama hem statik.
 
 - [x] Görünürlük giriş/ortada sabit/çıkış, yayın ve yerel açılış.
+
+## İletişim ve sosyal alt bölüm — 4 Ekim 2026
+
+Destek/Destek ol görünür etiketleri İletişim olur; mevcut /destek rotası korunur. Bağlantılar ana sayfa/header/footer gezinmesinden kaldırılır, /linkler public404. Yönetim bağlantı kayıtları ve kısa URL/QR hizmetleri korunur. Footer yayımlı/doğrulanmış dış adresleri sosyal bağlantı olarak gösterir; gerçek adres yoksa mevcut3sosyal örnek tıklanamaz. Ana sayfa altı tek İletişim kartı.
+
+- [x] İletişim, linkler404, sosyal footer ve yönetim/QR kabulü.
+- [x] Test/inceleme/public yayın/Git/yerel açılış.
