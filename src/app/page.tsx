@@ -1,4 +1,4 @@
-import { SuppliedPoster } from "../components/layout/supplied-poster";
+import { CoffeeTalkCard } from "../components/layout/coffee-talk-card";
 import { StoryPanels } from "../components/layout/story-panels";
 import { listPublicHistoricalResults } from "../modules/games/application/historical-results";
 import { ResultCard } from "../modules/games/ui/result-card";
@@ -83,10 +83,10 @@ export default async function HomePage() {
         >
           <div className={styles.destinationArt}>
             <Image
-              src="/theme/reference/ulujam.avif"
-              alt=""
+              src="/community/04-etkinlikler/etkinlik-coffe-talk/etkinlik-coffe-talk-afis.webp"
+              alt="Coffee Talk tanışma etkinliği afişi"
               width={1080}
-              height={1600}
+              height={1350}
               sizes="(max-width: 699px) 100vw, 40vw"
             />
           </div>
@@ -181,9 +181,8 @@ export default async function HomePage() {
             Henüz öne çıkan etkinlik yok. Yeni buluşmalar burada duyurulacak.
           </p>
         )}
-        <SuppliedPoster kind="event" />
+        <CoffeeTalkCard />
         <Link href="/duyurular" className={styles.announcement}>
-          <SuppliedPoster kind="announcement" />
           <span className="eyebrow">Topluluktan haberler</span>
           <h2>Duyurular</h2>
           <span className={styles.cta}>

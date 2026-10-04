@@ -1087,3 +1087,65 @@ body {
   padding-top: 12px;
   font-size: 16px;
 }
+
+.coffee-talk-card {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: clamp(28px, 5vw, 72px);
+  margin: 40px 0 70px;
+  padding: clamp(20px, 3vw, 40px);
+  border-radius: 32px;
+  background: linear-gradient(135deg, #242338, #302d40);
+}
+.coffee-talk-poster {
+  border-radius: 22px;
+  overflow: hidden;
+}
+.coffee-talk-poster img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: contain;
+}
+.coffee-talk-info {
+  min-width: 0;
+}
+.coffee-talk-info h2 {
+  font-size: clamp(48px, 6vw, 84px);
+  line-height: 0.95;
+  margin: 16px 0 24px;
+}
+.coffee-talk-info > p {
+  max-width: 36ch;
+}
+.coffee-talk-info dl {
+  display: grid;
+  gap: 18px;
+  margin: 32px 0 0;
+}
+.coffee-talk-info dl > div {
+  display: grid;
+  grid-template-columns: 70px minmax(0, 1fr);
+  gap: 20px;
+  padding: 16px 0 0;
+  border-top: 1px solid #fff9cb30;
+}
+.coffee-talk-info dt {
+  color: #c7bed4;
+  font-size: 14px;
+}
+.coffee-talk-info dd {
+  margin: 0;
+  color: #fff9cb;
+  font-size: 18px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 699px) {
+  .coffee-talk-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 30px;
+    border-radius: 24px;
+  }
+}

@@ -521,3 +521,10 @@ Son yönlendirme önceki People iki fotoğraf kabulünün yerini alır: kişi ba
 
 - [x] Kullanıcının açık talebiyle mevcut Sites önizlemesinin erişimi public yapıldı; aynı URL ve yayımlı sürüm korunur.
 - [x] Plan/rapor/Git kaydı; yerel uygulama ve worker yeniden açık.
+
+## Coffee Talk kartı ve sade duyuru alanı — 4 Ekim 2026
+
+Kullanıcı mevcut ana sayfa sunumunu revize etti: duyurular kutusunda tam afiş yok; Coffee Talk afişi yuvarlatılmış köşelerle yanında etkinlik bilgileri; Buluşmalar/Sohbet et bölümünde Coffee Talk afişi ve4:5 görsel alanı. Masaüstü yan yana, mobil alt alta; afiş kırpılmaz. Bilgiler kullanıcı afişinden7Ekim/Çarşamba/18.00–20.30/Nest’o Coffee Roastery; yıl/kayıt URLsi uydurulmaz. Mevcut rota ve yayımlı içerikler korunur.
+
+- [x] Poster/kart/duyuru düzeni ve mobil/masaüstü kabulü.
+- [x] İnceleme, aynı public Sites önizlemesinde yayın, Git ve yerel yeniden açılış.

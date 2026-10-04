@@ -44,11 +44,11 @@
       "klasor": "tasarim-girdileri/01-anasayfa",
       "dosya": "anasayfa-bulusmalar.webp",
       "genislik": 1080,
-      "yukseklik": 1600,
+      "yukseklik": 1350,
       "adet": 1,
       "tur": "fotoğraf",
-      "durum": "gerekli",
-      "mevcut_yer": "src/app/page.tsx: meetings / ulujam.avif"
+      "durum": "ayrı dosya gerekmez; Coffee Talk afişi paylaşılır",
+      "mevcut_yer": "src/app/page.tsx: meetings; Coffee Talk afişi 4:5"
     },
     {
       "alan": "Üretilen oyunlara açılan görsel",
@@ -168,7 +168,7 @@
       "adet": 1,
       "tur": "fotoğraf",
       "durum": "yerleştirildi",
-      "mevcut_yer": "supplied-poster.tsx: anasayfa ve etkinlikler; mevcut event kartları tam4:5"
+      "mevcut_yer": "coffee-talk-card.tsx: anasayfa ve etkinlikler; ayrıca anasayfa meetings 4:5"
     },
     {
       "alan": "Görseli olan duyuru kapağı",
@@ -180,7 +180,7 @@
       "adet": 1,
       "tur": "fotoğraf",
       "durum": "yerleştirildi",
-      "mevcut_yer": "supplied-poster.tsx: anasayfa ve duyurular"
+      "mevcut_yer": "supplied-poster.tsx: yalnız duyurular sayfası; anasayfa kutusu afişsiz"
     },
     {
       "alan": "Derece oyunları penceresinin üst kapağı",

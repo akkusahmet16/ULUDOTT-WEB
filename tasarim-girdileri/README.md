@@ -32,7 +32,7 @@ People video teslimi: bir açılış videosu, MP4/H.264, 1920×1080, 24–30 fps
 | `01-anasayfa/anasayfa-hero.webp` | 2560×1440 | Ana açılış kolajı | / | yerleştirildi |
 | `01-anasayfa/anasayfa-ulujam-panel.webp` | 1080×1600 | İkili panel sol: UluJam | / | yerleştirildi |
 | `01-anasayfa/anasayfa-derece-panel.webp` | 1080×1600 | İkili panel sağ: derece oyunları | / | yerleştirildi |
-| `01-anasayfa/anasayfa-bulusmalar.webp` | 1080×1600 | Etkinliklere açılan görsel | / | gerekli |
+| `01-anasayfa/anasayfa-bulusmalar.webp` | 1080×1350 | Etkinliklere açılan görsel | / | ayrı dosya gerekmez; Coffee Talk afişi paylaşılır |
 | `01-anasayfa/anasayfa-oyunlar.webp` | 1920×1080 | Üretilen oyunlara açılan görsel | / | gerekli |
 | `01-anasayfa/anasayfa-topluluk-dunyasi.webp` | 2560×1440 | People ve Places büyük sahnesi | / | gerekli |
 | `02-ulujam/ulujam-vlog-kapak.webp` | 1920×1080 | UluJam vlog oynatıcı kapağı | / — UluJam panel penceresi | yerleştirildi |
@@ -69,3 +69,5 @@ People video teslimi: bir açılış videosu, MP4/H.264, 1920×1080, 24–30 fps
 | `03-hakkimizda/people/uye-08/people-08-detay.webp` | 1600×1100 | Üye 08 tek detay fotoğrafı / video kapağı | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
 
 Etkinlik afişleri1080×1350 tam görünür; fotoğraf kırpılmaz. Teslim edilen11dosyanın kaynak→yayın eşlemesi `YERLESTIRILEN.json` içindedir. Gerçek etkinlik, duyuru ve arşiv medya yönetimi korunur; bu yerleşim sunum katmanıdır.
+
+Coffee Talk afişi ana sayfa etkinlik kartında, Buluşmalar alanında ve etkinlikler sayfasında paylaşılır; 4:5 tam görünür. Duyuru afişi yalnız duyurular sayfasında yer alır.

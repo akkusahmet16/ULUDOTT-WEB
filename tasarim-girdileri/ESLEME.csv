@@ -2,7 +2,7 @@ alan,sayfa,klasor,dosya,genislik,yukseklik,adet,tur,durum,mevcut_yer
 Ana açılış kolajı,/,tasarim-girdileri/01-anasayfa,anasayfa-hero.webp,2560,1440,1,fotoğraf,yerleştirildi,src/app/page.tsx: clone-opening / poster.avif
 İkili panel sol: UluJam,/,tasarim-girdileri/01-anasayfa,anasayfa-ulujam-panel.webp,1080,1600,1,fotoğraf,yerleştirildi,story-panels.tsx: ulujam.avif
 İkili panel sağ: derece oyunları,/,tasarim-girdileri/01-anasayfa,anasayfa-derece-panel.webp,1080,1600,1,fotoğraf,yerleştirildi,story-panels.tsx: community.avif
-Etkinliklere açılan görsel,/,tasarim-girdileri/01-anasayfa,anasayfa-bulusmalar.webp,1080,1600,1,fotoğraf,gerekli,src/app/page.tsx: meetings / ulujam.avif
+Etkinliklere açılan görsel,/,tasarim-girdileri/01-anasayfa,anasayfa-bulusmalar.webp,1080,1350,1,fotoğraf,ayrı dosya gerekmez; Coffee Talk afişi paylaşılır,src/app/page.tsx: meetings; Coffee Talk afişi 4:5
 Üretilen oyunlara açılan görsel,/,tasarim-girdileri/01-anasayfa,anasayfa-oyunlar.webp,1920,1080,1,fotoğraf,gerekli,src/app/page.tsx: games / world.avif
 People ve Places büyük sahnesi,/,tasarim-girdileri/01-anasayfa,anasayfa-topluluk-dunyasi.webp,2560,1440,1,fotoğraf,gerekli,src/app/page.tsx: community-world / venue-2.avif
 UluJam vlog oynatıcı kapağı,/ — UluJam panel penceresi,tasarim-girdileri/02-ulujam,ulujam-vlog-kapak.webp,1920,1080,1,fotoğraf,yerleştirildi,story-panels.tsx: vlog-play / poster.avif
@@ -12,8 +12,8 @@ UluJam vlog oynatıcı kapağı,/ — UluJam panel penceresi,tasarim-girdileri/0
 Etkinlik kafeleri,/hakkimizda#mekanlar,tasarim-girdileri/03-hakkimizda/places,places-kafeler.webp,2560,1440,1,fotoğraf,gerekli,hakkimizda/page.tsx: place-0 / venue-1.avif
 Salonlar ve buluşma alanları,/hakkimizda#mekanlar,tasarim-girdileri/03-hakkimizda/places,places-salonlar.webp,2560,1440,1,fotoğraf,gerekli,hakkimizda/page.tsx: place-1 / venue-2.avif
 Sponsorlar alanı,/hakkimizda#mekanlar,tasarim-girdileri/03-hakkimizda/places,places-sponsorlar.webp,2560,1440,1,fotoğraf,gerekli,hakkimizda/page.tsx: place-2 / venue-1.avif
-Örnek etkinlik afişi / kart ve detay,/etkinlikler ve etkinlik detayı,tasarim-girdileri/04-etkinlikler/etkinlik-coffe-talk,etkinlik-coffe-talk-afis.webp,1080,1350,1,fotoğraf,yerleştirildi,supplied-poster.tsx: anasayfa ve etkinlikler; mevcut event kartları tam4:5
-Görseli olan duyuru kapağı,/duyurular ve duyuru detayı,tasarim-girdileri/05-duyurular/duyuru-valorant,duyuru-valorant-afis.webp,1080,1600,1,fotoğraf,yerleştirildi,supplied-poster.tsx: anasayfa ve duyurular
+Örnek etkinlik afişi / kart ve detay,/etkinlikler ve etkinlik detayı,tasarim-girdileri/04-etkinlikler/etkinlik-coffe-talk,etkinlik-coffe-talk-afis.webp,1080,1350,1,fotoğraf,yerleştirildi,coffee-talk-card.tsx: anasayfa ve etkinlikler; ayrıca anasayfa meetings 4:5
+Görseli olan duyuru kapağı,/duyurular ve duyuru detayı,tasarim-girdileri/05-duyurular/duyuru-valorant,duyuru-valorant-afis.webp,1080,1600,1,fotoğraf,yerleştirildi,supplied-poster.tsx: yalnız duyurular sayfası; anasayfa kutusu afişsiz
 Derece oyunları penceresinin üst kapağı,/,tasarim-girdileri/06-oyunlar,derece-oyunlari-kapak.webp,1920,1080,1,fotoğraf,gerekli,story-panels.tsx: degree-dialog-cover / community.avif
 1. derece oyununun ekran görüntüsü / kapak,"/oyunlar, /ulujam ve derece penceresi",tasarim-girdileri/06-oyunlar/oyun-01,oyun-01-kapak.webp,1600,900,1,fotoğraf,şablon / ilgili oyunun sahipli görüntüsü,Game cover_asset_id editoryal yükleme
 2. derece oyununun ekran görüntüsü / kapak,"/oyunlar, /ulujam ve derece penceresi",tasarim-girdileri/06-oyunlar/oyun-02,oyun-02-kapak.webp,1600,900,1,fotoğraf,şablon / ilgili oyunun sahipli görüntüsü,Game cover_asset_id editoryal yükleme

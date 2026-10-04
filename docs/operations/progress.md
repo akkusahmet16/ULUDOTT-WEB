@@ -739,6 +739,17 @@ Yerel web1976/session36628 port3001, worker2237/session16834 yeniden açık. Por
 
 Kullanıcı herkese açık yayın istedi. Plan/rapor ve Sites hosting rehberi okundu. Web1976/worker2237 cwd doğrulandı ve durduruldu. Native get_site: owner,active,custom; public kullanılabilir. sites_update_site_access(access_mode=public) başarılı: project appgprj_6ac178c5619c8191af1de280c6a4393f, policy revision2,updated_at2026-10-04T11:34:28.957483+00:00. Mevcut yayımlı sürüm ve URL korunur: https://uludott-tasarim-onizleme.akkusahmet.chatgpt.site. Kaynak/sürüm değişmediği için yeniden paketleme veya deployment gerekmedi. Bu erişim değişikliği kullanıcı tarafından açıkça yetkilendirildi. Ayrı ekip daveti/e-posta gönderilmedi. Statik tasarım önizlemesi dışında DB/API/özel yönetim/Wallet yayını yok. Yerel web/worker yeniden başlatılır; port3000 başka projeye dokunulmaz.
 
+## Coffee Talk kartı ve sade duyuru alanı — 4 Ekim 2026
+
+Plan/rapor ve yüklü Next images rehberi okundu. Web2614/worker2640 doğru cwd ardından durduruldu. Kullanıcı sınırlı mevcut sunum revizyonu istedi; API/DB/Wallet değişmez. Duyurular ana sayfa kutusunda tam afiş kalkar; duyurular sayfasındaki gerçek afiş korunur. Coffee Talk bilgileri kullanıcı afişinden, yıl/kayıt adresi eklenmez. Buluşmalar bölümünün posteri4:5 tam görünür. Public Sites erişimi korunur.
+
+
+Son kabul: Ana sayfanın Duyurular kutusunda tam Valorant afişi kaldırıldı; başlık/bağlantı ve duyurular sayfasının afişi korunur. CoffeeTalkCard ana sayfa ve etkinliklerde yuvarlak köşeli afiş + bilgi alanı olarak paylaşılır; masaüstü yan yana/mobil alt alta, afiş kırpılmaz. Buluşmalar destination Coffee Talk afişi4:5; hover zoom kapalı. Gerçek yayımlı kartlar/rotalar korunur. Alan eşleme README/CSV/JSON yeni yerlere göre güncellendi.
+
+Doğrulama: Yeni kabul önce2 RED, ardından8 hedefli tarayıcı GREEN. Typecheck/lint/build başarılı; biçim ve diff kontrolü temiz. İlk geniş E2E yanlış ortam değişkeni nedeniyle dev modunda çalıştı:61/65; özel cache/CSP ve ilgili API kabulleri production bekliyordu. Doğru ULUDOTT_E2E_PRODUCTION=1 ve yeniden build ile coffee-production.log exit0:65/65(1.5dk). Bağımsız clone_review actionable defect bulmadı. Source624/Wallet3058 dosyada secretHits0/forbiddenFiles0; önceki Wallet tracing build uyarısı değişmedi. Statik9HTML/37referansasset yerel yollar geçerli; Coffee Talk bilgi/afiş iki alan ve ana sayfa duyuru afişsiz kontrolü geçti, backend/form yok.
+
+Sites erişimi public korunarak aynı URLye yayın succeeded: kaynak436abe1f763e25b34fecb49d8a70d28af26c21c5, archive.local/sites-coffee-layout-preview.tar.gz; version appgprj_6ac178c5619c8191af1de280c6a4393f~appgver_396ccba659e48191abc7c3103760b62e; deployment appgdep_6ac23d5766208191af0e8cb29953ecff. https://uludott-tasarim-onizleme.akkusahmet.chatgpt.site. Otomasyon yok. Yerel web4103/session11656 port3001, worker4095/session94917 yeniden açık; diğer projenin port3000 süreci korunur. Git codex/cinematic-theme üzerinde kaydedilir; önceki1d81212 ve özgün backup/theme-before-20261003 geri dönüş noktaları korunur. Apple ertelenmiş, Wallet gereksinimi en altta.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.
