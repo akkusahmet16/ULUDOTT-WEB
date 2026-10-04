@@ -567,3 +567,9 @@ Kullanıcının verdiği Instagram/WhatsApp/X/YouTube adresleri footerda aktif. 
 Sosyal bağlantılar görünür isim/ok olmadan sadece beyaz logolar;48px tıklama alanı, erişilebilir isim aria-label ile korunur. Adresler aynı.
 
 - [x] Uygulama, kontrol, yayın ve yerel açılış.
+
+## Coffee Talk boş durum düzeltmesi — 4 Ekim 2026
+
+Ana sayfada Coffee Talk zaten görünürken featured verisinin boş olmasına bağlı etkinlik yok metni kaldırılır; kart ve yayımlı etkinlikler korunur.
+
+- [x] Kontrol, yayın ve yerel açılış.

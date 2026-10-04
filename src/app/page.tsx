@@ -170,16 +170,12 @@ export default async function HomePage() {
             Tüm etkinlikler <span aria-hidden="true">↗</span>
           </Link>
         </div>
-        {featured.length ? (
+        {featured.length > 0 && (
           <div className="grid">
             {featured.map((event) => (
               <EventCard key={event.id} event={event} />
             ))}
           </div>
-        ) : (
-          <p className="empty">
-            Henüz öne çıkan etkinlik yok. Yeni buluşmalar burada duyurulacak.
-          </p>
         )}
         <CoffeeTalkCard />
         <Link href="/duyurular" className={styles.announcement}>

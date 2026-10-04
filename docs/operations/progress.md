@@ -811,6 +811,14 @@ Son kabul: Sosyal bağlantılarda sadece logo; görünür isim ve ok yok. aria-l
 
 Public Sites native succeeded: source6c21b851dab498f375f51168aaa73d61e9e29db9; archive.local/sites-icons-only-preview.tar.gz; version appgprj_6ac178c5619c8191af1de280c6a4393f~appgver_c6f8bcd2327081919fc3f6818cec2d0f; deployment appgdep_6ac2686d6434819194fa8dfa35d14dde. URL https://uludott-tasarim-onizleme.akkusahmet.chatgpt.site. Public erişim/otomasyon yok kararı korunur. Web14488/session55542 port3001 ve worker14502/session54417 yeniden açık. Git önceki ba34d87 ve yedek korunur; ilgisiz iki kullanıcı README değişikliği korunur. Apple ertelenmiş, Wallet gereksinimi en altta.
 
+## Coffee Talk boş durum düzeltmesi — 4 Ekim 2026
+
+Plan/rapor/kurulu Next rehberi okundu. Web14488/worker14502 doğru cwd ardından durduruldu. Kök neden: CoffeeTalkCard featured listesi dışında her zaman mevcut, fakat featured boş olduğunda yanıltıcı boş durum ayrıca gösteriliyor. Ana sayfa boş metni kaldırılır, kart/listeler korunur.
+
+Son kabul: Ana sayfada yanıltıcı etkinlik yok paragrafı kaldırıldı, CoffeeTalkCard ve featured listesi korunur. Type/lint, biçim/diff başarılı. Statik8HTML/42asset kabulü ve ana sayfada uyarının yokluğu/Coffee Talk kartının varlığı doğrulandı. Düşük etkili metin kaldırma için yeni test/bağımlılık eklenmedi.
+
+Sites public native succeeded: sourcecf194664be164040415607518a9f29d4d2e50869; archive.local/sites-coffee-empty-preview.tar.gz; version appgprj_6ac178c5619c8191af1de280c6a4393f~appgver_b394c78a54bc8191bd003f5c1a8a7475; deployment appgdep_6ac26a4b863081919f6795c1ef03e5a6. URL https://uludott-tasarim-onizleme.akkusahmet.chatgpt.site; public erişim korunur, otomasyon yok. Web15274/session31027 port3001 ve worker15286/session91025 yeniden açık. Git önceki b2af571/yedek ve iki ilgisiz kullanıcı README değişikliği korunur. Apple ertelenmiş, Wallet en altta.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.
