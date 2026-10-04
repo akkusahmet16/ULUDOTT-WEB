@@ -12,9 +12,9 @@ Geliştirme `.env.local` + loopback Compose; testler UUID DB ve sentetik S3 keys
 
 1. Commit/SHA ve release manifest kaydet; CI doğrulamaları geçmeden release üretme. `.github/workflows/ci.yml` package işi verify'e bağımlı; otomatik canlı yayın yok.
 2. Eşlenmiş [yedek](backup-restore.md) al; migration uyumluluğunu incele. Yeni boş DB için Node24.21/pnpm11.19 ve frozen install. Runtime güvenli env yüklenmişken `pnpm config:check`, `pnpm db:migrate` **tek süreçte**; ikinci çalışma idempotent. Canlı DB reset/truncate yapılmaz.
-3. Yalnız editoryal seed: `pnpm db:seed:2026`; gerekiyorsa tarihsiz2027 için `pnpm db:seed:ulujam`. Kişi/takım/kart yaratılmaz. Geliştirme fixture'ı çalıştırılmaz. Admin ayrı [etkileşimli bootstrap](admin-bootstrap.md).
+3. Yalnız editoryal seed: `pnpm db:seed:2026`; gerekiyorsa tarihsiz2027 için `pnpm db:seed:ulujam`. Kişi/takım/kart yaratılmaz. Geliştirme fixture'ı çalıştırılmaz. Yönetim paneli için sunucuda ayrı [özel şifre kurulumu](admin-bootstrap.md) yapılır; yerel şifre taşınmaz.
 4. Web/worker aynı release'i ayrı başlat; worker ancak migration tamamlandıktan sonra. Reverse proxy arkasındaki web host/port özel ağda; kullanıcı HTTPS ile erişir. Standalone paketi `.next/standalone`, `.next/static`, `public`; worker kaynak+productiondeps+src/db/migrations taşır.
-5. Smoke: `/`, `/ulujam`, `/linkler`200; 2026 yalnız bilinen3 URL, 2027 tarihsizYakında; admin login/MFA, izinli içerik yayını, staging fakeform/makbuz/worker. Canlı kişisel test kaydı oluşturma. Genel/özel cache/CSP, HTTPS/origin reddi, queue sağlık kontrolü. Hata halinde [rollback](rollback.md).
+5. Smoke: `/`, `/ulujam`, `/iletisim`200; 2026 yalnız bilinen3 URL, 2027 tarihsizYakında; admin özel şifre girişi, izinli içerik yayını, staging fakeform/makbuz/worker. Canlı kişisel test kaydı oluşturma. Genel/özel cache/CSP, HTTPS/origin reddi, queue sağlık kontrolü. Hata halinde [rollback](rollback.md).
 
 ## Ayrı Docker hedefleri
 

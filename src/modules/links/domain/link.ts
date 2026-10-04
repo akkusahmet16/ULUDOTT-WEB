@@ -12,16 +12,15 @@ export const staticPaths = new Set([
   "/",
   "/hakkimizda",
   "/ulujam",
-  "/destek",
+  "/iletisim",
   "/etkinlikler",
-  "/duyurular",
   "/oyunlar",
 ]);
 export function validLinkUrl(value: string) {
   if (/[\s\\\u0000-\u001f\u007f]/u.test(value)) return false;
   if (
     staticPaths.has(value) ||
-    /^\/(etkinlikler|duyurular)\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)
+    /^\/(etkinlikler)\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)
   )
     return true;
   try {

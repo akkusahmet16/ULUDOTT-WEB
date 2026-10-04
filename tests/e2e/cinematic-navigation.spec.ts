@@ -27,7 +27,7 @@ for (const width of [390, 1440])
     await expect(page.locator("#yonetim-kurulu")).toBeVisible();
     await expect(page.locator("#mekanlar")).toBeAttached();
     await expect(
-      page.getByText("Görsel yer tutucu", { exact: false }).first(),
+      page.getByText("Ecem Kafe & Oyun", { exact: true }),
     ).toBeVisible();
     await page.goto("/");
     const social = page

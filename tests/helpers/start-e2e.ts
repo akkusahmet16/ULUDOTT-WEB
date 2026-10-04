@@ -24,6 +24,7 @@ import { migrateEmptyDatabase } from "../../src/lib/database/migrate.ts";
 import { seedUlujamComingSoon } from "../../src/db/seeds/ulujam-coming-soon.ts";
 import { seed2026Results } from "../../src/db/seeds/2026-results.ts";
 import { getDatabase, closeDatabase } from "../../src/lib/database/client.ts";
+import { setPanelPassword } from "../../src/modules/admin/application/panel-password.ts";
 import {
   hashPassword,
   encryptMfaSecret,
@@ -266,6 +267,7 @@ try {
     await local.sql`insert into events(id,title,slug,kind,status,starts_at,location,publish_at,media_id) values(${event},'DEMO yük etkinliği','demo-load-event','general','published','2030-01-01','DEMO','2020-01-01',${asset})`;
     await local.sql`insert into featured_slots(event_id,position,media_id) values(${event},0,${asset})`;
   }
+  await setPanelPassword("E2E-only-password-long-42");
   await closeDatabase();
   if (process.env.ULUDOTT_E2E_PRODUCTION === "1") {
     productionDir = await mkdtemp(join(tmpdir(), "uludott-standalone-"));

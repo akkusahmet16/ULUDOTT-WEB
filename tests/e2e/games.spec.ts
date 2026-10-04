@@ -5,13 +5,7 @@ test("2026 oyun editörü, gerçek yapımcı onayı, finalist, tam yayın ve ger
   browser,
 }) => {
   await page.goto("/admin");
-  await page.getByLabel("E-posta").fill("admin-e2e@test.invalid");
-  await page
-    .getByLabel("Parola", { exact: true })
-    .fill("E2E-only-password-long-42");
-  await page
-    .getByLabel("Doğrulama veya kurtarma kodu")
-    .fill("dddddddddddddddddddddddddddddddd");
+  await page.getByLabel("Özel şifre").fill("E2E-only-password-long-42");
   await page.getByRole("button", { name: "Giriş yap", exact: true }).click();
   await page.getByRole("link", { name: "Oyunlar", exact: true }).click();
   await page

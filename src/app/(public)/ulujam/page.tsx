@@ -1,7 +1,4 @@
-import {
-  listPublicGames,
-  getPublicGameById,
-} from "../../../modules/games/infrastructure/game-repository";
+import { getPublicGameById } from "../../../modules/games/infrastructure/game-repository";
 import { historical2026 } from "../../../modules/games/domain/historical-result";
 import { PublicShell } from "../../../components/layout/public-shell";
 import {
@@ -19,19 +16,14 @@ export const metadata = {
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ finalistCursor?: string }>;
+  searchParams: Promise<Record<string, never>>;
 }) {
-  const { finalistCursor } = await searchParams;
-  const [startAt, results, gallery, full, finalists] = await Promise.all([
+  await searchParams;
+  const [startAt, results, gallery, full] = await Promise.all([
     publishedYearStart(2027),
     listPublicHistoricalResults(2026),
     galleryImages(2026),
     Promise.all(historical2026.results.map((g) => getPublicGameById(g.id))),
-    listPublicGames({
-      eventId: historical2026.eventId,
-      finalistOnly: true,
-      cursor: finalistCursor,
-    }),
   ]);
   return (
     <PublicShell>
@@ -48,8 +40,6 @@ export default async function Page({
                 alt: `UluJam 2026 — topluluktan kare ${n}`,
               }))
         }
-        finalists={finalists.items}
-        nextFinalistCursor={finalists.nextCursor}
       />
     </PublicShell>
   );

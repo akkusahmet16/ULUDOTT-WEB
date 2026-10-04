@@ -65,15 +65,6 @@ export function Dashboard({ view }: { view: DashboardView }) {
           </select>
         </label>
       </div>
-      {view.globalScheduledAnnouncements !== null &&
-        !eventId &&
-        !query.trim() &&
-        filter !== "upcoming" && (
-          <p>
-            Genel zamanlanmış duyuru: {view.globalScheduledAnnouncements} ·{" "}
-            <Link href="/admin/duyurular">Duyuruları yönet</Link>
-          </p>
-        )}
       <h3>Etkinlikler</h3>
       {!events.length && <p>Filtreye uygun etkinlik yok.</p>}
       <div className={styles.grid}>
@@ -82,8 +73,6 @@ export function Dashboard({ view }: { view: DashboardView }) {
             <h3>{e.title}</h3>
             <p>{e.upcoming ? "Yaklaşan etkinlik" : "Etkinlik kaydı"}</p>
             <dl className={styles.metrics}>
-              <dt>Zamanlanmış duyuru</dt>
-              <dd>{e.scheduledAnnouncements}</dd>
               {e.newSubmissions !== null && (
                 <>
                   <dt>Açık form</dt>

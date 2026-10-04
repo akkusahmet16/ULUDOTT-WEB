@@ -3,12 +3,17 @@ import { eq, and, isNull, sql } from "drizzle-orm";
 import type { DbTx } from "../../../lib/database/transaction.ts";
 import { admins, adminRoles, adminSessions } from "../../../db/schema/admin.ts";
 import { adminEventScopes, rateLimits } from "../../../db/schema/operations.ts";
+import { PANEL_ADMIN_EMAIL } from "../domain/panel-account.ts";
 export async function lockAdmin(tx: DbTx, email: string) {
   return (
     await tx.select().from(admins).where(eq(admins.email, email)).for("update")
   )[0];
 }
 export async function actorFor(tx: DbTx, id: string) {
+  const [account] = await tx
+    .select({ email: admins.email })
+    .from(admins)
+    .where(eq(admins.id, id));
   const roles = await tx
     .select({ role: adminRoles.role })
     .from(adminRoles)
@@ -17,10 +22,16 @@ export async function actorFor(tx: DbTx, id: string) {
     .select({ id: adminEventScopes.eventId })
     .from(adminEventScopes)
     .where(eq(adminEventScopes.adminId, id));
+  const allEvents =
+    account?.email === PANEL_ADMIN_EMAIL
+      ? await tx.execute(sql`select id from events order by id`)
+      : null;
   return {
     adminId: id,
     roles: roles.map((r) => r.role),
-    eventScopes: scopes.map((s) => s.id),
+    eventScopes: allEvents
+      ? allEvents.map((row) => String(row.id))
+      : scopes.map((s) => s.id),
   };
 }
 export async function updateAdmin(

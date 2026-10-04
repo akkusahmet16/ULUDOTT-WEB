@@ -29,7 +29,8 @@ export function Countdown({
     return () => clearInterval(timer);
   }, [startAt]);
   const state = countdownState(startAt ? new Date(startAt) : null, now);
-  if (state.kind === "coming_soon") return <p>Yakında</p>;
+  if (state.kind === "coming_soon")
+    return <p className="ulujam-soon">Yakında</p>;
   if (state.kind === "started") return <p>Etkinlik başladı.</p>;
   const days = Math.floor(state.seconds / 86400),
     hours = Math.floor((state.seconds % 86400) / 3600),

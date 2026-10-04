@@ -30,11 +30,9 @@ function revision(row: { revision: number } | undefined, expected?: number) {
 async function targetAvailable(tx: DbTx, url: string, now: Date) {
   if (!validLinkUrl(url)) return false;
   if (!url.startsWith("/") || staticPaths.has(url)) return true;
-  const match = /^\/(etkinlikler|duyurular)\/([a-z0-9-]+)$/.exec(url);
+  const match = /^\/(etkinlikler)\/([a-z0-9-]+)$/.exec(url);
   if (!match) return false;
-  const table = sql.identifier(
-    match[1] === "etkinlikler" ? "events" : "announcements",
-  );
+  const table = sql.identifier("events");
   const rows = await tx.execute(
     sql`select id from ${table} where slug=${match[2]} and status in ('scheduled','published','ended','cancelled') and publish_at<=${now.toISOString()} and (unpublish_at is null or unpublish_at>${now.toISOString()})`,
   );

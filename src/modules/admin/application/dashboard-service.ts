@@ -21,7 +21,6 @@ export type DashboardEvent = {
   capacity: number | null;
   full: boolean | null;
   failedWalletJobs: number | null;
-  scheduledAnnouncements: number;
 };
 export type DashboardForm = {
   id: string;
@@ -33,7 +32,6 @@ export type DashboardForm = {
   full: boolean;
 };
 export type DashboardView = {
-  globalScheduledAnnouncements: number | null;
   events: DashboardEvent[];
   forms: DashboardForm[];
 };
@@ -54,16 +52,7 @@ export async function getDashboard(
   const scopes = actor.roles.includes("event_manager") ? actor.eventScopes : [];
   if (eventScope && !content && !scopes.includes(eventScope))
     throw Error("Yetki yok");
-  if (!content && !scopes.length)
-    return { globalScheduledAnnouncements: null, events: [], forms: [] };
-  const globalScheduledAnnouncements =
-    content && !eventScope
-      ? ((
-          await getDatabase().execute(
-            sql`select count(*)::int n from announcements where event_id is null and status='scheduled'`,
-          )
-        )[0].n as number)
-      : null;
+  if (!content && !scopes.length) return { events: [], forms: [] };
   const visible = content ? undefined : inArray(events.id, scopes);
   const personal = scopes.length ? inArray(events.id, scopes) : sql`false`;
   const participants = sql<number | null>`case when ${personal} then
@@ -92,7 +81,6 @@ export async function getDashboard(
       failedWalletJobs: sql<
         number | null
       >`case when ${personal} then (select count(*)::int from outbox o join cards c on c.id=o.aggregate_id join applications a on a.id=c.application_id where a.event_id=${sql.raw('"events"."id"')} and o.type in ('card.changed','wallet.requested') and (o.status='dead' or (o.status='pending' and o.last_error_code is not null))) else null end`,
-      scheduledAnnouncements: sql<number>`(select count(*)::int from announcements a where a.event_id=${sql.raw('"events"."id"')} and a.status='scheduled')`,
     })
     .from(events)
     .where(and(visible, eventScope ? eq(events.id, eventScope) : undefined))
@@ -115,7 +103,6 @@ export async function getDashboard(
         .orderBy(forms.title, forms.id)
     : [];
   return {
-    globalScheduledAnnouncements,
     events: eventRows.map((e) => ({
       ...e,
       upcoming: e.upcoming === true,

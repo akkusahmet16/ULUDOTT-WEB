@@ -5,6 +5,7 @@ const urls = [
   "https://kmevciman.itch.io/lostchildsoul",
   "https://kairosthegeek.itch.io/project-sw",
 ];
+const titles = ["Lost Pieces", "Lost Child Soul", "ProjectSW"];
 test("2026 derece kartları eksik bilgiyi uydurmadan mobil/klavye ile açılır", async ({
   page,
 }) => {
@@ -19,21 +20,23 @@ test("2026 derece kartları eksik bilgiyi uydurmadan mobil/klavye ile açılır"
   await expect(cards).toHaveCount(3);
   for (let i = 0; i < 3; i++) {
     const card = cards.nth(i);
-    await expect(card.getByRole("heading")).toHaveText(`${i + 1}. derece`);
-    await expect(
-      card.getByText("Kısmi editoryal kayıt", { exact: true }),
-    ).toBeVisible();
+    await expect(card.getByRole("heading")).toHaveText(titles[i]);
+    await expect(card.getByRole("img", { name: titles[i] })).toBeVisible();
     const link = card.getByRole("link");
     await expect(link).toHaveAttribute("href", urls[i]);
     await expect(link).toHaveAttribute("target", "_blank");
     await expect(link).toHaveAttribute("rel", /noopener noreferrer/);
+    await expect(link).toHaveText(`${titles[i]} oyununu itch.io’da aç`);
     await link.focus();
     await expect(link).toBeFocused();
   }
   await cards.nth(0).getByRole("link").focus();
   await page.keyboard.press("Tab");
   await expect(cards.nth(1).getByRole("link")).toBeFocused();
-  await expect(page.getByRole("main").getByRole("img")).toHaveCount(0);
+  await expect(page.getByRole("main").getByRole("img")).toHaveCount(5);
+  await expect(
+    page.getByText("Henüz tam oyun kaydı yayımlanmadı.", { exact: true }),
+  ).toHaveCount(0);
   await expect(page.getByText("lost-pieces", { exact: true })).toHaveCount(0);
   expect(
     (

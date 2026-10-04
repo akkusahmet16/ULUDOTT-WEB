@@ -67,7 +67,15 @@ it("şema ve tehlikeli/olmayan iç URL sunucuda reddedilir", async () => {
     { startsAt: "2030-01-01T14:00:00Z", endsAt: "2030-01-01T12:00:00Z" },
     { startsAt: "not-a-date" },
   ]) {
-    await expect(saveLink(actor, { groupId: g.id, title: "Aralık", url: "/", position: 0, ...window })).rejects.toThrow();
+    await expect(
+      saveLink(actor, {
+        groupId: g.id,
+        title: "Aralık",
+        url: "/",
+        position: 0,
+        ...window,
+      }),
+    ).rejects.toThrow();
   }
   await expect(
     saveLink(actor, { groupId: g.id, title: "", url: "/", position: 0 }),
@@ -123,7 +131,7 @@ it("kategori ve link sırası tam snapshot ile değişir; eksik/çift/eski sıra
   const b = await saveLink(actor, {
     groupId: g.id,
     title: "İkinci",
-    url: "/destek",
+    url: "/iletisim",
     position: 1,
     published: true,
   });

@@ -1,14 +1,4 @@
-import Link from "next/link";
 import { getPublishedLinks } from "../../modules/links/application/link-service";
-const destinations = [
-  ["/hakkimizda", "Hakkımızda"],
-  ["/ulujam", "UluJam"],
-  ["/etkinlikler", "Etkinlikler"],
-  ["/duyurular", "Duyurular"],
-  ["/oyunlar", "Oyunlar"],
-  ["/destek", "İletişim"],
-  ["/admin", "Yönetim"],
-] as const;
 export async function Footer() {
   const communitySocials = [
     {
@@ -51,13 +41,6 @@ export async function Footer() {
           <p>Dijital Oyun Tasarım Topluluğu</p>
         </div>
         <div>
-          <nav className="footer-map" aria-label="Site haritası">
-            {destinations.map(([href, label]) => (
-              <Link key={href} href={href}>
-                {label}
-              </Link>
-            ))}
-          </nav>
           <nav className="footer-socials" aria-label="Sosyal medya">
             <p className="eyebrow">Sosyal medya</p>
             <div>

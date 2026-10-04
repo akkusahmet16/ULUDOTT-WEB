@@ -1,18 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
-import { TOTP } from "otpauth";
-async function login(page: Page, email = "admin-e2e@test.invalid") {
+async function login(page: Page) {
   await page.goto("/admin");
-  await page.getByLabel("E-posta").fill(email);
-  await page
-    .getByLabel("Parola", { exact: true })
-    .fill("E2E-only-password-long-42");
-  await page
-    .getByLabel("Doğrulama veya kurtarma kodu")
-    .fill(
-      email === "admin-e2e@test.invalid"
-        ? "abababababababababababababababab"
-        : new TOTP({ secret: "JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP" }).generate(),
-    );
+  await page.getByLabel("Özel şifre").fill("E2E-only-password-long-42");
   await page.getByRole("button", { name: "Giriş yap", exact: true }).click();
   await expect(page.getByText("Yönetim oturumu açık.")).toBeVisible();
 }
@@ -90,24 +79,22 @@ test("Mobile dashboard filters and critical retry preview/cancel/confirm use the
     page.getByRole("link", { name: "Operasyon özeti", exact: true }),
   ).toBeVisible();
 });
-test("Editor navigation and direct system URL withhold operations and personal metrics", async ({
+test("tek şifreli panel tüm yönetim modüllerini gösterir; CSRF hâlâ zorunludur", async ({
   page,
 }) => {
-  await login(page, "editor-e2e@test.invalid");
+  await login(page);
   const nav = page.getByRole("navigation", { name: "Yönetim modülleri" });
   await expect(
-    nav.getByRole("link", { name: "Duyurular", exact: true }),
+    nav.getByRole("link", { name: "Yönetim kurulu", exact: true }),
   ).toBeVisible();
   await expect(
     nav.getByRole("link", { name: "Başvurular", exact: true }),
-  ).toHaveCount(0);
+  ).toBeVisible();
   await expect(
     nav.getByRole("link", { name: "Sistem", exact: true }),
-  ).toHaveCount(0);
-  await expect(page.getByText("Yeni başvuru", { exact: true })).toHaveCount(0);
+  ).toBeVisible();
   await page.goto("/admin/sistem");
-  await expect(page.getByRole("heading", { name: "Yetki yok" })).toBeVisible();
-  await expect(page.getByText("Google Wallet", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("Google Wallet", { exact: true })).toBeVisible();
   expect(
     (
       await page.request.post(

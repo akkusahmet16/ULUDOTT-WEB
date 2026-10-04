@@ -82,9 +82,6 @@ export function StoryPanels({ degreeContent }: { degreeContent: ReactNode }) {
               </span>
               <strong>{title}</strong>
               <span>{description}</span>
-              {id === "ulujam" && (
-                <span className="panel-status">Başvurular henüz açılmadı.</span>
-              )}
             </span>
           </button>
         ))}

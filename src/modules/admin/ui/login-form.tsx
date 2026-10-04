@@ -25,9 +25,7 @@ export function LoginForm() {
     setPending(true);
     try {
       await mutate("/api/admin/login", {
-        email: data.get("email"),
         password: data.get("password"),
-        mfaCode: data.get("mfaCode"),
       });
       form.reset();
       router.refresh();
@@ -39,39 +37,16 @@ export function LoginForm() {
   }
   return (
     <form onSubmit={submit}>
-      <p>Yalnızca yetkilendirilmiş yöneticiler giriş yapabilir.</p>
+      <p>Yönetim paneli için özel şifreyi girin.</p>
       <p>
         <label>
-          E-posta{" "}
-          <input
-            name="email"
-            type="email"
-            autoComplete="username"
-            required
-            maxLength={254}
-          />
-        </label>
-      </p>
-      <p>
-        <label>
-          Parola{" "}
+          Özel şifre{" "}
           <input
             name="password"
             type="password"
             autoComplete="current-password"
             required
             maxLength={1024}
-          />
-        </label>
-      </p>
-      <p>
-        <label>
-          Doğrulama veya kurtarma kodu{" "}
-          <input
-            name="mfaCode"
-            autoComplete="one-time-code"
-            required
-            maxLength={64}
           />
         </label>
       </p>

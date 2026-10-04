@@ -6,3 +6,4 @@ export * from "./wallet.ts";
 export * from "./links.ts";
 export * from "./operations.ts";
 export * from "./gallery.ts";
+export * from "./people.ts";

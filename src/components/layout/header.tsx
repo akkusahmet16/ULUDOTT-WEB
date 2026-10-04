@@ -9,9 +9,8 @@ const links = [
   ["/hakkimizda", "Hakkımızda"],
   ["/ulujam", "UluJam"],
   ["/etkinlikler", "Etkinlikler"],
-  ["/duyurular", "Duyurular"],
   ["/oyunlar", "Oyunlar"],
-  ["/destek", "İletişim"],
+  ["/iletisim", "İletişim"],
 ] as const;
 export function Header() {
   const path = usePathname(),
@@ -120,7 +119,7 @@ export function Header() {
               href === "/hakkimizda"
                 ? [
                     ["/hakkimizda#yonetim-kurulu", "Yönetim kurulu"],
-                    ["/hakkimizda#mekanlar", "Sponsorlar & mekânlar"],
+                    ["/hakkimizda#mekanlar", "Mekânlar"],
                   ]
                 : href === "/oyunlar"
                   ? [
@@ -141,7 +140,7 @@ export function Header() {
                   setPreview(
                     href === "/hakkimizda"
                       ? "/theme/reference/board-1.avif"
-                      : href === "/etkinlikler" || href === "/destek"
+                      : href === "/etkinlikler" || href === "/iletisim"
                         ? "/theme/reference/venue-1.avif"
                         : "/theme/reference/community.avif",
                   )

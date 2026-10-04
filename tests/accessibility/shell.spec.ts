@@ -4,10 +4,9 @@ for (const route of [
   "/",
   "/hakkimizda",
   "/ulujam",
-  "/destek",
+  "/iletisim",
   "/admin",
   "/etkinlikler",
-  "/duyurular",
   "/oyunlar",
 ])
   test(`axe ${route}`, async ({ page }) => {

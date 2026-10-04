@@ -47,9 +47,9 @@ async function media(tx: DbTx, id: string | null, published = false) {
 }
 async function liveCta(tx: DbTx, url: string | null, now: Date) {
   if (!url) return true;
-  const match = /^\/(etkinlikler|duyurular)\/([a-z0-9-]+)$/.exec(url);
+  const match = /^\/(etkinlikler)\/([a-z0-9-]+)$/.exec(url);
   if (!match) return true;
-  const targetType = match[1] === "etkinlikler" ? "event" : "announcement";
+  const targetType = "event";
   const rows = await tx.execute(
     sql`select * from ${table(targetType)} where slug=${match[2]}`,
   );

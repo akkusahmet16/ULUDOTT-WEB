@@ -2,13 +2,9 @@ import { test, expect, type Page } from "@playwright/test";
 import sharp from "sharp";
 import { openEventWithoutApplication } from "../helpers/event-card";
 import AxeBuilder from "@axe-core/playwright";
-async function login(page: Page, code: string) {
+async function login(page: Page) {
   await page.goto("/admin");
-  await page.getByLabel("E-posta").fill("admin-e2e@test.invalid");
-  await page
-    .getByLabel("Parola", { exact: true })
-    .fill("E2E-only-password-long-42");
-  await page.getByLabel("Doğrulama veya kurtarma kodu").fill(code);
+  await page.getByLabel("Özel şifre").fill("E2E-only-password-long-42");
   await page.getByRole("button", { name: "Giriş yap", exact: true }).click();
   await expect(page.getByText("Yönetim oturumu açık.")).toBeVisible();
 }
@@ -31,7 +27,7 @@ test("Coffee Talk taslak kalır; doğrulanmış afiş ve tarih sonrası ana sayf
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 900 });
-  await login(page, "22222222222222222222222222222222");
+  await login(page);
   const image = await sharp({
     create: { width: 640, height: 360, channels: 3, background: "#b7a0ff" },
   })
@@ -167,78 +163,16 @@ test("Coffee Talk taslak kalır; doğrulanmış afiş ve tarih sonrası ana sayf
     fullPage: true,
   });
 });
-test("duyuru metni HTML çalıştırmaz, slug yönlenir ve arşiv public erişimi kaldırır", async ({
-  page,
-}) => {
-  await login(page, "33333333333333333333333333333333");
-  await page.goto("/admin/duyurular");
-  await page.getByLabel("Başlık", { exact: true }).fill("Test duyurusu");
-  await page.getByLabel("Slug", { exact: true }).fill("test-duyuru");
-  await page
-    .getByLabel("İçerik", { exact: true })
-    .fill("<script>window.bad=true</script>");
-  await page.getByLabel("SEO başlığı").fill("Özel paylaşım başlığı");
-  await page
-    .getByRole("button", { name: "Taslağı kaydet", exact: true })
-    .click();
-  await expect(page.getByRole("status")).toContainText("Kaydedildi");
-  const card = page.getByRole("article").filter({
-    has: page.getByRole("heading", { name: "Test duyurusu", exact: true }),
-  });
-  await card.getByRole("button", { name: "Düzenle", exact: true }).click();
-  await page
-    .getByRole("button", { name: "Yayın etkisini göster", exact: true })
-    .click();
-  await page
-    .getByRole("dialog")
-    .getByRole("button", { name: "Yayını onayla", exact: true })
-    .click();
-  await expect(page.getByRole("status")).toContainText("Yayın güncellendi");
-  await page.keyboard.press("Escape");
-  await page.goto("/duyurular/test-duyuru");
-  await expect(
-    page.getByText("<script>window.bad=true</script>", { exact: true }),
-  ).toBeVisible();
-  await expect(page).toHaveTitle("Özel paylaşım başlığı");
-  expect(await page.evaluate(() => Object.hasOwn(window, "bad"))).toBe(false);
-  const items = await (
-    await page.request.get("/api/admin/announcements", {
-      headers: await authHeaders(page),
-    })
-  ).json();
-  const a = items.items.find((x: { slug: string }) => x.slug === "test-duyuru");
-  const saved = await mutate(page, "/api/admin/announcements", {
-    action: "save",
-    id: a.id,
-    expectedRevision: a.revision,
-    input: {
-      title: a.title,
-      slug: "test-duyuru-yeni",
-      body: a.body,
-      seo: a.seo,
-    },
-  });
-  expect(saved.ok()).toBe(true);
-  const updated = await saved.json();
-  const redirect = await page.request.get("/duyurular/test-duyuru", {
-    maxRedirects: 0,
-  });
-  expect(redirect.status()).toBe(308);
-  expect(redirect.headers().location).toContain("test-duyuru-yeni");
-  expect(
-    (
-      await mutate(page, "/api/admin/announcements", {
-        action: "archive",
-        id: a.id,
-        expectedRevision: updated.revision,
-        confirmed: true,
-      })
-    ).ok(),
-  ).toBe(true);
-  expect((await page.request.get("/duyurular/test-duyuru")).status()).toBe(404);
+test("kaldırılan duyuru yüzeyleri erişime kapalıdır", async ({ request }) => {
+  for (const route of [
+    "/duyurular",
+    "/duyurular/test-duyuru",
+    "/api/admin/announcements",
+  ])
+    expect((await request.get(route)).status()).toBe(404);
 });
 test("yayın API yetkisiz mutasyonları reddeder", async ({ request }) => {
-  for (const route of ["events", "announcements"]) {
+  for (const route of ["events"]) {
     expect((await request.get(`/api/admin/${route}`)).status()).toBe(401);
     expect((await request.post(`/api/admin/${route}`)).status()).toBe(403);
   }

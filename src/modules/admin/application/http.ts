@@ -16,7 +16,7 @@ import {
   readCookie,
 } from "../../../lib/auth/csrf.ts";
 import { loginRateAllowed } from "../infrastructure/admin-repository.ts";
-import { authenticateAdmin } from "./auth-service.ts";
+import { authenticatePanelPassword } from "./auth-service.ts";
 const securityHeaders = {
   "Cache-Control": "no-store",
   "Referrer-Policy": "no-referrer",
@@ -24,9 +24,7 @@ const securityHeaders = {
   "X-Content-Type-Options": "nosniff",
 };
 const bodySchema = z.strictObject({
-  email: z.email().max(254),
   password: z.string().min(1).max(1024),
-  mfaCode: z.string().min(1).max(64),
 });
 function response(body: unknown, status = 200) {
   return NextResponse.json(body, { status, headers: securityHeaders });
@@ -93,11 +91,7 @@ export async function handleAdminRequest(
         return response({ error: "Giriş alanlarını kontrol edin." }, 400);
       }
       try {
-        const session = await authenticateAdmin(
-          data.email,
-          data.password,
-          data.mfaCode,
-        );
+        const session = await authenticatePanelPassword(data.password);
         const r = response({ ok: true });
         r.cookies.set(SESSION_COOKIE, session.token, {
           ...cookieOptions,

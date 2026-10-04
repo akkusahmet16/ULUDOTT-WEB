@@ -71,16 +71,10 @@ for (const width of [390, 1440])
     expect(
       (await new AxeBuilder({ page }).include("main").analyze()).violations,
     ).toEqual([]);
-    await page.goto("/duyurular");
-    await expect(
-      page.getByRole("img", {
-        name: "Uludott Valorant turnuvası afişi",
-        exact: true,
-      }),
-    ).toBeVisible();
+    expect((await page.request.get("/duyurular")).status()).toBe(404);
     await page.goto("/hakkimizda");
     const chair = page.getByRole("region", {
-      name: "Başkan Yiğit",
+      name: "Hamza Yiğit Adıgüzel",
       exact: true,
     });
     await expect(chair.locator("video")).toHaveCount(1);

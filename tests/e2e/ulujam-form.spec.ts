@@ -4,13 +4,7 @@ test("UluJam dört mod ve beceriler; yalnız önizleme, parola temizlenir", asyn
   page,
 }) => {
   await page.goto("/admin");
-  await page.getByLabel("E-posta").fill("admin-e2e@test.invalid");
-  await page
-    .getByLabel("Parola", { exact: true })
-    .fill("E2E-only-password-long-42");
-  await page
-    .getByLabel("Doğrulama veya kurtarma kodu")
-    .fill("99999999999999999999999999999999");
+  await page.getByLabel("Özel şifre").fill("E2E-only-password-long-42");
   await page.getByRole("button", { name: "Giriş yap", exact: true }).click();
   await expect(page.getByText("Yönetim oturumu açık.")).toBeVisible();
   await page.goto("/admin/formlar");

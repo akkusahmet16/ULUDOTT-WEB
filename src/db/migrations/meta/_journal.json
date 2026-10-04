@@ -155,6 +155,13 @@
       "when": 1791040336597,
       "tag": "0021_high_yellow_claw",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1791133749433,
+      "tag": "0022_brave_crystal",
+      "breakpoints": true
     }
   ]
 }

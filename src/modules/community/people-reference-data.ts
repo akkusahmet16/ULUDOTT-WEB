@@ -1,201 +1,153 @@
-const referenceScenes = [
+export type Member = {
+  slug: string;
+  name: string;
+  role: string;
+  details: string[];
+  quote?: string;
+  photo: string;
+  photoReference: boolean;
+};
+export type Chapter = {
+  slug: string;
+  title: string;
+  role: string;
+  color: string;
+  video: string;
+  videoReference: boolean;
+  poster: string;
+  members: Member[];
+};
+const community = "/community/03-hakkimizda/people";
+const reference = "/theme/reference/people";
+export const peopleChapters: Chapter[] = [
   {
     slug: "baskan-yigit",
-    referenceName: "Yiğit",
-    color: "#171923",
-    photos: [
-      "/community/03-hakkimizda/people/baskan-yigit/baskan-yigit-detay.webp",
-    ],
-    background:
-      "/community/03-hakkimizda/people/baskan-yigit/baskan-yigit-detay.webp",
-    foreground: null,
-    videos: [
-      "/community/03-hakkimizda/people/baskan-yigit/baskan-yigit-acilis.mp4",
-    ],
-  },
-  {
-    slug: "lucia",
-    referenceName: "Lucia Caminos",
-    color: "#282338",
-    photos: [
-      "/theme/reference/people/lucia-caminos-01.avif",
-      "/theme/reference/people/lucia-caminos-02.avif",
-      "/theme/reference/people/lucia-caminos-03.avif",
-      "/theme/reference/people/lucia-caminos-04.avif",
-      "/theme/reference/people/lucia-caminos-05.avif",
-      "/theme/reference/people/lucia-caminos-06.avif",
-    ],
-    background: "/theme/reference/people/lucia-caminos-01.avif",
-    foreground: null,
-    videos: [
-      "/theme/reference/people/lucia-intro.mp4",
-      "/theme/reference/people/lucia-quote.mp4",
-    ],
-  },
-  {
-    slug: "cal",
-    referenceName: "Cal Hampton",
-    color: "#213949",
-    photos: [
-      "/theme/reference/people/cal-hampton-01.avif",
-      "/theme/reference/people/cal-hampton-02.avif",
-      "/theme/reference/people/cal-hampton-03.avif",
-      "/theme/reference/people/cal-hampton-04.avif",
-    ],
-    background: "/theme/reference/people/cal-bg.avif",
-    foreground: "/theme/reference/people/cal-fg.avif",
-    videos: ["/theme/reference/people/cal.mp4"],
-  },
-  {
-    slug: "boobie",
-    referenceName: "Boobie Ike",
-    color: "#24354b",
-    photos: [
-      "/theme/reference/people/boobie-ike-01.avif",
-      "/theme/reference/people/boobie-ike-02.avif",
-      "/theme/reference/people/boobie-ike-03.avif",
-      "/theme/reference/people/boobie-ike-04.avif",
-    ],
-    background: "/theme/reference/people/boobie-bg.avif",
-    foreground: "/theme/reference/people/boobie-fg.avif",
-    videos: ["/theme/reference/people/boobie.mp4"],
-  },
-  {
-    slug: "drequan",
-    referenceName: "Dre’Quan Priest",
-    color: "#382e40",
-    photos: [
-      "/theme/reference/people/drequan-priest-01.avif",
-      "/theme/reference/people/drequan-priest-02.avif",
-      "/theme/reference/people/drequan-priest-03.avif",
-      "/theme/reference/people/drequan-priest-04.avif",
-    ],
-    background: "/theme/reference/people/drequan-bg.avif",
-    foreground: "/theme/reference/people/drequan-fg.avif",
-    videos: ["/theme/reference/people/drequan.mp4"],
-  },
-  {
-    slug: "dimez",
-    referenceName: "Real Dimez",
-    color: "#49303d",
-    photos: [
-      "/theme/reference/people/real-dimez-01.avif",
-      "/theme/reference/people/real-dimez-02.avif",
-      "/theme/reference/people/real-dimez-03.avif",
-      "/theme/reference/people/real-dimez-04.avif",
-    ],
-    background: "/theme/reference/people/dimez-bg.avif",
-    foreground: "/theme/reference/people/dimez-fg.avif",
-    videos: ["/theme/reference/people/dimez.mp4"],
-  },
-  {
-    slug: "raul",
-    referenceName: "Raul Bautista",
-    color: "#313929",
-    photos: [
-      "/theme/reference/people/raul-bautista-01.avif",
-      "/theme/reference/people/raul-bautista-02.avif",
-      "/theme/reference/people/raul-bautista-03.avif",
-      "/theme/reference/people/raul-bautista-04.avif",
-    ],
-    background: "/theme/reference/people/raul-bg.avif",
-    foreground: "/theme/reference/people/raul-fg.avif",
-    videos: ["/theme/reference/people/raul.mp4"],
-  },
-  {
-    slug: "brian",
-    referenceName: "Brian Heder",
-    color: "#31304a",
-    photos: [
-      "/theme/reference/people/brian-heder-01.avif",
-      "/theme/reference/people/brian-heder-02.avif",
-      "/theme/reference/people/brian-heder-03.avif",
-      "/theme/reference/people/brian-heder-04.avif",
-    ],
-    background: "/theme/reference/people/brian-bg.avif",
-    foreground: "/theme/reference/people/brian-fg.avif",
-    videos: ["/theme/reference/people/brian.mp4"],
-  },
-] as const;
-
-const members = [
-  {
-    slug: "baskan-yigit",
-    name: "Hamza Yiğit Adıgüzel",
+    title: "Hamza Yiğit Adıgüzel",
     role: "Başkan",
-    quote:
-      "Uludott'ta en sevdiğim şey, fikirlerin sadece fikir olarak kalmaması.",
-    details: ["Bilgisayar Mühendisliği 2.Sınıf"],
+    color: "#171923",
+    video: `${community}/baskan-yigit/baskan-yigit-acilis.mp4`,
+    videoReference: false,
+    poster: `${community}/baskan-yigit/baskan-yigit-detay.webp`,
+    members: [
+      {
+        slug: "baskan-yigit",
+        name: "Hamza Yiğit Adıgüzel",
+        role: "Başkan",
+        quote:
+          "Uludott'ta en sevdiğim şey, fikirlerin sadece fikir olarak kalmaması.",
+        details: ["Bilgisayar Mühendisliği 2. Sınıf"],
+        photo: `${community}/baskan-yigit/baskan-yigit-detay.webp`,
+        photoReference: false,
+      },
+    ],
   },
   {
     slug: "baskan-yard-batu",
-    name: "Batuhan Özdemir",
+    title: "Batuhan Özdemir",
     role: "Başkan Yardımcısı",
-    quote: "Aklımıza gelen şeyi ‘neden olmasın?’ deyip denemeyi seviyoruz.",
-    details: ["Bilgisayar Mühendisliği 3.Sınıf", "Uludott Dergi Yazarı"],
-    video: "baskan-yard-batu-acilis.mp4",
-    photo: "baskan-yard-batu-detay.webp",
+    color: "#282338",
+    video: `${community}/baskan-yard-batu/baskan-yard-batu-acilis.mp4`,
+    videoReference: false,
+    poster: `${community}/baskan-yard-batu/baskan-yard-batu-detay.webp`,
+    members: [
+      {
+        slug: "baskan-yard-batu",
+        name: "Batuhan Özdemir",
+        role: "Başkan Yardımcısı",
+        quote: "Aklımıza gelen şeyi ‘neden olmasın?’ deyip denemeyi seviyoruz.",
+        details: ["Bilgisayar Mühendisliği 3. Sınıf", "Uludott Dergi Yazarı"],
+        photo: `${community}/baskan-yard-batu/baskan-yard-batu-detay.webp`,
+        photoReference: false,
+      },
+    ],
   },
   {
-    slug: "sosyal-medya-ahmet",
-    name: "Ahmet Akkuş",
-    role: "Sosyal Medya Deparmanı Başkanı",
-    quote:
-      "Bir işin gerçekten iyi olması için detaylarla uğraşmaktan kaçınmam.",
-    details: ["Bilgisayar ve Öğr. Tek. Eğitimi 2.Sınıf"],
+    slug: "sosyal-medya-ekip",
+    title: "Sosyal Medya Ekibi",
+    role: "Sosyal medya",
+    color: "#213949",
+    video: `${reference}/cal.mp4`,
+    videoReference: true,
+    poster: `${reference}/cal-hampton-01.avif`,
+    members: [
+      {
+        slug: "sosyal-medya-ahmet",
+        name: "Ahmet Akkuş",
+        role: "Sosyal Medya Departmanı Başkanı",
+        quote:
+          "Bir işin gerçekten iyi olması için detaylarla uğraşmaktan kaçınmam.",
+        details: ["Bilgisayar ve Öğretim Teknolojileri Eğitimi 2. Sınıf"],
+        photo: `${reference}/cal-hampton-01.avif`,
+        photoReference: true,
+      },
+      {
+        slug: "ex-smd-melek",
+        name: "Melek",
+        role: "Sosyal Medya Ekibi",
+        details: [],
+        photo: `${reference}/brian-heder-01.avif`,
+        photoReference: true,
+      },
+      {
+        slug: "dwayne-jesus-emir",
+        name: "Emir",
+        role: "Sosyal Medya Ekibi",
+        details: [],
+        photo: `${reference}/raul-bautista-01.avif`,
+        photoReference: true,
+      },
+    ],
+  },
+  {
+    slug: "etkinlik-ekip",
+    title: "Etkinlik Ekibi",
+    role: "Etkinlikler",
+    color: "#382e40",
+    video: `${reference}/drequan.mp4`,
+    videoReference: true,
+    poster: `${reference}/drequan-priest-01.avif`,
+    members: [
+      {
+        slug: "efe-tutucu",
+        name: "Efe Tutucu",
+        role: "Etkinlik Ekibi",
+        quote:
+          "Burada sadece etkinlik yapmıyoruz, birlikte bir şeyler inşa ediyoruz.",
+        details: ["Bilgisayar Mühendisliği 4. Sınıf"],
+        photo: `${reference}/drequan-priest-01.avif`,
+        photoReference: true,
+      },
+      {
+        slug: "aybey",
+        name: "Aybey",
+        role: "Etkinlik Ekibi",
+        details: [],
+        photo: `${reference}/real-dimez-01.avif`,
+        photoReference: true,
+      },
+    ],
   },
   {
     slug: "cayci-halis",
-    name: "Halis Can Sağır",
+    title: "Halis Can Sağır",
     role: "Çaycı",
-    quote: "Çav yok bok için",
-    details: ["Bilgisayar ve Öğr. Tek. Eğitimi 2.Sınıf", "Çaylarrrr"],
-    video: "cayci-halis-acilis.mp4",
-    photo: "cayci-halis-detay.webp",
+    color: "#313929",
+    video: `${community}/cayci-halis/cayci-halis-acilis.mp4`,
+    videoReference: false,
+    poster: `${community}/cayci-halis/cayci-halis-detay.webp`,
+    members: [
+      {
+        slug: "cayci-halis",
+        name: "Halis Can Sağır",
+        role: "Çaycı",
+        quote: "Çav yok bok için",
+        details: [
+          "Bilgisayar ve Öğretim Teknolojileri Eğitimi 2. Sınıf",
+          "Çaylarrrr",
+        ],
+        photo: `${community}/cayci-halis/cayci-halis-detay.webp`,
+        photoReference: false,
+      },
+    ],
   },
-  {
-    slug: "efe-tutucu",
-    name: "Efe Tutucu",
-    role: "Yönetim kurulu",
-    quote:
-      "Burada sadece etkinlik yapmıyoruz, birlikte bir şeyler inşa ediyoruz.",
-    details: ["Bilgisayar Mühendisliği 4.Sınıf"],
-    video: "efe-tutucu-acilis.mp4",
-  },
-  {
-    slug: "aybey",
-    name: "Aybey",
-    role: "Yönetim kurulu",
-    quote: null,
-    details: [],
-  },
-  {
-    slug: "dwayne-jesus-emir",
-    name: "Dwayne Jesus Emir",
-    role: "Yönetim kurulu",
-    quote: null,
-    details: [],
-  },
-  {
-    slug: "ex-smd-melek",
-    name: "Melek",
-    role: "Eski Sosyal Medya Departmanı",
-    quote: null,
-    details: [],
-  },
-] as const;
-export const peopleReference = members.map((member, index) => {
-  const fallback = referenceScenes[index];
-  const base = `/community/03-hakkimizda/people/${member.slug}/`;
-  const photo = "photo" in member ? base + member.photo : fallback.photos[0];
-  const video = "video" in member ? base + member.video : fallback.videos[0];
-  return {
-    ...fallback,
-    ...member,
-    referenceName: member.name,
-    photos: [photo],
-    videos: [video],
-    photoReference: index !== 0 && !("photo" in member),
-    videoReference: index !== 0 && !("video" in member),
-  };
-});
+];

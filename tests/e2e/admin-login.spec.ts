@@ -1,18 +1,13 @@
 import { test, expect } from "@playwright/test";
-import { TOTP } from "otpauth";
-const email = "admin-e2e@test.invalid",
-  password = "E2E-only-password-long-42",
-  secret = "JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP";
-test("yönetici giriş MFA, güvenli cookie, yenileme ve çıkış akışı", async ({
+const password = "E2E-only-password-long-42";
+test("özel şifre, güvenli cookie, yenileme ve çıkış akışı", async ({
   page,
   context,
 }) => {
   await page.goto("/admin");
-  await page.getByLabel("E-posta").fill(email);
-  await page.getByLabel("Parola", { exact: true }).fill(password);
-  await page
-    .getByLabel("Doğrulama veya kurtarma kodu")
-    .fill(new TOTP({ secret }).generate());
+  await expect(page.getByLabel("E-posta")).toHaveCount(0);
+  await expect(page.getByLabel("Doğrulama veya kurtarma kodu")).toHaveCount(0);
+  await page.getByLabel("Özel şifre").fill(password);
   await page.getByRole("button", { name: "Giriş yap", exact: true }).click();
   await expect(page.getByText("Yönetim oturumu açık.")).toBeVisible();
   const first = (await context.cookies()).find(
@@ -27,7 +22,7 @@ test("yönetici giriş MFA, güvenli cookie, yenileme ve çıkış akışı", as
   const next = (await context.cookies()).find((c) => c.name === first.name)!;
   expect(next.value).not.toBe(first.value);
   await page.getByRole("button", { name: "Çıkış yap" }).click();
-  await expect(page.getByLabel("E-posta")).toBeVisible();
+  await expect(page.getByLabel("Özel şifre")).toBeVisible();
   expect(
     (await context.cookies()).find((c) => c.name === first.name),
   ).toBeUndefined();
@@ -36,7 +31,7 @@ test("CSRF olmayan giriş/logout ve genel kayıt endpointi reddedilir", async ({
   request,
 }) => {
   const r = await request.post("/api/admin/login", {
-    data: { email, password, mfaCode: "000000" },
+    data: { password },
   });
   expect(r.status()).toBe(403);
   expect(r.headers()["cache-control"]).toContain("no-store");

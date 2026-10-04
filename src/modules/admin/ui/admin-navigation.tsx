@@ -11,8 +11,8 @@ export function AdminNavigation({ actor }: { actor: Actor }) {
     ...(content
       ? [
           { href: "/admin/medya", label: "Medya" },
+          { href: "/admin/people", label: "Yönetim kurulu" },
           { href: "/admin/etkinlikler", label: "Etkinlikler" },
-          { href: "/admin/duyurular", label: "Duyurular" },
           { href: "/admin/linkler", label: "Bağlantılar" },
           { href: "/admin/galeri", label: "Galeri" },
           { href: "/admin/oyunlar", label: "Oyunlar" },

@@ -819,6 +819,86 @@ Son kabul: Ana sayfada yanıltıcı etkinlik yok paragrafı kaldırıldı, Coffe
 
 Sites public native succeeded: sourcecf194664be164040415607518a9f29d4d2e50869; archive.local/sites-coffee-empty-preview.tar.gz; version appgprj_6ac178c5619c8191af1de280c6a4393f~appgver_b394c78a54bc8191bd003f5c1a8a7475; deployment appgdep_6ac26a4b863081919f6795c1ef03e5a6. URL https://uludott-tasarim-onizleme.akkusahmet.chatgpt.site; public erişim korunur, otomasyon yok. Web15274/session31027 port3001 ve worker15286/session91025 yeniden açık. Git önceki b2af571/yedek ve iki ilgisiz kullanıcı README değişikliği korunur. Apple ertelenmiş, Wallet en altta.
 
+## Yerel yumuşak parıltı denemesi — 4 Ekim 2026
+
+Plan/rapor/Next client rehberi okundu. Web15274/worker15286 doğru cwd ardından durduruldu. Kullanıcı afiş arkası çok hafif mouse takibi ve CTA yavaş yanıp sönen ışık istedi. Yerelde çalışılır; Git push/commit ve Sites source push yapılmaz. Önceki b4b9cc1 korunur; iki değişen ürün dosyası .local/glow-before içine ayrıca kopyalandı. İlgisiz kullanıcı README düzenlemeleri korunur.
+
+Son kabul: Afiş arkasında düşük alfa pembe/lavanta radial ışık,900ms mouse takip geçişi. Topluluğu tanı CTA6sn ease-in-out soft pulse; opacity0.06–0.2. Reduced motion sabit, touch takip yok. Mobil wrapper afişin önceki tam genişliğini korur; mouse ofseti mobilde uygulanmaz. Type/lint ve biçim/diff başarılı. Yerel tarayıcı1440/390kontrolü: mousex33px,6sn pulse, yerleşim geçişi tamamlandıktan sonra overflow yok, reduced motion animationnone. Desktop/mobile .local/glow-desktop.png ve glow-mobile.png görselleri üretildi; masaüstü görseli incelendi. Yeni kalıcı test/bağımlılık yok.
+
+Yalnız yerel: Git commit/push ve Sites publish yapılmadı. b4b9cc1 geri dönüş noktası, .local/glow-before ürün dosyalarının önceki kopyaları. Web16409/session35448 port3001 ve worker16421/session49850 yeniden açık. İlgisiz kullanıcı README düzenlemeleri korunur, Apple ertelenmiş, Wallet en altta.
+
+## Parıltı Sites yayını — 4 Ekim 2026
+
+Plan/rapor okundu; web16409/worker16421 cwd doğrulanıp durduruldu. Kullanıcı GitHuba dokunmadan Sites yayını istedi/onayladı. Sites source deposu ayrı; root commit/push yapılmaz. Native markup/CSS yeniden export edildi; statik preview.js aynı110px/70px mouse oranı ve900ms CSS geçişini uygular. CTA6sn pulse CSS ile her iki ortamda aynı.
+
+Kabul: Statik8HTML/42asset, JS syntax,1440/390mousex33px/pulse6sn/overflowyok/reducedmotionsabit kontrolü geçti. Önceki type/lint kabulü kodu değişmedi. Geçici statik sunucu durduruldu. Public native succeeded: source32672da10479dfb7e841a06bc3f637076cf17425; archive.local/sites-soft-glow-preview.tar.gz; version appgprj_6ac178c5619c8191af1de280c6a4393f~appgver_4069dc3c9c5081918c900581aaf06cec; deployment appgdep_6ac26f3144748191bc56c1b205f646e8. URL https://uludott-tasarim-onizleme.akkusahmet.chatgpt.site; public korunur, otomasyon yok. Web16893/session46631 port3001 ve worker16907/session75534 yeniden açık. b4b9cc1 ve .local/glow-before geri dönüşü korunur; iki ilgisiz kullanıcı README değişikliği korunur. Apple ertelenmiş, Wallet en altta.
+
+## Yalnız yerel geliştirme kararı — 4 Ekim 2026
+
+Kullanıcı Sites önizlemesini artık istemiyor ve ürünü yerelde tamamlamayı seçti. Plan/rapor okundu; web16893/worker16907 cwd doğrulanıp durduruldu. Sites mutasyonları arasında suspend/unpublish/delete aracı yok. Geri alınabilir şekilde public erişim custom/boş kullanıcı ve grup listelerine çekilir; owner erişimi korunur. get_site automations=[]; durdurulacak görev yok. Site/source geçmişi silinmez.
+
+Gelecek işlemler: Açık yeni kullanıcı isteği olmadan Sites export/source push/save/deploy yok; ana ürün localhost3001üzerinde çalışır. Plan/rapor okuma ve işlem başında durdurma/sonunda açma devam eder. GitHub push yapılmaz; mevcut parıltı denemesi commitlenmeden ve geri dönüş kopyalarıyla korunur. Apple ertelemesi ve Wallet son kabul gereksinimi değişmez.
+
+Doğrulama: Sites update_site_access revision3/custom, allowed_users yalnız owner, allowed_editors=[] ve grup listeleri boş; public erişim kaldırıldı. Tam suspend/unpublish yapılmadı. Yerel web17407/session40175 port3001 HTTP200; worker17427/session96598 yeniden açık. Diff kontrolü temiz; root commit/GitHub push yok. Sites hosting manifesti/geçmişi geri dönüş için korunur, yerel çalışma kararı gelecekteki yayın varsayılanının önündedir.
+
+## Görsel ve içerik envanteri — 4 Ekim 2026
+
+Plan/rapor okundu. Web17407/worker17427 doğru cwd ardından durduruldu, tarayıcı incelemesi için yerel yeniden açıldı. Kullanıcı rapor istedi; ürün kodu/veritabanı değişmedi. Tarayıcı:7public sayfa200, linkler404, admin giriş200, menü hoverları ve derece dialogu. Kaynak: public/private/admin rotaları, gerçek medya referansları, ESLEME ve teslim READMEleri. Korumalı gerçek hesap/katılımcı tokenları kullanılmadı. Kanıt .local/content-audit.json;14benzersiz aktif GTA asseti,18ayrı değiştirme alanı(14görsel/4video),3ilave derece kapağı.
+
+İnceleme sırasında kullanıcı People klasörünü ekip yapısına çevirdi: sosyal-medya-ekip/etkinlik-ekip yeni, eski Efe/Aybey/Emir/Melek klasörleri kaldırılmış. Değişikliklere dokunulmadı. Raporda mevcut8kişi ile yeni ekip hedefi ayrıldı; yeni hedef2ekipvideo, detay2toplufoto/5kişifoto kararı açık. Efe public videosu var ama kaynak klasörü artık yok. Etkinlikler/Duyurular afişli boş-durum çelişkisi, İletişim eski metni, oyun editoryal bilgileri/finalistler/UluJam2027 girdileri kaydedildi.
+
+Teslim tasarim-girdileri/ICERIK-EKSIKLERI-2026-10-04.md;21satırlık CSV mevcut18GTAalanı+3oyunkapağını eşler. Ekip adları öneri, eski yollar mevcut durum kanıtı; dosya üretme/yerleştirme yapılmadı. Sites/GitHub push/rootcommit yok; parıltı ve diğer kullanıcı düzenlemeleri korunur. Apple/Wallet kararları değişmez.
+
+## Beş bölümlü People ve sadeleştirilmiş site — 4 Ekim 2026
+
+Plan/rapor/People README ve kurulu Next linking/notFound rehberleri okundu. Web17823/worker17835 doğru cwd ardından durduruldu. Kullanıcının güncel isteği eski sekiz kişilik People bölümlerini ekip düzenine geçirir; kişi detayları korunur. Gerçek ekip medyaları henüz sağlanmadığı için geçici görsel/klipler kullanılacak. Duyurular genel erişimden ve admin gezinmesinden çıkarılır, kayıtlar silinmez. /destek yerine /iletisim ve footerda yalnız sosyal alan. Ana sayfa/menü yeni medya dosyaları henüz yok; eşleme adları hazır, mevcut geçiciler görünür. GitHub/Sites yayınlanmaz; parıltı denemesi ve kullanıcı README değişiklikleri korunur.
+
+## Beş bölümlü People ve sadeleştirilmiş site — uygulama sonucu (4 Ekim 2026)
+
+People sayfası README sırasıyla beş açılış bölümüne (başkan, yardımcısı, sosyal medya ekibi, etkinlik ekibi, Halis) ve sekiz kişisel detay görseline geçti. Her ekipte tek ortak açılış videosu, her kişide tek detay fotoğrafı var. Başkan, yardımcı ve Halis'in verilen medyası kullanılıyor; sosyal medya ve etkinlik ekiplerinin açılışları ile beş kişinin fotoğrafı şimdilik mevcut GTA VI referanslarıdır. Bu dosyalar geldiğinde panelden bölüm video/kapak ve kişi görseli yolları değiştirilebilir; sıralama ve kişi sayısı README'ye sabitlenmiştir.
+
+Yönetim panelindeki mevcut etkinlik, medya, form, başvuru, takım, oyun, galeri ve sistem araçları korunur. `/admin/people` editörü bölüm başlığı/görevi/video/kapağı ile kişinin adı/görevi/alıntısı/bilgileri/detay fotoğrafını yetkiye bağlı olarak düzenler. Kayıtlar `people_overrides` tablosunda sürümlü tutulur, audit kaydı bırakır; yerel dosya veya yayımlanmış medya yolu doğrulanır. Gerçek video dosyaları uygulamanın `public/community` klasörüne teslim edilmelidir; mevcut medya paneli yalnız görsel yükler. `0022_brave_crystal.sql` migration yerel veritabanına uygulandı. Başlangıçta tüm alanlar kod içindeki README uyumlu varsayılanları kullanır, yönetim değişiklikleri üzerine yazılır.
+
+Duyuruların ana sayfa kartı, genel sayfaları, admin sayfası/API'si ve menü bağlantısı kaldırıldı; eski veriler silinmedi. `/destek` yerine `/iletisim` var; footer sayfa haritası kaldırıldı, sosyal ikonlar kaldı. Etkinlikler sayfasının yanıltıcı boş metni ve ana sayfanın GTA kaynak paragrafı kaldırıldı. UluJam 2027 için tarih yayımlanana kadar `Yakında` büyük gösterilir; gerçek tarih yayımlandığında mevcut sayaç çalışır. Anasayfa ve menünün yeni medya dosyaları henüz teslim edilmediğinden bu alanlarda mevcut görseller durur.
+
+Hedefli kabul: 10 entegrasyon testi ve ilgili 31 tarayıcı testi geçti; ilk tarayıcı koşusundaki eski görsel sayısı beklentisi düzeltilip tekrar geçti. Panelden kişi alıntısı güncellemesi yapılıp Hakkımızda'da görüldü. Typecheck/lint/build ve migration kontrolü geçti. Geniş Vitest koşusunda 270 test geçti, yeni tabloyu saymayan tek şema beklentisi düzeltildi ve ilgili 17 şema testi tekrar geçti. Tam tarayıcı koşusu yavaşlayıp eski kart/form/oyun/bağlantı akışlarında hata verdiği için yarıda durduruldu; form akışı tekil tekrarda geçti, kart testinde geliştirme sunucusu `Cache-Control: no-cache` döndürürken test `no-store` bekliyordu, oyun ve bağlantı testlerinin doğrudan API çağrıları yanıt gövdesini beklenen biçimde alamadı. Bu üç eski akışın genel kabulü doğrulanmış sayılmaz; bu turdaki People/menü/duyuru/iletişim hedefli kabulü geçti. Mevcut Wallet dosya izleme uyarısı derlemede değişmeden sürüyor.
+
+Yerel web ve worker yeniden açıldı. `http://127.0.0.1:3001/`, `/hakkimizda`, `/iletisim`, `/etkinlikler`, `/ulujam` HTTP200; `/duyurular`, `/destek`, `/admin/duyurular` HTTP404. Sites/GitHub push yok; önceki parıltı denemesi ve kullanıcı kaynak düzenlemeleri korunur.
+
+## Yönetim panelinde tek özel şifre — 4 Ekim 2026
+
+Kullanıcı e-posta/parola/MFA formu yerine yalnız özel şifre istedi. Plan/rapor ve Next authentication/route handler rehberleri okundu. Yerel DB'de başlangıçta admin yoktu; web27610/worker27574 durduruldu. Tek iç hesap `panel@uludott.invalid` oluşturuldu; tüm panel rolleri bağlandı ve her oturumda güncel etkinlik kapsamı okunur. Tek alanlı `/admin` formu ve `/api/admin/login` yalnız `{password}` kabul eder; önceki e-posta/MFA API biçimi kapatıldı. Argon2id, beş yanlış denemede 15 dakika kilit, küresel hız sınırı, CSRF, HttpOnly/Secure oturum ve audit korunur. Şifre yenileme tüm panel oturumlarını iptal eder. Mevcut farklı admin kayıtları silinmedi; eski MFA servis yordamı tarihsel testler için kodda kalır fakat genel girişte kullanılmaz.
+
+Yerel özel şifre 24 rastgele byte'dan üretildi; düz metin yalnız `.local/admin-panel-password.txt` dosyasında 0600 izinle saklanır, Git tarafından yok sayılır. Şifre içeriği rapora/sohbete/test çıktısına yazılmaz. VDS'ye bu yerel şifre taşınmaz; kurulumda `pnpm admin:panel-password` ayrı şifre üretir. Mevcut paylaşılmış şifreyle işlem bazında bireysel yönetici ayrımı yapılamaz; bu, kullanıcının seçtiği basit giriş modelinin sınırıdır.
+
+Kabul: typecheck/lint, 27 hedefli entegrasyon ve 10 tarayıcı testi geçti; derleme ve migration şema kontrolü başarılı. Derlemede önceden bilinen Wallet dinamik dosya izleme uyarısı sürüyor. Gerçek yerel panel hesabıyla tarayıcı girişi ve yönetim bağlantıları doğrulandı. İlk denemede `.env.local` içindeki `APP_URL=http://localhost:3000` eski adreste kaldığı için CSRF 403 görüldü; yerel adres `http://127.0.0.1:3001` olarak düzeltildi, giriş tekrarında HTTP200 ve panel içeriği görüldü. Web 3001 ve worker yeniden açık. İşletme yönergeleri tek şifre modeline güncellendi. Sites/GitHub push yok.
+
+## Ana sayfa, Places ve oyun içerikleri — 4 Ekim 2026
+
+Plan/rapor okundu; web/worker işlem başında durduruldu. UluJam ana sayfa kartındaki başvuru durumu kaldırıldı. Hakkımızda People etiketi yalnız “Topluluğun insanları” oldu; kaynak varsayılan kişi bilgileri [people-reference-data.ts](../../src/modules/community/people-reference-data.ts), düzenleme yolu `/admin/people`. “Her disipline yer var” ifadesi kaynakta bulunmadığı için görünür bir karşılığı bırakılmadı. Places sponsor kartından ayrıldı; kullanıcının verdiği kafe ve salon isimleri iki yeni görsel üzerinde listelendi. Sponsor logosu ana sayfada, İletişim’in hemen üstünde gri olarak gösteriliyor. Ana sayfa oyun kartı silinmeden `SHOW_HOME_GAMES=false` ile gizlendi.
+
+Oyunlar sayfasına kullanıcının verdiği kapaklarla No Time To Die ve InFrame eklendi; itch.io resmi sayfalarındaki başlık, ekip ve yayın bilgileri kullanıldı. Kaynak görseller `public/community/06-oyunlar/yayimlanan/` altında tutuluyor. Ana sayfa People & Places başlığının mobil kelime taşması düzeltildi.
+
+Kabul: yeni RED testi önce beklenen 5 davranışta başarısız oldu; ardından hedefli content-refresh 5/5, gezinme/People/oyun/erişilebilirlik paketi 20/20, ilgili entegrasyon 12/12, tam Vitest 273/273, typecheck, lint ve build geçti. Build’de Wallet dinamik dosya izleme uyarısı önceki durumla aynı. Web ve worker yeniden açıldı; Sites/GitHub push yok.
+
+## UluJam 2026 derece oyun kapakları — 4 Ekim 2026
+
+Plan/rapor okundu; web/worker işlem başında durduruldu. `yayımlanmış oyunlar ve finalistler` dışındaki yeni kullanıcı görselleri `public/community/06-oyunlar/derece/` altına taşındı. Derece sırası mevcut doğrulanmış kayıtlarla eşlenerek Lost Pieces, Lost Child Soul ve ProjectSW adları, kapakları ve itch.io adresleri gösteriliyor. Link metni artık derece numarası yerine oyun adını söylüyor. Yayımlanmış oyunlar bölümündeki “Henüz tam oyun kaydı yayımlanmadı” boş uyarısı kaldırıldı; mevcut yayımlanmış oyun kartları korunuyor.
+
+Kabul: hedefli derece/oyun ve önceki içerik paketi 5/5, ilgili entegrasyon 14/14, typecheck, lint ve build geçti. Build’deki Wallet dinamik dosya izleme uyarısı önceki durumla aynı. Web ve worker yeniden açıldı; Sites/GitHub push yok.
+
+## UluJam arşiv derece kartları ve finalistler bölümü — 4 Ekim 2026
+
+Plan/rapor okundu; web/worker işlem başında durduruldu. UluJam 2026 arşivindeki ilk üç kart, Oyunlar sayfasıyla ortak `degreeGames` verisini kullanacak şekilde güncellendi; aynı Lost Pieces, Lost Child Soul ve ProjectSW görselleri, adları ve itch.io bağlantı metinleri gösteriliyor. Finalistler bileşeni UluJam arşivinden tamamen kaldırıldı; `FinalistList` ve “Finalist oyunları henüz yayımlanmadı.” boş uyarısı artık bu sayfada render edilmiyor. Finalist veritabanı ve yönetim araçları korunuyor.
+
+Kabul: UluJam/2026 derece tarayıcı paketi 4/4, ilgili entegrasyon 14/14, tam Vitest 273/273, typecheck, lint ve build geçti. Build’deki Wallet dinamik dosya izleme uyarısı önceki durumla aynı. Web ve worker yeniden açıldı; Sites/GitHub push yok.
+
+## UluJam arşiv galerisi — 4 Ekim 2026
+
+Plan/rapor okundu; web/worker işlem başında durduruldu. Arşiv galerisi üç eşit karttan sinematik mozaik düzene geçti: ilk görsel iki satırı kaplayan ana kare, diğer iki görsel yan kartlar olarak yerleşir. Radius, yumuşak gradient/etiket katmanı, hover zoom ve mobil tek kolon davranışı eklendi.
+
+Kabul: yeni gallery RED testi önce eski düzende beklenen sınıf/span bulunamadığı için başarısız oldu; ardından mozaik sınıfları ve masaüstü grid span doğrulaması geçti. UluJam/2026 ve derece oyun E2E paketi 4/4, lint, typecheck, build ve tam Vitest 273/273 geçti. Build’deki önceden bilinen Wallet dinamik dosya izleme uyarısı sürüyor. `/ulujam` HTTP200, diff kontrolü temiz; yerel web/worker yeniden açık. Sites/GitHub push yok.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.

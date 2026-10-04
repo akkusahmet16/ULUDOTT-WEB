@@ -15,7 +15,6 @@ it("Dashboard isolates personal counts and failed Wallet jobs by stored event re
     await x.sql`update forms set capacity=1 where id=${x.form.id}`;
     const foreign = randomUUID();
     await x.sql`insert into events(id,title,slug,kind,status,starts_at) values(${foreign},'FOREIGN private event',${foreign},'ulujam','published','2031-01-01')`;
-    await x.sql`insert into announcements(event_id,title,slug,body,status,publish_at) values(${x.eventId},'DEMO scheduled',${randomUUID()},'safe','scheduled','2030-01-01'),(${foreign},'FOREIGN scheduled',${randomUUID()},'safe','scheduled','2030-01-01')`;
     await x.sql`insert into applications(event_id,full_name,email,phone,mode) values(${foreign},'FOREIGN person','foreign@test.invalid','+905551234567','solo')`;
     const foreignForm = randomUUID(),
       foreignVersion = randomUUID();
@@ -36,7 +35,6 @@ it("Dashboard isolates personal counts and failed Wallet jobs by stored event re
       capacity: 1,
       full: true,
       failedWalletJobs: 1,
-      scheduledAnnouncements: 1,
     });
     expect(view.forms[0]).toMatchObject({
       id: x.form.id,
@@ -112,28 +110,8 @@ it("Empty scopes stay empty and withdrawn/rejected rows do not consume capacity"
       openForms: 0,
       newSubmissions: 0,
       failedWalletJobs: 0,
-      scheduledAnnouncements: 0,
     });
     expect(v.forms[0]).toMatchObject({ open: false, used: 0, full: false });
-  } finally {
-    await x.cleanup();
-  }
-});
-
-it("Global scheduled announcements remain visible to content editors even without events", async () => {
-  const x = await ulujamFixture();
-  try {
-    // This fixture owns an isolated disposable database, never the application database.
-    await x.sql`truncate events cascade`;
-    await x.sql`insert into announcements(title,slug,body,status,publish_at) values('DEMO global',${randomUUID()},'safe','scheduled','2030-01-01')`;
-    const editor = { ...x.actor, roles: ["content_editor"] };
-    const view = await getDashboard(editor);
-    expect(view.events).toEqual([]);
-    expect(view).toHaveProperty("globalScheduledAnnouncements", 1);
-    expect(await getDashboard({ ...x.actor, eventScopes: [] })).toHaveProperty(
-      "globalScheduledAnnouncements",
-      null,
-    );
   } finally {
     await x.cleanup();
   }

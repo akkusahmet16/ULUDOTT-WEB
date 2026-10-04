@@ -573,3 +573,75 @@ Sosyal bağlantılar görünür isim/ok olmadan sadece beyaz logolar;48px tıkla
 Ana sayfada Coffee Talk zaten görünürken featured verisinin boş olmasına bağlı etkinlik yok metni kaldırılır; kart ve yayımlı etkinlikler korunur.
 
 - [x] Kontrol, yayın ve yerel açılış.
+
+## Yerel yumuşak parıltı denemesi — 4 Ekim 2026
+
+Açılış afişi arkasında mouse takipli düşük yoğunluklu ışık; Topluluğu tanı düğmesinde6sn soft pulse. Reduced motion sabit; touch takip yok. Kullanıcı Git push istemediğinden yalnız yerel deneme, yayın/source push/commit yok.
+
+- [x] Yerel görsel/hareket kabulü ve yeniden açılış.
+
+## Parıltı Sites yayını — 4 Ekim 2026
+
+Kullanıcı ayrı Sites deposuna aktarımı onayladı. GitHub push ve kök commit yapılmaz. Yereldeki afiş mouse glow/CTA pulse aynı public Sites sürümüne taşınır.
+
+- [x] Statik hareket kabulü, public yayın ve yerel açılış.
+
+## Yalnız yerel geliştirme kararı — 4 Ekim 2026
+
+Kullanıcı tasarım önizlemesini sonlandırdı. Bundan sonra ürün yalnız yerelde geliştirilir/test edilir; ayrıca açıkça istenmedikçe Sites export/source push/save/deploy yapılmaz. Sites tümüyle silinmez; public erişim kapatılıp owner-only korunur. Önceki tasarım denemesi için GitHub push yasağı sürer. Yerel3001 kullanılır; başka projenin3000portuna dokunulmaz. Her işlemde plan/rapor okuma ve işlem öncesi yerel durdurma/sonrası yeniden açma devam eder.
+
+- [x] Çalışma tercihi kaydedildi, public erişim kaldırıldı.
+
+## Görsel ve içerik envanteri — 4 Ekim 2026
+
+Kullanıcı tüm sitedeki GTA VI/eksik içeriklerin raporunu istedi. Yedi public rota, menü/modal, People/Places, medya eşlemeleri ve dinamik/özel rota kaynakları incelendi. Teslim: tasarim-girdileri/ICERIK-EKSIKLERI-2026-10-04.md ve CSV. İnceleme sırasında People README ekip yapısına değişti; mevcut8kişi ile yeni5bölüm hedefi ayrı raporlandı. Ürün/kullanıcı kaynakları değiştirilmedi.
+
+- [x] Aktif GTA18medya alanı(14görsel+4video),3ek oyun kapağı ve içerik boşlukları.
+- [x] Yeni ekip hedefi ve kaynak klasörü uyuşmazlıkları raporlandı; yalnız yerel.
+
+## Beş bölümlü People ve sadeleştirilmiş site — 4 Ekim 2026
+
+Kullanıcı ana sayfa/ortak menü içerik hazırlığı, People README ekip sırası, kişi başına detay görseli, yönetim paneli bitişi ve genel gezinme sadeleştirmesi istedi. People: Başkan, Yardımcı, Sosyal medya ekibi (Ahmet/Melek/Emir), Etkinlik ekibi (Efe/Aybey), Halis; 5 açılış sahnesi, 8 kişi detayı. Eksik ekip medyası mevcut geçici referansla görünür; kullanıcı içerikleri korunur. Duyurular genel sayfa ve ana sayfa bölümü kaldırılır; eski URL404; veritabanı kayıtları silinmez. Destek yerine /iletisim, eski /destek404. Footer site haritası kaldırılır, sosyal ikonlar kalır. Etkinlik boş metni kaldırılır. UluJam2027 tarih yokken büyük Yakında, tarih olunca geri sayım. Ana sayfa GTA kaynak paragrafı kaldırılır. Yerel-only kuralı sürer.
+
+- [x] Rota/menü/footer ve ana sayfa.
+- [x] People ekip şeması, kişi detayları, medya konumları.
+- [x] Mevcut yönetim modüllerinde duyuru izlerini kaldır; sabit bölüm/kişi düzeni için metin ve medya yolu editörü ekle.
+- [x] Hedefli kabul, derleme, rapor ve yerel yeniden açılış; Sites/GitHub yayını yok. Tam tarayıcı paketi için kalan eski test sorunları raporda açık.
+
+## Yönetim panelinde tek özel şifre — 4 Ekim 2026
+
+`/admin` girişinde yalnız özel şifre alanı gösterilir. Panel için tek iç hesap bulunur; şifre rastgele üretilip Argon2id hash olarak saklanır, açık hali yalnız Git tarafından yok sayılan yerel 0600 dosyada tutulur. Başka admin hesapları eski veri/audit için silinmez ancak genel giriş endpointi e-posta/MFA biçimini kabul etmez. Panel hesabı içerik, etkinlik ve sistem yetkilerini taşır; etkinlik kapsamı her oturum çözümünde mevcut etkinliklere genişler. CSRF, oturum süresi, başarısız deneme kilidi ve audit korunur. Şifre döndürme eski oturumları iptal eder. VDS kurulumu sırasında ayrı güçlü şifre üretilir; yerel şifre sunucuya taşınmaz.
+
+- [x] Tek alanlı giriş, iç panel hesabı, şifre üretimi ve yetkiler.
+- [x] Test, işletme yönergesi ve yerel yeniden açılış; Sites/GitHub yayını yok.
+
+## Ana sayfa, Places ve oyun içerikleri — 4 Ekim 2026
+
+Kullanıcının onayıyla ana sayfa ve Hakkımızda içerik düzeni güncellendi. UluJam kartındaki başvuru durumu kaldırıldı; People başlığı yalnız “Topluluğun insanları” olarak gösteriliyor. Hakkımızda Places alanı sponsor kartından ayrıldı ve Ecem Kafe & Oyun, Nest'o Coffe Roastery, Müptela Kahve, Çamlık Personel Yemekhanesi ve Mete Cengiz Kültür Merkezi isimleri verilen iki görselle gösteriliyor. Sponsor logosu ana sayfada İletişim bölümünün üstünde gri şerit olarak yer alıyor. Ana sayfa oyun kartı silinmeden kapatıldı. Oyunlar sayfasına verilen iki itch.io oyunu ve kapakları eklendi. Topluluğun dünyası başlığında kelime ortası bölünmesi düzeltildi.
+
+- [x] UluJam başvuru metni, People etiketi, Places ve sponsor yerleşimi.
+- [x] Ana sayfa oyun kartını geri alınabilir biçimde gizle; Oyunlar sayfasını koru.
+- [x] No Time To Die ve InFrame kartları, dış bağlantı ve görseller.
+- [x] Hedefli/erişilebilirlik testleri, tam Vitest, typecheck/lint/build ve yerel yeniden açılış.
+
+## UluJam 2026 derece oyun kapakları — 4 Ekim 2026
+
+UluJam 2026 derece kartları artık kullanıcının sağladığı üç kapak görselini ve oyun adını kullanıyor: Lost Pieces, Lost Child Soul ve ProjectSW. Her kart kendi itch.io adresine, oyun adıyla düzeltilmiş erişilebilir bağlantı metni üzerinden açılır. Yayımlanmış oyunlar bölümündeki yanıltıcı “Henüz tam oyun kaydı yayımlanmadı” metni kaldırıldı; bölümde kayıt yoksa boş metin gösterilmez.
+
+- [x] Üç derece görseli, oyun adı ve bağlantı metni.
+- [x] Yayımlanmış oyun boş uyarısını kaldır; test ve yerel yeniden açılış.
+
+## UluJam arşiv derece kartları ve finalistler bölümü — 4 Ekim 2026
+
+UluJam arşivi, Oyunlar sayfasındaki ortak derece oyun verisini ve üç kapağı kullanır. “Finalistler” bölümü ve finalist boş uyarısı tamamen kaldırıldı; finalist yönetim verileri silinmedi.
+
+- [x] UluJam derece kartlarını ortak görsel/ad/link bileşenine geçir.
+- [x] Finalistler bölümünü arşiv görünümünden kaldır; test ve yerel yeniden açılış.
+
+## UluJam arşiv galerisi — 4 Ekim 2026
+
+UluJam arşiv galerisi, içerik bütünlüğünü koruyan sinematik mozaik düzene geçirilecek. İlk görsel masaüstünde iki satırı kaplayan ana kare olacak; diğer iki görsel yan kartlarda gösterilecek. Kartlarda radius, gradient/etiket katmanı ve ölçülü hover yakınlaşması bulunacak. Dar ekranlarda kartlar tek kolon akışına geçecek.
+
+- [x] Mozaik grid ve featured/side kart sınıfları.
+- [x] Masaüstü grid span, mobil tek kolon ve erişilebilir galeri etiketleri.
+- [x] Hedefli E2E, lint, typecheck, build, Vitest ve yerel yeniden açılış.

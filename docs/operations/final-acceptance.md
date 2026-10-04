@@ -6,7 +6,7 @@ Bu dosya son kabul incelemesini ve görev28–29 yerel teslimini ve ürünün a�
 |---|---|---|---|---|
 | 1 | Kurulabilir Node/pnpm/Next, server-only sınırı | config/server; next.config; Dockerfile | integration/bootstrap; e2e/bootstrap | Yerel geçti |
 | 2 | Boş PostgreSQL, FK/unique/transaction/audit omurgası | db/schema; db/migrations; lib/database | integration/schema; operations/backup-restore | Yerel geçti |
-| 3 | Admin MFA, rol/eventScope, recovery/session/CSRF | modules/admin; lib/auth | integration/admin-auth; security/authorization | Yerel geçti; gerçek admin ataması işletme girdisi |
+| 3 | Panel özel şifresi, rol/eventScope, session/CSRF | modules/admin; lib/auth | integration/admin-auth, panel-password; security/authorization | Yerel geçti; tek ortak hesap işlemleri kişiye ayırmaz |
 | 4 | Marka/tokens/logo, responsive/keyboard/reduced-motion | styles; components; app/layout | accessibility/shell; e2e/navigation | Otomatik/klavye geçti; gerçek ekran okuyucu açık |
 | 5 | Özel orijinal, HEIC/EXIF/optimize media ve alt metin | modules/media | integration/media; e2e/media | Yerel geçti; gerçek fotoğraf yayın uygunluğu açık |
 | 6 | Etkinlik/duyuru/afiş/zamanlama/redirect/SEO/anasayfaCTA | modules/events; modules/announcements | integration/publication; e2e/featured-event | Yerel geçti; gerçek tarih/konum açık |

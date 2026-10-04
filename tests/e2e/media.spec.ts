@@ -6,14 +6,7 @@ test("mobil medya yükleme, özel önizleme, yayın ve silme etkisi", async ({
 }) => {
   await page.setViewportSize({ width: 390, height: 900 });
   await page.goto("/admin");
-  await page.getByLabel("E-posta").fill("admin-e2e@test.invalid");
-  await page
-    .getByLabel("Parola", { exact: true })
-    .fill("E2E-only-password-long-42");
-  // Başka E2E de aynı admin ile TOTP tüketir; tek kullanımlık recovery bu akışı ayırır.
-  await page
-    .getByLabel("Doğrulama veya kurtarma kodu")
-    .fill("11111111111111111111111111111111");
+  await page.getByLabel("Özel şifre").fill("E2E-only-password-long-42");
   await page.getByRole("button", { name: "Giriş yap", exact: true }).click();
   await expect(page.getByText("Yönetim oturumu açık.")).toBeVisible();
   await page.goto("/admin/medya");

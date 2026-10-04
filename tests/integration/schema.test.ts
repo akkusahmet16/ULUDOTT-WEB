@@ -33,6 +33,7 @@ const required = [
   "event_categories",
   "event_years",
   "event_gallery",
+  "people_overrides",
   "announcements",
   "featured_slots",
   "media_assets",

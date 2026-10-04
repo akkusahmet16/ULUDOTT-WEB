@@ -12,6 +12,7 @@ import { createTestDatabase } from "../helpers/local-database";
 import { migrateEmptyDatabase } from "../../src/lib/database/migrate";
 import { closeDatabase } from "../../src/lib/database/client";
 import { authenticateAdmin } from "../../src/modules/admin/application/auth-service";
+import { setPanelPassword } from "../../src/modules/admin/application/panel-password";
 import { requirePermission } from "../../src/modules/admin/domain/permissions";
 import {
   resolveSession,
@@ -250,9 +251,8 @@ describe("MFA ve oturum yaşam döngüsü", () => {
 });
 
 it("CLI kurulumu MFA doğrulanmadan admin oluşturmaz ve kurtarma kodlarını yalnızca hash saklar", async () => {
-  const { bootstrapAdmin } = await import(
-    "../../src/modules/admin/application/bootstrap-admin"
-  );
+  const { bootstrapAdmin } =
+    await import("../../src/modules/admin/application/bootstrap-admin");
   const email = `${randomUUID()}@test.invalid`;
   await expect(
     bootstrapAdmin({
@@ -304,9 +304,8 @@ it("kilit süresi dolunca doğru MFA ile giriş sayaçları sıfırlanır", asyn
   expect(r.locked_until).toBeNull();
 });
 it("HTTP hata gövdeleri sır içermez ve boyut/type sınırı uygulanır", async () => {
-  const { handleAdminRequest } = await import(
-    "../../src/modules/admin/application/http"
-  );
+  const { handleAdminRequest } =
+    await import("../../src/modules/admin/application/http");
   const origin = new URL(process.env.APP_URL!).origin;
   const csrf = issueCsrf();
   const request = (body: string, type = "application/json") =>
@@ -326,23 +325,20 @@ it("HTTP hata gövdeleri sır içermez ve boyut/type sınırı uygulanır", asyn
     request("{}", "text/plain"),
   ])
     expect((await handleAdminRequest("login", r)).status).toBe(400);
-  const a = await admin(),
-    r = await handleAdminRequest(
-      "login",
-      request(
-        JSON.stringify({ email: a.email, password: "wrong", mfaCode: otp() }),
-      ),
-    );
+  await setPanelPassword(password);
+  const r = await handleAdminRequest(
+    "login",
+    request(JSON.stringify({ password: "wrong" })),
+  );
   expect(r.status).toBe(401);
   expect(await r.json()).toEqual({ error: "Giriş bilgileri doğrulanamadı" });
 });
 it("HTTP başarılı giriş/oturum yanıtı parola, MFA, kurtarma kodu veya token içermez", async () => {
-  const { handleAdminRequest } = await import(
-    "../../src/modules/admin/application/http"
-  );
+  const { handleAdminRequest } =
+    await import("../../src/modules/admin/application/http");
   const origin = new URL(process.env.APP_URL!).origin,
-    a = await admin(),
     csrf = issueCsrf();
+  await setPanelPassword(password);
   const r = await handleAdminRequest(
     "login",
     new Request(`${origin}/api/admin/login`, {
@@ -353,7 +349,7 @@ it("HTTP başarılı giriş/oturum yanıtı parola, MFA, kurtarma kodu veya toke
         Cookie: `__Host-uludott_csrf=${csrf}`,
         "content-type": "application/json",
       },
-      body: JSON.stringify({ email: a.email, password, mfaCode: otp() }),
+      body: JSON.stringify({ password }),
     }),
   );
   expect(r.status).toBe(200);
@@ -379,12 +375,10 @@ it("HTTP başarılı giriş/oturum yanıtı parola, MFA, kurtarma kodu veya toke
   expect(text).not.toMatch(/passwordHash|mfaSecret|recoveryCode|tokenHash/);
 });
 it("paylaşılan PostgreSQL giriş sayacı 120 denemeden sonrasını reddeder", async () => {
-  const { loginRateAllowed } = await import(
-    "../../src/modules/admin/infrastructure/admin-repository"
-  );
-  const { withTransaction } = await import(
-    "../../src/lib/database/transaction"
-  );
+  const { loginRateAllowed } =
+    await import("../../src/modules/admin/infrastructure/admin-repository");
+  const { withTransaction } =
+    await import("../../src/lib/database/transaction");
   const start = new Date(Math.floor(Date.now() / 60_000) * 60_000);
   await local.sql`insert into rate_limits(scope,key_hash,window_starts_at,count,expires_at) values('admin_login_global','global',${start},120,${new Date(start.getTime() + 120_000)}) on conflict(scope,key_hash,window_starts_at) do update set count=120`;
   expect(await withTransaction(loginRateAllowed)).toBe(false);

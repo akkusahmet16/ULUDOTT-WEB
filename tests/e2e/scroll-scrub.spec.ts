@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-test("ana sayfa etiketsiz ve mini oyunsuz; People bir açılış videosu ve bir fotoğraf", async ({
+test("ana sayfa etiketsiz ve mini oyunsuz; People bölüm videosu ve kişi fotoğrafları", async ({
   page,
 }) => {
   await page.goto("/");
@@ -28,7 +28,7 @@ test("ana sayfa etiketsiz ve mini oyunsuz; People bir açılış videosu ve bir 
           ).size,
       ),
     );
-  expect(counts).toEqual(Array(8).fill(1));
+  expect(counts).toEqual([1, 1, 3, 2, 1]);
 });
 for (const width of [390, 1440]) {
   test(`açılış ortada sabit kalır ve son12karede ayrılır ${width}`, async ({
@@ -116,7 +116,7 @@ for (const width of [390, 1440]) {
     ).toBe(900);
   });
 }
-test("sekiz açılış kısa ekranda ortada kalır ve metin taşmaz", async ({
+test("beş açılış kısa ekranda ortada kalır ve metin taşmaz", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 450 });

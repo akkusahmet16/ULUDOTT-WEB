@@ -60,14 +60,13 @@ const routes = new Set([
   "/",
   "/hakkimizda",
   "/ulujam",
-  "/destek",
+  "/iletisim",
   "/etkinlikler",
-  "/duyurular",
 ]);
 export function safeUrl(value: string) {
   if (
     routes.has(value) ||
-    /^\/(etkinlikler|duyurular)\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)
+    /^\/(etkinlikler)\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)
   )
     return true;
   try {

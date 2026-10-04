@@ -5,11 +5,12 @@ import { ResultCard } from "../modules/games/ui/result-card";
 import Image from "next/image";
 import Link from "next/link";
 import { PublicShell } from "../components/layout/public-shell";
-import { ButtonLink } from "../components/design-system/button";
+import { OpeningGlow } from "../components/layout/opening-glow";
 import { getFeaturedEvents } from "../modules/events/application/event-service";
 import { EventCard } from "../modules/events/ui/event-card";
 import styles from "../styles/home.module.css";
 export const dynamic = "force-dynamic";
+const SHOW_HOME_GAMES = false;
 export default async function HomePage() {
   const [featured, results] = await Promise.all([
     getFeaturedEvents(),
@@ -18,27 +19,31 @@ export default async function HomePage() {
   return (
     <PublicShell>
       <section className={`clone-opening ${styles.opening}`}>
-        <div className={styles.poster}>
-          <Image
-            src="/community/01-anasayfa/anasayfa-hero.webp"
-            alt=""
-            width={2560}
-            height={1440}
-            priority
-            sizes="(max-width: 699px) 100vw, 80vw"
-          />
-        </div>
+        <OpeningGlow>
+          <div className={styles.poster}>
+            <Image
+              src="/community/01-anasayfa/anasayfa-hero.webp"
+              alt=""
+              width={2560}
+              height={1440}
+              priority
+              sizes="(max-width: 699px) 100vw, 80vw"
+            />
+          </div>
+        </OpeningGlow>
         <div className={styles.openingRow}>
           <div>
             <h1>Uludott</h1>
             <p>Dijital oyun tasarım topluluğu</p>
           </div>
-          <ButtonLink href="/hakkimizda">Topluluğu tanı</ButtonLink>
+          <Link href="/hakkimizda" className={`button ${styles.softPulse}`}>
+            Topluluğu tanı
+          </Link>
           <div className={styles.openingLinks}>
             <Link href="/ulujam">
               UluJam’i keşfet <span aria-hidden="true">↗</span>
             </Link>
-            <Link href="/destek">
+            <Link href="/iletisim">
               İletişim <span aria-hidden="true">↗</span>
             </Link>
           </div>
@@ -74,7 +79,7 @@ export default async function HomePage() {
       </section>
       <section
         className={styles.destinations}
-        aria-label="Etkinlikler ve oyunlar"
+        aria-label="Buluşmalar"
         data-sky="#17303c"
       >
         <Link
@@ -103,32 +108,34 @@ export default async function HomePage() {
             </span>
           </div>
         </Link>
-        <Link
-          href="/oyunlar"
-          className={`${styles.destination} ${styles.games}`}
-        >
-          <div className={styles.destinationArt}>
-            <Image
-              src="/theme/reference/world.avif"
-              alt=""
-              width={1920}
-              height={1080}
-              sizes="(max-width: 699px) 100vw, 40vw"
-            />
-          </div>
-          <div>
-            <span className="eyebrow">Oyunlar</span>
-            <h2>
-              Birlikte üretmenin
-              <br />
-              oyun hâli.
-            </h2>
-            <p>Topluluğun yayımlanan oyunlarını ve yapımcılarını keşfet.</p>
-            <span className={styles.cta}>
-              Oyunlara göz at <span aria-hidden="true">→</span>
-            </span>
-          </div>
-        </Link>
+        {SHOW_HOME_GAMES && (
+          <Link
+            href="/oyunlar"
+            className={`${styles.destination} ${styles.games}`}
+          >
+            <div className={styles.destinationArt}>
+              <Image
+                src="/theme/reference/world.avif"
+                alt=""
+                width={1920}
+                height={1080}
+                sizes="(max-width: 699px) 100vw, 40vw"
+              />
+            </div>
+            <div>
+              <span className="eyebrow">Oyunlar</span>
+              <h2>
+                Birlikte üretmenin
+                <br />
+                oyun hâli.
+              </h2>
+              <p>Topluluğun yayımlanan oyunlarını ve yapımcılarını keşfet.</p>
+              <span className={styles.cta}>
+                Oyunlara göz at <span aria-hidden="true">→</span>
+              </span>
+            </div>
+          </Link>
+        )}
       </section>
       <section
         className="community-world"
@@ -146,7 +153,7 @@ export default async function HomePage() {
         <div>
           <p className="eyebrow">People & Places</p>
           <h2>
-            Topluluğun
+            <span>Topluluğun</span>
             <br />
             dünyası.
           </h2>
@@ -155,13 +162,13 @@ export default async function HomePage() {
             Yönetim kurulunu keşfet
           </Link>
           <Link className="button secondary" href="/hakkimizda#mekanlar">
-            Sponsorlar & mekânlar
+            Mekânları keşfet
           </Link>
         </div>
       </section>
       <section
         className={styles.news}
-        aria-label="Etkinlikler ve duyurular"
+        aria-label="Etkinlikler"
         data-sky="#3e2b40"
       >
         <div className={styles.sectionHeading}>
@@ -178,20 +185,29 @@ export default async function HomePage() {
           </div>
         )}
         <CoffeeTalkCard />
-        <Link href="/duyurular" className={styles.announcement}>
-          <span className="eyebrow">Topluluktan haberler</span>
-          <h2>Duyurular</h2>
-          <span className={styles.cta}>
-            Duyuruları keşfet <span aria-hidden="true">→</span>
-          </span>
-        </Link>
+      </section>
+      <section
+        className={styles.sponsors}
+        aria-label="Sponsorlar"
+        data-sky="#262943"
+      >
+        <p className="eyebrow">Sponsorlarımız</p>
+        <div className={styles.sponsorLogos}>
+          <Image
+            src="/community/01-anasayfa/sponsorlar/sponsor-dijipin-logo.webp"
+            alt="Dijipin"
+            width={2000}
+            height={510}
+            sizes="(max-width: 699px) 55vw, 280px"
+          />
+        </div>
       </section>
       <section
         className={styles.lastLinks}
         aria-label="İletişim"
         data-sky="#262943"
       >
-        <Link href="/destek">
+        <Link href="/iletisim">
           <span className="eyebrow">İletişim</span>
           <h2>
             Birlikte
@@ -203,10 +219,6 @@ export default async function HomePage() {
           </span>
         </Link>
       </section>
-      <p className={styles.attribution}>
-        Yerel tasarım denemesi: referans görselleri ve yazı tipleri Rockstar
-        Games / GTA VI sayfasından alınmıştır.
-      </p>
     </PublicShell>
   );
 }

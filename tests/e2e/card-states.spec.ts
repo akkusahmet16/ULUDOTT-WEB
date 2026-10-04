@@ -28,13 +28,7 @@ test("Mobil bireysel kart pending/active/revoked ve özel erişim başlıkları"
   expect(res.headers()["referrer-policy"]).toBe("no-referrer");
   expect(res.headers()["x-robots-tag"]).toContain("noindex");
   await page.goto("/admin");
-  await page.getByLabel("E-posta").fill("admin-e2e@test.invalid");
-  await page
-    .getByLabel("Parola", { exact: true })
-    .fill("E2E-only-password-long-42");
-  await page
-    .getByLabel("Doğrulama veya kurtarma kodu")
-    .fill("cccccccccccccccccccccccccccccccc");
+  await page.getByLabel("Özel şifre").fill("E2E-only-password-long-42");
   await page.getByRole("button", { name: "Giriş yap", exact: true }).click();
   await page.getByRole("link", { name: "Takım onayları", exact: true }).click();
   await page

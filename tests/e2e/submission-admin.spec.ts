@@ -5,18 +5,10 @@ test("başvuru arama, sürümlü düzeltme, durum, güvenli indirme ve silme", a
   page,
 }) => {
   await page.goto("/admin");
-  await page.getByLabel("E-posta").fill("admin-e2e@test.invalid");
-  await page
-    .getByLabel("Parola", { exact: true })
-    .fill("E2E-only-password-long-42");
-  await page
-    .getByLabel("Doğrulama veya kurtarma kodu")
-    .fill("77777777777777777777777777777777");
+  await page.getByLabel("Özel şifre").fill("E2E-only-password-long-42");
   await page.getByRole("button", { name: "Giriş yap", exact: true }).click();
   await expect(page.getByText("Yönetim oturumu açık.")).toBeVisible();
-  await page
-    .getByRole("link", { name: "Başvurular", exact: true })
-    .click();
+  await page.getByRole("link", { name: "Başvurular", exact: true }).click();
   await page
     .getByLabel("Form", { exact: true })
     .selectOption({ label: "E2E başvuru yönetimi" });

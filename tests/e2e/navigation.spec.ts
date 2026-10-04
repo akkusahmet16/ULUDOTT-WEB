@@ -11,7 +11,7 @@ for (const width of [390, 768, 1440])
     await menu.click();
     await expect(menu).toHaveAttribute("aria-expanded", "true");
     const navigation = page.getByRole("navigation", { name: "Ana menü" });
-    await expect(navigation.getByRole("link")).toHaveCount(7);
+    await expect(navigation.getByRole("link")).toHaveCount(6);
     await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
     await navigation.getByRole("link").last().focus();
     await page.keyboard.press("Tab");
@@ -36,7 +36,7 @@ for (const width of [390, 768, 1440])
         name: "Birlikte öğren. Birlikte üret.",
       }),
     ).toBeVisible();
-    for (const route of ["/", "/hakkimizda", "/ulujam", "/destek"]) {
+    for (const route of ["/", "/hakkimizda", "/ulujam", "/iletisim"]) {
       const r = await page.goto(route);
       expect(r?.status()).toBe(200);
       expect(

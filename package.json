@@ -29,6 +29,7 @@
     "db:generate": "drizzle-kit generate",
     "db:check": "drizzle-kit check",
     "admin:bootstrap": "node --env-file-if-exists=.env.local --conditions=react-server scripts/admin-bootstrap.ts",
+    "admin:panel-password": "node --env-file-if-exists=.env.local --conditions=react-server scripts/admin-panel-password.ts",
     "db:seed:2026": "node --env-file-if-exists=.env.local --conditions=react-server scripts/seed-2026.ts",
     "db:seed:ulujam": "node --env-file-if-exists=.env.local --conditions=react-server scripts/seed-ulujam-years.ts",
     "submissions:purge": "node --env-file-if-exists=.env.local --conditions=react-server scripts/purge-submissions.ts",

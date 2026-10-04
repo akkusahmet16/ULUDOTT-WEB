@@ -9,7 +9,6 @@ export default async function Page() {
     <PublicShell>
       <section className="section">
         <h1>Etkinlikler</h1>
-        {!items.length && <p>Henüz yayımlanmış etkinlik yok.</p>}
         <CoffeeTalkCard />
         <div className="grid">
           {items.map((item) => (
