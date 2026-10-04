@@ -293,170 +293,170 @@
     {
       "alan": "Üye 02 açılış kaydırma videosu",
       "sayfa": "/hakkimizda#yonetim-kurulu",
-      "klasor": "tasarim-girdileri/03-hakkimizda/people/uye-02",
-      "dosya": "people-02-acilis.mp4",
+      "klasor": "tasarim-girdileri/03-hakkimizda/people/baskan-yard-batu",
+      "dosya": "baskan-yard-batu-acilis.mp4",
       "genislik": 1920,
       "yukseklik": 1080,
       "adet": 1,
       "tur": "video",
-      "durum": "dosya bekleniyor",
-      "mevcut_yer": "people-story.tsx: açılış video / tek fotoğraf"
+      "durum": "yerleştirildi",
+      "mevcut_yer": "people-reference-data.ts: baskan-yard-batu; eksik medyada GTA VI referansı"
     },
     {
       "alan": "Üye 02 tek detay fotoğrafı / video kapağı",
       "sayfa": "/hakkimizda#yonetim-kurulu",
-      "klasor": "tasarim-girdileri/03-hakkimizda/people/uye-02",
-      "dosya": "people-02-detay.webp",
+      "klasor": "tasarim-girdileri/03-hakkimizda/people/baskan-yard-batu",
+      "dosya": "baskan-yard-batu-detay.webp",
       "genislik": 1600,
       "yukseklik": 1100,
       "adet": 1,
       "tur": "fotoğraf",
-      "durum": "dosya bekleniyor",
-      "mevcut_yer": "people-story.tsx: açılış video / tek fotoğraf"
+      "durum": "yerleştirildi",
+      "mevcut_yer": "people-reference-data.ts: baskan-yard-batu; eksik medyada GTA VI referansı"
     },
     {
       "alan": "Üye 03 açılış kaydırma videosu",
       "sayfa": "/hakkimizda#yonetim-kurulu",
-      "klasor": "tasarim-girdileri/03-hakkimizda/people/uye-03",
+      "klasor": "tasarim-girdileri/03-hakkimizda/people/sosyal-medya-ahmet",
       "dosya": "people-03-acilis.mp4",
       "genislik": 1920,
       "yukseklik": 1080,
       "adet": 1,
       "tur": "video",
       "durum": "dosya bekleniyor",
-      "mevcut_yer": "people-story.tsx: açılış video / tek fotoğraf"
+      "mevcut_yer": "people-reference-data.ts: sosyal-medya-ahmet; eksik medyada GTA VI referansı"
     },
     {
       "alan": "Üye 03 tek detay fotoğrafı / video kapağı",
       "sayfa": "/hakkimizda#yonetim-kurulu",
-      "klasor": "tasarim-girdileri/03-hakkimizda/people/uye-03",
+      "klasor": "tasarim-girdileri/03-hakkimizda/people/sosyal-medya-ahmet",
       "dosya": "people-03-detay.webp",
       "genislik": 1600,
       "yukseklik": 1100,
       "adet": 1,
       "tur": "fotoğraf",
       "durum": "dosya bekleniyor",
-      "mevcut_yer": "people-story.tsx: açılış video / tek fotoğraf"
+      "mevcut_yer": "people-reference-data.ts: sosyal-medya-ahmet; eksik medyada GTA VI referansı"
     },
     {
       "alan": "Üye 04 açılış kaydırma videosu",
       "sayfa": "/hakkimizda#yonetim-kurulu",
-      "klasor": "tasarim-girdileri/03-hakkimizda/people/uye-04",
-      "dosya": "people-04-acilis.mp4",
+      "klasor": "tasarim-girdileri/03-hakkimizda/people/caycı-halis",
+      "dosya": "caycı-halis-acilis.mp4",
       "genislik": 1920,
       "yukseklik": 1080,
       "adet": 1,
       "tur": "video",
-      "durum": "dosya bekleniyor",
-      "mevcut_yer": "people-story.tsx: açılış video / tek fotoğraf"
+      "durum": "yerleştirildi",
+      "mevcut_yer": "people-reference-data.ts: caycı-halis; eksik medyada GTA VI referansı"
     },
     {
       "alan": "Üye 04 tek detay fotoğrafı / video kapağı",
       "sayfa": "/hakkimizda#yonetim-kurulu",
-      "klasor": "tasarim-girdileri/03-hakkimizda/people/uye-04",
-      "dosya": "people-04-detay.webp",
+      "klasor": "tasarim-girdileri/03-hakkimizda/people/caycı-halis",
+      "dosya": "cayci-halis-detay.webp",
       "genislik": 1600,
       "yukseklik": 1100,
       "adet": 1,
       "tur": "fotoğraf",
-      "durum": "dosya bekleniyor",
-      "mevcut_yer": "people-story.tsx: açılış video / tek fotoğraf"
+      "durum": "yerleştirildi",
+      "mevcut_yer": "people-reference-data.ts: caycı-halis; eksik medyada GTA VI referansı"
     },
     {
       "alan": "Üye 05 açılış kaydırma videosu",
       "sayfa": "/hakkimizda#yonetim-kurulu",
-      "klasor": "tasarim-girdileri/03-hakkimizda/people/uye-05",
-      "dosya": "people-05-acilis.mp4",
+      "klasor": "tasarim-girdileri/03-hakkimizda/people/efe-tutucu",
+      "dosya": "efe-tutucu-acilis.mp4",
       "genislik": 1920,
       "yukseklik": 1080,
       "adet": 1,
       "tur": "video",
-      "durum": "dosya bekleniyor",
-      "mevcut_yer": "people-story.tsx: açılış video / tek fotoğraf"
+      "durum": "yerleştirildi",
+      "mevcut_yer": "people-reference-data.ts: efe-tutucu; eksik medyada GTA VI referansı"
     },
     {
       "alan": "Üye 05 tek detay fotoğrafı / video kapağı",
       "sayfa": "/hakkimizda#yonetim-kurulu",
-      "klasor": "tasarim-girdileri/03-hakkimizda/people/uye-05",
+      "klasor": "tasarim-girdileri/03-hakkimizda/people/efe-tutucu",
       "dosya": "people-05-detay.webp",
       "genislik": 1600,
       "yukseklik": 1100,
       "adet": 1,
       "tur": "fotoğraf",
       "durum": "dosya bekleniyor",
-      "mevcut_yer": "people-story.tsx: açılış video / tek fotoğraf"
+      "mevcut_yer": "people-reference-data.ts: efe-tutucu; eksik medyada GTA VI referansı"
     },
     {
       "alan": "Üye 06 açılış kaydırma videosu",
       "sayfa": "/hakkimizda#yonetim-kurulu",
-      "klasor": "tasarim-girdileri/03-hakkimizda/people/uye-06",
+      "klasor": "tasarim-girdileri/03-hakkimizda/people/aybey",
       "dosya": "people-06-acilis.mp4",
       "genislik": 1920,
       "yukseklik": 1080,
       "adet": 1,
       "tur": "video",
       "durum": "dosya bekleniyor",
-      "mevcut_yer": "people-story.tsx: açılış video / tek fotoğraf"
+      "mevcut_yer": "people-reference-data.ts: aybey; eksik medyada GTA VI referansı"
     },
     {
       "alan": "Üye 06 tek detay fotoğrafı / video kapağı",
       "sayfa": "/hakkimizda#yonetim-kurulu",
-      "klasor": "tasarim-girdileri/03-hakkimizda/people/uye-06",
+      "klasor": "tasarim-girdileri/03-hakkimizda/people/aybey",
       "dosya": "people-06-detay.webp",
       "genislik": 1600,
       "yukseklik": 1100,
       "adet": 1,
       "tur": "fotoğraf",
       "durum": "dosya bekleniyor",
-      "mevcut_yer": "people-story.tsx: açılış video / tek fotoğraf"
+      "mevcut_yer": "people-reference-data.ts: aybey; eksik medyada GTA VI referansı"
     },
     {
       "alan": "Üye 07 açılış kaydırma videosu",
       "sayfa": "/hakkimizda#yonetim-kurulu",
-      "klasor": "tasarim-girdileri/03-hakkimizda/people/uye-07",
+      "klasor": "tasarim-girdileri/03-hakkimizda/people/dwayne-jesus-emir",
       "dosya": "people-07-acilis.mp4",
       "genislik": 1920,
       "yukseklik": 1080,
       "adet": 1,
       "tur": "video",
       "durum": "dosya bekleniyor",
-      "mevcut_yer": "people-story.tsx: açılış video / tek fotoğraf"
+      "mevcut_yer": "people-reference-data.ts: dwayne-jesus-emir; eksik medyada GTA VI referansı"
     },
     {
       "alan": "Üye 07 tek detay fotoğrafı / video kapağı",
       "sayfa": "/hakkimizda#yonetim-kurulu",
-      "klasor": "tasarim-girdileri/03-hakkimizda/people/uye-07",
+      "klasor": "tasarim-girdileri/03-hakkimizda/people/dwayne-jesus-emir",
       "dosya": "people-07-detay.webp",
       "genislik": 1600,
       "yukseklik": 1100,
       "adet": 1,
       "tur": "fotoğraf",
       "durum": "dosya bekleniyor",
-      "mevcut_yer": "people-story.tsx: açılış video / tek fotoğraf"
+      "mevcut_yer": "people-reference-data.ts: dwayne-jesus-emir; eksik medyada GTA VI referansı"
     },
     {
       "alan": "Üye 08 açılış kaydırma videosu",
       "sayfa": "/hakkimizda#yonetim-kurulu",
-      "klasor": "tasarim-girdileri/03-hakkimizda/people/uye-08",
+      "klasor": "tasarim-girdileri/03-hakkimizda/people/ex-smd-melek",
       "dosya": "people-08-acilis.mp4",
       "genislik": 1920,
       "yukseklik": 1080,
       "adet": 1,
       "tur": "video",
       "durum": "dosya bekleniyor",
-      "mevcut_yer": "people-story.tsx: açılış video / tek fotoğraf"
+      "mevcut_yer": "people-reference-data.ts: ex-smd-melek; eksik medyada GTA VI referansı"
     },
     {
       "alan": "Üye 08 tek detay fotoğrafı / video kapağı",
       "sayfa": "/hakkimizda#yonetim-kurulu",
-      "klasor": "tasarim-girdileri/03-hakkimizda/people/uye-08",
+      "klasor": "tasarim-girdileri/03-hakkimizda/people/ex-smd-melek",
       "dosya": "people-08-detay.webp",
       "genislik": 1600,
       "yukseklik": 1100,
       "adet": 1,
       "tur": "fotoğraf",
       "durum": "dosya bekleniyor",
-      "mevcut_yer": "people-story.tsx: açılış video / tek fotoğraf"
+      "mevcut_yer": "people-reference-data.ts: ex-smd-melek; eksik medyada GTA VI referansı"
     }
   ]
 }

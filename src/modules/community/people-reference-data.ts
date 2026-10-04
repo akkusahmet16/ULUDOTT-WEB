@@ -1,4 +1,4 @@
-export const peopleReference = [
+const referenceScenes = [
   {
     slug: "baskan-yigit",
     referenceName: "Yiğit",
@@ -117,3 +117,85 @@ export const peopleReference = [
     videos: ["/theme/reference/people/brian.mp4"],
   },
 ] as const;
+
+const members = [
+  {
+    slug: "baskan-yigit",
+    name: "Hamza Yiğit Adıgüzel",
+    role: "Başkan",
+    quote:
+      "Uludott'ta en sevdiğim şey, fikirlerin sadece fikir olarak kalmaması.",
+    details: ["Bilgisayar Mühendisliği 2.Sınıf"],
+  },
+  {
+    slug: "baskan-yard-batu",
+    name: "Batuhan Özdemir",
+    role: "Başkan Yardımcısı",
+    quote: "Aklımıza gelen şeyi ‘neden olmasın?’ deyip denemeyi seviyoruz.",
+    details: ["Bilgisayar Mühendisliği 3.Sınıf", "Uludott Dergi Yazarı"],
+    video: "baskan-yard-batu-acilis.mp4",
+    photo: "baskan-yard-batu-detay.webp",
+  },
+  {
+    slug: "sosyal-medya-ahmet",
+    name: "Ahmet Akkuş",
+    role: "Sosyal Medya Deparmanı Başkanı",
+    quote:
+      "Bir işin gerçekten iyi olması için detaylarla uğraşmaktan kaçınmam.",
+    details: ["Bilgisayar ve Öğr. Tek. Eğitimi 2.Sınıf"],
+  },
+  {
+    slug: "cayci-halis",
+    name: "Halis Can Sağır",
+    role: "Çaycı",
+    quote: "Çav yok bok için",
+    details: ["Bilgisayar ve Öğr. Tek. Eğitimi 2.Sınıf", "Çaylarrrr"],
+    video: "cayci-halis-acilis.mp4",
+    photo: "cayci-halis-detay.webp",
+  },
+  {
+    slug: "efe-tutucu",
+    name: "Efe Tutucu",
+    role: "Yönetim kurulu",
+    quote:
+      "Burada sadece etkinlik yapmıyoruz, birlikte bir şeyler inşa ediyoruz.",
+    details: ["Bilgisayar Mühendisliği 4.Sınıf"],
+    video: "efe-tutucu-acilis.mp4",
+  },
+  {
+    slug: "aybey",
+    name: "Aybey",
+    role: "Yönetim kurulu",
+    quote: null,
+    details: [],
+  },
+  {
+    slug: "dwayne-jesus-emir",
+    name: "Dwayne Jesus Emir",
+    role: "Yönetim kurulu",
+    quote: null,
+    details: [],
+  },
+  {
+    slug: "ex-smd-melek",
+    name: "Melek",
+    role: "Eski Sosyal Medya Departmanı",
+    quote: null,
+    details: [],
+  },
+] as const;
+export const peopleReference = members.map((member, index) => {
+  const fallback = referenceScenes[index];
+  const base = `/community/03-hakkimizda/people/${member.slug}/`;
+  const photo = "photo" in member ? base + member.photo : fallback.photos[0];
+  const video = "video" in member ? base + member.video : fallback.videos[0];
+  return {
+    ...fallback,
+    ...member,
+    referenceName: member.name,
+    photos: [photo],
+    videos: [video],
+    photoReference: index !== 0 && !("photo" in member),
+    videoReference: index !== 0 && !("video" in member),
+  };
+});

@@ -53,21 +53,23 @@ People video teslimi: bir açılış videosu, MP4/H.264, 1920×1080, 24–30 fps
 | `00-ortak/menu-places.webp` | 1920×1080 | Menü etkinlik/destek satırı görseli | tüm genel sayfalar | gerekli |
 | `03-hakkimizda/people/baskan-yigit/baskan-yigit-acilis.mp4` | 1920×1080 | Başkan Yiğit açılış kaydırma videosu | /hakkimizda#yonetim-kurulu | yerleştirildi |
 | `03-hakkimizda/people/baskan-yigit/baskan-yigit-detay.webp` | 1600×1100 | Başkan Yiğit tek detay fotoğrafı / video kapağı | /hakkimizda#yonetim-kurulu | yerleştirildi |
-| `03-hakkimizda/people/uye-02/people-02-acilis.mp4` | 1920×1080 | Üye 02 açılış kaydırma videosu | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
-| `03-hakkimizda/people/uye-02/people-02-detay.webp` | 1600×1100 | Üye 02 tek detay fotoğrafı / video kapağı | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
-| `03-hakkimizda/people/uye-03/people-03-acilis.mp4` | 1920×1080 | Üye 03 açılış kaydırma videosu | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
-| `03-hakkimizda/people/uye-03/people-03-detay.webp` | 1600×1100 | Üye 03 tek detay fotoğrafı / video kapağı | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
-| `03-hakkimizda/people/uye-04/people-04-acilis.mp4` | 1920×1080 | Üye 04 açılış kaydırma videosu | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
-| `03-hakkimizda/people/uye-04/people-04-detay.webp` | 1600×1100 | Üye 04 tek detay fotoğrafı / video kapağı | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
-| `03-hakkimizda/people/uye-05/people-05-acilis.mp4` | 1920×1080 | Üye 05 açılış kaydırma videosu | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
-| `03-hakkimizda/people/uye-05/people-05-detay.webp` | 1600×1100 | Üye 05 tek detay fotoğrafı / video kapağı | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
-| `03-hakkimizda/people/uye-06/people-06-acilis.mp4` | 1920×1080 | Üye 06 açılış kaydırma videosu | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
-| `03-hakkimizda/people/uye-06/people-06-detay.webp` | 1600×1100 | Üye 06 tek detay fotoğrafı / video kapağı | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
-| `03-hakkimizda/people/uye-07/people-07-acilis.mp4` | 1920×1080 | Üye 07 açılış kaydırma videosu | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
-| `03-hakkimizda/people/uye-07/people-07-detay.webp` | 1600×1100 | Üye 07 tek detay fotoğrafı / video kapağı | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
-| `03-hakkimizda/people/uye-08/people-08-acilis.mp4` | 1920×1080 | Üye 08 açılış kaydırma videosu | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
-| `03-hakkimizda/people/uye-08/people-08-detay.webp` | 1600×1100 | Üye 08 tek detay fotoğrafı / video kapağı | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
+| `03-hakkimizda/people/baskan-yard-batu/baskan-yard-batu-acilis.mp4` | 1920×1080 | Üye 02 açılış kaydırma videosu | /hakkimizda#yonetim-kurulu | yerleştirildi |
+| `03-hakkimizda/people/baskan-yard-batu/baskan-yard-batu-detay.webp` | 1600×1100 | Üye 02 tek detay fotoğrafı / video kapağı | /hakkimizda#yonetim-kurulu | yerleştirildi |
+| `03-hakkimizda/people/sosyal-medya-ahmet/people-03-acilis.mp4` | 1920×1080 | Üye 03 açılış kaydırma videosu | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
+| `03-hakkimizda/people/sosyal-medya-ahmet/people-03-detay.webp` | 1600×1100 | Üye 03 tek detay fotoğrafı / video kapağı | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
+| `03-hakkimizda/people/caycı-halis/caycı-halis-acilis.mp4` | 1920×1080 | Üye 04 açılış kaydırma videosu | /hakkimizda#yonetim-kurulu | yerleştirildi |
+| `03-hakkimizda/people/caycı-halis/cayci-halis-detay.webp` | 1600×1100 | Üye 04 tek detay fotoğrafı / video kapağı | /hakkimizda#yonetim-kurulu | yerleştirildi |
+| `03-hakkimizda/people/efe-tutucu/efe-tutucu-acilis.mp4` | 1920×1080 | Üye 05 açılış kaydırma videosu | /hakkimizda#yonetim-kurulu | yerleştirildi |
+| `03-hakkimizda/people/efe-tutucu/people-05-detay.webp` | 1600×1100 | Üye 05 tek detay fotoğrafı / video kapağı | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
+| `03-hakkimizda/people/aybey/people-06-acilis.mp4` | 1920×1080 | Üye 06 açılış kaydırma videosu | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
+| `03-hakkimizda/people/aybey/people-06-detay.webp` | 1600×1100 | Üye 06 tek detay fotoğrafı / video kapağı | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
+| `03-hakkimizda/people/dwayne-jesus-emir/people-07-acilis.mp4` | 1920×1080 | Üye 07 açılış kaydırma videosu | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
+| `03-hakkimizda/people/dwayne-jesus-emir/people-07-detay.webp` | 1600×1100 | Üye 07 tek detay fotoğrafı / video kapağı | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
+| `03-hakkimizda/people/ex-smd-melek/people-08-acilis.mp4` | 1920×1080 | Üye 08 açılış kaydırma videosu | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
+| `03-hakkimizda/people/ex-smd-melek/people-08-detay.webp` | 1600×1100 | Üye 08 tek detay fotoğrafı / video kapağı | /hakkimizda#yonetim-kurulu | dosya bekleniyor |
 
 Etkinlik afişleri1080×1350 tam görünür; fotoğraf kırpılmaz. Teslim edilen11dosyanın kaynak→yayın eşlemesi `YERLESTIRILEN.json` içindedir. Gerçek etkinlik, duyuru ve arşiv medya yönetimi korunur; bu yerleşim sunum katmanıdır.
 
 Coffee Talk afişi ana sayfa etkinlik kartında, Buluşmalar alanında ve etkinlikler sayfasında paylaşılır; 4:5 tam görünür. Duyuru afişi yalnız duyurular sayfasında yer alır.
+
+People sırası: Başkan, Başkan Yardımcısı, Sosyal Medya Başkanı, Çaycı, Efe, Aybey, Emir, Melek. Bilgi dosyaları yerleştirildi; medya ayrı ayrı teslim edilen dosya veya mevcut GTA VI referansı kullanır. Halis yayın yolları ASCII cayci-halis adıdır; kaynak klasör adı korunur.

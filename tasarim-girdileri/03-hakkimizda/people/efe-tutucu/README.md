@@ -4,5 +4,5 @@ Kişi başına yalnız **bir açılış videosu ve bir detay fotoğrafı**. Deta
 
 | Dosya | Boyut | Alan |
 |---|---|---|
-| `people-02-acilis.mp4` | 1920×1080 | Üye 02 açılış kaydırma videosu |
-| `people-02-detay.webp` | 1600×1100 | Üye 02 tek detay fotoğrafı / video kapağı |
+| `efe-tutucu-acilis.mp4` | 1920×1080 | Üye 05 açılış kaydırma videosu |
+| `people-05-detay.webp` | 1600×1100 | Üye 05 tek detay fotoğrafı / video kapağı |

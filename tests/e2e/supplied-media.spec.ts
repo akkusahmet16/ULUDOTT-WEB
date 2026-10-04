@@ -91,6 +91,6 @@ for (const width of [390, 1440])
     await expect(chair.locator(".people-gallery img")).toHaveCount(1);
     await expect(chair.locator(".people-gallery img")).toHaveAttribute(
       "alt",
-      /Yiğit detay fotoğrafı/,
+      /Hamza Yiğit Adıgüzel detay fotoğrafı/,
     );
   });

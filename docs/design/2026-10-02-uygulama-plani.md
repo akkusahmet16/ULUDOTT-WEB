@@ -528,3 +528,10 @@ Kullanıcı mevcut ana sayfa sunumunu revize etti: duyurular kutusunda tam afiş
 
 - [x] Poster/kart/duyuru düzeni ve mobil/masaüstü kabulü.
 - [x] İnceleme, aynı public Sites önizlemesinde yayın, Git ve yerel yeniden açılış.
+
+## Menü düğmesi ve yönetim kurulu teslimi — 4 Ekim 2026
+
+Menü simgesinin kapalı/açık ve hover konumunda merkezde kalması. People README sırası ve beş bilgi dosyası, yeni Batu/Halis/Efe medyası; eksik medya ayrı ayrı mevcut GTA VI referansı. Kişi başına1video1detay korunur; gerçek üye bilgisi ile referans medya etiketleri ayrıdır.
+
+- [x] Menü/üyeler/medya ve mobil kabul.
+- [x] Test, public önizleme, rapor/Git ve yerel yeniden açılış.

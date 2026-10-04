@@ -74,7 +74,7 @@ export function Header() {
         )}
         <button
           ref={toggle}
-          className="button secondary menu-toggle"
+          className="menu-toggle"
           aria-label="Menü"
           aria-expanded={open}
           aria-controls="main-menu"

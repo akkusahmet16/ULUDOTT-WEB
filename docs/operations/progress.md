@@ -750,6 +750,17 @@ Doğrulama: Yeni kabul önce2 RED, ardından8 hedefli tarayıcı GREEN. Typechec
 
 Sites erişimi public korunarak aynı URLye yayın succeeded: kaynak436abe1f763e25b34fecb49d8a70d28af26c21c5, archive.local/sites-coffee-layout-preview.tar.gz; version appgprj_6ac178c5619c8191af1de280c6a4393f~appgver_396ccba659e48191abc7c3103760b62e; deployment appgdep_6ac23d5766208191af0e8cb29953ecff. https://uludott-tasarim-onizleme.akkusahmet.chatgpt.site. Otomasyon yok. Yerel web4103/session11656 port3001, worker4095/session94917 yeniden açık; diğer projenin port3000 süreci korunur. Git codex/cinematic-theme üzerinde kaydedilir; önceki1d81212 ve özgün backup/theme-before-20261003 geri dönüş noktaları korunur. Apple ertelenmiş, Wallet gereksinimi en altta.
 
+## Menü düğmesi ve yönetim kurulu teslimi — 4 Ekim 2026
+
+Plan/rapor, Next images ve debugging rehberleri okundu. Web4103/worker4095 cwd doğrulandı ve durduruldu. Menü padding20px/0 nedeniyle ikon merkezden10px kayıyor; genel secondary hover dikdörtgen arkaplanı belirginleştiriyor. Yeni People README sırası ve tüm bilgi dosyaları okundu. Kullanıcının diğer README düzenlemeleri korunur.
+
+
+Son kabul: Menü düğmesi genel button/secondary stillerinden ayrıldı,48×48 eşit padding ve ortalı iki çizgi; kapalı/hover/açık merkez kayması0. People sırası READMEye göre Başkan/BaşkanYard/SMD/Çaycı/Efe/Aybey/Emir/Melek. Beş bilgi MDsindeki isim/görev/alıntı ve detay bilgileri yerleşti. Batu ve Halis1video1foto, Efe1video yeni kaynak; Efe fotoğrafı ve diğer eksik alanlar bağımsız GTA fallback. Başkan dosyaları korunur. Kişi başına1video1detay, kaydırmayla seek/durma/geri davranışı korunur. Halis kaynak Unicode adıyla korunur, yayın yolu ASCII cayci-halis;16kaynak/yayın byte hash eşleşti. Eşleme JSON/CSV/README ve klasör yerleşimi güncellendi. Kullanıcının ilgisiz ana sayfa/duyuru README değişiklikleri kaybolmaz, bu commit kapsamına alınmaz.
+
+Doğrulama: Menü merkezleme390/1440 ve üye içerik sırası önce3 RED; uygulama sonra13 hedefli GREEN. ASCII media yolu ve HTTP200 kontrolü sonrası type/lint/build,22production tarayıcı+axe GREEN (34.1sn), people-production.log exit0. Testte request fixture eksikliği typecheckte yakalanıp düzeltildi. Biçim/diff kontrolü temiz; clone_review bulgu yok. Source647/Wallet3062 dosyada secretHits0/forbiddenFiles0. Önceki Wallet tracing uyarısı aynı; yeni bağımlılık/DB/API yok. Statik9HTML/37referansasset tüm local paths mevcut,backend/form yok. Yayın public korunarak native succeeded: source07d7ec493b9b82ee83eac30d83d160bc69207bb5; archive.local/sites-people-menu-preview.tar.gz; version appgprj_6ac178c5619c8191af1de280c6a4393f~appgver_e2c8bbcbddd08191b0d95426924c1e95; deployment appgdep_6ac2573b6a348191a42fba255941c955. URL https://uludott-tasarim-onizleme.akkusahmet.chatgpt.site; otomasyon yok.
+
+Yerel web7060/session8079 port3001 HTTP200, worker7052/session32836 doğru cwd ile yeniden açık. Port3000 diğer projeye dokunulmadı. Git codex/cinematic-theme, önceki7443603 ve özgün backup/theme-before-20261003 korunur. Apple ertelenmiş, Wallet QR gereksinimi raporun en altında kalır.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.

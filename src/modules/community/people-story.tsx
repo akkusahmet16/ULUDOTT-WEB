@@ -13,9 +13,8 @@ export function PeopleStory() {
         <h2>Yönetim kurulu.</h2>
         <p className="lede">Birlikte üreten topluluğun arkasındaki ekip.</p>
         <p className="placeholder-note">
-          Görsel yer tutucu · İsimler, görevler ve topluluk portreleri daha
-          sonra eklenecek. Başkan Yiğit görselleri eklendi; diğer yedi sahne
-          geçici GTA VI referanslarıdır.
+          Eksik topluluk fotoğrafı ve videosu bulunan alanlarda geçici GTA VI
+          görselleri kullanılıyor.
         </p>
       </div>
       {peopleReference.map((person, index) => (
@@ -24,43 +23,42 @@ export function PeopleStory() {
           className={`people-chapter chapter-${index}`}
           data-sky={person.color}
           id={`people-${person.slug}`}
-          aria-label={
-            index === 0
-              ? "Başkan Yiğit"
-              : `${person.referenceName} referans sahnesi`
-          }
+          aria-label={index === 0 ? "Başkan Yiğit" : person.name}
         >
           <div className="people-hero">
             <SceneVideo
               src={person.videos[0]}
               poster={person.photos[0]}
               label={
-                index === 0
-                  ? "Başkan Yiğit açılış videosu"
-                  : `${person.referenceName} GTA VI referans klibi`
+                person.videoReference
+                  ? `${person.name} GTA VI referans klibi`
+                  : `${person.name} açılış videosu`
               }
-              reference={index !== 0}
+              reference={person.videoReference}
             />
             <div className="people-copy">
-              <p className="eyebrow">
-                {index === 0 ? "Başkan" : `Görsel yer tutucu / 0${index + 1}`}
-              </p>
+              <p className="eyebrow">{person.role}</p>
               <h2>{person.referenceName}</h2>
-              <p className="people-quote">
-                Birlikte üretmenin arkasındaki insanlar.
-              </p>
-              <p>
-                {index === 0
-                  ? "Uludott yönetim kurulu."
-                  : "İsim, görev ve biyografi eklenecek. Bu karakter topluluk üyesi değildir; görsel düzeni göstermek için kullanılıyor."}
-              </p>
+              {person.quote && <p className="people-quote">{person.quote}</p>}
+              <p>Uludott Yönetim Kurulu</p>
             </div>
           </div>
-          <PhotoGallery
-            photos={person.photos.slice(0, 1)}
-            name={person.referenceName}
-            reference={index !== 0}
-          />
+          <div className="people-detail">
+            <PhotoGallery
+              photos={person.photos}
+              name={person.name}
+              reference={person.photoReference}
+            />
+            {!!person.details.length && (
+              <div className="people-detail-copy">
+                <p className="eyebrow">{person.role}</p>
+                <h3>{person.name}</h3>
+                {person.details.map((detail) => (
+                  <p key={detail}>{detail}</p>
+                ))}
+              </div>
+            )}
+          </div>
         </section>
       ))}
     </section>
