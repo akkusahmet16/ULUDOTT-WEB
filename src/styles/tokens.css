@@ -154,6 +154,11 @@ img {
   width: 36px;
   height: 36px;
 }
+.brand .brand-wordmark {
+  width: 140px;
+  height: auto;
+}
+
 .button.menu-toggle {
   display: inline-flex;
   position: relative;

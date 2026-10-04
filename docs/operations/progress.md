@@ -681,6 +681,12 @@ Sites project_id `appgprj_6ac178c5619c8191af1de280c6a4393f`; version `appgprj_6a
 
 Yerel son durum: web74887/worker75313 doğru proje cwd; session58769/62629; HTTP200. Geçici statik kontrol sunucusu75074 durduruldu. Ana uygulama322a458 kaynakları değişmedi; Sites paketi ayrı kaynak deposunda temiz. Plan/rapor ve ignore kaydı ana Git dalına eklenir.
 
+## Header white text — 4 Ekim 2026
+
+Plan/rapor ve yüklü Next12-images rehberi okundu. Web74887/worker75313 doğru cwd sonrası durduruldu. Header ULUDOTT span, logo paketindeki özgün `ULUDOTT WHİTE TEXT.png` ile değişti; `public/brand/uludott-white-text.png` byte-for-byte aynı14KB/3000×390. Önceki ikon ve ana sayfa aria-label korunur. CSS brand-wordmark140px/orantılı yükseklik; gerçek tarayıcı loaded=true,natural3000×390,render140×18.195. Typecheck/lint exit0,diffcheck temiz. Ekran `.local/header-white-text.png`. Yeni test yazılmadı (yalnız geri alınabilir görsel değişim).
+
+Aynı Sites project_id appgprj_6ac178c5619c8191af1de280c6a4393f açıldı ve kaynak senkronize edildi. Owner/custom1user/0group/0external, önceki owner-private erişim korunur.9statikheader özgün PNG ve aynı CSS ile güncellendi. Script syntax/orijinal byte karşılaştırma geçti. Workflow pushSHA80d55ff1be1cb49147dc7bc2e3830d18eb58266c/archive doğrulandı. Private yayın succeeded; deployment appgdep_6ac1ef7d13408191946cb5c04df40ec2; version appgprj_6ac178c5619c8191af1de280c6a4393f~appgver_ff28a8cab6088191b8c4a0a51cc92721. URL https://uludott-tasarim-onizleme.akkusahmet.chatgpt.site aynı. Yerel web/worker session89905/60079 yeniden çalışıyor.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.

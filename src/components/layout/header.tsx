@@ -57,7 +57,14 @@ export function Header() {
       <div className="wrap header-inner">
         <Link href="/" className="brand" aria-label="Uludott ana sayfa">
           <Image src="/brand/uludott-white.svg" alt="" width={48} height={48} />
-          <span>ULUDOTT</span>
+          <Image
+            src="/brand/uludott-white-text.png"
+            alt=""
+            className="brand-wordmark"
+            width={3000}
+            height={390}
+            unoptimized
+          />
         </Link>
         <button
           ref={toggle}

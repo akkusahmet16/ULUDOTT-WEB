@@ -476,3 +476,8 @@ Kullanıcı Sites yayınını istedi, sunucu uyumsuzluğu açıklanması ardınd
 - [x] Yönetim bağlantısı giriş/form yerine önizleme açıklaması; bütün sayfalarda kapsam bildirimi.
 - [x] Yerel asset/rota doğrulama, script syntax, kart eşleştirme/kapatma ve yıldız tamamlanma, menü/Escape.
 - [x] Kaynak push/archive/native private publication succeeded; bağlantı, rapor ve yerel tam uygulama açık.
+
+## Header white text — 4 Ekim 2026
+
+- [x] Kullanıcının logo paketindeki özgün ULUDOTT WHİTE TEXT.png header yazısı yerine kullanıldı; mevcut ikon korunur. PNG3000×390 byte-for-byte kopya,140px/orantılı yükseklik; erişilebilir ana sayfa adı aynı.
+- [x] Yerel typecheck/lint/görsel kontrol; Sites9header güncelleme/kaynak push/arşiv/private yayın succeeded; rapor/Git ve yerel yeniden açılış.
