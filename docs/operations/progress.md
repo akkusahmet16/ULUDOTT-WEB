@@ -899,6 +899,12 @@ Plan/rapor okundu; web/worker işlem başında durduruldu. Arşiv galerisi üç 
 
 Kabul: yeni gallery RED testi önce eski düzende beklenen sınıf/span bulunamadığı için başarısız oldu; ardından mozaik sınıfları ve masaüstü grid span doğrulaması geçti. UluJam/2026 ve derece oyun E2E paketi 4/4, lint, typecheck, build ve tam Vitest 273/273 geçti. Build’deki önceden bilinen Wallet dinamik dosya izleme uyarısı sürüyor. `/ulujam` HTTP200, diff kontrolü temiz; yerel web/worker yeniden açık. Sites/GitHub push yok.
 
+## VDS yayını ve GitHub sürümü — 4 Ekim 2026
+
+Kullanıcının verdiği VDS ile SSH erişimi doğrulandı; mevcut Discord bot sürecine dokunulmadı. Proje `codex/cinematic-theme` dalı olarak GitHub’a gönderildi: `122b384`. VDS’de Node.js 24.21, pnpm 11.19, Nginx ve PostgreSQL 16 kuruldu; ayrı `uludott` veritabanı oluşturuldu, migration uygulandı ve üretim derlemesi tamamlandı. Web ve worker systemd servisleri olarak etkinleştirildi. IP adresi için geçici self-signed HTTPS sertifikası ve HTTP→HTTPS yönlendirmesi eklendi.
+
+Kabul: `https://185.246.113.167/` HTTP200 döndürüyor; `/` reverse proxy üzerinden çalışıyor, web/worker servisleri aktif, PostgreSQL yerel porta bağlı. Yönetim paneli özel şifresi VDS’de yalnız `/srv/uludott/current/.local/admin-panel-password.txt` dosyasında tutuluyor. Google Wallet modu demo olarak yapılandırıldı; yayın onayı bekleniyor. Alan adı ve geçerli TLS sertifikası daha sonra bağlanabilir.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.
