@@ -717,6 +717,24 @@ Sites owner/custom1user/0group erişimi korunarak workflow kaynakpush SHA ba684d
 
 Yerel web90646/session96459 port3001, worker session68397 çalışır. Port3000 başka proje (GeminiTestGTAVI Type Site) tarafından kullanılır; bu sürece dokunulmadı. Uludott http://127.0.0.1:3001/ açık; sonraki görevde doğru cwd kontrolüyle durdur. Kaynak codex/cinematic-theme üzerinde Git kaydı; fe9365c önceki görünüm geri dönüş noktası ve original backup/theme-before-20261003 korunur. Apple ertelemesi ve aşağıdaki Wallet check-in son gereksinimi değişmedi.
 
+## Kaydırma karesi ve sadeleştirme — 4 Ekim 2026
+
+Plan/rapor ve Next videos rehberi okundu. Cwd doğrulanan web90646/worker91268 durduruldu. Kullanıcının beş maddesi yeni kabul kapsamıdır. API/DB/Wallet değişikliği yok; mini oyunların site sunumu kaldırılır, üretilen oyun kataloğu korunur. People galerisi iki fotoğraf; video otomatik oynama yerine doğrudan scroll seek. Yerel ve Sites eş davranışı doğrulanacak.
+
+Kabul ara kaydı: scrub-ci.log exit0;48dosyada271test,63production test,build/type/lint/dbcheck/audit/source598/Wallet3017secretHits0. Statik9sayfa/52asset,galeri16;Range destekli statik test ileri/geri/durma GREEN. Python basit HTTP sunucusunda Range eksikliği ready1/seekingtrue oluşturdu; Range sunucusunda ready4 ve seek tamamlandı, kaynak davranışı değişmedi. Bağımsız inceleme bulguları kapalı. İlk yayın SHA136b792d108bffadab9e013772e894e25870c1d8, deploymentappgdep_6ac20d2721c08191b8e54dcece05f001 succeeded. Kullanıcının ardından dosya/People yeni yönlendirmesi geldi; son kabul buna göre devam eder.
+
+## Kullanıcı görsellerinin yerleşimi — 4 Ekim 2026
+
+Eklenen11medya dosyası bulundu. Etkinlik-coffe-talk README:1080×1350 tam afiş, kırpılmaz. People son kabulü1açılışvideo+1detayfotoğraf; başkan Yiğit gerçek dosyaları birinci sahneye. Önceki iki galeri fotoğrafı ve10klip düzeni son kullanıcı talebiyle değiştirilir. Yerel önceki web/worker süreçleri artık çalışmıyor; port3000 başka projeye dokunulmaz.
+
+Son kabul: Kullanıcıdan gelen 11 dosya public/community altına tam kaynak adıyla byte-for-byte kopyalandı; YERLESTIRILEN.json kaynak/yayın eşlemesini içerir. Ana açılış, iki panel, vlog kapağı, üç 2026 arşiv fotoğrafı, Coffee Talk ve Valorant afişleri, Başkan Yiğit açılış videosu/detay fotoğrafı yerleşti. People kişi başına yalnız bir video/bir fotoğraf; toplam 8 video/8 fotoğraf. Diğer yedi üye geçici referans kalır. Gerçek başkan fotoğrafının thumbnail/lightbox etiketleri GTA yerine gerçek detay fotoğrafıdır. ESLEME JSON/CSV/README son düzen: 38 benzersiz alan,30 fotoğraf/8 video. Özgün Coffee Talk README talimatı korunur; afişler tam1080×1350/object-fit contain.
+
+Doğrulama: People sayısı önce 1 RED; uygulama sonra aynı kabul GREEN. İlk yükleme CI48 dosyada271test/build/type/lint/dbcheck geçti; production63/65, yeni afiş testi2 RED. Neden: başka yayımlı kayıt varken koşullu poster gizleniyordu. Kullanıcı afişleri mevcut yayımlı kartların yanında sürekli görünür yapıldı; DB yayın/başvuru kaydı, tarih ve CTA eklenmedi. Son uploads-final-check.log exit0: type/lint/build,65/65 production(1.9dk), audit bilinen açık0, source623/Wallet3058 dosyada secretHits0/forbiddenFiles0. Bağımsız clone_review bulguları kapalı. Statik9HTML/38referansasset, tüm src/href/poster mevcut; backend/form/sır0;8video/8fotoğraf; Range destekli statik ileri/geri/durma testi GREEN. Gerçek tarayıcıda afiş ve başkan sahnesi görüldü; ekran .local/uploads-president.png. Önceki header etiketsiz ana sayfa, diğerlerinde sayfa adı; sade Yönetim önizlemesi ve mini oyun kaldırma korunur.
+
+Sites aynı owner-private proje: kaynak0635e8cb3351b6119fd59c7114ba96777cc89a5b, archive.local/sites-user-assets-preview.tar.gz; private publication succeeded. Project appgprj_6ac178c5619c8191af1de280c6a4393f; version appgprj_6ac178c5619c8191af1de280c6a4393f~appgver_7525ec1624688191b5be5dab0bc10b00; deployment appgdep_6ac23912b1008191af18b5c46d29b929. URL https://uludott-tasarim-onizleme.akkusahmet.chatgpt.site aynı; erişim/özel backend/Wallet değişmedi. Otomasyon yok.
+
+Yerel web1976/session36628 port3001, worker2237/session16834 yeniden açık. Port3000 diğer projeye dokunulmadı. Git codex/cinematic-theme üzerinde kaydedilir; önceki3e948c6 ve özgün backup/theme-before-20261003 geri dönüş noktaları korunur. Apple ertelenmiş; aşağıdaki Wallet gereksinimi raporun en altında kalır.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.

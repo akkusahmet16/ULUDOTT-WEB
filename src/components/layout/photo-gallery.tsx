@@ -4,9 +4,11 @@ import { useEffect, useRef, useState } from "react";
 export function PhotoGallery({
   photos,
   name,
+  reference = true,
 }: {
   photos: readonly string[];
   name: string;
+  reference?: boolean;
 }) {
   const [active, setActive] = useState<number | null>(null);
   const dialog = useRef<HTMLDialogElement>(null),
@@ -38,7 +40,7 @@ export function PhotoGallery({
             <a
               href={photo}
               data-gallery-photo
-              aria-label={`${name} referans fotoğrafı ${i + 1}, büyük görüntü`}
+              aria-label={`${name}${reference ? " referans" : ""} fotoğrafı ${i + 1}, büyük görüntü`}
               onClick={(e) => {
                 e.preventDefault();
                 trigger.current = e.currentTarget;
@@ -47,7 +49,7 @@ export function PhotoGallery({
             >
               <Image
                 src={photo}
-                alt={`${name} GTA VI görsel yer tutucusu ${i + 1}`}
+                alt={`${name}${reference ? " GTA VI görsel yer tutucusu" : " detay fotoğrafı"} ${i + 1}`}
                 width={1600}
                 height={1100}
                 unoptimized
@@ -94,7 +96,7 @@ export function PhotoGallery({
         {active !== null && (
           <Image
             src={photos[active]}
-            alt={`${name} referans fotoğrafı ${active + 1}`}
+            alt={`${name}${reference ? " referans" : ""} fotoğrafı ${active + 1}`}
             width={1600}
             height={1100}
             unoptimized

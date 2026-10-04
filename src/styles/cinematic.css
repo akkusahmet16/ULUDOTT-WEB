@@ -1061,3 +1061,29 @@ body {
   aspect-ratio: auto;
   min-width: 0;
 }
+
+/* User-supplied posters remain fully visible at their original ratio. */
+.supplied-poster {
+  margin: 35px auto;
+  max-width: 540px;
+  width: 100%;
+}
+.supplied-poster img,
+.event-poster img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+.event-poster {
+  display: block;
+  max-width: 540px;
+}
+.event-poster img {
+  aspect-ratio: 4 / 5;
+  object-fit: contain;
+}
+.supplied-poster figcaption {
+  padding-top: 12px;
+  font-size: 16px;
+}

@@ -11,8 +11,6 @@ import {
 import { UlujamComingSoon } from "../../../modules/events/ui/ulujam-coming-soon";
 import { UlujamArchive } from "../../../modules/events/ui/ulujam-archive";
 import { listPublicHistoricalResults } from "../../../modules/games/application/historical-results";
-import { StarCatch } from "../../../modules/community/star-catch";
-import { PairMatch } from "../../../modules/community/pair-match";
 export const dynamic = "force-dynamic";
 export const metadata = {
   title: "UluJam — Uludott",
@@ -41,18 +39,18 @@ export default async function Page({
       <UlujamArchive
         year={2026}
         results={results.map((r) => full.find((g) => g?.id === r.id) ?? r)}
-        gallery={gallery}
+        gallery={
+          gallery.length
+            ? gallery
+            : [1, 2, 3].map((n) => ({
+                id: `community-2026-${n}`,
+                src: `/community/02-ulujam/2026-arsiv/ulujam-2026-galeri-0${n}.webp`,
+                alt: `UluJam 2026 — topluluktan kare ${n}`,
+              }))
+        }
         finalists={finalists.items}
         nextFinalistCursor={finalists.nextCursor}
       />
-      <section className="section" aria-label="Mini oyunlar">
-        <h2>Kısa bir oyun molası</h2>
-        <p>İsteğe bağlı oyunlar. Puanlar bu sayfada kalır; kaydedilmez.</p>
-        <div className="grid">
-          <StarCatch />
-          <PairMatch />
-        </div>
-      </section>
     </PublicShell>
   );
 }

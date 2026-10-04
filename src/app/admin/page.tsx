@@ -8,7 +8,7 @@ export default async function AdminPage() {
   const session = token ? await resolveSession(token) : null;
   return (
     <main>
-      <h1>Uludott Yönetim</h1>
+      <h1>Yönetim paneli</h1>
       {session ? (
         <>
           <p>Yönetim oturumu açık.</p>

@@ -1,47 +1,82 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 export function SceneVideo({
   src,
   poster,
   label,
+  reference = true,
 }: {
   src: string;
   poster: string;
   label: string;
+  reference?: boolean;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
-  const manualPause = useRef(false);
-  const [paused, setPaused] = useState(true);
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
     const preference = matchMedia("(prefers-reduced-motion: reduce)");
-    let inView = false;
-    const sync = () => {
+    let frame = 0,
+      near = false,
+      loaded = false,
+      target = 0;
+    const seek = () => {
       if (
-        inView &&
-        !manualPause.current &&
-        !preference.matches &&
-        !document.hidden
+        preference.matches ||
+        document.hidden ||
+        !Number.isFinite(video.duration) ||
+        video.duration <= 0
       )
-        void video.play().catch(() => {});
-      else video.pause();
+        return;
+      video.pause();
+      if (!video.seeking && Math.abs(video.currentTime - target) > 0.035)
+        video.currentTime = target;
+    };
+    const update = () => {
+      frame = 0;
+      if (preference.matches || document.hidden) return;
+      const r = video.getBoundingClientRect();
+      const progress = Math.max(
+        0,
+        Math.min(1, (innerHeight - r.top) / (innerHeight + r.height)),
+      );
+      if (near && !loaded) {
+        loaded = true;
+        video.preload = "auto";
+        video.load();
+      }
+      if (Number.isFinite(video.duration))
+        target = progress * Math.max(0, video.duration - 0.04);
+      seek();
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
     };
     const observer = new IntersectionObserver(
       (entries) => {
-        inView = entries[0].isIntersecting;
-        sync();
+        near = entries[0].isIntersecting;
+        schedule();
       },
-      { threshold: 0.35 },
+      { rootMargin: "300px" },
     );
     observer.observe(video);
-    document.addEventListener("visibilitychange", sync);
-    preference.addEventListener("change", sync);
+    video.addEventListener("loadedmetadata", schedule);
+    video.addEventListener("seeked", seek);
+    addEventListener("scroll", schedule, { passive: true });
+    addEventListener("resize", schedule);
+    document.addEventListener("visibilitychange", schedule);
+    preference.addEventListener("change", schedule);
+    schedule();
     return () => {
       observer.disconnect();
+      cancelAnimationFrame(frame);
       video.pause();
-      document.removeEventListener("visibilitychange", sync);
-      preference.removeEventListener("change", sync);
+      video.removeEventListener("loadedmetadata", schedule);
+      video.removeEventListener("seeked", seek);
+      removeEventListener("scroll", schedule);
+      removeEventListener("resize", schedule);
+      document.removeEventListener("visibilitychange", schedule);
+      preference.removeEventListener("change", schedule);
     };
   }, []);
   return (
@@ -52,28 +87,12 @@ export function SceneVideo({
         poster={poster}
         muted
         playsInline
-        loop
         preload="none"
         aria-label={label}
-        onPlay={() => setPaused(false)}
-        onPause={() => setPaused(true)}
       />
-      <button
-        className="scene-video-toggle"
-        aria-label={paused ? "Videoyu oynat" : "Videoyu duraklat"}
-        onClick={() => {
-          if (ref.current?.paused) {
-            manualPause.current = false;
-            void ref.current.play().catch(() => {});
-          } else {
-            manualPause.current = true;
-            ref.current?.pause();
-          }
-        }}
-      >
-        {paused ? "▶" : "Ⅱ"}
-      </button>
-      <span className="scene-video-label">GTA VI görsel referansı</span>
+      <span className="scene-video-label">
+        Kaydırarak ilerle{reference ? " · GTA VI görsel referansı" : ""}
+      </span>
     </div>
   );
 }

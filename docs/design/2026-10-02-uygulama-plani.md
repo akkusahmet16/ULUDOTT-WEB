@@ -500,3 +500,19 @@ Kullanıcının iki yeni kaydı ve altı maddesi: ikon/sayfa adı, UluJam vloglu
 - [x] Mini oyun akıcılığı; test/inceleme, aynı Sites önizlemesi ve yerel yeniden açılış.
 
 Vlog oynatıcı bağlantısı kuruldu; gerçek tarayıcıda YouTube “This video is unavailable” döndürdü. Nedeni doğrulanmadı; YouTube’da izleme bağlantısı korunur. Görsel/etkileşim kabulü, sağlayıcı videosunun erişilebilir olduğu iddiası değildir.
+
+## Kaydırma karesi ve sadeleştirme — 4 Ekim 2026
+
+Kullanıcı beş yeni değişiklik istedi: ana sayfa header etiketsiz, Yönetim önizlemesi yalnız panel, cinematic video zaman çizelgesi kaydırmaya bağlı ileri/geri ve sabit kare, mini oyunların kaldırılması, People başına iki galeri fotoğrafı ve tüm sayfa/alanlar için ad/ölçü/adet eşleme klasörleri. Vlog kullanıcı kontrollü oynatıcıdır; otomatik başlangıç kapatılır. Topluluk tarafından üretilen oyun arşivi mini oyun kaldırma kapsamına dahil değildir. Gerçek yönetim işlevleri korunur, önizleme anlatımı sadeleşir.
+
+- [x] Ana sayfa etiketi/mini oyunlar ve Yönetim önizleme metni.
+- [x] İleri/geri scroll seek, durma ve reduced-motion kabulü; statik eş davranış.
+- [x] Kişi başına iki fotoğraf kabulü son yönlendirmeyle bir açılış videosu + bir detay fotoğrafına çevrildi; alan adı/ölçü/adet manifesti ve kullanıcı yükleme klasörleri.
+- [x] Test, inceleme, Git, aynı Sites yayını ve yerel yeniden açılış.
+
+## Kullanıcı görsellerinin yerleşimi — 4 Ekim 2026
+
+Son yönlendirme önceki People iki fotoğraf kabulünün yerini alır: kişi başına yalnız bir açılış videosu ve bir detay fotoğrafı. Başkan Yiğit dosyaları ilk sahneye; diğer üyeler dosya gelene kadar geçici referanstır. Eklenmiş ana sayfa/panel/vlog/2026 galeri/etkinlik/duyuru görselleri mevcut alanlara yerleşir. Etkinlik README talebi1080×1350 tam afiş, kırpılmaz. Afişler mevcut liste/ana sayfa tasarımında gösterilir; tarihler veya yeni DB başvuru/yayın kayıtları uydurulmaz.
+
+- [x] Dosya eşleme, People1video+1fotoğraf, tam4:5 etkinlik afişi.
+- [x] Test/bağımsız inceleme/statik yayın/Git/yerel yeniden açılış; manifest son düzene göre güncel.

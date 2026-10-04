@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 for (const width of [390, 1440]) {
-  test(`ana sayfa haritası ve doğrudan oyun molası ${width}px`, async ({
+  test(`ana sayfa panelleri ve mini oyunların kaldırılması ${width}px`, async ({
     page,
   }) => {
     await page.setViewportSize({ width, height: 900 });
@@ -17,27 +17,8 @@ for (const width of [390, 1440]) {
     await expect(
       main.getByRole("button", { name: "Başlat", exact: true }),
     ).toHaveCount(0);
-    const star = page.getByRole("region", { name: "Yıldız yakalama" });
-    const target = star.getByRole("button", {
-      name: "Yıldızı yakala",
-      exact: true,
-    });
-    await expect(target).toBeVisible();
-    await target.hover();
-    expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
-    for (let i = 0; i < 5; i++) await target.click();
-    await expect(star.getByRole("status")).toContainText("5 / 5");
-    await star.getByRole("button", { name: "Yeniden oyna" }).click();
-    await expect(star.getByRole("status")).toContainText("0 / 5");
-    const memory = page.getByRole("region", { name: "Hafıza eşleştirme" });
-    for (const index of [1, 5, 2, 4, 3, 6])
-      await memory
-        .getByRole("button", { name: `Kart ${index}: kapalı`, exact: true })
-        .click();
-    await expect(memory.getByRole("status")).toContainText("3 / 3");
-    await memory.getByRole("button", { name: "Yeniden oyna" }).click();
-    await expect(memory.getByRole("status")).toContainText("0 / 3");
-    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await expect(page.locator(".game-break")).toHaveCount(0);
+    await expect(page.locator(".header-page-name")).toHaveCount(0);
     const overflow = await page.evaluate(() =>
       Array.from(document.querySelectorAll("main *"))
         .filter((e) => e.getBoundingClientRect().right > innerWidth + 1)

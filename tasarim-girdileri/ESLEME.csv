@@ -1,0 +1,39 @@
+alan,sayfa,klasor,dosya,genislik,yukseklik,adet,tur,durum,mevcut_yer
+Ana açılış kolajı,/,tasarim-girdileri/01-anasayfa,anasayfa-hero.webp,2560,1440,1,fotoğraf,yerleştirildi,src/app/page.tsx: clone-opening / poster.avif
+İkili panel sol: UluJam,/,tasarim-girdileri/01-anasayfa,anasayfa-ulujam-panel.webp,1080,1600,1,fotoğraf,yerleştirildi,story-panels.tsx: ulujam.avif
+İkili panel sağ: derece oyunları,/,tasarim-girdileri/01-anasayfa,anasayfa-derece-panel.webp,1080,1600,1,fotoğraf,yerleştirildi,story-panels.tsx: community.avif
+Etkinliklere açılan görsel,/,tasarim-girdileri/01-anasayfa,anasayfa-bulusmalar.webp,1080,1600,1,fotoğraf,gerekli,src/app/page.tsx: meetings / ulujam.avif
+Üretilen oyunlara açılan görsel,/,tasarim-girdileri/01-anasayfa,anasayfa-oyunlar.webp,1920,1080,1,fotoğraf,gerekli,src/app/page.tsx: games / world.avif
+People ve Places büyük sahnesi,/,tasarim-girdileri/01-anasayfa,anasayfa-topluluk-dunyasi.webp,2560,1440,1,fotoğraf,gerekli,src/app/page.tsx: community-world / venue-2.avif
+UluJam vlog oynatıcı kapağı,/ — UluJam panel penceresi,tasarim-girdileri/02-ulujam,ulujam-vlog-kapak.webp,1920,1080,1,fotoğraf,yerleştirildi,story-panels.tsx: vlog-play / poster.avif
+2026 arşiv galeri fotoğrafı 1,/ulujam,tasarim-girdileri/02-ulujam/2026-arsiv,ulujam-2026-galeri-01.webp,1920,1080,1,fotoğraf,yerleştirildi,Galeri: etkinlik yılına ait editoryal yükleme
+2026 arşiv galeri fotoğrafı 2,/ulujam,tasarim-girdileri/02-ulujam/2026-arsiv,ulujam-2026-galeri-02.webp,1920,1080,1,fotoğraf,yerleştirildi,Galeri: etkinlik yılına ait editoryal yükleme
+2026 arşiv galeri fotoğrafı 3,/ulujam,tasarim-girdileri/02-ulujam/2026-arsiv,ulujam-2026-galeri-03.webp,1920,1080,1,fotoğraf,yerleştirildi,Galeri: etkinlik yılına ait editoryal yükleme
+Etkinlik kafeleri,/hakkimizda#mekanlar,tasarim-girdileri/03-hakkimizda/places,places-kafeler.webp,2560,1440,1,fotoğraf,gerekli,hakkimizda/page.tsx: place-0 / venue-1.avif
+Salonlar ve buluşma alanları,/hakkimizda#mekanlar,tasarim-girdileri/03-hakkimizda/places,places-salonlar.webp,2560,1440,1,fotoğraf,gerekli,hakkimizda/page.tsx: place-1 / venue-2.avif
+Sponsorlar alanı,/hakkimizda#mekanlar,tasarim-girdileri/03-hakkimizda/places,places-sponsorlar.webp,2560,1440,1,fotoğraf,gerekli,hakkimizda/page.tsx: place-2 / venue-1.avif
+Örnek etkinlik afişi / kart ve detay,/etkinlikler ve etkinlik detayı,tasarim-girdileri/04-etkinlikler/etkinlik-coffe-talk,etkinlik-coffe-talk-afis.webp,1080,1350,1,fotoğraf,yerleştirildi,supplied-poster.tsx: anasayfa ve etkinlikler; mevcut event kartları tam4:5
+Görseli olan duyuru kapağı,/duyurular ve duyuru detayı,tasarim-girdileri/05-duyurular/duyuru-valorant,duyuru-valorant-afis.webp,1080,1600,1,fotoğraf,yerleştirildi,supplied-poster.tsx: anasayfa ve duyurular
+Derece oyunları penceresinin üst kapağı,/,tasarim-girdileri/06-oyunlar,derece-oyunlari-kapak.webp,1920,1080,1,fotoğraf,gerekli,story-panels.tsx: degree-dialog-cover / community.avif
+1. derece oyununun ekran görüntüsü / kapak,"/oyunlar, /ulujam ve derece penceresi",tasarim-girdileri/06-oyunlar/oyun-01,oyun-01-kapak.webp,1600,900,1,fotoğraf,şablon / ilgili oyunun sahipli görüntüsü,Game cover_asset_id editoryal yükleme
+2. derece oyununun ekran görüntüsü / kapak,"/oyunlar, /ulujam ve derece penceresi",tasarim-girdileri/06-oyunlar/oyun-02,oyun-02-kapak.webp,1600,900,1,fotoğraf,şablon / ilgili oyunun sahipli görüntüsü,Game cover_asset_id editoryal yükleme
+3. derece oyununun ekran görüntüsü / kapak,"/oyunlar, /ulujam ve derece penceresi",tasarim-girdileri/06-oyunlar/oyun-03,oyun-03-kapak.webp,1600,900,1,fotoğraf,şablon / ilgili oyunun sahipli görüntüsü,Game cover_asset_id editoryal yükleme
+Menü varsayılan topluluk sahnesi,tüm genel sayfalar,tasarim-girdileri/00-ortak,menu-topluluk.webp,1920,1080,1,fotoğraf,gerekli,Header preview / community.avif
+Menü topluluk satırı görseli,tüm genel sayfalar,tasarim-girdileri/00-ortak,menu-people.webp,1920,1080,1,fotoğraf,gerekli,Header preview / board-1.avif
+Menü etkinlik/destek satırı görseli,tüm genel sayfalar,tasarim-girdileri/00-ortak,menu-places.webp,1920,1080,1,fotoğraf,gerekli,Header preview / venue-1.avif
+Başkan Yiğit açılış kaydırma videosu,/hakkimizda#yonetim-kurulu,tasarim-girdileri/03-hakkimizda/people/baskan-yigit,baskan-yigit-acilis.mp4,1920,1080,1,video,yerleştirildi,people-story.tsx: açılış video / tek fotoğraf
+Başkan Yiğit tek detay fotoğrafı / video kapağı,/hakkimizda#yonetim-kurulu,tasarim-girdileri/03-hakkimizda/people/baskan-yigit,baskan-yigit-detay.webp,1600,1100,1,fotoğraf,yerleştirildi,people-story.tsx: açılış video / tek fotoğraf
+Üye 02 açılış kaydırma videosu,/hakkimizda#yonetim-kurulu,tasarim-girdileri/03-hakkimizda/people/uye-02,people-02-acilis.mp4,1920,1080,1,video,dosya bekleniyor,people-story.tsx: açılış video / tek fotoğraf
+Üye 02 tek detay fotoğrafı / video kapağı,/hakkimizda#yonetim-kurulu,tasarim-girdileri/03-hakkimizda/people/uye-02,people-02-detay.webp,1600,1100,1,fotoğraf,dosya bekleniyor,people-story.tsx: açılış video / tek fotoğraf
+Üye 03 açılış kaydırma videosu,/hakkimizda#yonetim-kurulu,tasarim-girdileri/03-hakkimizda/people/uye-03,people-03-acilis.mp4,1920,1080,1,video,dosya bekleniyor,people-story.tsx: açılış video / tek fotoğraf
+Üye 03 tek detay fotoğrafı / video kapağı,/hakkimizda#yonetim-kurulu,tasarim-girdileri/03-hakkimizda/people/uye-03,people-03-detay.webp,1600,1100,1,fotoğraf,dosya bekleniyor,people-story.tsx: açılış video / tek fotoğraf
+Üye 04 açılış kaydırma videosu,/hakkimizda#yonetim-kurulu,tasarim-girdileri/03-hakkimizda/people/uye-04,people-04-acilis.mp4,1920,1080,1,video,dosya bekleniyor,people-story.tsx: açılış video / tek fotoğraf
+Üye 04 tek detay fotoğrafı / video kapağı,/hakkimizda#yonetim-kurulu,tasarim-girdileri/03-hakkimizda/people/uye-04,people-04-detay.webp,1600,1100,1,fotoğraf,dosya bekleniyor,people-story.tsx: açılış video / tek fotoğraf
+Üye 05 açılış kaydırma videosu,/hakkimizda#yonetim-kurulu,tasarim-girdileri/03-hakkimizda/people/uye-05,people-05-acilis.mp4,1920,1080,1,video,dosya bekleniyor,people-story.tsx: açılış video / tek fotoğraf
+Üye 05 tek detay fotoğrafı / video kapağı,/hakkimizda#yonetim-kurulu,tasarim-girdileri/03-hakkimizda/people/uye-05,people-05-detay.webp,1600,1100,1,fotoğraf,dosya bekleniyor,people-story.tsx: açılış video / tek fotoğraf
+Üye 06 açılış kaydırma videosu,/hakkimizda#yonetim-kurulu,tasarim-girdileri/03-hakkimizda/people/uye-06,people-06-acilis.mp4,1920,1080,1,video,dosya bekleniyor,people-story.tsx: açılış video / tek fotoğraf
+Üye 06 tek detay fotoğrafı / video kapağı,/hakkimizda#yonetim-kurulu,tasarim-girdileri/03-hakkimizda/people/uye-06,people-06-detay.webp,1600,1100,1,fotoğraf,dosya bekleniyor,people-story.tsx: açılış video / tek fotoğraf
+Üye 07 açılış kaydırma videosu,/hakkimizda#yonetim-kurulu,tasarim-girdileri/03-hakkimizda/people/uye-07,people-07-acilis.mp4,1920,1080,1,video,dosya bekleniyor,people-story.tsx: açılış video / tek fotoğraf
+Üye 07 tek detay fotoğrafı / video kapağı,/hakkimizda#yonetim-kurulu,tasarim-girdileri/03-hakkimizda/people/uye-07,people-07-detay.webp,1600,1100,1,fotoğraf,dosya bekleniyor,people-story.tsx: açılış video / tek fotoğraf
+Üye 08 açılış kaydırma videosu,/hakkimizda#yonetim-kurulu,tasarim-girdileri/03-hakkimizda/people/uye-08,people-08-acilis.mp4,1920,1080,1,video,dosya bekleniyor,people-story.tsx: açılış video / tek fotoğraf
+Üye 08 tek detay fotoğrafı / video kapağı,/hakkimizda#yonetim-kurulu,tasarim-girdileri/03-hakkimizda/people/uye-08,people-08-detay.webp,1600,1100,1,fotoğraf,dosya bekleniyor,people-story.tsx: açılış video / tek fotoğraf

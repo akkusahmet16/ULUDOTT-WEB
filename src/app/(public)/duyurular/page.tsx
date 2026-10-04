@@ -1,3 +1,4 @@
+import { SuppliedPoster } from "../../../components/layout/supplied-poster";
 import { PublicShell } from "../../../components/layout/public-shell";
 import { getPublicAnnouncements } from "../../../modules/announcements/application/announcement-service";
 import { AnnouncementCard } from "../../../modules/announcements/ui/announcement-card";
@@ -9,6 +10,7 @@ export default async function Page() {
       <section className="section">
         <h1>Duyurular</h1>
         {!items.length && <p>Henüz yayımlanmış duyuru yok.</p>}
+        <SuppliedPoster kind="announcement" />
         <div className="grid">
           {items.map((item) => (
             <AnnouncementCard key={item.id} announcement={item} />

@@ -30,7 +30,7 @@ export function ContentView({
       </p>
       <h1>{item.title}</h1>
       {image && (
-        <picture>
+        <picture className={type === "event" ? "event-poster" : undefined}>
           <img
             src={
               preview
@@ -84,10 +84,12 @@ export function ContentCard({
   type: "event" | "announcement";
 }) {
   return (
-    <article className="card">
+    <article
+      className={`card ${type === "event" ? "event-card" : "announcement-card"}`}
+    >
       <p className="eyebrow">{labels[item.displayStatus]}</p>
       {item.image && (
-        <picture>
+        <picture className={type === "event" ? "event-poster" : undefined}>
           <img
             src={`/media/${item.image.id}`}
             alt={item.image.altText}

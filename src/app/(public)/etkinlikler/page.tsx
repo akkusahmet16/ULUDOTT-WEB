@@ -1,3 +1,4 @@
+import { SuppliedPoster } from "../../../components/layout/supplied-poster";
 import { PublicShell } from "../../../components/layout/public-shell";
 import { getPublicEvents } from "../../../modules/events/application/event-service";
 import { EventCard } from "../../../modules/events/ui/event-card";
@@ -9,6 +10,7 @@ export default async function Page() {
       <section className="section">
         <h1>Etkinlikler</h1>
         {!items.length && <p>Henüz yayımlanmış etkinlik yok.</p>}
+        <SuppliedPoster kind="event" />
         <div className="grid">
           {items.map((item) => (
             <EventCard key={item.id} event={item} />

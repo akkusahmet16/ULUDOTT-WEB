@@ -63,7 +63,11 @@ export function StoryPanels({ degreeContent }: { degreeContent: ReactNode }) {
             data-open-story={id}
           >
             <Image
-              src={`/theme/reference/${art}.avif`}
+              src={
+                art === "ulujam"
+                  ? "/community/01-anasayfa/anasayfa-ulujam-panel.webp"
+                  : "/community/01-anasayfa/anasayfa-derece-panel.webp"
+              }
               alt=""
               width={1080}
               height={1600}
@@ -107,9 +111,9 @@ export function StoryPanels({ degreeContent }: { degreeContent: ReactNode }) {
         <div className="vlog-player" data-video-id="_ECGC1V__xo">
           {playing ? (
             <iframe
-              src="https://www.youtube-nocookie.com/embed/_ECGC1V__xo?autoplay=1&rel=0"
+              src="https://www.youtube-nocookie.com/embed/_ECGC1V__xo?autoplay=0&rel=0"
               title="UluJam vlog"
-              allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+              allow="encrypted-media; picture-in-picture; fullscreen"
               allowFullScreen
               referrerPolicy="strict-origin-when-cross-origin"
             />
@@ -120,7 +124,7 @@ export function StoryPanels({ degreeContent }: { degreeContent: ReactNode }) {
               onClick={() => setPlaying(true)}
             >
               <Image
-                src="/theme/reference/poster.avif"
+                src="/community/02-ulujam/ulujam-vlog-kapak.webp"
                 alt=""
                 width={2560}
                 height={1440}

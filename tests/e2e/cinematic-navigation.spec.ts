@@ -48,9 +48,7 @@ test("normal hareketle kaydırılan mobil ana sayfa yatay taşmaz", async ({
   await page.setViewportSize({ width: 390, height: 900 });
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
-  await page
-    .getByRole("region", { name: "Hafıza eşleştirme" })
-    .scrollIntoViewIfNeeded();
+  await page.locator(".community-world").scrollIntoViewIfNeeded();
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(700);
   await expect
     .poll(() =>

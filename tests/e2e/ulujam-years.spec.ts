@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 test.use({ hasTouch: true });
-test("2027 boş tarih, 2026 arşivi ve isteğe bağlı oyunlar", async ({
+test("2027 boş tarih, 2026 arşivi ve mini oyunların kaldırılması", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 900 });
@@ -14,46 +14,13 @@ test("2027 boş tarih, 2026 arşivi ve isteğe bağlı oyunlar", async ({
   const archive = page.getByRole("region", { name: "UluJam 2026 arşivi" });
   await expect(archive.getByRole("article")).toHaveCount(3);
   await expect(
-    archive.getByText("Henüz doğrulanmış arşiv görseli yok."),
+    archive.getByText("UluJam 2026 — topluluktan kare 1"),
   ).toBeVisible();
-  await expect(archive.getByRole("img")).toHaveCount(0);
+  await expect(archive.getByRole("img")).toHaveCount(3);
   await expect(
     archive.getByText("Finalist oyunları henüz yayımlanmadı."),
   ).toBeVisible();
-  const star = page.getByRole("region", { name: "Yıldız yakalama" });
-  const target = star.getByRole("button", {
-    name: "Yıldızı yakala",
-    exact: true,
-  });
-  expect(await target.evaluate((e) => getComputedStyle(e).animationName)).toBe(
-    "none",
-  );
-  await target.tap();
-  await target.focus();
-  for (let i = 0; i < 4; i++) await page.keyboard.press("Enter");
-  await expect(star.getByRole("status")).toContainText("5 / 5");
-  await expect(target).toBeDisabled();
-  const memory = page.getByRole("region", { name: "Hafıza eşleştirme" });
-  await memory
-    .getByRole("button", { name: "Kart 1: kapalı", exact: true })
-    .tap();
-  await memory
-    .getByRole("button", { name: "Kart 5: kapalı", exact: true })
-    .click();
-  await memory
-    .getByRole("button", { name: "Kart 2: kapalı", exact: true })
-    .focus();
-  await page.keyboard.press("Enter");
-  await memory
-    .getByRole("button", { name: "Kart 4: kapalı", exact: true })
-    .click();
-  await memory
-    .getByRole("button", { name: "Kart 3: kapalı", exact: true })
-    .click();
-  await memory
-    .getByRole("button", { name: "Kart 6: kapalı", exact: true })
-    .click();
-  await expect(memory.getByRole("status")).toContainText("3 / 3");
+  await expect(page.locator(".game-break")).toHaveCount(0);
   expect(
     (
       await new AxeBuilder({ page })

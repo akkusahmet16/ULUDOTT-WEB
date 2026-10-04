@@ -1,21 +1,16 @@
 export const peopleReference = [
   {
-    slug: "jason",
-    referenceName: "Jason Duval",
+    slug: "baskan-yigit",
+    referenceName: "Yiğit",
     color: "#171923",
     photos: [
-      "/theme/reference/people/jason-duval-01.avif",
-      "/theme/reference/people/jason-duval-02.avif",
-      "/theme/reference/people/jason-duval-03.avif",
-      "/theme/reference/people/jason-duval-04.avif",
-      "/theme/reference/people/jason-duval-05.avif",
-      "/theme/reference/people/jason-duval-06.avif",
+      "/community/03-hakkimizda/people/baskan-yigit/baskan-yigit-detay.webp",
     ],
-    background: "/theme/reference/people/jason-duval-01.avif",
+    background:
+      "/community/03-hakkimizda/people/baskan-yigit/baskan-yigit-detay.webp",
     foreground: null,
     videos: [
-      "/theme/reference/people/jason-intro.mp4",
-      "/theme/reference/people/jason-quote.mp4",
+      "/community/03-hakkimizda/people/baskan-yigit/baskan-yigit-acilis.mp4",
     ],
   },
   {

@@ -1,15 +1,13 @@
+import { SuppliedPoster } from "../components/layout/supplied-poster";
 import { StoryPanels } from "../components/layout/story-panels";
 import { listPublicHistoricalResults } from "../modules/games/application/historical-results";
 import { ResultCard } from "../modules/games/ui/result-card";
-import { randomInt } from "node:crypto";
 import Image from "next/image";
 import Link from "next/link";
 import { PublicShell } from "../components/layout/public-shell";
 import { ButtonLink } from "../components/design-system/button";
 import { getFeaturedEvents } from "../modules/events/application/event-service";
 import { EventCard } from "../modules/events/ui/event-card";
-import { StarCatch } from "../modules/community/star-catch";
-import { PairMatch } from "../modules/community/pair-match";
 import styles from "../styles/home.module.css";
 export const dynamic = "force-dynamic";
 export default async function HomePage() {
@@ -17,30 +15,12 @@ export default async function HomePage() {
     getFeaturedEvents(),
     listPublicHistoricalResults(2026),
   ]);
-  // Choose order and section gaps once. Hydration and gameplay never reshuffle them.
-  const starFirst = randomInt(2) === 0;
-  const firstPauseEarly = randomInt(2) === 0;
-  const secondPauseEarly = randomInt(2) === 0;
-  const firstPause = (
-    <div className={styles.pause}>
-      <span className="eyebrow">Kısa bir mola · doğrudan oyna</span>
-      {starFirst ? <StarCatch /> : <PairMatch />}
-    </div>
-  );
-  const secondPause = (
-    <div className={styles.pause}>
-      <span className="eyebrow">
-        Bir oyun daha · puanlar yalnızca bu sayfada kalır
-      </span>
-      {starFirst ? <PairMatch /> : <StarCatch />}
-    </div>
-  );
   return (
     <PublicShell>
       <section className={`clone-opening ${styles.opening}`}>
         <div className={styles.poster}>
           <Image
-            src="/theme/reference/poster.avif"
+            src="/community/01-anasayfa/anasayfa-hero.webp"
             alt=""
             width={2560}
             height={1440}
@@ -92,7 +72,6 @@ export default async function HomePage() {
           Öğrenmek, denemek ve oyun üretmek için bir aradayız.
         </p>
       </section>
-      {firstPauseEarly && firstPause}
       <section
         className={styles.destinations}
         aria-label="Etkinlikler ve oyunlar"
@@ -151,7 +130,6 @@ export default async function HomePage() {
           </div>
         </Link>
       </section>
-      {!firstPauseEarly && firstPause}
       <section
         className="community-world"
         aria-label="People ve Places"
@@ -203,7 +181,9 @@ export default async function HomePage() {
             Henüz öne çıkan etkinlik yok. Yeni buluşmalar burada duyurulacak.
           </p>
         )}
+        <SuppliedPoster kind="event" />
         <Link href="/duyurular" className={styles.announcement}>
+          <SuppliedPoster kind="announcement" />
           <span className="eyebrow">Topluluktan haberler</span>
           <h2>Duyurular</h2>
           <span className={styles.cta}>
@@ -211,7 +191,6 @@ export default async function HomePage() {
           </span>
         </Link>
       </section>
-      {secondPauseEarly && secondPause}
       <section
         className={styles.lastLinks}
         aria-label="Bağlantılar ve destek"
@@ -240,7 +219,6 @@ export default async function HomePage() {
           </span>
         </Link>
       </section>
-      {!secondPauseEarly && secondPause}
       <p className={styles.attribution}>
         Yerel tasarım denemesi: referans görselleri ve yazı tipleri Rockstar
         Games / GTA VI sayfasından alınmıştır.
