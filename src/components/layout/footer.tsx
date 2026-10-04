@@ -10,9 +10,39 @@ const destinations = [
   ["/admin", "Yönetim"],
 ] as const;
 export async function Footer() {
-  const socials = (await getPublishedLinks())
+  const communitySocials = [
+    {
+      id: "instagram",
+      title: "Instagram",
+      url: "https://www.instagram.com/uludott",
+      logo: "instagram",
+    },
+    {
+      id: "whatsapp",
+      title: "WhatsApp",
+      url: "https://chat.whatsapp.com/G9zI4u4FOEu8Cz5AhitkVS?s=cl&p=i&mlu=4&ilr=4",
+      logo: "whatsapp",
+    },
+    { id: "x", title: "X", url: "https://x.com/uludott", logo: "x" },
+    {
+      id: "youtube",
+      title: "YouTube",
+      url: "https://youtube.com/@uludott",
+      logo: "youtube",
+    },
+  ];
+  const published = (await getPublishedLinks())
     .flatMap((group) => group.links)
     .filter((item) => !item.url.startsWith("/"));
+  const socials = [
+    ...published.map((item) => ({
+      ...item,
+      logo: communitySocials.find((social) => social.url === item.url)?.logo,
+    })),
+    ...communitySocials.filter(
+      (social) => !published.some((item) => item.url === social.url),
+    ),
+  ];
   return (
     <footer className="site-footer">
       <div className="wrap footer-inner">
@@ -31,31 +61,30 @@ export async function Footer() {
           <nav className="footer-socials" aria-label="Sosyal medya">
             <p className="eyebrow">Sosyal medya</p>
             <div>
-              {socials.length
-                ? socials.map((item) => (
-                    <a
-                      key={item.id}
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer external"
-                    >
-                      <span className="social-title">{item.title}</span>
-                      <span aria-hidden="true">↗</span>
-                    </a>
-                  ))
-                : ["YouTube", "WhatsApp", "Instagram"].map((name) => (
-                    <span
-                      key={name}
-                      className="social-pending"
-                      aria-disabled="true"
-                    >
-                      {name}
-                    </span>
-                  ))}
+              {socials.map((item) => (
+                <a
+                  key={item.id}
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer external"
+                >
+                  {item.logo && (
+                    // Static brand SVGs are copied unchanged into the public preview.
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      className="social-logo"
+                      src={`/brand/social/${item.logo}.svg`}
+                      width="24"
+                      height="24"
+                      alt=""
+                      aria-hidden="true"
+                    />
+                  )}
+                  <span className="social-title">{item.title}</span>
+                  <span aria-hidden="true">↗</span>
+                </a>
+              ))}
             </div>
-            {!socials.length && (
-              <p className="social-note">Bağlantılar eklenecek.</p>
-            )}
           </nav>
           <p>Oyunlar, fikirler ve birlikte üretmek.</p>
         </div>

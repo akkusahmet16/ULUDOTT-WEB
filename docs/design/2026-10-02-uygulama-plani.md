@@ -555,3 +555,9 @@ Destek/Destek ol görünür etiketleri İletişim olur; mevcut /destek rotası k
 
 - [x] İletişim, linkler404, sosyal footer ve yönetim/QR kabulü.
 - [x] Test/inceleme/public yayın/Git/yerel açılış.
+
+## Gerçek sosyal bağlantılar — 4 Ekim 2026
+
+Kullanıcının verdiği Instagram/WhatsApp/X/YouTube adresleri footerda aktif. Marka sembolleri beyaz tek renk SVG,24px eş alan; mevcut dış kayıt sırası ve uzun başlık sarılması korunur. Yeni sayfa/özellik yok.
+
+- [x] Adresler, beyaz logolar, yayın ve yerel yeniden açılış.

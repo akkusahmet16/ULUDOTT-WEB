@@ -1251,8 +1251,7 @@ body {
   flex-wrap: wrap;
   gap: 10px;
 }
-.footer-socials a,
-.footer-socials .social-pending {
+.footer-socials a {
   display: inline-flex;
   align-items: center;
   gap: 14px;
@@ -1265,13 +1264,6 @@ body {
 .footer-socials a:hover {
   background: #d7c8df15;
 }
-.footer-socials .social-pending {
-  color: var(--muted);
-}
-.footer-socials .social-note {
-  font-size: 12px;
-}
-
 .footer-inner > div {
   min-width: 0;
   max-width: 100%;
@@ -1285,5 +1277,13 @@ body {
   overflow-wrap: anywhere;
 }
 .footer-socials a > span[aria-hidden] {
+  flex-shrink: 0;
+}
+
+.footer-socials .social-logo {
+  display: block;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
   flex-shrink: 0;
 }
