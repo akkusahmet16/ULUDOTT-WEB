@@ -42,7 +42,8 @@ export function PairMatch() {
           const visible = open.includes(i) || matched.includes(i);
           return (
             <button
-              className="button"
+              className={`button memory-card ${visible ? "is-revealed" : ""} ${matched.includes(i) ? "is-matched" : ""}`}
+              aria-pressed={visible}
               key={i}
               aria-label={`Kart ${i + 1}: ${visible ? symbols[symbol] : "kapalı"}`}
               disabled={matched.includes(i) || open.length === 2}

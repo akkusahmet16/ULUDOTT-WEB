@@ -9,15 +9,6 @@ import { StarCatch } from "../modules/community/star-catch";
 import { PairMatch } from "../modules/community/pair-match";
 import styles from "../styles/home.module.css";
 export const dynamic = "force-dynamic";
-const routes = [
-  ["/hakkimizda", "Topluluk"],
-  ["/ulujam", "UluJam"],
-  ["/etkinlikler", "Etkinlikler"],
-  ["/duyurular", "Duyurular"],
-  ["/oyunlar", "Oyunlar"],
-  ["/linkler", "Bağlantılar"],
-  ["/destek", "Destek"],
-] as const;
 export default async function HomePage() {
   const featured = await getFeaturedEvents();
   // Choose order and section gaps once. Hydration and gameplay never reshuffle them.
@@ -74,14 +65,6 @@ export default async function HomePage() {
           <span aria-hidden="true">⌄</span>
         </a>
       </section>
-      <nav className={styles.routeStrip} aria-label="Ana sayfa bölüm haritası">
-        {routes.map(([href, name]) => (
-          <Link href={href} key={href}>
-            {name}
-            <span aria-hidden="true">↗</span>
-          </Link>
-        ))}
-      </nav>
       <section
         id="kesfet"
         className={styles.features}
@@ -108,7 +91,7 @@ export default async function HomePage() {
             </p>
           </div>
         </Link>
-        <Link href="/hakkimizda" className={styles.feature}>
+        <Link href="/oyunlar#derece-oyunlari" className={styles.feature}>
           <Image
             src="/theme/reference/community.avif"
             alt=""
@@ -120,9 +103,9 @@ export default async function HomePage() {
             ↗
           </span>
           <div>
-            <span className="eyebrow">Topluluğu tanı</span>
-            <h2>Uludott</h2>
-            <p>Bir fikrin varsa, bir yerin var.</p>
+            <span className="eyebrow">UluJam 2026</span>
+            <h2>Derece oyunları</h2>
+            <p>İlk üç oyun. Üç farklı dünya.</p>
           </div>
         </Link>
       </section>
@@ -197,6 +180,31 @@ export default async function HomePage() {
         </Link>
       </section>
       {!firstPauseEarly && firstPause}
+      <section className="community-world" aria-label="People ve Places">
+        <Image
+          src="/theme/reference/venue-2.avif"
+          alt=""
+          width={2560}
+          height={1440}
+          sizes="100vw"
+          unoptimized
+        />
+        <div>
+          <p className="eyebrow">People & Places</p>
+          <h2>
+            Topluluğun
+            <br />
+            dünyası.
+          </h2>
+          <p>İnsanlar, buluşmalar ve birlikte üretime alan açan yerler.</p>
+          <Link className="button" href="/hakkimizda#yonetim-kurulu">
+            Yönetim kurulunu keşfet
+          </Link>
+          <Link className="button secondary" href="/hakkimizda#mekanlar">
+            Sponsorlar & mekânlar
+          </Link>
+        </div>
+      </section>
       <section className={styles.news} aria-label="Etkinlikler ve duyurular">
         <div className={styles.sectionHeading}>
           <h2>Yaklaşan buluşmalar</h2>

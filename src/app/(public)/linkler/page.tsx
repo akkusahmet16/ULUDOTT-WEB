@@ -23,6 +23,36 @@ export default async function Page() {
           <h1>Uludott bağlantıları</h1>
           <p className="lede">Topluluğun yayımlanmış adresleri, tek yerde.</p>
         </div>
+        <section
+          className="social-samples"
+          aria-label="Örnek sosyal bağlantı tasarımları"
+        >
+          <p className="placeholder-note">
+            Tasarım örnekleri · Gerçek bağlantılar henüz eklenmedi.
+          </p>
+          <div className="social-sample-grid">
+            {[
+              ["YouTube", "▶", "Videolar & üretim günlüğü"],
+              ["WhatsApp", "◉", "Topluluk sohbeti"],
+              ["Instagram", "◎", "Topluluktan anlar"],
+            ].map(([name, icon, description]) => (
+              <article
+                className={`social-sample social-${name.toLowerCase()}`}
+                aria-label={`${name} örnek kutusu`}
+                key={name}
+              >
+                <span className="social-icon" aria-hidden="true">
+                  {icon}
+                </span>
+                <div>
+                  <h2>{name}</h2>
+                  <p>{description}</p>
+                  <span className="sample-address">Bağlantı eklenecek</span>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
         <LinkHub
           groups={await getPublishedLinks()}
           baseUrl={loadServerConfig().appUrl}

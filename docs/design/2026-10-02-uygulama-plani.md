@@ -481,3 +481,12 @@ Kullanıcı Sites yayınını istedi, sunucu uyumsuzluğu açıklanması ardınd
 
 - [x] Kullanıcının logo paketindeki özgün ULUDOTT WHİTE TEXT.png header yazısı yerine kullanıldı; mevcut ikon korunur. PNG3000×390 byte-for-byte kopya,140px/orantılı yükseklik; erişilebilir ana sayfa adı aynı.
 - [x] Yerel typecheck/lint/görsel kontrol; Sites9header güncelleme/kaynak push/arşiv/private yayın succeeded; rapor/Git ve yerel yeniden açılış.
+
+## Video referanslı menü ve topluluk dünyası — 4 Ekim 2026
+
+- [x] Video incelendi: solda görsel/wordmark, sağda tek sütun açılır menü; büyük başlıklar ve kademeli portre/mekân sahneleri.
+- [x] Ana sayfa toplu rota şeridi kaldırıldı; iki ana panel UluJam ve derece oyunları oldu.
+- [x] People yönetim kurulu, Places sponsor/kafe/salon yer tutucuları; özgün GTA VI geçici görselleri, sahte kişi/kurum kaydı yok.
+- [x] Sosyal örnek kutuları ve mevcut iki oyuna çevrilme/hareket animasyonları; kurallar aynı.
+- [x] Mobil/masaüstü, hareket azaltma ve normal hareket, klavye, mevcut akışların kabulü ve bağımsız inceleme.
+- [x] Aynı özel Sites önizlemesinin etkileşimleriyle yayını succeeded; kaynak/Git kaydı ve yerel tam uygulama yeniden açıldı.

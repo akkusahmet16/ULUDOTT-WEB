@@ -24,7 +24,11 @@ export default async function Page({
         <p className="eyebrow">UluJam oyunları</p>
         <h1>Oyunlar</h1>
         <p className="lede">Topluluğun ürettiği oyunlara açılan kapı.</p>
-        <section aria-label="UluJam 2026 sonuçları" className="section">
+        <section
+          id="derece-oyunlari"
+          aria-label="UluJam 2026 sonuçları"
+          className="section"
+        >
           <h2>UluJam 2026</h2>
           <p>
             Doğrulanmış ilk üç derece ve oyun bağlantısı. Diğer bilgiler
@@ -40,7 +44,11 @@ export default async function Page({
             <p className="empty">Henüz yayımlanmış derece bağlantısı yok.</p>
           )}
         </section>
-        <section aria-label="Yayımlanmış oyunlar" className="section">
+        <section
+          id="yayinlanan-oyunlar"
+          aria-label="Yayımlanmış oyunlar"
+          className="section"
+        >
           <h2>Yayımlanmış oyunlar ve finalistler</h2>
           {full.items.length ? (
             <div className="grid">

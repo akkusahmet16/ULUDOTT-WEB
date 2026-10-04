@@ -8,17 +8,12 @@ for (const width of [390, 1440]) {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
     const main = page.getByRole("main");
-    for (const href of [
-      "/hakkimizda",
-      "/ulujam",
-      "/etkinlikler",
-      "/duyurular",
-      "/oyunlar",
-      "/linkler",
-      "/destek",
-    ]) {
-      await expect(main.locator(`a[href="${href}"]`).first()).toBeVisible();
-    }
+    await expect(
+      page.getByRole("navigation", { name: "Ana sayfa bölüm haritası" }),
+    ).toHaveCount(0);
+    await expect(
+      main.locator('a[href="/oyunlar#derece-oyunlari"]'),
+    ).toBeVisible();
     await expect(
       main.getByRole("button", { name: "Başlat", exact: true }),
     ).toHaveCount(0);

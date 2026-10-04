@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 const links = [
@@ -10,7 +11,7 @@ const links = [
   ["/etkinlikler", "Etkinlikler"],
   ["/duyurular", "Duyurular"],
   ["/oyunlar", "Oyunlar"],
-  ["/linkler", "Linkler"],
+  ["/linkler", "Bağlantılar"],
   ["/destek", "Destek"],
 ] as const;
 export function Header() {
@@ -18,6 +19,8 @@ export function Header() {
     [open, setOpen] = useState(false),
     toggle = useRef<HTMLButtonElement>(null);
   const header = useRef<HTMLElement>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [preview, setPreview] = useState("/theme/reference/community.avif");
   useEffect(() => {
     if (!open) return;
     const previous = document.body.style.overflow;
@@ -41,9 +44,12 @@ export function Header() {
           const items = header.current?.querySelectorAll<
             HTMLAnchorElement | HTMLButtonElement
           >("a, button");
-          if (!items?.length) return;
-          const first = items[0],
-            last = items[items.length - 1];
+          const visible = [...(items ?? [])].filter(
+            (item) => item.getBoundingClientRect().width > 0,
+          );
+          if (!visible.length) return;
+          const first = visible[0],
+            last = visible[visible.length - 1];
           if (e.shiftKey && document.activeElement === first) {
             e.preventDefault();
             last.focus();
@@ -80,6 +86,24 @@ export function Header() {
             <i />
           </span>
         </button>
+        <div className="menu-scene" hidden={!open} aria-hidden="true">
+          <Image
+            className="menu-scene-art"
+            src={preview}
+            alt=""
+            fill
+            unoptimized
+          />
+          <Image
+            className="menu-scene-logo"
+            src="/brand/uludott-white-text.png"
+            alt=""
+            width={3000}
+            height={390}
+            unoptimized
+          />
+          <p>Bir fikir. Bir takım. Bir oyun.</p>
+        </div>
         <nav
           id="main-menu"
           className={`site-nav ${open ? "open" : ""}`}
@@ -91,16 +115,79 @@ export function Header() {
             }
           }}
         >
-          {links.map(([href, label]) => (
-            <Link
-              key={href}
-              href={href}
-              aria-current={path === href ? "page" : undefined}
-              onClick={() => setOpen(false)}
-            >
-              {label}
-            </Link>
-          ))}
+          <p className="menu-caption">Uludott / Keşfet</p>
+          {links.map(([href, label], index) => {
+            const children =
+              href === "/hakkimizda"
+                ? [
+                    ["/hakkimizda#yonetim-kurulu", "Yönetim kurulu"],
+                    ["/hakkimizda#mekanlar", "Sponsorlar & mekânlar"],
+                  ]
+                : href === "/oyunlar"
+                  ? [
+                      ["/oyunlar#derece-oyunlari", "Dereceye giren oyunlar"],
+                      ["/oyunlar#yayinlanan-oyunlar", "Yayımlanan oyunlar"],
+                    ]
+                  : [];
+            const groupLabel =
+              href === "/hakkimizda"
+                ? "Topluluk alt menüsü"
+                : "Oyunlar alt menüsü";
+            return (
+              <div
+                className="menu-item"
+                key={href}
+                style={{ "--menu-index": index } as CSSProperties}
+                onMouseEnter={() =>
+                  setPreview(
+                    href === "/hakkimizda"
+                      ? "/theme/reference/board-1.avif"
+                      : href === "/etkinlikler" || href === "/destek"
+                        ? "/theme/reference/venue-1.avif"
+                        : "/theme/reference/community.avif",
+                  )
+                }
+              >
+                <div className="menu-row">
+                  <Link
+                    href={href}
+                    aria-current={path === href ? "page" : undefined}
+                    onClick={() => setOpen(false)}
+                  >
+                    {label}
+                  </Link>
+                  {!!children.length && (
+                    <button
+                      className="menu-expand"
+                      aria-label={groupLabel}
+                      aria-expanded={expanded === href}
+                      aria-controls={`submenu-${index}`}
+                      onClick={() =>
+                        setExpanded(expanded === href ? null : href)
+                      }
+                    >
+                      <span aria-hidden="true">
+                        {expanded === href ? "−" : "+"}
+                      </span>
+                    </button>
+                  )}
+                </div>
+                {!!children.length && (
+                  <div
+                    id={`submenu-${index}`}
+                    className="menu-submenu"
+                    hidden={expanded !== href}
+                  >
+                    {children.map(([url, name]) => (
+                      <Link href={url} key={url} onClick={() => setOpen(false)}>
+                        {name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </nav>
       </div>
     </header>

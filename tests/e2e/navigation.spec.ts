@@ -72,7 +72,8 @@ test("ana sayfa CTA hedefleri ve logo geçerli", async ({ page }) => {
     page
       .getByRole("banner")
       .getByRole("link", { name: "Uludott ana sayfa" })
-      .locator("img"),
+      .locator("img")
+      .first(),
   ).toBeVisible();
 });
 

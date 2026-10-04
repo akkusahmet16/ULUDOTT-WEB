@@ -43,5 +43,32 @@
       "kind": "image",
       "url": "https://www.rockstargames.com/VI/_next/static/media/onlyInLeonidaDesktop.15y2n40f3axwo.jpg?akim=1&imdensity=1&imwidth=3840"
     }
+  ],
+  "additionalAssets": [
+    {
+      "file": "public/theme/reference/board-1.avif",
+      "source": "https://www.rockstargames.com/VI/_next/static/media/Jason_Duval_02.1486~7_v40cn..jpg?akim=1&imdensity=1&imwidth=2560",
+      "use": "GTA VI visual placeholder, replaced later by Uludott content"
+    },
+    {
+      "file": "public/theme/reference/board-2.avif",
+      "source": "https://www.rockstargames.com/VI/_next/static/media/Hero_FG.0p~ee~e~y9.k2.png?akim=1&imdensity=1&imwidth=2560",
+      "use": "GTA VI visual placeholder, replaced later by Uludott content"
+    },
+    {
+      "file": "public/theme/reference/board-3.avif",
+      "source": "https://www.rockstargames.com/VI/_next/static/media/Hero_FG.0zlb-yol13~s9.png?akim=1&imdensity=1&imwidth=2560",
+      "use": "GTA VI visual placeholder, replaced later by Uludott content"
+    },
+    {
+      "file": "public/theme/reference/venue-1.avif",
+      "source": "https://www.rockstargames.com/VI/_next/static/media/Vice_City_02.0c5.7qx17u9kl.jpg?akim=1&imdensity=1&imwidth=2560",
+      "use": "GTA VI visual placeholder, replaced later by Uludott content"
+    },
+    {
+      "file": "public/theme/reference/venue-2.avif",
+      "source": "https://www.rockstargames.com/VI/_next/static/media/Vice_City_01.135x56yoeu.6t.jpg?akim=1&imdensity=1&imwidth=2560",
+      "use": "GTA VI visual placeholder, replaced later by Uludott content"
+    }
   ]
 }

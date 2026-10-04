@@ -29,8 +29,8 @@ export function StarCatch() {
           aria-label="Yıldızı yakala"
           disabled={score === 5}
           style={{
-            gridColumn: (position % 3) + 1,
-            gridRow: Math.floor(position / 3) + 1,
+            left: `${(position % 3) * 33.333}%`,
+            top: `${Math.floor(position / 3) * 33.333}%`,
           }}
           onClick={() => {
             if (score < 5) {

@@ -8,6 +8,7 @@
   gap: 28px;
 }
 .poster {
+  overflow: hidden;
   width: min(100%, calc((100svh - 235px) * 1.7778));
 }
 .poster img {

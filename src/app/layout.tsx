@@ -1,5 +1,6 @@
 import { connection } from "next/server";
 import "../styles/tokens.css";
+import "../styles/cinematic.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import localFont from "next/font/local";
