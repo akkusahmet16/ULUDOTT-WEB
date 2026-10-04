@@ -65,10 +65,11 @@ export async function Footer() {
                 <a
                   key={item.id}
                   href={item.url}
+                  aria-label={item.title}
                   target="_blank"
                   rel="noopener noreferrer external"
                 >
-                  {item.logo && (
+                  {item.logo ? (
                     // Static brand SVGs are copied unchanged into the public preview.
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -79,9 +80,19 @@ export async function Footer() {
                       alt=""
                       aria-hidden="true"
                     />
+                  ) : (
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      aria-hidden="true"
+                    >
+                      <path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-2 2M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l2-2" />
+                    </svg>
                   )}
-                  <span className="social-title">{item.title}</span>
-                  <span aria-hidden="true">↗</span>
                 </a>
               ))}
             </div>

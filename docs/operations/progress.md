@@ -803,6 +803,14 @@ Doğrulama: Type/lint/build başarılı. İlk hedefli koşuda5test geçti;2ileti
 
 Sites public native succeeded: source8b3ea2dc8d66ac6d1f588bb70bd92858fd93e60e; archive.local/sites-social-links-preview.tar.gz; version appgprj_6ac178c5619c8191af1de280c6a4393f~appgver_af67d5cbaae48191aa1abae1e948831d; deployment appgdep_6ac2677ead508191a1c3837ad147b84f. URL https://uludott-tasarim-onizleme.akkusahmet.chatgpt.site. Public erişim korunur, otomasyon yok. Web13758/session19250 port3001 HTTP200 ve worker13772/session67091 doğru cwd ile yeniden açık. Git codex/cinematic-theme; önceki37349e1 ve özgün yedek korunur. İlgisiz iki kullanıcı README değişikliği korunur; Apple ertelenmiş, Wallet gereksinimi en altta.
 
+## Yalnız sosyal logolar — 4 Ekim 2026
+
+Plan/rapor/Next rehberi okundu; web13758/worker13772 doğru cwd ardından durduruldu. Görünür isim/ok kaldırılır, dört beyaz marka logosu ve adresler korunur. Ekran okuyucu isimleri aria-label;48px tıklama alanı. Marka olmayan mevcut dış kayıtlar erişilebilir adıyla genel bağlantı simgesi gösterir.
+
+Son kabul: Sosyal bağlantılarda sadece logo; görünür isim ve ok yok. aria-label isimleri, adresler, beyaz24px semboller ve48px tıklama alanı korunur. Type/lint/build,7hedefli production E2E+axe(14.9sn), biçim/diff başarılı; icons-only.log. Statik8HTML/42asset ve gerçekadres/beyazlogo assertleri geçti.
+
+Public Sites native succeeded: source6c21b851dab498f375f51168aaa73d61e9e29db9; archive.local/sites-icons-only-preview.tar.gz; version appgprj_6ac178c5619c8191af1de280c6a4393f~appgver_c6f8bcd2327081919fc3f6818cec2d0f; deployment appgdep_6ac2686d6434819194fa8dfa35d14dde. URL https://uludott-tasarim-onizleme.akkusahmet.chatgpt.site. Public erişim/otomasyon yok kararı korunur. Web14488/session55542 port3001 ve worker14502/session54417 yeniden açık. Git önceki ba34d87 ve yedek korunur; ilgisiz iki kullanıcı README değişikliği korunur. Apple ertelenmiş, Wallet gereksinimi en altta.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.

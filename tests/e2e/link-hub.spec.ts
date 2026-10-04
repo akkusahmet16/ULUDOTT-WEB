@@ -69,7 +69,9 @@ test("sosyal footer: yönetim sırası, dış link, kısa URL/QR ve gizleme", as
   await expect(external).toHaveAttribute("rel", /noopener/);
   await expect(external).toHaveAttribute("target", "_blank");
   await expect(external).toHaveAttribute("href", "https://example.com/test");
-  await expect(social.getByRole("link").first()).toContainText(outsideTitle);
+  await expect(social.getByRole("link").first()).toHaveAccessibleName(
+    outsideTitle,
+  );
   const result = await page.request.get(src);
   expect(result.status()).toBe(200);
   const { data, info } = await sharp(await result.body())

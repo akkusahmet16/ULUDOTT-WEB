@@ -561,3 +561,9 @@ Destek/Destek ol görünür etiketleri İletişim olur; mevcut /destek rotası k
 Kullanıcının verdiği Instagram/WhatsApp/X/YouTube adresleri footerda aktif. Marka sembolleri beyaz tek renk SVG,24px eş alan; mevcut dış kayıt sırası ve uzun başlık sarılması korunur. Yeni sayfa/özellik yok.
 
 - [x] Adresler, beyaz logolar, yayın ve yerel yeniden açılış.
+
+## Yalnız sosyal logolar — 4 Ekim 2026
+
+Sosyal bağlantılar görünür isim/ok olmadan sadece beyaz logolar;48px tıklama alanı, erişilebilir isim aria-label ile korunur. Adresler aynı.
+
+- [x] Uygulama, kontrol, yayın ve yerel açılış.

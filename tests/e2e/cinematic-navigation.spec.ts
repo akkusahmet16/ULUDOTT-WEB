@@ -34,7 +34,9 @@ for (const width of [390, 1440])
       .getByRole("contentinfo")
       .getByRole("navigation", { name: "Sosyal medya" });
     for (const name of ["YouTube", "WhatsApp", "Instagram"])
-      await expect(social.getByText(name, { exact: true })).toBeAttached();
+      await expect(
+        social.getByRole("link", { name, exact: true }),
+      ).toBeAttached();
     await expect(social.locator('a[href="#"]')).toHaveCount(0);
     expect(
       await page.evaluate(
