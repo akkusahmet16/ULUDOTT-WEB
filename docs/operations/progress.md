@@ -905,6 +905,14 @@ Kullanıcının verdiği VDS ile SSH erişimi doğrulandı; mevcut Discord bot s
 
 Kabul: `https://185.246.113.167/` HTTP200 döndürüyor; `/` reverse proxy üzerinden çalışıyor, web/worker servisleri aktif, PostgreSQL yerel porta bağlı. Yönetim paneli özel şifresi VDS’de yalnız `/srv/uludott/current/.local/admin-panel-password.txt` dosyasında tutuluyor. Google Wallet modu demo olarak yapılandırıldı; yayın onayı bekleniyor. Alan adı ve geçerli TLS sertifikası daha sonra bağlanabilir.
 
+## VDS alan adı ve kalıcı medya deposu — 5 Ekim 2026
+
+Plan/rapor okundu; yerel web ve worker işlem başında durduruldu. METUnic üzerinde `uludott.com.tr` ve `media` için A kayıtları VDS'ye, `www` için kök alan adına CNAME kaydı TTL 300 ile eklendi. Yetkili iki METUnic DNS sunucusu kayıtları döndürüyor; yeni kayıt nedeniyle bazı çözümleyicilerin eski olumsuz önbelleği kısa süre daha sürebilir.
+
+VDS'de mevcut Discord botuna dokunulmadı. Web, worker, Nginx ve PostgreSQL servislerine ek olarak Garage v2.4.1 tek düğümlü S3 uyumlu medya servisi kuruldu. Veri `/srv/uludott-data/garage` altında kalıcıdır; servis ve PostgreSQL yalnız loopback üzerinde dinler. Uygulamanın üretim `APP_URL` ve nesne deposu adresi HTTPS alan adlarına geçirildi. S3 yaz/oku/sil denemesi hem loopback hem `https://media.uludott.com.tr` üzerinden geçti. Tek VDS fiziksel yedeklilik sağlamaz; sonraki işletme adımı harici şifreli yedektir.
+
+Let's Encrypt sertifikası `uludott.com.tr`, `www.uludott.com.tr` ve `media.uludott.com.tr` adlarını kapsayacak şekilde kuruldu; bitiş 3 Ocak 2027 ve otomatik yenileme dry-run başarılı. HTTP kök alan adı HTTPS'ye 301 yönleniyor. `/`, `/ulujam`, `/hakkimizda`, `/iletisim`, `/etkinlikler` ve `/admin` hem kök hem `www` üzerinden HTTP200 verdi. Web, worker, Garage, Nginx ve PostgreSQL aktif; Discord botu PM2 altında online. VDS disk kullanımı %25, doğrulama anında yaklaşık 2.7 GiB kullanılabilir RAM vardı.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.

@@ -645,3 +645,12 @@ UluJam arşiv galerisi, içerik bütünlüğünü koruyan sinematik mozaik düze
 - [x] Mozaik grid ve featured/side kart sınıfları.
 - [x] Masaüstü grid span, mobil tek kolon ve erişilebilir galeri etiketleri.
 - [x] Hedefli E2E, lint, typecheck, build, Vitest ve yerel yeniden açılış.
+
+## VDS alan adı ve kalıcı medya deposu — 5 Ekim 2026
+
+`uludott.com.tr`, `www.uludott.com.tr` ve `media.uludott.com.tr` METUnic DNS üzerinden mevcut VDS'ye yönlendirilir. Web ve worker servisleri systemd ile çalışır; PostgreSQL ve S3 uyumlu medya servisi yalnız loopback arayüzünde dinler. Nginx dış HTTPS trafiğini web ve medya servislerine iletir. Let's Encrypt sertifikası üç adı da kapsar ve zamanlayıcıyla otomatik yenilenir. Tek düğümlü medya deposu VDS diskinde kalıcıdır; ayrı sunucu veya yedekleme eklenene kadar fiziksel sunucu arızasına karşı çoğaltma sağlamaz.
+
+- [x] METUnic A/CNAME kayıtları ve yetkili DNS doğrulaması.
+- [x] Kalıcı S3 uyumlu medya deposu, uygulama ortamı ve servis izolasyonu.
+- [x] Nginx alan adı yönlendirmesi, HTTPS sertifikası ve otomatik yenileme.
+- [x] Genel rotalar, servisler, veritabanı, medya yaz/oku/sil ve kaynak kullanımı kabulü.
