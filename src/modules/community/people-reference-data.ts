@@ -48,7 +48,7 @@ export const peopleChapters: Chapter[] = [
     color: "#282338",
     video: `${community}/baskan-yard-batu/baskan-yard-batu-acilis.mp4`,
     videoReference: false,
-    poster: `${community}/baskan-yard-batu/baskan-yard-batu-detay1.webp`,
+    poster: `${community}/baskan-yard-batu/baskan-yard-batu-detay.webp`,
     members: [
       {
         slug: "baskan-yard-batu",
@@ -56,7 +56,7 @@ export const peopleChapters: Chapter[] = [
         role: "Başkan Yardımcısı",
         quote: "Aklımıza gelen şeyi ‘neden olmasın?’ deyip denemeyi seviyoruz.",
         details: ["Bilgisayar Mühendisliği 3. Sınıf", "Uludott Dergi Yazarı"],
-        photo: `${community}/baskan-yard-batu/baskan-yard-batu-detay1.webp`,
+        photo: `${community}/baskan-yard-batu/baskan-yard-batu-detay.webp`,
         photoReference: false,
       },
     ],

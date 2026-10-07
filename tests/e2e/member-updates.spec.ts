@@ -94,6 +94,6 @@ test("üyeler güncel ekip sırası ve teslim edilen detay fotoğraflarıyla gö
   }
   await expect(chapters.nth(1).locator(".people-gallery img")).toHaveAttribute(
     "src",
-    /baskan-yard-batu-detay1/,
+    /baskan-yard-batu-detay\.webp/,
   );
 });
