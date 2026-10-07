@@ -913,6 +913,12 @@ VDS'de mevcut Discord botuna dokunulmadı. Web, worker, Nginx ve PostgreSQL serv
 
 Let's Encrypt sertifikası `uludott.com.tr`, `www.uludott.com.tr` ve `media.uludott.com.tr` adlarını kapsayacak şekilde kuruldu; bitiş 3 Ocak 2027 ve otomatik yenileme dry-run başarılı. HTTP kök alan adı HTTPS'ye 301 yönleniyor. `/`, `/ulujam`, `/hakkimizda`, `/iletisim`, `/etkinlikler` ve `/admin` hem kök hem `www` üzerinden HTTP200 verdi. Web, worker, Garage, Nginx ve PostgreSQL aktif; Discord botu PM2 altında online. VDS disk kullanımı %25, doğrulama anında yaklaşık 2.7 GiB kullanılabilir RAM vardı.
 
+## Hakkımızda kişi detay görselleri — 7 Ekim 2026
+
+Plan/rapor ve yeni People README sıraları okundu. Yerel site kullanıcı isteğiyle kapalıydı; doğrulama için yalnız geçici test sunucusu ve yerel DB/S3 açıldı. Kullanıcının teslim ettiği fotoğraflar `public/community/03-hakkimizda/people/` altına kopyalandı. Başkan Yardımcısı yeni `detay1` görselini, Halis yenilenen görselini yeni URL ile kullanır; Halis'in eski URL'si önbellek nedeniyle değiştirilmedi. Sosyal Medya Ekibi Ahmet–Emir–Melek; Etkinlik Ekibi Efe–Aybey–Fatih–Eren sırasına geçti. Ekip bölümlerinin kapakları gerçek fotoğraflara döndü; açılış videoları teslim edilene kadar geçici GTA referansları durur. Kişi detaylarında GTA görseli kalmadı. `tasarim-girdileri` içindeki kullanıcı dosyaları değiştirilmedi.
+
+Kabul: People tarayıcı testi önce eski sırada beklenen nedenle kırmızı, ardından yeni sırada ve tüm görsellerde yeşil oldu. Halis'in yeni URL gereksinimi ayrıca kırmızı→yeşil doğrulandı. İlgili entegrasyon testi, tam Vitest 273/273, typecheck, lint ve üretim derlemesi geçti. Derlemede önceden bilinen Wallet dinamik dosya izleme uyarısı sürüyor. Canlı VDS veritabanında People override kaydı bulunmadığı doğrulandı.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.

@@ -654,3 +654,11 @@ UluJam arşiv galerisi, içerik bütünlüğünü koruyan sinematik mozaik düze
 - [x] Kalıcı S3 uyumlu medya deposu, uygulama ortamı ve servis izolasyonu.
 - [x] Nginx alan adı yönlendirmesi, HTTPS sertifikası ve otomatik yenileme.
 - [x] Genel rotalar, servisler, veritabanı, medya yaz/oku/sil ve kaynak kullanımı kabulü.
+
+## Hakkımızda kişi detay görselleri — 7 Ekim 2026
+
+Kullanıcının yeni teslim ettiği detay fotoğrafları mevcut People kişi alanlarına yerleştirilir. Sosyal Medya Ekibi sırası Ahmet, Emir, Melek; Etkinlik Ekibi sırası Efe, Aybey, Fatih Soyer, Eren Bozacı olarak güncellenir. Ekip açılış videoları henüz teslim edilmediği için mevcut geçici videolar korunur; bölüm kapakları teslim edilen ekip başkanı fotoğraflarını gösterir. Başkan Yardımcısı için yeni `detay1` fotoğrafı ve Halis için önbellek karışmaması amacıyla yeni URL'li fotoğraf kullanılır.
+
+- [x] Yeni görselleri genel site medya yoluna yerleştir ve kişi/bölüm eşlemesini güncelle.
+- [x] Güncel ekip sırası, görseller ve mevcut açılış videolarını doğrula.
+- [x] Üretim derlemesi ve canlı sayfa kontrolüyle VDS'ye yayımla.

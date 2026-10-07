@@ -72,7 +72,7 @@ test("üyeler güncel ekip sırası ve teslim edilen detay fotoğraflarıyla gö
   );
   await expect(chapters.nth(4).locator(".people-gallery img")).toHaveAttribute(
     "src",
-    /cayci-halis-detay/,
+    /cayci-halis-detay-2026-10-07/,
   );
   for (const i of [2, 3]) {
     await expect(chapters.nth(i).locator("video")).toHaveAttribute(

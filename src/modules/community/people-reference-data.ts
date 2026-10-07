@@ -150,7 +150,7 @@ export const peopleChapters: Chapter[] = [
     color: "#313929",
     video: `${community}/cayci-halis/cayci-halis-acilis.mp4`,
     videoReference: false,
-    poster: `${community}/cayci-halis/cayci-halis-detay.webp`,
+    poster: `${community}/cayci-halis/cayci-halis-detay-2026-10-07.webp`,
     members: [
       {
         slug: "cayci-halis",
@@ -161,7 +161,7 @@ export const peopleChapters: Chapter[] = [
           "Bilgisayar ve Öğretim Teknolojileri Eğitimi 2. Sınıf",
           "Çaylarrrr",
         ],
-        photo: `${community}/cayci-halis/cayci-halis-detay.webp`,
+        photo: `${community}/cayci-halis/cayci-halis-detay-2026-10-07.webp`,
         photoReference: false,
       },
     ],
