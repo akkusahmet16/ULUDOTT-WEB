@@ -662,3 +662,9 @@ Kullanıcının yeni teslim ettiği detay fotoğrafları mevcut People kişi ala
 - [x] Yeni görselleri genel site medya yoluna yerleştir ve kişi/bölüm eşlemesini güncelle.
 - [x] Güncel ekip sırası, görseller ve mevcut açılış videolarını doğrula.
 - [x] Üretim derlemesi ve canlı sayfa kontrolüyle VDS'ye yayımla.
+
+## Başkan yardımcısı fotoğraf değişimi — 7 Ekim 2026
+
+Başkan yardımcısı Batuhan'ın açılış kapağı ve detay fotoğrafı, kaynak klasörde belirtilen `baskan-yard-batu-detay.webp` dosyasına döner. Diğer kişi ve ekip içerikleri değişmez.
+
+- [x] İki görünümün aynı kaynak fotoğrafı kullandığını ve canlı sayfada açıldığını doğrula.

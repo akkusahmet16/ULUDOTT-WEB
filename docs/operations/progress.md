@@ -919,6 +919,10 @@ Plan/rapor ve yeni People README sıraları okundu. Yerel site kullanıcı iste�
 
 Kabul: People tarayıcı testi önce eski sırada beklenen nedenle kırmızı, ardından yeni sırada ve tüm görsellerde yeşil oldu. Halis'in yeni URL gereksinimi ayrıca kırmızı→yeşil doğrulandı. İlgili entegrasyon testi, tam Vitest 273/273, typecheck, lint ve üretim derlemesi geçti. Derlemede önceden bilinen Wallet dinamik dosya izleme uyarısı sürüyor. Canlı VDS veritabanında People override kaydı bulunmadığı doğrulandı.
 
+## Başkan yardımcısı fotoğraf değişimi — 7 Ekim 2026
+
+Plan/rapor, Batu kaynak README'si ve iki mevcut fotoğraf kontrol edildi. Kaynak klasörde yalnız `baskan-yard-batu-detay.webp` bulunduğu için açılış kapağı ile detay alanı bu dosyaya döndürüldü; önceki `detay1` dosyası korunur, ancak kullanılmaz. Yeni kod üretim derlemesi ve lintten geçti; `codex/cinematic-theme` dalı `773b2eb` olarak VDS'ye çekildi. Canlı `/hakkimizda` HTTP200, Batu bölümünde doğru görsel adresi üç kez referanslanıyor, önceki adres bulunmuyor ve görsel HTTP200 dönüyor. Yerel site kapalı kaldı.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.
