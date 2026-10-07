@@ -791,20 +791,6 @@ body {
 .story-panel-button:hover > img {
   transform: scale(1.045);
 }
-.panel-play {
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border: 3px solid white;
-  border-radius: 50%;
-  width: 76px;
-  height: 76px;
-  display: grid;
-  place-items: center;
-  font-size: 25px;
-  z-index: 1;
-}
 .panel-caption {
   position: absolute;
   inset: auto 35px 45px;

@@ -73,9 +73,6 @@ export function StoryPanels({ degreeContent }: { degreeContent: ReactNode }) {
               height={1600}
               unoptimized
             />
-            <span className="panel-play" aria-hidden="true">
-              ▶
-            </span>
             <span className="panel-caption">
               <span className="eyebrow">
                 {id === "ulujam" ? "Birlikte üret" : "UluJam 2026"}

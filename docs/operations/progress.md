@@ -923,6 +923,12 @@ Kabul: People tarayıcı testi önce eski sırada beklenen nedenle kırmızı, a
 
 Plan/rapor, Batu kaynak README'si ve iki mevcut fotoğraf kontrol edildi. Kaynak klasörde yalnız `baskan-yard-batu-detay.webp` bulunduğu için açılış kapağı ile detay alanı bu dosyaya döndürüldü; önceki `detay1` dosyası korunur, ancak kullanılmaz. Yeni kod üretim derlemesi ve lintten geçti; `codex/cinematic-theme` dalı `773b2eb` olarak VDS'ye çekildi. Canlı `/hakkimizda` HTTP200, Batu bölümünde doğru görsel adresi üç kez referanslanıyor, önceki adres bulunmuyor ve görsel HTTP200 dönüyor. Yerel site kapalı kaldı.
 
+## Ana sayfa kartları ve UluJam 2026 canlı sonuçları — 8 Ekim 2026
+
+Plan ve rapor okundu. Ana sayfadaki UluJam ve Derece oyunları kartlarının ortasındaki oynat işaretleri ve yalnızca bu işaretlere ait CSS kaldırıldı. Kartların açılma davranışı ve UluJam vlogunun kendi oynatma düğmesi korundu.
+
+Canlı VDS veritabanında 2026 etkinlik, oyun ve derece kayıtlarının tamamı eksikti (0/0/0). Kişi veya takım oluşturmayan idempotent `db:seed:2026` işlemi uygulandı. Ardından canlı `/oyunlar` ve `/ulujam` sayfalarında Lost Pieces, Lost Child Soul ve ProjectSW adlarının göründüğü, boş derece uyarısının kalktığı doğrulandı. Yerel site kapalı kaldı. Kod için lint, typecheck ve üretim derlemesi geçti; derlemede önceden bilinen Wallet dosya izleme uyarısı sürüyor.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.
