@@ -27,7 +27,7 @@ for (const width of [390, 1440]) {
     await expect(button).toHaveAttribute("aria-expanded", "false");
   });
 }
-test("üyeler teslim sırası, bilgileri ve eksik medya referanslarıyla doludur", async ({
+test("üyeler güncel ekip sırası ve teslim edilen detay fotoğraflarıyla görünür", async ({
   page,
   request,
 }) => {
@@ -43,17 +43,19 @@ test("üyeler teslim sırası, bilgileri ve eksik medya referanslarıyla doludur
   await expect(chapters.nth(1)).toContainText("Uludott Dergi Yazarı");
   await expect(chapters.nth(2).locator(".people-detail h3")).toHaveText([
     "Ahmet Akkuş",
-    "Melek",
     "Emir",
+    "Melek",
   ]);
   await expect(chapters.nth(3).locator(".people-detail h3")).toHaveText([
     "Efe Tutucu",
     "Aybey",
+    "Fatih Soyer",
+    "Eren Bozacı",
   ]);
   for (let i = 0; i < 5; i++) {
     await expect(chapters.nth(i).locator("video")).toHaveCount(1);
     await expect(chapters.nth(i).locator(".people-gallery img")).toHaveCount(
-      [1, 1, 3, 2, 1][i],
+      [1, 1, 3, 4, 1][i],
     );
     for (const selector of ["video", ".people-gallery img"]) {
       const src = await chapters
@@ -80,7 +82,18 @@ test("üyeler teslim sırası, bilgileri ve eksik medya referanslarıyla doludur
     for (const image of await chapters
       .nth(i)
       .locator(".people-gallery img")
-      .all())
-      await expect(image).toHaveAttribute("src", /theme\/reference/);
+      .all()) {
+      await expect(image).toHaveAttribute(
+        "src",
+        /community\/03-hakkimizda\/people/,
+      );
+      expect(
+        (await request.get((await image.getAttribute("src"))!)).status(),
+      ).toBe(200);
+    }
   }
+  await expect(chapters.nth(1).locator(".people-gallery img")).toHaveAttribute(
+    "src",
+    /baskan-yard-batu-detay1/,
+  );
 });

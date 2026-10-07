@@ -12,7 +12,7 @@ it("People düzenleyicisi sabit ekip/kişi sırasını korur, metni yayımlar ve
     const actor = { ...fixture.actor, roles: ["content_editor"] };
     const initial = await listPeopleContent(actor);
     expect(initial.filter((item) => item.kind === "chapter")).toHaveLength(5);
-    expect(initial.filter((item) => item.kind === "member")).toHaveLength(8);
+    expect(initial.filter((item) => item.kind === "member")).toHaveLength(10);
     const member = initial.find((item) => item.slot === "member:baskan-yigit")!;
     const fields = { ...member.fields, quote: "Test alıntısı" };
     const saved = await savePeopleContent(
