@@ -929,6 +929,14 @@ Plan ve rapor okundu. Ana sayfadaki UluJam ve Derece oyunları kartlarının ort
 
 Canlı VDS veritabanında 2026 etkinlik, oyun ve derece kayıtlarının tamamı eksikti (0/0/0). Kişi veya takım oluşturmayan idempotent `db:seed:2026` işlemi uygulandı. Ardından canlı `/oyunlar` ve `/ulujam` sayfalarında Lost Pieces, Lost Child Soul ve ProjectSW adlarının göründüğü, boş derece uyarısının kalktığı doğrulandı. Yerel site kapalı kaldı. Kod için lint, typecheck ve üretim derlemesi geçti; derlemede önceden bilinen Wallet dosya izleme uyarısı sürüyor.
 
+## Yerel yönetim, UluJam başvuru ve takım demosu — 10 Ekim 2026
+
+Kullanıcının isteğiyle yalnız yerel adreste çalışan DEMO modu kuruldu. `LOCAL_DEMO_MODE=true`, üretim dışı çalışma ve loopback `APP_URL` koşulları olmadan örnek başvuru görünmez ve doğrudan gönderim reddedilir. Yerel panel tek özel şifre ile çalışır; istenen sekiz karakterli geçici şifreye yalnız bu koruma altında izin verilir. Üretim parolası politikası değişmedi. Şifre, takım erişimi, makbuz ve kart bağlantıları Git dışında `.local/` dosyalarında 0600 izinleriyle saklanır.
+
+Tekrar çalıştırılabilir kurulum bir örnek etkinlik, açılıp durdurulabilen UluJam formu, DEMO Takım, kurucu ve üye başvuruları ile iki bekleyen kart oluşturdu. Gerçek UluJam 2027 tarihi “Yakında” olarak kalır. `/ulujam` sayfası yalnız yerel demoda form açıkken örnek başvuru bağlantısı, duraklatıldığında durum metni gösterir. Yönetim paneli mevcut araçları koruyarak form, başvuru, takım onayı ve sistem/Wallet kısayolları kazandı; takım sayfasında etkinlik, üye sayısı ve kişisel veri içermeyen kart durumları görülür.
+
+Yerel web `127.0.0.1:3001`, PostgreSQL, obje deposu ve worker açık. Tarayıcıda tek şifreli panel girişi, kurucu takım girişi, iki üyenin görünmesi ve bekleyen web kartı doğrulandı. Entegrasyon testinde form durdurma/yeniden açma, tekrar kurulumda çoğalmama, yerel dışı kurulum reddi ve onay öncesi kart reddi doğrulandı. Tam Vitest paketi 53 dosyada 283/283, typecheck, lint ve üretim derlemesi geçti. Derlemede önceden bilinen Wallet dinamik dosya izleme uyarısı sürüyor. Kart/Google Wallet/check-in ilgili 16 entegrasyon testi ayrıca geçti; Google Android cihazına gerçek kart ekleme bu oturumda yapılmadı. Apple Wallet ertelenmiş durumda. VDS ve GitHub değiştirilmedi.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.

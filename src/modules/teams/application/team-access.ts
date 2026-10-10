@@ -1,5 +1,6 @@
 import "server-only";
 import { getTeamCardSummaries } from "../../cards/application/card-service.ts";
+import { events } from "../../../db/schema/content.ts";
 import { z } from "zod";
 import { eq, and, isNull, sql } from "drizzle-orm";
 import { getDatabase } from "../../../lib/database/client.ts";
@@ -134,8 +135,10 @@ export async function getTeamView(token: string, request: Request) {
       name: teams.name,
       status: teams.status,
       expectedSize: teams.expectedSize,
+      eventTitle: events.title,
     })
     .from(teams)
+    .innerJoin(events, eq(events.id, teams.eventId))
     .where(eq(teams.id, a.teamId));
   const [{ n }] = await getDatabase()
     .select({ n: sql<number>`count(*)::int` })

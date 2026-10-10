@@ -24,7 +24,9 @@ it("takım oturum izolasyonu, güçlü hash, yenileme/eski token-parola, hız li
     });
     expect(await requireTeamSession(req, a.id)).toBeTruthy();
     await expect(requireTeamSession(req, randomUUID())).rejects.toThrow();
-    const view = JSON.stringify(await getTeamView(a.token, req));
+    const teamView = await getTeamView(a.token, req);
+    expect(teamView.eventTitle).toBeTruthy();
+    const view = JSON.stringify(teamView);
     for (const text of [
       "+905551234567",
       "@test.invalid",

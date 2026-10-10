@@ -1481,3 +1481,20 @@ body {
   color: #ffd1df;
   margin: 36px 0 48px;
 }
+.local-demo-application {
+  margin: clamp(24px, 5vw, 72px) auto;
+  max-width: 1100px;
+  border: 1px solid rgba(255, 203, 220, .28);
+  border-radius: 24px;
+  background: linear-gradient(130deg, rgba(65, 34, 82, .7), rgba(24, 22, 45, .8));
+}
+.local-demo-application h2 { font-size: clamp(2.6rem, 8vw, 6rem); line-height: .95; }
+.local-demo-application__link {
+  display: inline-flex; align-items: center; gap: 1.5em;
+  margin-top: 1.25rem; padding: .9em 1.3em;
+  border-radius: 100px; background: #ffcedf; color: #251629;
+  font-weight: 700; text-decoration: none;
+}
+.local-demo-application__link:hover { background: #fff; }
+.local-demo-application__link:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+.local-demo-application__state { font-weight: 700; color: #ffcedf; }

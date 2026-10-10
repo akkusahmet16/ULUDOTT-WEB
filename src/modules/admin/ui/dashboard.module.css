@@ -71,3 +71,18 @@
   border-radius: 999px;
   margin: 8px 8px 8px 0;
 }
+.adminPage { min-height: 100vh; padding: 0 20px 70px; color: #fff; background: radial-gradient(circle at 65% 0%, #634369, transparent 36%), #171526; }
+.adminHero { max-width: 1200px; margin: 0 auto; padding: clamp(35px, 6vw, 85px) 24px 15px; }
+.adminHero h1 { font-size: clamp(3.2rem, 8vw, 7rem); line-height: .92; margin: 12px 0 22px; }
+.adminEyebrow { letter-spacing: .2em; color: #ffd7e5; }
+.demoBadge { display: inline-block; padding: 8px 14px; border: 1px solid #f9c9e0; border-radius: 100px; font-size: .78rem; letter-spacing: .1em; }
+.loginCard { max-width: 530px; margin: 30px auto; padding: 32px; border: 1px solid #ffffff44; border-radius: 22px; background: #292139; }
+.loginCard form { display: grid; gap: 16px; }
+.loginCard label { display: grid; gap: 8px; }
+.loginCard input { width: 100%; min-height: 48px; padding: 10px 14px; border: 1px solid #ffffff66; border-radius: 8px; background: #171426; color: #fff; }
+.loginCard button, .sessionActions button { min-height: 44px; padding: 10px 22px; border: 0; border-radius: 100px; background: #ffd1e1; color: #231526; font-weight: 700; cursor: pointer; }
+.loginCard :is(button, input):focus-visible, .quickLinks a:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.sessionActions { max-width: 1200px; margin: 20px auto; }
+.quickLinks { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0 40px; }
+.quickLinks a { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 18px; border: 1px solid #ffc9dc80; border-radius: 100px; color: #fff; text-decoration: none; }
+.quickLinks a:hover { background: #ffc9dc; color: #231526; }

@@ -7,6 +7,7 @@ import {
 } from "../../../modules/events/application/ulujam-service";
 import { UlujamComingSoon } from "../../../modules/events/ui/ulujam-coming-soon";
 import { UlujamArchive } from "../../../modules/events/ui/ulujam-archive";
+import { LocalDemoApplication } from "../../../modules/events/ui/local-demo-application";
 import { listPublicHistoricalResults } from "../../../modules/games/application/historical-results";
 export const dynamic = "force-dynamic";
 export const metadata = {
@@ -28,6 +29,7 @@ export default async function Page({
   return (
     <PublicShell>
       <UlujamComingSoon year={2027} startAt={startAt} />
+      <LocalDemoApplication />
       <UlujamArchive
         year={2026}
         results={results.map((r) => full.find((g) => g?.id === r.id) ?? r)}

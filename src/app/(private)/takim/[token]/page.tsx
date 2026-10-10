@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getTeamView } from "../../../../modules/teams/application/team-access";
 import { TeamLogin, TeamLogout } from "../../../../modules/teams/ui/team-page";
 import { SubmissionError } from "../../../../modules/forms/domain/submission-error";
+import styles from "../../../../modules/teams/ui/team-page.module.css";
 export const dynamic = "force-dynamic";
 export const metadata = {
   robots: { index: false, follow: false },
@@ -25,33 +26,37 @@ export default async function Page({
   } catch (e) {
     if (e instanceof SubmissionError && e.status === 403)
       return (
-        <main>
+        <main className={styles.page}>
+          <div className={styles.frame}>
+          <p className={styles.eyebrow}>ULUDOTT · TAKIM ALANI</p>
           <h1>Takım erişimi</h1>
           <TeamLogin token={token} />
+          </div>
         </main>
       );
     notFound();
   }
   return (
-    <main>
+    <main className={styles.page}>
+      <div className={styles.frame}>
+      <p className={styles.eyebrow}>{view.eventTitle} · Takım alanı</p>
       <h1>{view.name}</h1>
-      <p>Takım durumu: {view.status}</p>
-      <p>
-        Üye sayısı: {view.memberCount} / {view.expectedSize}
-      </p>
-      <p>Katılım onayı ve kart uygunluğu ayrı değerlendirilir.</p>
-      <section aria-label="Takım kart özetleri">
+      <div className={styles.stats}>
+        <p><strong>{view.memberCount} / {view.expectedSize}</strong><span>Takım üyeleri</span></p>
+        <p><strong>{view.status}</strong><span>Takım durumu</span></p>
+      </div>
+      <p>Katılım onayı ve kart uygunluğu ayrı değerlendirilir. Kişisel kartınıza başvuru makbuzunuzdan ulaşabilirsiniz.</p>
+      <section className={styles.cards} aria-label="Takım kart özetleri">
         <h2>Katılım kartları</h2>
         <ul>
           {view.cards.map((c, i) => (
-            <li key={i}>
-              {c.name} · {c.status}
-            </li>
+            <li key={i}><span>{c.name}</span><strong>{c.status}</strong></li>
           ))}
         </ul>
         <p>Bireysel kartınıza kendi makbuz bağlantınızdan ulaşın.</p>
       </section>
       <TeamLogout />
+      </div>
     </main>
   );
 }

@@ -35,6 +35,12 @@ export function Dashboard({ view }: { view: DashboardView }) {
         Başvuru ve takım sayıları yalnızca yetkili olduğunuz etkinlikler için
         gösterilir.
       </p>
+      <div className={styles.quickLinks} aria-label="Yönetim kısayolları">
+        <Link href="/admin/formlar">Formu aç veya durdur</Link>
+        <Link href="/admin/basvurular">Başvuruları incele</Link>
+        <Link href="/admin/takim-onaylari">Takımları onayla</Link>
+        <Link href="/admin/sistem">Sistem ve Wallet durumu</Link>
+      </div>
       <div className={styles.filters}>
         <label className="field">
           Etkinlik veya form ara
