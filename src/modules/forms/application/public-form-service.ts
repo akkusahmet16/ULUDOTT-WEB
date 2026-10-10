@@ -4,8 +4,13 @@ import { events } from "../../../db/schema/content.ts";
 import { forms } from "../../../db/schema/forms.ts";
 import { withTransaction } from "../../../lib/database/transaction.ts";
 import { readFormVersion } from "../infrastructure/form-repository.ts";
+import {
+  LOCAL_DEMO_FORM_SLUG,
+  localDemoEnabled,
+} from "../../../lib/config/local-demo.ts";
 export async function getPublicForm(slug: string) {
   if (!/^[a-z0-9-]{1,100}$/.test(slug)) return null;
+  if (slug === LOCAL_DEMO_FORM_SLUG && !localDemoEnabled()) return null;
   return withTransaction(async (tx) => {
     const [f] = await tx.select().from(forms).where(eq(forms.slug, slug));
     if (

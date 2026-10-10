@@ -14,6 +14,8 @@ Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; G
 
 ## Global kısıtlar
 
+**10 Ekim 2026 yerel demo eki:** Kullanıcı yalnız yerelde yönetim, UluJam başvuru, takım ve Wallet akışını sentetik verilerle denemeyi onayladı. Ayrı DEMO etkinliği/başvurusu `LOCAL_DEMO_MODE=true`, geliştirme ortamı ve loopback `APP_URL` koşullarında açılır; üretim 2027 tarihi ve başvuru durumu değişmez. Geçici yönetim şifresi yalnız yerel veritabanında hash'lenir. Bu ek, üretimde sahte kişi/takım seed etmeme kuralını değiştirmez. Uygulama ayrıntısı `docs/superpowers/plans/2026-10-10-local-admin-ulujam-demo.md` içindedir.
+
 - Genel ziyaretçi ve katılımcı için hesap açma/giriş yoktur; yalnızca yönetici hesapları, takım oturumları ve bireysel makbuz/kart erişimi vardır.
 - Yeni üretim veritabanında kişi, başvuru, takım ve kart kayıtları sıfırdır. 2026 üç derece bağlantısı ayrı, kişisel veri içermeyen idempotent editoryal başlangıç içeriğidir. Sahte takım veya kişi seed edilmez.
 - 2027 UluJam tarihi bilinmiyor: tarih yayımlanana kadar “Yakında” görünür, sayısal geri sayım ve başvuru açılmaz.
