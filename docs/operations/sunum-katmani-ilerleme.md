@@ -5,7 +5,12 @@
 Tarih: 10 Ekim 2026 (Europe/Istanbul). Dal: `sunum/faz-0`.
 Başlangıç commit'i: `b731d00`. İlk incelemede çalışma ağacı temizdi.
 
-**Durum: 0.1 ortam kurulumu engellendi; Faz 0 tamamlanmadı.** Referans
+**Güncel durum:** 0.1 yeniden başlatıldı; migration, typecheck ve lint geçti,
+`pnpm test` **135 geçti / 6 başarısız** sonucu verdi. Garage sır dosyası izinleri
+ve eksik iki HEIC girdisi engel oluşturuyor. Ayrıntılar en alttaki yeniden
+başlatma kaydında. Faz 0 tamamlanmadı; 0.2–0.6 başlatılmadı.
+
+**İlk deneme (tarihsel): 0.1 ortam kurulumu engellendi.** Referans
 doğrulamalarına ve 0.2–0.6 adımlarına geçilmedi. Uygulama, arka uç, şema,
 migration, kimlik doğrulama, UI ve test kaynakları değiştirilmedi. Push/merge,
 canlı siteye erişim ve yedek hedefi erişimi yapılmadı.
@@ -139,3 +144,99 @@ ile deterministik çekim, ortam düzeldikten sonra ve UI değişmeden yapılacak
   adımından devam edilerek bütün referans kontrolleri sırayla çalıştırılacak.
 - Yedek sağlayıcısı ve VDS kabul eşikleri henüz kararlaştırılmadı; 0.6
   başlatılmadığından onaylanmış kapasite/sağlayıcı iddiası yok.
+
+## 0.1 yeniden başlatma — 10 Ekim 2026
+
+Kullanıcı Docker soket sorununu manuel çözdüğünü, motorun sağlıklı olduğunu
+bildirdi ve Compose adımından devam edilmesini onayladı. Başlangıç:
+`sunum/faz-0`, `07ce585`, temiz çalışma ağacı. Önceki Docker motoru engeli
+bu denemede tekrar oluşmadı; aşağıdaki yeni engeller ayrı kaydedildi.
+
+### Komutlar ve çıktı özeti
+
+| Sıra | Komut / kontrol | Sonuç |
+| --- | --- | --- |
+| 1 | `docker-compose --env-file .env.local up -d` | Sandbox named pipe erişimini reddetti; izinli tekrar **exit 0**. PostgreSQL/Garage imajları hazırlandı, yerel ağ/volume/konteynerler oluşturulup başlatıldı. |
+| 2 | `docker-compose --env-file .env.local ps` ve `ps -a` | PostgreSQL **healthy**. Garage **Exited (1)**; Compose başlatma çıkışı tek başına servis sağlığı kabul edilmedi. |
+| 3 | `docker-compose --env-file .env.local exec -T object-store /garage status` | Exit 1; object-store servisi çalışmıyor. |
+| 4 | `docker-compose --env-file .env.local logs --no-color --tail 70 object-store` | Garage RPC sır dosyasının `0100777` izinleri nedeniyle başlamayı reddetti; beklenen `0600`. |
+| 5 | `pnpm config:check` | **Exit 0**, sunucu yapılandırması geçerli. Sandbox içinde çıktı vermeden bekleyen ilk deneme iptal edilip izinli tekrar çalıştırıldı. Bu kontrol servis bağlantılarını doğrulamıyor. |
+| 6 | `pnpm db:migrate` | **Exit 0**, migration tamamlandı; seed çalıştırılmadı. Şema/migration kaynakları değiştirilmedi. |
+| 7 | `pnpm typecheck` | **Exit 0**, `tsc --noEmit` geçti. |
+| 8 | `pnpm lint` | **Exit 0**, `eslint . --max-warnings=0` geçti. |
+| 9 | `pnpm test` | **Exit 1**. Vitest 5.0.3: **13 dosya, 11 geçti / 2 başarısız; 141 test, 135 geçti / 6 başarısız**. Süre **6,97 sn**. |
+| 10 | `pnpm test:integration` | **Çalıştırılmadı / doğrulanmadı**; ilk kırmızı referans kontrolünden sonra durma kuralı uygulandı. `pnpm test` entegrasyon dosyalarını da çalıştırdı, ancak ayrı komutun geçtiği iddia edilmiyor. |
+| 11 | `pnpm test:e2e` | **Çalıştırılmadı / doğrulanmadı**; aynı durma kuralı. |
+| 12 | `pnpm build` | **Çalıştırılmadı / doğrulanmadı**; aynı durma kuralı. |
+
+Kontroller tabloda gösterilen sırayla çalıştırıldı. pnpm komutları normal
+kullanıcı önbelleği/runtime erişimiyle izinli çalıştırıldı. Ham pnpm çıktıları
+Git dışında `.local/faz0-reference-{config,migrate,typecheck,lint,test}.log`
+dosyalarında saklandı.
+
+### Kırmızı testler, kök nedenler ve etkilenen dosyalar
+
+| Başarısız test | Gözlenen hata ve neden |
+| --- | --- |
+| `tests/integration/infrastructure.test.ts`: özel S3 yükle/oku/anonim erişim | `ECONNREFUSED ::1:9000` ve `127.0.0.1:9000`; Garage çalışmıyor. |
+| `tests/integration/media.test.ts`: özel orijinal/yayın/silme akışı | Aynı S3 bağlantı reddi. |
+| `tests/integration/media.test.ts`: orijinal/yayınlanmamış türev anonim erişim | Aynı S3 bağlantı reddi. |
+| `tests/integration/media.test.ts`: `IMG_0427.heic` yön/metadata | Satır 91'de `ENOENT`; `Media/IMG_0427.heic` bulunmuyor. `Test-Path` da `False` verdi. |
+| `tests/integration/media.test.ts`: `IMG_1206.heic` yön/metadata | Satır 91'de `ENOENT`; `Media/IMG_1206.heic` bulunmuyor. `Test-Path` da `False` verdi. |
+| `tests/integration/media.test.ts`: eşzamanlı upload | Satır 191'de başarılı upload sayısı beklenen **1**, gerçekleşen **0**. S3 kullanan upload akışında, aynı kapalı Garage koşulunda oluştu; dolaylı S3 etkisi değerlendirmesi çıkarımdır. Garage düzeldikten sonra yeniden doğrulanmalı. |
+
+**Garage'ın doğrudan başlangıç nedeni**, konteyner günlüğünde açıkça:
+
+```text
+Error: File /run/secrets/garage-rpc is world-readable!
+(mode: 0100777, expected 0600)
+```
+
+`compose.yaml`, Windows'taki `.local/garage-rpc.secret` dosyasını salt okunur
+bind mount ile `/run/secrets/garage-rpc` yoluna sunuyor;
+`infrastructure/garage.toml` bu yolu `rpc_secret_file` olarak okuyor.
+Konteynerin gördüğü `0777` izinleri Garage'ın `0600` koşulunu sağlamıyor.
+Bu, önceki Docker Desktop soket hatasından farklı bir yerel kurulum engeli.
+Garage'ın izin denetimi devre dışı bırakılmadı; Compose/config/arka uç
+kaynakları değiştirilmedi.
+
+HEIC testleri Git dışında bırakılan gerçek yerel `Media/` girdilerine doğrudan
+bağlı. İki dosya bu checkout'ta yok; yerine görsel üretilmedi, testler
+atlanmadı veya zayıflatılmadı. Etkilenen test satırları ve servis başlangıcı
+incelendi; mevcut kanıtla arka uç uygulama hatası iddiası yapılmıyor.
+
+### Test sonrası yerel veri kontrolü
+
+Yerel konteynerde `psql -v ON_ERROR_STOP=1` ile salt okunur sorgular geçti:
+
+- **42** public tablo.
+- `uludott_test_%` adlı kalan geçici test DB sayısı **0**.
+- Ana DB'de `admins`, `events`, `announcements`, `games` tablolarının her biri
+  **0** kayıt. Bu dört tablonun sayımı tüm ürün tablolarının sayımı olarak
+  sunulmuyor.
+
+### Rota tablosu, görsel baseline ve kabul
+
+| Ölçüt | Sonuç | Kanıt |
+| --- | --- | --- |
+| Docker motoruna erişim ve PostgreSQL hazır | ✓ | İzinli Compose çalıştı; PostgreSQL healthy, migration başarılı. |
+| Garage/S3 hazır | ✗ | Garage Exited (1), RPC secret `0777`/`0600` hatası; S3 bağlantıları reddediliyor. |
+| Yapılandırma, migration, typecheck, lint | ✓ | İlgili dört komut exit 0. |
+| `pnpm test` yeşil | ✗ | 135 geçti / 6 başarısız. |
+| Ayrı integration, e2e ve build kontrolleri | ✗ | Durma kuralı nedeniyle çalıştırılmadı; doğrulanmadı. |
+| Faz 0 başlangıç rota tablosu | ✗ | Build çalıştırılmadı; statik/dinamik tablo yok. Bitiş tablosu ve karşılaştırma da doğrulanmadı. |
+| 16 klasik masaüstü/mobil ekran görüntüsü | ✗ | İlk kırmızı kontrolde duruldu; baseline üretilmedi. |
+| Faz 0'ın diğer kabul ölçütleri | ✗ | 0.2–0.6 başlatılmadı; önceki kabul tablosundaki indeksleme/önbellek/kural belgesi maddeleri açık. |
+
+### Değişen dosyalar ve devam koşulu
+
+- Tek takip edilen değişiklik: `docs/operations/sunum-katmani-ilerleme.md`
+  (bu kayıt ve güncel durum özeti). Uygulama, test, şema/migration,
+  kimlik doğrulama, UI, bağımlılık ve lockfile kaynakları değiştirilmedi.
+- Referans hattı yeşile dönmeden 0.2–0.6'ya geçilmeyecek. Garage'a RPC sır
+  dosyasının `0600` olarak sunulması ve testlerin beklediği iki gerçek HEIC
+  dosyasının yerel `Media/` altında sağlanması gerekiyor. Yerel kurulum
+  uyarlaması ve kırmızı kontrol sonrası devam kullanıcı onayı bekliyor.
+- Sonraki denemede ilgili kırmızı kontrol yeniden doğrulanacak; kalan
+  referans komutları sırayla çalıştırılacak. Push/merge, canlı sistem ve yedek
+  hedefine erişim yapılmadı.
