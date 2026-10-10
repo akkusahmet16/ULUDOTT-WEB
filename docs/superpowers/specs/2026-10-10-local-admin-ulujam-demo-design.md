@@ -1,6 +1,6 @@
 # Yerel yönetim, UluJam başvuru, takım ve Wallet denemesi
 
-Tarih: 10 Ekim 2026. Durum: tasarım incelemesinde.
+Tarih: 10 Ekim 2026. Durum: kullanıcı tasarımı onayladı; uygulama planı incelemesinde.
 
 ## Amaç ve sınır
 
