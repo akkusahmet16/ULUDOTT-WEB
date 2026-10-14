@@ -685,3 +685,25 @@ Eski değişken adları base.css'te takma ad olarak bırakılmaz. Yeni özel öz
 ### 1.1 sonuç ve kullanıcı kararı
 
 Lint kapsam düzeltmesi sonrası `pnpm typecheck`, `pnpm lint`: exit 0; `pnpm test`: **162/162**, 17 dosya, 7,78 sn. Envanter ve eski→anlamsal eşleme tamamlandı. 14 Ekim 2026 kullanıcı JPEG sabitini **yalnız ilgili kullanıma özel gerekçeli istisna** olarak korumayı onayladı; backend dosyası değişmeyecek. Renk kabulü bu açık kararla “themes.css dışında 0 UI renk literal'i; 1 dokunulmaz JPEG işleme sabiti” olarak ölçülür. Font preload seçeneği yanıtı beklenirken bağımsız token/CSS işi ilerler.
+### 1.2 sonuç ve kontrast kanıtı
+
+`themes.css` iki eş özel özellik kümesiyle (**tema başına 140 token**) oluşturuldu; selector'lar `:root, [data-theme="arcade"]` ve `[data-theme="classic"]`, ikisi de dark color-scheme. Temanın bütün renk/tipografi/ölçü/hareket/katman değerleri bu dosyada. Named layer, next/font'un katmansız yüz sınıflarının root'ta üstün gelmesini ve alt ağaçlarda inherit ile gerçek yüzün korunmasını sağlar. Classic ana renkler/radius/Arial-Courier değerleri korundu; güçlü kontrol sınırı ayrı token olarak eklendi.
+
+Önce 24 yeni test eksik themes.css nedeniyle RED; sonra `pnpm typecheck`, `pnpm lint`: exit 0; `pnpm test`: **186/186**, 18 dosya, 6,87 sn. Renkler aşağıda WCAG sRGB luminance formülüyle ölçüldü; yuvarlama yalnız rapor içindir, test ham oranı karşılaştırır.
+
+| Çift | Classic | Arcade | Eşik |
+|---|---:|---:|---:|
+| text / bg | 14,802 | 17,963 | 4,5 |
+| text / surface | 13,114 | 16,559 | 4,5 |
+| text-muted / bg | 8,954 | 7,100 | 4,5 |
+| text-muted / surface | 7,934 | 6,545 | 4,5 |
+| primary-contrast / primary | 14,346 | 5,423 | 4,5 |
+| secondary-contrast / secondary | 7,690 | 14,665 | 4,5 |
+| accent-contrast / accent | 8,469 | 17,041 | 4,5 |
+| primary / bg | 14,346 | 5,423 | 3 |
+| secondary / bg | 7,690 | 14,665 | 3 |
+| focus / bg | 14,346 | 17,041 | 3 |
+| border-strong / bg | 3,500 | 3,279 | 3 |
+| border-strong / surface (ek gerçek kontrol sınırı) | 3,101 | 3,022 | 3 |
+
+Arcade istenen border-strong tonu #4a4a7a → #5f5f8f olarak açıldı (bg oranı 2,377 → 3,279). Classic dekoratif border #494a50 aynıdır; yeni güçlü sınır #707177, mevcut dekoratif görünümün yerine geçirilmez. Değişenler: themes.css ve kontrast test/helper dosyaları, bu rapor. Henüz uygulama CSS import'u değiştirilmedi.
