@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ADMIN_THEME } from "../../config/theme.config.ts";
 export const metadata: Metadata = {
   title: "Uludott Yönetim",
   robots: { index: false, follow: false },
@@ -9,5 +10,5 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return <div className="admin-shell" data-theme={ADMIN_THEME}>{children}</div>;
 }

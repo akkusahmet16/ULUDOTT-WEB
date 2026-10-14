@@ -717,3 +717,11 @@ Arcade istenen border-strong tonu #4a4a7a → #5f5f8f olarak açıldı (bg oran�
 Üç `next/font/google` tanımı yalnız `src/config/fonts.ts` içinde: Press Start 2P (400), Space Grotesk (variable), VT323 (400); latin+latin-ext, display:swap, ayrı face değişkenleri. Root yalnız `.variable` sınıflarını taşır; hangi yüzün kullanıldığını themes.css seçer. Koşulsuz preload classic sıfır-font şartına aykırı olduğundan preload:false seçildi; arcade doğal CSS yüklemesi kullanır, **preload listesi boş**. Kullanıcı font alternatifi sorusuna ayrı yanıt vermeden Faz 1'i kesintisiz bitirmeyi istedi; minimum doğal CSS seçeneğiyle ilerlenir. Yeni bağımlılık yok.
 
 Önce eksik font config nedeniyle RED; sonra `pnpm typecheck`, `pnpm lint`: exit 0; `pnpm test`: **187/187**, 19 dosya, 6,85 sn. Gerçek Google font indirmeleriyle `pnpm build`: exit 0, compile 5,2 sn / TS 5,3 sn; Faz 0 rota statiklik tablosu korunur. Mock/fallback dosyasıyla derleme geçirme yapılmadı. Classic ağ sıfırı ve Türkçe glif ekran kanıtı, boot sonrası üretim e2e'de alınacak; henüz görsel kanıt iddiası yok. Değişenler: fonts.ts, root font sınıfları, AST tabanlı font sözleşmesi testi ve rapor.
+
+### Faz 1 / 1.5 — Tema tercihi ve ilk boyama
+
+- `THEMES` birleşim tipi, tam `THEME_REGISTRY`, doğrulayıcı, varsayılan Arcade ve admin Classic tanımlandı. Storage/çerez anahtarlarının tek kaynağı `src/config/storage-keys.ts`.
+- Next 16 `preventing-flash-before-hydration` rehberine uygun senkron `head` betiği merkezi sabitlerden üretilir; erişilemeyen/geçersiz localStorage varsayılana döner. HTML hydration uyarısı yalnız kök attribute için bastırılır.
+- `useSyncExternalStore` DOM attribute, MutationObserver ve sekmeler arası storage olayını izler. Layout effect yalnız Next dev/StrictMode attribute sıfırlamasını ilk boyamadan önce onarır. Tema değiştirici UI eklenmedi.
+- Admin sarmalayıcısı Classic tokenlarını font/color/background üzerinde yeniden tüketir; hesaplanmış Arcade body fontunu miras almaz. Backend ve admin robots metadata değişmedi.
+- Kanıt: önce yeni iki test modül eksikliğinde kırmızı; ardından `pnpm typecheck`, `pnpm lint` çıkış 0, `pnpm test`: 21 dosya / 197 test geçti (12.28 sn). Gerçek tarayıcı FOUC/ağ/admin kanıtları 1.8'de tamamlanacak.

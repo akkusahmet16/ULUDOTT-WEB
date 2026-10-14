@@ -240,6 +240,15 @@ select {
 .field small {
   color: var(--color-text-muted);
 }
+.admin-shell {
+  display: flow-root;
+  min-height: var(--layout-min-height);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+}
 body > main:not(#main-content),
 .admin-shell > main {
   max-width: var(--layout-heading-max);

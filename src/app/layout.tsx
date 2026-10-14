@@ -4,6 +4,9 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { loadServerConfig } from "../lib/config/server.ts";
 import { fontVariables } from "../config/fonts.ts";
+import { DEFAULT_THEME } from "../config/theme.config.ts";
+import { BootScript } from "../components/boot/BootScript.tsx";
+import { ThemeProvider } from "../components/theme/ThemeProvider.tsx";
 
 export const metadata: Metadata = {
   metadataBase: new URL(loadServerConfig().appUrl),
@@ -16,8 +19,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="tr" className={fontVariables}>
-      <body>{children}</body>
+    <html lang="tr" className={fontVariables} data-theme={DEFAULT_THEME} suppressHydrationWarning>
+      <head><BootScript /></head>
+      <body><ThemeProvider>{children}</ThemeProvider></body>
     </html>
   );
 }
