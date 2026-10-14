@@ -707,3 +707,8 @@ Lint kapsam düzeltmesi sonrası `pnpm typecheck`, `pnpm lint`: exit 0; `pnpm te
 | border-strong / surface (ek gerçek kontrol sınırı) | 3,101 | 3,022 | 3 |
 
 Arcade istenen border-strong tonu #4a4a7a → #5f5f8f olarak açıldı (bg oranı 2,377 → 3,279). Classic dekoratif border #494a50 aynıdır; yeni güçlü sınır #707177, mevcut dekoratif görünümün yerine geçirilmez. Değişenler: themes.css ve kontrast test/helper dosyaları, bu rapor. Henüz uygulama CSS import'u değiştirilmedi.
+### 1.3 sonuç ve kanıt
+
+`git mv src/styles/tokens.css src/styles/base.css` yapıldı. Eski 12 takma ad kaldırıldı; bütün renk, font ölçüsü, boşluk, radius, border, gölge, süre ve katman değerleri `var(--…)` tüketir. Root layout import sırası themes.css → base.css. Base dosyasındaki px literal'leri yalnız başta belgelenen 700/900/1100 breakpoint sorgularında bulunur. 699/700 ayrımı aynı 700 sınırını kullanan modern range syntax'e çevrildi. Reduced-motion süre/iteration tokenlarıyla kısalır; mevcut yıldız animasyonu yalnız no-preference altında olduğundan eski reduced-motion “animationName none” sözleşmesi korunur.
+
+`pnpm typecheck`, `pnpm lint`: exit 0; `pnpm test`: **186/186**, 18 dosya, 10,29 sn. `rg` taramasında base.css'te renk/ölçü literal'i kalmadı (yalnız belgeli media px istisnası); eski değişken yok. Classic görsel regresyonu boot/font adımları sonrasındaki özel boş-DB koşusunda doğrulanacak, henüz iddia edilmiyor. Değişenler: CSS taşıması/içeriği, root import'ları ve rapor.

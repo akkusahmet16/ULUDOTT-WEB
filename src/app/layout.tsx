@@ -1,4 +1,5 @@
-import "../styles/tokens.css";
+import "../styles/themes.css";
+import "../styles/base.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { loadServerConfig } from "../lib/config/server.ts";
