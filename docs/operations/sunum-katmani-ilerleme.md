@@ -637,3 +637,51 @@ tests/unit/live-audit.test.ts
 - **Sonraki fazlar:** sitemap statik listesi `FAZ-2` işaretiyle taşınmayı bekler. İleride token'lı sayfalar eklendiğinde kendi explicit noindex meta/HTTP korumaları gerekir; şu an böyle bir sayfa uygulanmış değildir. Tarihî sonuçlarda mevcut HTTP yazma yolu yoktur; CLI seed değişikliği TTL ile yenilenir, gelecekte HTTP yönetim yolu eklendiğinde ilgili etiketi COMMIT sonrası geçersiz kılmalıdır.
 
 Faz 0 uygulama ve yerel kabul ölçütleri **tamamlandı**. Faz 1 UI/tema/i18n çalışması bu faza eklenmedi.
+## Faz 1 başlangıç — 14 Ekim 2026
+
+Dal: `sunum/faz-1`, başlangıç `dba0f64`. Faz 0 son kabul tablosu ✓; 16 baseline ve CSS gzip referansı mevcut. AGENTS, Next 16.3.8 font/root layout/flash-before-hydration rehberleri, kural belgesinin tamamı, bu rapor ve mevcut CSS/layout/tasarım sistemi okundu. Çalışma ağacında kullanıcıya ait bağımsız `ULUDOTT-WEB/` Git checkout'u var (başlangıç `b731d00`); bu dizine dokunulmaz ve commit'e alınmaz. Uygulama bu deponun kök `src/` ağacıdır.
+
+### 1.1 envanter ve anlamsal eşleme (uygulama öncesi)
+
+`src/**/*.{ts,tsx,css}` taraması **201 kullanım kaydı**, 12 farklı eski özel özellik, 11 farklı renk yazımı, 53 farklı ölçü/hareket yazımı çıkardı. Tam dosya/satır/kullanım envanteri `.local/faz1-inventory.json`; tekrar üretme yardımcısı `.local/faz1-inventory.mjs` (Git dışında). `ms` literal'i yok; animasyonda `2s` var. JSX'teki tek mevcut inline style oyun grid konumudur, renk değildir. UI dışındaki tek TS renk sabiti JPEG rasterizasyon arka planıdır.
+
+| Eski değişken / literal | Yeni anlamsal token | Classic davranışı |
+|---|---|---|
+| `--ink` | `--color-bg`, `--color-text-inverse`, kontrast tokenları | Mevcut koyu değer aynı |
+| `--panel` | `--color-surface`, `--color-bg-elevated` | Mevcut panel aynı |
+| `--cream` | `--color-text` | Mevcut metin aynı |
+| `--muted` | `--color-text-muted` | Mevcut ikincil metin aynı |
+| `--line` | `--color-border` | Dekoratif border aynı; yeni güçlü UI sınırı ayrı |
+| `--lime` | `--color-primary`, `--color-focus` | Mevcut vurgu aynı |
+| `--purple` | `--color-secondary`, seçim/status tokenları | Mevcut ikincil vurgu aynı |
+| `--coral` | `--color-accent` | Mevcut vurgu aynı |
+| `--radius` | `--radius-card` | 18px korunur |
+| `--space` | `--space-gutter` | clamp(20px, 5vw, 80px) korunur |
+| `--font`, `--mono` | `--font-body`, `--font-display`, `--font-label`, `--font-mono` | Arial / Courier New eşlemesi korunur |
+| `#000a` dialog backdrop | `--color-overlay` | Aynı alpha |
+| QR `white` | `--color-qr-bg` | QR için opak açık yüzey korunur |
+| Yıldız rgba gölgesi | `--glow-primary` | Mevcut 18px efekt, yalnız izinli harekette |
+| `1px`, `3px`, `5px`, `-1px` | border/outline/underline/tracking tokenları | Mevcut ölçüler aynı |
+| `6/8/10/12/16/18/20/24/28/30/32/36/40/48/56/64/68/80px` | space scale + bölüm/hero/control tokenları | Her bağlamın ölçüsü korunur; sayısal takma ad yerine anlam |
+| `12/14/18/20/22/24/30/32/36/48/52/76/120px` | text scale, display/heading/label/link/control tokenları | Eski hesaplanan font ölçüleri korunur |
+| `44/48/70/84/106px` | touch target, board row, header yüksekliği tokenları | Touch hedefleri 48px'e tamamlanır; header kompozisyonu korunur |
+| `390/560/800/1000/1360px`, `65ch`, `90vw` | preview/dialog/profile/heading/layout/measure tokenları | Aynı layout sınırları |
+| `100/999px` | status/control/pill radius tokenları | Mevcut pill görünümleri |
+| `2s`, easing, z-index ve birimsiz oranlar | motion/ease/layer/opacity/layout tokenları | Hareket reduced-motion altında kısalır |
+| `699/700/900/1100px` | base.css başındaki tek breakpoint belge bloğu | Mobil sınırı 700, grid 900, tablet üst sınırı 1100; CSS media literal istisnası |
+
+Eski değişken adları base.css'te takma ad olarak bırakılmaz. Yeni özel özelliklerin tamamı themes.css'te tanımlanır. Next/font yüz adları için aynı token kümesinde `inherit` tanımları + named layer kullanımı araştırıldı; derleyicinin katmansız `.variable` sınıfları gerçek yüzleri sağlar. Tema ekleme registry kümesi ve CSS bloğuyla yürür. Yeni görünür metin/çeviri/rota config veya tema seçici eklenmez; mevcut metinler bu fazda taşınmaz.
+
+### Uygulama öncesi teknik kararlar ve etkilenen doğrulamalar
+
+- **Dokunulmaz JPEG sabiti:** `src/modules/media/infrastructure/process-image.ts:34` içindeki flatten arka planı UI teması değil, kalıcı görüntü çıktısı sözleşmesidir. Backend'e dokunmama ile mutlak sıfır literal hedefi burada çatışır. Tercih kullanıcıya sunulacak; sonuç merkezi renk testinde açık, bağlama bağlı gerekçeyle ve raporda kayıtlı olmalı. Tüm infrastructure ağacını sessizce hariç tutmak yasaktır.
+- **Font preload:** Next root layout'ta `preload: true` bütün temalarda koşulsuz ağ isteği üretir; localStorage classic tercihi sunucuya görünmez. Classic sıfır-font için üç loader'da preload:false gerekir. Arcade'in doğal CSS font yüklemesi ile koşullu kritik preload seçenekleri kullanıcıya sunulacak; ağ kanıtı üretim cold-cache e2e ile alınır. Font loader yüz değişkenleri ve font/subset boyutları da raporlanır.
+- **Kontrast:** Eski classic border/bg ≈1,93; arcade istenen güçlü border/bg ≈2,38. Dekoratif classic border değeri korunur; yeni güçlü border tokenı aynı ton ailesinde yeterince açılır. Renklerin diğer zorunlu çiftleri ölçülecek, düşük çiftler ayarlanıp kaydedilecek.
+- **Admin alt ağaç:** Klasik wrapper, font/zemin/metin tokenlarını kendisi tüketir; root arcade'den hesaplanan font-family mirasının yönetimi değiştirmesi önlenir. Eski body > main stilleri yeni wrapper'a uyarlanır. Kimlik/oturum işleyicileri değişmez.
+- Etkilenen doğrulamalar: merkezi literal/özel özellik/kontrast unit testleri, boot ve store testleri, sekmeler arası tema ve engellenmiş storage e2e, iki temada axe, boş DB classic 16 baseline karşılaştırması, font ağ/preload ve Türkçe glif kanıtları, mevcut backend davranış testleri.
+### 1.1 yerel doğrulama kapsamı düzeltmesi (uygulama öncesi)
+
+İlk envanter sonrası `pnpm typecheck` geçti; `pnpm lint` **319 parsing error** verdi. Nedeni tema kodu değil: kökte sonradan bulunan bağımsız `ULUDOTT-WEB/` checkout'unun ikinci eslint/tsconfig kökü olarak taranması. `pnpm test` lint kırmızı olduğundan bu ilk zincirde çalıştırılmadı. Kullanıcı dizini taşınmaz/silinmez/değiştirilmez. Minimum doğrulama config düzeltmesi: kök `eslint.config.mjs` içine parser için `tsconfigRootDir: import.meta.dirname` ve yalnız bu bağımsız checkout için açıklamalı global ignore eklenir. Kök uygulamanın src/tests/scripts/config taraması veya kuralları daraltılmaz. Etkilenen kontrol `pnpm lint`; ardından typecheck/lint/test zinciri tekrarlanır. Test beklentisi veya backend değişikliği değildir.
+### 1.1 sonuç ve kullanıcı kararı
+
+Lint kapsam düzeltmesi sonrası `pnpm typecheck`, `pnpm lint`: exit 0; `pnpm test`: **162/162**, 17 dosya, 7,78 sn. Envanter ve eski→anlamsal eşleme tamamlandı. 14 Ekim 2026 kullanıcı JPEG sabitini **yalnız ilgili kullanıma özel gerekçeli istisna** olarak korumayı onayladı; backend dosyası değişmeyecek. Renk kabulü bu açık kararla “themes.css dışında 0 UI renk literal'i; 1 dokunulmaz JPEG işleme sabiti” olarak ölçülür. Font preload seçeneği yanıtı beklenirken bağımsız token/CSS işi ilerler.
