@@ -5,10 +5,10 @@
 Tarih: 10 Ekim 2026 (Europe/Istanbul). Dal: `sunum/faz-0`.
 Başlangıç commit'i: `b731d00`. İlk incelemede çalışma ağacı temizdi.
 
-**Güncel durum:** 0.1 yeniden başlatıldı; migration, typecheck ve lint geçti,
-`pnpm test` **135 geçti / 6 başarısız** sonucu verdi. Garage sır dosyası izinleri
-ve eksik iki HEIC girdisi engel oluşturuyor. Ayrıntılar en alttaki yeniden
-başlatma kaydında. Faz 0 tamamlanmadı; 0.2–0.6 başlatılmadı.
+**Güncel durum (14 Ekim 2026):** 0.1 referans hattı yeşil: 141/141 test,
+93/93 integration, 27/27 e2e ve üretim build'i geçti. 16 deterministik klasik
+görüntü kaydedildi. 0.2–0.6 uygulaması sırada; Faz 0 bütünü henüz tamamlanmadı.
+Önceki başarısız koşular aşağıda tarihsel kayıt olarak korunuyor.
 
 **İlk deneme (tarihsel): 0.1 ortam kurulumu engellendi.** Referans
 doğrulamalarına ve 0.2–0.6 adımlarına geçilmedi. Uygulama, arka uç, şema,
@@ -240,3 +240,126 @@ Yerel konteynerde `psql -v ON_ERROR_STOP=1` ile salt okunur sorgular geçti:
 - Sonraki denemede ilgili kırmızı kontrol yeniden doğrulanacak; kalan
   referans komutları sırayla çalıştırılacak. Push/merge, canlı sistem ve yedek
   hedefine erişim yapılmadı.
+
+## Faz 0 başlangıç — kabul (14 Ekim 2026)
+
+Kullanıcı mevcut sırları koruyarak 0.1'in tekrarını ve yeşil olduğunda 0.2–0.6'nın
+kesintisiz yürütülmesini onayladı. Başlangıç dalı `sunum/faz-0`, commit `c9cb08b`.
+
+### Yerel kurulum ve girdi kararları
+
+- Docker motoru çalışıyor. Windows bind mount `0777` sorunu, yalnızca ignore
+  kapsamındaki `.local/compose.windows.yaml` ile çözüldü: mevcut RPC sırrı
+  Linux volume'a kopyalanıp `0600` yapılıyor; Garage `GARAGE_RPC_SECRET_FILE`
+  ile bu kopyayı okuyor. İzin kontrolü kapatılmadı, yeni imaj/bağımlılık yok.
+  Komut: `docker-compose --env-file .env.local -f compose.yaml -f .local/compose.windows.yaml up -d`.
+  Init exit 0; PostgreSQL healthy; `/garage status` sağlıklı düğüm gösterdi.
+- `.env.local` ve `.local/garage-rpc.secret` SHA256 değerleri önce/sonra eşit;
+  içerikleri ve mevcut anahtarlar korundu. Bu değerler rapora/çıktıya yazılmadı.
+- Kullanıcı özgün HEIC'lerin mevcut olmadığını bildirdi ve açık örneklerin
+  indirilmesini onayladı. Mevcut iki farklı boyut beklentisini korumak için
+  iki uygun örnek kullanıldı; test kaynakları/beklentileri değiştirilmedi.
+  `Media/` Git dışında; örnekler gerçek topluluk fotoğrafı olarak sunulmadı,
+  public'e veya ürün DB'sine aktarılmadı. Özgün iPhone dosyalarının cihaz/yön
+  davranışı bu örneklerle yeniden kanıtlanmış sayılmaz.
+
+| Yerel ad | Kaynak | SHA256 | İşlenmiş boyut |
+| --- | --- | --- | --- |
+| `Media/IMG_0427.heic` | [heic.fyi EXIF test chart](https://heic.fyi/samples/exif-gps-date.heic), [CC0 lisansı](https://heic.fyi/samples/LICENSE.txt) | `01fd9fa28d09885d8482d01a5b36d88dc89fde3b7cfeaca50b70f8314d2c63d1` | 1600×1200 |
+| `Media/IMG_1206.heic` | [Pine & Birch 1920×1080 örneği](https://pnb-website-bucket.s3.us-east-2.amazonaws.com/samples/images/heic/sample-image-1920x1080.heic), [yeniden kullanım açıklaması](https://www.pine-and-birch.com/sample-files/images/heic) | `5a9cbaa3ca36b535dc9c2b100b7f595e819d8841ace6ea616778fd5254227bf4` | 1600×900 |
+
+İki örnekte de mevcut `validateMedia` HEIC imzasını kabul etti; `processImage`
+WebP/AVIF/JPEG üretti. Projeye bağımlılık eklenmedi.
+
+### Sıralı referans doğrulama kanıtı
+
+| Komut | Sonuç |
+| --- | --- |
+| `pnpm config:check` | Exit 0, yapılandırma geçerli. |
+| `pnpm db:migrate` | Exit 0, migration tamamlandı; seed yok. |
+| `pnpm typecheck` | Exit 0, strict TypeScript geçti. |
+| `pnpm lint` | Exit 0, sıfır uyarı. |
+| `pnpm test` | Exit 0, **13 dosya / 141 test**, 10,43 sn. |
+| `pnpm test:integration` | Exit 0, **10 dosya / 93 test**, 9,29 sn. |
+| `pnpm test:e2e` | Exit 0, **27/27**, 47,8 sn; mevcut davranış ve axe testleri. |
+| `pnpm build` | Exit 0, Next 16.3.8 Turbopack; derleme 10,0 sn, TypeScript 4,6 sn. |
+
+Ham çıktılar `.local/faz0-2026-10-14-*.log` altında. Chromium 1243 indirmesi
+Node indiricisinde beş kez zaman aşımına uğradı; aynı resmî arşivler curl ile
+alınıp geçici localhost sunucusundan Playwright'ın kendi kurucusuna sunuldu.
+Chrome arşivinin MD5'i resmî HTTP başlığıyla eşleşti. Kurulan sürüm
+153.0.8010.12; farklı browser revizyonu veya test muafiyeti kullanılmadı.
+
+İlk e2e başlangıcı Windows `spawn("pnpm")` → `ENOENT` nedeniyle durdu. Mevcut
+pnpm 11.19.0 `.CMD` dosyasını çağıran, sistem C# derleyicisiyle üretilmiş
+`.local/pnpm-bin/pnpm.exe` adaptörü PATH'e yalnızca test koşusunda eklendi.
+Başlatıcı/test/uygulama kaynakları korunarak aynı `pnpm test:e2e` geçti.
+Windows kapanışında kalan tek test DB'si, UUID adı + yalnızca bilinen e2e
+admini + boş katılım tabloları + izinli medya anahtarları doğrulanarak kendi
+fixture medyasıyla temizlendi. Son kalan geçici test DB sayısı **0**.
+
+### Başlangıç rota tablosu
+
+```text
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /admin
+├ ƒ /admin/duyurular
+├ ƒ /admin/etkinlikler
+├ ƒ /admin/galeri
+├ ƒ /admin/linkler
+├ ƒ /admin/medya
+├ ƒ /api/admin/announcements
+├ ƒ /api/admin/csrf
+├ ƒ /api/admin/events
+├ ƒ /api/admin/gallery
+├ ƒ /api/admin/links
+├ ƒ /api/admin/login
+├ ƒ /api/admin/logout
+├ ƒ /api/admin/media
+├ ƒ /api/admin/session
+├ ƒ /api/admin/session/renew
+├ ƒ /api/links/[id]/qr
+├ ○ /destek
+├ ƒ /duyurular
+├ ƒ /duyurular/[slug]
+├ ƒ /etkinlikler
+├ ƒ /etkinlikler/[slug]
+├ ○ /hakkimizda
+├ ƒ /l/[id]
+├ ƒ /linkler
+├ ƒ /media/[variantId]
+├ ƒ /oyunlar
+└ ƒ /ulujam
+○ Statik; ƒ istek anında sunucuda render.
+```
+
+### Klasik görsel referans ve boyutlar
+
+- `tests/e2e/__baseline-classic__/`: **16 PNG + manifest + çekim README'si**.
+  Sekiz istenen rota; 1280×800 ve 375×812; ayrı, migration uygulanmış ve
+  42 tablosunun her biri boş DB; seed yok.
+- Sabit saat `2026-10-10T09:00:01.000Z`; İstanbul/tr-TR; reduced motion;
+  animasyon/transition/caret kapalı. Yalnızca Next geliştirme rozeti çekimde
+  gizlendi. İlk taslak çekimde görülen rozet QA'da kaldırıldıktan sonra iki
+  yeni bağımsız koşu karşılaştırıldı: **16/16 SHA256 birebir eşit**.
+- Ana sayfa masaüstü/mobil ve UluJam mobil görüntüleri görsel incelendi.
+  Gerçek UI kaynakları değiştirilmedi. Dev'in ürettiği `next-env.d.ts`
+  import yolları başlangıçtaki üretim yollarına geri getirildi.
+- Başlangıç üretim CSS: **5651 bayt**, gzip (zlib level 9) **1940 bayt**;
+  SHA256 `5f2bd63bda302fb49a83f6fe9e9248de08f8ccb494495d46a077e8ab286b1ae1`.
+
+### 0.1 kabul ve değişen dosyalar
+
+| Ölçüt | Sonuç | Kanıt |
+| --- | --- | --- |
+| Referans komutların tamamı yeşil | ✓ | Sekiz komut exit 0; 141/93/27 test. |
+| Başlangıç statik/dinamik rota tablosu | ✓ | Gerçek üretim build çıktısı yukarıda. |
+| 16 deterministik klasik referans | ✓ | Manifest SHA256'ları, iki koşuda 16/16 eşitlik. |
+| Mevcut sırlar ve arka uç/UI kaynakları korundu | ✓ | Sır hash'leri eşit; kaynak/test beklentisi diff'i yok. |
+| Geçici test DB temizliği | ✓ | Doğrulanmış fixture temizliği sonrası 0. |
+
+Takip edilen dosyalar: ilerleme raporu ve klasik baseline dizini. Yerel
+kurulum adaptörleri, indirilen örnekler/arşivler ve ham loglar ignore altında.
+0.1 tamamlandı; kullanıcı onayı doğrultusunda şimdi 0.2–0.6 uygulanacak.
