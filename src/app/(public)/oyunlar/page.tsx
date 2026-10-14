@@ -3,7 +3,8 @@ import { listPublicHistoricalResults } from "../../../modules/games/application/
 import { ResultCard } from "../../../modules/games/ui/result-card";
 export const dynamic = "force-dynamic";
 export const metadata = {
-  title: "Oyunlar — Uludott",
+  title: "Oyunlar",
+  alternates: { canonical: "/oyunlar" },
   description: "UluJam 2026'nın doğrulanmış derece ve itch.io bağlantıları.",
 };
 export default async function Page() {

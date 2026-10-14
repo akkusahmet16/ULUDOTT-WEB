@@ -4,6 +4,7 @@ import { Card } from "../components/design-system/card";
 import { getFeaturedEvents } from "../modules/events/application/event-service";
 import { EventCard } from "../modules/events/ui/event-card";
 export const dynamic = "force-dynamic";
+export const metadata = { alternates: { canonical: "/" } };
 export default async function HomePage() {
   const featured = await getFeaturedEvents();
   return (

@@ -337,3 +337,27 @@ export async function editorOptions(actor: Actor) {
     };
   });
 }
+
+const indexablePublication = z.object({
+  slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+  lastModified: z.coerce.date(),
+});
+
+// Salt okunur sitemap entegrasyonu: şema/mutasyon değiştirmeden gerçek son
+// düzenleme zamanını mevcut audit indeksinden alır; 100 kayıt sınırı yoktur.
+export async function listIndexablePublications(type: ContentType, now = new Date()) {
+  return withTransaction(async tx => {
+    const rows = await tx.execute(sql`
+      select c.slug, coalesce(
+        (select max(a.created_at) from audit_logs a where a.object_type=${type} and a.object_id=c.id),
+        c.created_at
+      ) as "lastModified"
+      from ${table(type)} c
+      where c.status in ('scheduled','published','ended','cancelled')
+        and c.publish_at<=${now.toISOString()}
+        and (c.unpublish_at is null or c.unpublish_at>${now.toISOString()})
+      order by c.slug
+    `);
+    return z.array(indexablePublication).parse(rows);
+  });
+}

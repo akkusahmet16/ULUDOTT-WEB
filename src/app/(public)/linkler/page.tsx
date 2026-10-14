@@ -7,6 +7,7 @@ import { loadServerConfig } from "../../../lib/config/server";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Uludott bağlantıları",
+  alternates: { canonical: "/linkler" },
   description: "Topluluğun yayımlanmış adresleri, tek yerde.",
 };
 export default async function Page() {

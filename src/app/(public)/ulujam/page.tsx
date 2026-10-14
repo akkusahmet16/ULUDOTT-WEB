@@ -10,7 +10,8 @@ import { StarCatch } from "../../../modules/community/star-catch";
 import { PairMatch } from "../../../modules/community/pair-match";
 export const dynamic = "force-dynamic";
 export const metadata = {
-  title: "UluJam — Uludott",
+  title: "UluJam",
+  alternates: { canonical: "/ulujam" },
   description: "UluJam 2026 arşivi, oyun sonuçları ve 2027 duyuruları.",
 };
 export default async function Page() {

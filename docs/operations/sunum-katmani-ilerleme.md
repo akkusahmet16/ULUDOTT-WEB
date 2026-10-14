@@ -372,3 +372,70 @@ kurulum adaptörleri, indirilen örnekler/arşivler ve ham loglar ignore altınd
 - `pnpm typecheck`, `pnpm lint`, `pnpm test`: exit 0; **141/141**, 6,54 sn.
 - `git diff --check` temiz. Değişen dosyalar: kural belgesi ve bu rapor.
   0.2 kabulü **✓**; 0.3'e geçiliyor.
+
+## 0.3 — uygulama öncesi kapsam kararı
+
+- Mevcut genel yayın liste servisleri 100 kayıtla sınırlı; sitemap için tüm
+  görünür slug'ları ve son düzenleme zamanını veren bir okuma yok. Şemada
+  `updated_at` da yok. Zorunlu ve yalnızca eklemeli istisna:
+  `src/modules/publication/service.ts` içine salt okunur
+  `listIndexablePublications` eklenecek. Mevcut yayın görünürlüğü/zaman
+  penceresi korunacak; `lastModified`, mevcut indeksli `audit_logs` tablosunda
+  ilgili içerik nesnesinin son işlem zamanından, audit olmayan eski satırlarda
+  gerçek `created_at` değerinden gelecek. Şema, migration veya mutasyonlara
+  dokunulmayacak; güncelleme zamanı uydurulmayacak.
+- Statik genel rotalarda güvenilir yayın/güncelleme tarihi olmadığı için
+  `lastModified` yazılmayacak. Statik rota listesi Faz 2 taşıma işaretiyle
+  geçici tutulacak. Kök için onaylı OG görseli yok; yeni görsel eklenmeyecek.
+- Etkilenen doğrulamalar: yeni gerçek PG sitemap/görünürlük/100+ kayıt/audit
+  zamanı testleri, yeni genel/admin indeksleme e2e kontrolleri ve mevcut
+  `publication`, `featured-event`, `admin-login`, `shell` sözleşmeleri.
+
+### 0.4 uygulama öncesi zorunlu entegrasyon istisnaları
+
+- `src/lib/cache/tags.ts` ve küçük bir server-only cache yardımcısı yalnızca
+  eklenir. Gerekçe: etiket adlarını tek dosyada tutmak ve farklı yerel test
+  DB'lerinin kalıcı Next cache'ini paylaşmasını önlemek. Cache anahtarı DB
+  bağlantısının SHA256 kimliğini kullanır; sır değeri cache anahtarına yazılmaz.
+- Cache Components tüm projede açılmaz: mevcut admin/API/medya davranışını
+  değiştirmemek için Next 16.3.8'in paket rehberinde belgelenen mevcut model
+  `unstable_cache` kullanılır. Genel UI için yeni okuma sarmalayıcıları eklenir;
+  mevcut uygulama/domain/repository okuma ve yazma mantıkları korunur.
+- Zamana bağlı yayın/link/etkinlik/ULUJAM/historik görünürlük ve galeri için
+  **30 sn** veri yenilemesi; ayrıca typed etiketler. Cache JSON dönüşümünde
+  Date alanları Zod ile tekrar Date'e çevrilir. Sayaç `initialNow` değeri
+  cache'e girmez; `connection()` sonrasında her istekte üretilir.
+- HTTP katmanına minimum ekleme: `publication/http.ts`,
+  `links/application/http.ts`, `media/application/http.ts` ve mevcut
+  `/api/admin/gallery/route.ts` içine yalnızca başarılı servis await'i
+  (transaction COMMIT) sonrasında `revalidateTag(tag, { expire: 0 })` çağrıları.
+  Yayın/save/draft/archive, link/grup sıra/gizleme, medya yayın/attach/silme ve
+  galeri değişimi kapsanır. Auth/CSRF/MFA ve transaction içi kod değişmez.
+- Etkilenen kontroller: cache tarih serileştirme/TTL/etiket ve commit öncesi
+  geçersiz kılmama unit testleri; mevcut yayın/link/medya/galeri entegrasyonları;
+  sıcak cache ile yayınla→görünür, taslağa al→kaybolur, yeniden yayınla e2e;
+  sayaç tazeliği/hidrasyon ve üretim build rota tablosu.
+
+### 0.3 sonuç ve kanıt
+
+- Kök `noindex` kaldırıldı; `metadataBase` yalnızca `loadServerConfig().appUrl`
+  üzerinden. `%s | ULUDOTT` şablonu ve sekiz genel sayfanın kanonik adresleri
+  eklendi. Mevcut özel SEO başlığının birebir korunması sözleşmesi için slug
+  sayfalarında editörün açık SEO başlığı `title.absolute` kullanır; diğer
+  başlıklar kök şablonu izler. Admin layout/HTTP başlıkları değişmedi.
+- `robots.ts` genel `/` erişimini açıp `/admin`, `/api`, `/l/` engeller;
+  `sitemap.ts` sekiz statik rota ve salt okunur servis slug'larını içerir.
+  Taslak/arşiv/gelecek/sona ermiş pencereler hariç, 100+ kayıt ve audit'ten
+  gerçek son değişiklik zamanı gerçek PG testleriyle doğrulandı.
+- Önce iki yeni PG testi eksik fonksiyon nedeniyle **RED**; uygulama sonrası
+  **143/143 Vitest GREEN**. Typecheck/lint exit 0. Yeni e2e ilk koşuda 35/37:
+  özel SEO başlığı sözleşmesi ve Next'in kök URL son slash normalizasyonu
+  bulundu. Mevcut test beklentisi korunarak SEO davranışı düzeltildi; yeni
+  canonical testi standart URL normalizasyonuyla eşitlik ölçüyor. Son tam
+  e2e **37/37**, 22,5 sn; admin/API noindex, genel başlık/meta/başlık şablonu,
+  robots/sitemap ve publish→draft→publish görünürlüğü geçti.
+- Değişenler: kök/genel metadata dosyaları, robots/sitemap, shared publication
+  servisine tek salt okunur ekleme, yeni sitemap PG/indexability e2e testleri
+  ve mevcut featured-event testine ek davranış assert'leri; bu rapor.
+  OG görseli üretilmedi; genel UI/tema, şema/migration ve auth değişmedi.
+  0.3 kabulü **✓**; 0.4 veri önbelleği uygulanacak.
