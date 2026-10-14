@@ -69,8 +69,15 @@ try {
   await local.sql`update admins set recovery_code_hashes=${local.sql.json([tokenHash("11111111111111111111111111111111"), tokenHash("22222222222222222222222222222222"), tokenHash("33333333333333333333333333333333"), tokenHash("44444444444444444444444444444444"), tokenHash("55555555555555555555555555555555")])} where id=${id}`;
   await closeDatabase();
   if (process.env.ULUDOTT_E2E_PRODUCTION === "1") {
+    if (process.env.ULUDOTT_E2E_REBUILD === "1") {
+      // Ön üretilen HTML de bu düzeneğin seed'li, izole DB'sinden gelmelidir.
+      execFileSync(process.execPath, [join(process.cwd(), "node_modules/next/dist/bin/next"), "build"], {
+        stdio: "inherit",
+        env: { ...process.env, NODE_ENV: "production", APP_URL: "https://127.0.0.1:3443", OBJECT_STORAGE_ENDPOINT: "https://127.0.0.1:9443" },
+      });
+    }
     productionDir = await mkdtemp(join(tmpdir(), "uludott-standalone-"));
-    await cp(".next/standalone", productionDir, { recursive: true });
+    await cp(".next/standalone", productionDir, { recursive: true, dereference: process.platform === "win32" });
     await cp(".next/static", join(productionDir, ".next/static"), {
       recursive: true,
     });
@@ -155,6 +162,7 @@ try {
   }
   child.on("error", () => void finish(1));
   child.on("exit", (code, signal) => void finish(signal ? 0 : (code ?? 1)));
-} catch {
+} catch (error) {
+  console.error("E2E test düzeneği başlatılamadı:", error instanceof Error ? error.message : "Bilinmeyen hata");
   await finish(1);
 }

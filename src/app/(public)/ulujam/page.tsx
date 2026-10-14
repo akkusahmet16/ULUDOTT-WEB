@@ -1,14 +1,13 @@
 import { PublicShell } from "../../../components/layout/public-shell";
 import {
-  publishedYearStart,
-  galleryImages,
-} from "../../../modules/events/application/ulujam-service";
+  readPublishedYearStart,
+  readGalleryImages,
+  readHistoricalResults,
+} from "../../../modules/publication/ui/public-queries.ts";
 import { UlujamComingSoon } from "../../../modules/events/ui/ulujam-coming-soon";
 import { UlujamArchive } from "../../../modules/events/ui/ulujam-archive";
-import { listPublicHistoricalResults } from "../../../modules/games/application/historical-results";
 import { StarCatch } from "../../../modules/community/star-catch";
 import { PairMatch } from "../../../modules/community/pair-match";
-export const dynamic = "force-dynamic";
 export const metadata = {
   title: "UluJam",
   alternates: { canonical: "/ulujam" },
@@ -16,9 +15,9 @@ export const metadata = {
 };
 export default async function Page() {
   const [startAt, results, gallery] = await Promise.all([
-    publishedYearStart(2027),
-    listPublicHistoricalResults(2026),
-    galleryImages(2026),
+    readPublishedYearStart(2027),
+    readHistoricalResults(2026),
+    readGalleryImages(2026),
   ]);
   return (
     <PublicShell>

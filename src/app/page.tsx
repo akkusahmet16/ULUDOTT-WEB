@@ -1,12 +1,11 @@
 import { PublicShell } from "../components/layout/public-shell";
 import { ButtonLink } from "../components/design-system/button";
 import { Card } from "../components/design-system/card";
-import { getFeaturedEvents } from "../modules/events/application/event-service";
+import { readFeaturedEvents } from "../modules/publication/ui/public-queries.ts";
 import { EventCard } from "../modules/events/ui/event-card";
-export const dynamic = "force-dynamic";
 export const metadata = { alternates: { canonical: "/" } };
 export default async function HomePage() {
-  const featured = await getFeaturedEvents();
+  const featured = await readFeaturedEvents();
   return (
     <PublicShell>
       <section className="hero">

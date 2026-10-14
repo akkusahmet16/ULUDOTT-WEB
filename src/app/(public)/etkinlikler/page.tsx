@@ -1,10 +1,9 @@
 import { PublicShell } from "../../../components/layout/public-shell";
-import { getPublicEvents } from "../../../modules/events/application/event-service";
+import { readPublicEvents } from "../../../modules/publication/ui/public-queries.ts";
 import { EventCard } from "../../../modules/events/ui/event-card";
-export const dynamic = "force-dynamic";
 export const metadata = { title: "Etkinlikler", alternates: { canonical: "/etkinlikler" } };
 export default async function Page() {
-  const items = await getPublicEvents();
+  const items = await readPublicEvents();
   return (
     <PublicShell>
       <section className="section">

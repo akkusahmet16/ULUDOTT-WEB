@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
 import { loadServerConfig } from "../lib/config/server.ts";
-import { listIndexablePublications } from "../modules/publication/service.ts";
+import { readIndexablePublications } from "../modules/publication/ui/public-queries.ts";
 
 // Metadata route çıktısı yayınlardan bağımsız olarak sonsuza dek sabitlenmez.
-// Veri önbelleği 0.4'te okuma fonksiyonu etiketleriyle yönetilir.
+// Veri okumaları 30 sn TTL ve yayın etiketleriyle yönetilir.
 export const dynamic = "force-dynamic";
 
 // FAZ-2: routes.config.ts'e taşınacak
@@ -12,8 +12,8 @@ const publicPaths = ["/", "/hakkimizda", "/ulujam", "/etkinlikler", "/duyurular"
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = loadServerConfig().appUrl;
   const [events, announcements] = await Promise.all([
-    listIndexablePublications("event"),
-    listIndexablePublications("announcement"),
+    readIndexablePublications("event"),
+    readIndexablePublications("announcement"),
   ]);
   return [
     ...publicPaths.map(path => ({ url: new URL(path, base).toString() })),

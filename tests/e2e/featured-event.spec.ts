@@ -91,6 +91,9 @@ test("Coffee Talk taslak kalır; doğrulanmış afiş ve tarih sonrası ana sayf
     (await page.request.get("/etkinlikler/coffee-talk-test")).status(),
   ).toBe(404);
   expect(await (await page.request.get("/sitemap.xml")).text()).not.toContain("/etkinlikler/coffee-talk-test");
+  // Boş ana sayfa/listeler ve 404 detay önbelleği yayınlamadan önce ısıtılır.
+  expect(await (await page.request.get("/")).text()).not.toContain("Coffee Talk test taslağı");
+  expect(await (await page.request.get("/etkinlikler")).text()).not.toContain("Coffee Talk test taslağı");
   await page.getByLabel("Başlangıç (İstanbul)").fill("2030-01-02T15:00");
   await page.getByLabel("Bitiş (İstanbul)").fill("2030-01-02T17:00");
   await page.getByLabel("Konum", { exact: true }).fill("Yalnız test konumu");
@@ -143,6 +146,7 @@ test("Coffee Talk taslak kalır; doğrulanmış afiş ve tarih sonrası ana sayf
   await expect(
     page.getByRole("img", { name: "Sentetik test afişi" }),
   ).toBeVisible();
+  expect(await (await page.request.get("/etkinlikler")).text()).toContain("Coffee Talk test taslağı");
   await expect(page.getByRole("link", { name: /Başvur/ })).toHaveCount(0);
   await page
     .getByRole("link", { name: "Etkinlik ayrıntıları", exact: true })
@@ -181,6 +185,7 @@ test("Coffee Talk taslak kalır; doğrulanmış afiş ve tarih sonrası ana sayf
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "Coffee Talk test taslağı", exact: true })).toHaveCount(0);
   expect((await page.request.get("/etkinlikler/coffee-talk-test")).status()).toBe(404);
+  expect(await (await page.request.get("/etkinlikler")).text()).not.toContain("Coffee Talk test taslağı");
   expect(await (await page.request.get("/sitemap.xml")).text()).not.toContain("/etkinlikler/coffee-talk-test");
   const republished = await mutate(page, "/api/admin/events", { action: "publish", id: event.id, expectedRevision: hiddenEvent.revision, confirmed: true });
   expect(republished.ok()).toBe(true);

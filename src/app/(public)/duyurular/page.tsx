@@ -1,10 +1,9 @@
 import { PublicShell } from "../../../components/layout/public-shell";
-import { getPublicAnnouncements } from "../../../modules/announcements/application/announcement-service";
+import { readPublicAnnouncements } from "../../../modules/publication/ui/public-queries.ts";
 import { AnnouncementCard } from "../../../modules/announcements/ui/announcement-card";
-export const dynamic = "force-dynamic";
 export const metadata = { title: "Duyurular", alternates: { canonical: "/duyurular" } };
 export default async function Page() {
-  const items = await getPublicAnnouncements();
+  const items = await readPublicAnnouncements();
   return (
     <PublicShell>
       <section className="section">

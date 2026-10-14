@@ -1,11 +1,14 @@
 import { Countdown } from "./countdown";
-export function UlujamComingSoon({
+import { connection } from "next/server";
+export async function UlujamComingSoon({
   year,
   startAt,
 }: {
   year: number;
   startAt: Date | null;
 }) {
+  // Veri 30 sn önbellekli olabilir; initialNow her istekte taze olmalıdır.
+  await connection();
   return (
     <section aria-label={`UluJam ${year}`} className="section">
       <p className="eyebrow">Birlikte üretmenin yeni yılı</p>
