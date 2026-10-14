@@ -1,13 +1,12 @@
 import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
-import { getPublicAnnouncement } from "../../../../modules/announcements/application/announcement-service";
+import { readPublicAnnouncement } from "../../../../modules/publication/ui/public-queries.ts";
 import { PublicShell } from "../../../../components/layout/public-shell";
 import { ContentView } from "../../../../modules/publication/ui/content-view";
 import { loadServerConfig } from "../../../../lib/config/server";
-export const dynamic = "force-dynamic";
 type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const item = await getPublicAnnouncement((await params).slug);
+  const item = await readPublicAnnouncement((await params).slug);
   if (!item) return { robots: { index: false, follow: false } };
   const url = new URL(
     `/duyurular/${item.slug}`,
@@ -16,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = item.seo.title || item.title,
     description = item.seo.description || item.excerpt || undefined;
   return {
-    title,
+    title: item.seo.title ? { absolute: title } : title,
     description,
     alternates: { canonical: url },
     openGraph: {
@@ -45,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 export default async function Page({ params }: Props) {
-  const item = await getPublicAnnouncement((await params).slug);
+  const item = await readPublicAnnouncement((await params).slug);
   if (!item) notFound();
   if (item.redirectSlug) permanentRedirect(`/duyurular/${item.redirectSlug}`);
   return (

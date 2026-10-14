@@ -1,4 +1,6 @@
 import "server-only";
+import { revalidateTag } from "next/cache";
+import { CACHE_TAGS } from "../../lib/cache/tags.ts";
 import { z } from "zod";
 import { resolveSession, SESSION_COOKIE } from "../../lib/auth/session.ts";
 import { readCookie, verifyCsrf } from "../../lib/auth/csrf.ts";
@@ -82,22 +84,23 @@ export function handler(type: ContentType) {
           input: z.unknown().optional(),
         })
         .parse(await body(request));
-      if (d.action === "save")
-        return json(
-          await save(type, session.actor, d.input, d.id, d.expectedRevision),
-          d.id ? 200 : 201,
-        );
+      if (d.action === "save") {
+        const result = await save(type, session.actor, d.input, d.id, d.expectedRevision);
+        // Servis await'i transaction COMMIT'ini içerir; transaction içinde çağrılmaz.
+        revalidateTag(type === "event" ? CACHE_TAGS.events : CACHE_TAGS.announcements, { expire: 0 });
+        return json(result, d.id ? 200 : 201);
+      }
       if (!d.id || !d.expectedRevision || !d.confirmed)
         throw Error("İşlem onayı ve sürüm gerekli");
-      return json(
-        await transition(
-          type,
-          d.id,
-          session.actor,
-          d.expectedRevision,
-          d.action === "archive" ? "archived" : d.action,
-        ),
+      const result = await transition(
+        type,
+        d.id,
+        session.actor,
+        d.expectedRevision,
+        d.action === "archive" ? "archived" : d.action,
       );
+      revalidateTag(type === "event" ? CACHE_TAGS.events : CACHE_TAGS.announcements, { expire: 0 });
+      return json(result);
     } catch (e) {
       const m = e instanceof Error ? e.message : "";
       if (m === "Yetki yok") return json({ error: m }, 403);

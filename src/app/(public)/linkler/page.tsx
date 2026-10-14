@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { PublicShell } from "../../../components/layout/public-shell";
-import { getPublishedLinks } from "../../../modules/links/application/link-service";
+import { readPublishedLinks } from "../../../modules/publication/ui/public-queries.ts";
 import { LinkHub } from "../../../modules/links/ui/link-hub";
 import { loadServerConfig } from "../../../lib/config/server";
-export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Uludott bağlantıları",
+  alternates: { canonical: "/linkler" },
   description: "Topluluğun yayımlanmış adresleri, tek yerde.",
 };
 export default async function Page() {
@@ -24,7 +24,7 @@ export default async function Page() {
           <p className="lede">Topluluğun yayımlanmış adresleri, tek yerde.</p>
         </div>
         <LinkHub
-          groups={await getPublishedLinks()}
+          groups={await readPublishedLinks()}
           baseUrl={loadServerConfig().appUrl}
         />
       </section>

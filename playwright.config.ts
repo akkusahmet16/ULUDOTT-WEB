@@ -21,6 +21,6 @@ export default defineConfig({
     ignoreHTTPSErrors: process.env.ULUDOTT_E2E_PRODUCTION === "1",
     reuseExistingServer: false,
     gracefulShutdown: { signal: "SIGTERM", timeout: 10_000 },
-    timeout: 60_000,
+    timeout: process.env.ULUDOTT_E2E_REBUILD === "1" ? 180_000 : 60_000,
   },
 });

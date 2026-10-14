@@ -26,6 +26,7 @@
     "build": "next build",
     "db:migrate": "node --env-file-if-exists=.env.local --conditions=react-server scripts/migrate.ts",
     "config:check": "node --env-file-if-exists=.env.local --conditions=react-server --experimental-strip-types scripts/check-config.ts",
+    "audit:live": "node --env-file-if-exists=.env.local --experimental-strip-types scripts/live-audit.ts",
     "db:generate": "drizzle-kit generate",
     "db:check": "drizzle-kit check",
     "admin:bootstrap": "node --env-file-if-exists=.env.local --conditions=react-server scripts/admin-bootstrap.ts",

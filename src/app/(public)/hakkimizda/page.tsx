@@ -1,6 +1,6 @@
 import { PublicShell } from "../../../components/layout/public-shell";
 import { ButtonLink } from "../../../components/design-system/button";
-export const metadata = { title: "Hakkımızda — Uludott" };
+export const metadata = { title: "Hakkımızda", alternates: { canonical: "/hakkimizda" } };
 export default function Page() {
   return (
     <PublicShell>

@@ -1,0 +1,173 @@
+{
+  "sourceCommit": "c9cb08b",
+  "database": "empty-migrated-no-seed",
+  "browser": "153.0.8010.12",
+  "locale": "tr-TR",
+  "timezone": "Europe/Istanbul",
+  "fixedTime": "2026-10-10T09:00:01.000Z",
+  "animation": "disabled",
+  "nextDevtools": "hidden",
+  "fullPage": false,
+  "files": [
+    {
+      "route": "/",
+      "device": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "filename": "home-desktop.png",
+      "sha256": "d0dc94ad19594d1853d6d7efa9808f9cd97e2cbfc389693438ad2a72a9efbd63"
+    },
+    {
+      "route": "/hakkimizda",
+      "device": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "filename": "hakkimizda-desktop.png",
+      "sha256": "bf166e17eafefd7a845f398be9090f47a687a56b7dcec802ad8a43fd527534c1"
+    },
+    {
+      "route": "/ulujam",
+      "device": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "filename": "ulujam-desktop.png",
+      "sha256": "b5466b9d117637a8ee86acd3560a8c4d458166e56ce266308b5e9b6b59887600"
+    },
+    {
+      "route": "/etkinlikler",
+      "device": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "filename": "etkinlikler-desktop.png",
+      "sha256": "7305e7fafa1c68a7dfb4eef1b0e63a86f057f31d928017f149abe8fdedf9c540"
+    },
+    {
+      "route": "/duyurular",
+      "device": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "filename": "duyurular-desktop.png",
+      "sha256": "0a54183f92d1d436e43c70d6ef8a746077f7fadf2e703c759c4b793564228a00"
+    },
+    {
+      "route": "/oyunlar",
+      "device": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "filename": "oyunlar-desktop.png",
+      "sha256": "94c8ed4fa93eabc5b831cada58af952e6c3318a3f8edf20f1beb15d3ac481cf3"
+    },
+    {
+      "route": "/linkler",
+      "device": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "filename": "linkler-desktop.png",
+      "sha256": "826a166dfb11b585d884e670a8722546da08be6d08411cb988bd4b0f33eef90e"
+    },
+    {
+      "route": "/destek",
+      "device": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "filename": "destek-desktop.png",
+      "sha256": "be13c9518321cd8a8eb0915d21ad2c6e256ee2e068f9f3b5856e0b845a1f335a"
+    },
+    {
+      "route": "/",
+      "device": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "filename": "home-mobile.png",
+      "sha256": "78c4845a42029e6b655c0d6414b691d846f159e6c10d5f1e9ddc85a076aaf1ad"
+    },
+    {
+      "route": "/hakkimizda",
+      "device": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "filename": "hakkimizda-mobile.png",
+      "sha256": "dd2efddbbdef6987e89f53b32bdfaf54077e46ae17ea5bb77bd6dccc6e3497ec"
+    },
+    {
+      "route": "/ulujam",
+      "device": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "filename": "ulujam-mobile.png",
+      "sha256": "b87bb69a1c4c95cc33b44cc3a787a302229baba2a209f6134ba867d3f485e84d"
+    },
+    {
+      "route": "/etkinlikler",
+      "device": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "filename": "etkinlikler-mobile.png",
+      "sha256": "2281779ae13e4ad667d5b711e021813a156de1605f3c6944d2f010ae1a0bd9ac"
+    },
+    {
+      "route": "/duyurular",
+      "device": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "filename": "duyurular-mobile.png",
+      "sha256": "1a153e1b1842d15a3308146d9bfb60e3a12a52996e0df36a22853b6b836339d2"
+    },
+    {
+      "route": "/oyunlar",
+      "device": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "filename": "oyunlar-mobile.png",
+      "sha256": "d5f22dfaf3e9d61923664e54f9a3d46dd881c4c8f7a18f89a1b93b9b27945714"
+    },
+    {
+      "route": "/linkler",
+      "device": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "filename": "linkler-mobile.png",
+      "sha256": "e85240762bd65e00a27d2ddd0e09ce276577536fb77d4d30847cf3b5029ffbb4"
+    },
+    {
+      "route": "/destek",
+      "device": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "filename": "destek-mobile.png",
+      "sha256": "c75c46954a0a0d2befcc5ed9ad7656cf9d9dcc24b3c222277f9b67d00a065188"
+    }
+  ]
+}

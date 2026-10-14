@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import sharp from "sharp";
 import AxeBuilder from "@axe-core/playwright";
+import { z } from "zod";
 async function login(page: Page, code: string) {
   await page.goto("/admin");
   await page.getByLabel("E-posta").fill("admin-e2e@test.invalid");
@@ -89,6 +90,10 @@ test("Coffee Talk taslak kalır; doğrulanmış afiş ve tarih sonrası ana sayf
   expect(
     (await page.request.get("/etkinlikler/coffee-talk-test")).status(),
   ).toBe(404);
+  expect(await (await page.request.get("/sitemap.xml")).text()).not.toContain("/etkinlikler/coffee-talk-test");
+  // Boş ana sayfa/listeler ve 404 detay önbelleği yayınlamadan önce ısıtılır.
+  expect(await (await page.request.get("/")).text()).not.toContain("Coffee Talk test taslağı");
+  expect(await (await page.request.get("/etkinlikler")).text()).not.toContain("Coffee Talk test taslağı");
   await page.getByLabel("Başlangıç (İstanbul)").fill("2030-01-02T15:00");
   await page.getByLabel("Bitiş (İstanbul)").fill("2030-01-02T17:00");
   await page.getByLabel("Konum", { exact: true }).fill("Yalnız test konumu");
@@ -141,6 +146,7 @@ test("Coffee Talk taslak kalır; doğrulanmış afiş ve tarih sonrası ana sayf
   await expect(
     page.getByRole("img", { name: "Sentetik test afişi" }),
   ).toBeVisible();
+  expect(await (await page.request.get("/etkinlikler")).text()).toContain("Coffee Talk test taslağı");
   await expect(page.getByRole("link", { name: /Başvur/ })).toHaveCount(0);
   await page
     .getByRole("link", { name: "Etkinlik ayrıntıları", exact: true })
@@ -167,6 +173,24 @@ test("Coffee Talk taslak kalır; doğrulanmış afiş ve tarih sonrası ana sayf
     path: ".local/task6-event-desktop.png",
     fullPage: true,
   });
+  expect(await (await page.request.get("/sitemap.xml")).text()).toContain("/etkinlikler/coffee-talk-test");
+  const inventory = z.object({ items: z.array(z.object({ id: z.uuid(), slug: z.string(), revision: z.int().positive() })) }).parse(
+    await (await page.request.get("/api/admin/events", { headers: await authHeaders(page) })).json(),
+  );
+  const event = inventory.items.find(item => item.slug === "coffee-talk-test");
+  if (!event) throw new Error("Test etkinliği bulunamadı");
+  const hidden = await mutate(page, "/api/admin/events", { action: "draft", id: event.id, expectedRevision: event.revision, confirmed: true });
+  expect(hidden.ok()).toBe(true);
+  const hiddenEvent = z.object({ revision: z.int().positive() }).parse(await hidden.json());
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "Coffee Talk test taslağı", exact: true })).toHaveCount(0);
+  expect((await page.request.get("/etkinlikler/coffee-talk-test")).status()).toBe(404);
+  expect(await (await page.request.get("/etkinlikler")).text()).not.toContain("Coffee Talk test taslağı");
+  expect(await (await page.request.get("/sitemap.xml")).text()).not.toContain("/etkinlikler/coffee-talk-test");
+  const republished = await mutate(page, "/api/admin/events", { action: "publish", id: event.id, expectedRevision: hiddenEvent.revision, confirmed: true });
+  expect(republished.ok()).toBe(true);
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "Coffee Talk test taslağı", exact: true })).toBeVisible();
 });
 test("duyuru metni HTML çalıştırmaz, slug yönlenir ve arşiv public erişimi kaldırır", async ({
   page,

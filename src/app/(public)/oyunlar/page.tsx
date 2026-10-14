@@ -1,13 +1,13 @@
 import { PublicShell } from "../../../components/layout/public-shell";
-import { listPublicHistoricalResults } from "../../../modules/games/application/historical-results";
+import { readHistoricalResults } from "../../../modules/publication/ui/public-queries.ts";
 import { ResultCard } from "../../../modules/games/ui/result-card";
-export const dynamic = "force-dynamic";
 export const metadata = {
-  title: "Oyunlar — Uludott",
+  title: "Oyunlar",
+  alternates: { canonical: "/oyunlar" },
   description: "UluJam 2026'nın doğrulanmış derece ve itch.io bağlantıları.",
 };
 export default async function Page() {
-  const results = await listPublicHistoricalResults(2026);
+  const results = await readHistoricalResults(2026);
   return (
     <PublicShell>
       <section className="section">
