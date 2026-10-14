@@ -363,3 +363,12 @@ Route (app)
 Takip edilen dosyalar: ilerleme raporu ve klasik baseline dizini. Yerel
 kurulum adaptörleri, indirilen örnekler/arşivler ve ham loglar ignore altında.
 0.1 tamamlandı; kullanıcı onayı doğrultusunda şimdi 0.2–0.6 uygulanacak.
+
+## 0.2 — kalıcı kurallar (14 Ekim 2026)
+
+- `docs/design/sunum-katmani-kurallari.md` oluşturuldu; kullanıcının dokuz
+  maddesi kapsam, merkezileştirme, TypeScript, erişilebilirlik, performans,
+  veri dürüstlüğü, doğrulama, tasarım ve rapor içeriği kısaltılmadan korundu.
+- `pnpm typecheck`, `pnpm lint`, `pnpm test`: exit 0; **141/141**, 6,54 sn.
+- `git diff --check` temiz. Değişen dosyalar: kural belgesi ve bu rapor.
+  0.2 kabulü **✓**; 0.3'e geçiliyor.
