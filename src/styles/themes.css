@@ -34,6 +34,10 @@
     --font-body: var(--font-body-face, system-ui), system-ui;
     --font-label: var(--font-label-face, ui-monospace), ui-monospace;
     --font-mono: ui-monospace, monospace;
+    --font-control: var(--font-label);
+    --text-control: 24px;
+    --weight-display: 400;
+    --weight-control: 400;
     --text-xs: 12px;
     --text-sm: 14px;
     --text-base: 16px;
@@ -104,7 +108,7 @@
     --shadow-pixel-hover: 6px 6px 0 0 var(--color-shadow);
     --shadow-pixel-pressed: 0 0 0 0 var(--color-shadow);
     --glow-primary: 0 0 18px var(--color-primary);
-    --fx-scanline-opacity: 0.08;
+    --fx-scanline-opacity: 0.04;
     --fx-scanline-image: repeating-linear-gradient(to bottom, transparent 0 2px, var(--color-shadow) 2px 4px);
     --motion-fast: 80ms;
     --motion-base: 160ms;
@@ -118,6 +122,7 @@
     --z-overlay: 20;
     --z-dialog: 30;
     --z-scanline: 1;
+    --z-underlay: -1;
     --layout-max-width: 1360px;
     --layout-measure: 65ch;
     --layout-heading-max: 1000px;
@@ -143,6 +148,7 @@
     --shadow-rest: none;
     --nav-hit-padding-block: 12.8px;
     --nav-hit-margin-block: -12.8px;
+    --nav-hit-margin-inline: -4px;
   }
 
   [data-theme="classic"] {
@@ -178,6 +184,10 @@
     --font-body: Arial, Helvetica, sans-serif;
     --font-label: "Courier New", monospace;
     --font-mono: "Courier New", monospace;
+    --font-control: var(--font-body);
+    --text-control: var(--text-base);
+    --weight-display: 700;
+    --weight-control: 700;
     --text-xs: 12px;
     --text-sm: 14px;
     --text-base: 16px;
@@ -262,6 +272,7 @@
     --z-overlay: 20;
     --z-dialog: 30;
     --z-scanline: 1;
+    --z-underlay: -1;
     --layout-max-width: 1360px;
     --layout-measure: 65ch;
     --layout-heading-max: 1000px;
@@ -287,5 +298,6 @@
     --shadow-rest: none;
     --nav-hit-padding-block: 12.8px;
     --nav-hit-margin-block: -12.8px;
+    --nav-hit-margin-inline: -4px;
   }
 }

@@ -50,6 +50,25 @@ h1 {
   letter-spacing: var(--tracking-display);
   max-width: var(--layout-heading-max);
 }
+h1,
+h2,
+h3 {
+  font-weight: var(--weight-display);
+  overflow-wrap: anywhere;
+}
+#main-content {
+  position: relative;
+  isolation: isolate;
+}
+#main-content::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-underlay);
+  pointer-events: none;
+  background-image: var(--fx-scanline-image);
+  opacity: var(--fx-scanline-opacity);
+}
 h2 {
   font-family: var(--font-display);
   font-size: var(--text-heading-2);
@@ -115,6 +134,9 @@ img {
   align-items: center;
 }
 .site-nav a {
+  display: inline-block;
+  padding: var(--nav-hit-padding-block) var(--space-1);
+  margin: var(--nav-hit-margin-block) var(--nav-hit-margin-inline);
   text-decoration: none;
   font-size: var(--text-nav);
 }
@@ -159,7 +181,11 @@ img {
   border-radius: var(--radius-control);
   background: var(--color-primary);
   color: var(--color-bg);
-  font-weight: var(--weight-bold);
+  font-family: var(--font-control);
+  font-size: var(--text-control);
+  font-weight: var(--weight-control);
+  box-shadow: var(--shadow-pixel);
+  transition: transform var(--motion-fast) var(--ease-snap), box-shadow var(--motion-fast) var(--ease-snap);
   text-decoration: none;
   cursor: pointer;
 }
@@ -168,9 +194,27 @@ img {
   border-color: var(--color-border);
   color: var(--color-text);
 }
+.button:not(:disabled):not([aria-disabled="true"]):hover {
+  box-shadow: var(--shadow-pixel-hover);
+  transform: var(--translate-control-hover);
+}
+.button:not(:disabled):not([aria-disabled="true"]):active {
+  box-shadow: var(--shadow-pixel-pressed);
+  transform: var(--translate-control-pressed);
+}
+.button:focus-visible {
+  box-shadow: var(--shadow-pixel);
+}
 button:disabled {
   opacity: var(--opacity-disabled);
   cursor: wait;
+}
+.button[aria-disabled="true"],
+input:disabled,
+textarea:disabled,
+select:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
 }
 .section {
   padding: var(--space-section) 0;
@@ -185,6 +229,13 @@ button:disabled {
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-card);
   background: var(--color-surface);
+  box-shadow: var(--shadow-pixel);
+}
+.card:has(a:hover, button:hover) {
+  box-shadow: var(--shadow-pixel-hover);
+}
+.card:has(a:active, button:active) {
+  box-shadow: var(--shadow-pixel-pressed);
 }
 .card .number {
   font: var(--text-label) var(--font-label);
@@ -206,6 +257,10 @@ button:disabled {
   background: var(--color-secondary);
   color: var(--color-bg);
   margin-bottom: var(--space-5);
+  box-shadow: var(--shadow-pixel);
+}
+.status[aria-disabled="true"] {
+  opacity: var(--opacity-disabled);
 }
 .site-footer {
   border-top: var(--border-width) solid var(--color-border);
@@ -218,6 +273,20 @@ button:disabled {
   justify-content: space-between;
   gap: var(--space-6);
   flex-wrap: wrap;
+}
+.site-footer a {
+  display: inline-block;
+  padding: var(--nav-hit-padding-block) var(--space-1);
+  margin: var(--nav-hit-margin-block) var(--nav-hit-margin-inline);
+}
+.site-nav a:hover,
+.site-footer a:hover {
+  text-decoration: underline;
+}
+.site-nav a:active,
+.site-footer a:active {
+  text-decoration: underline;
+  text-decoration-thickness: var(--border-width-strong);
 }
 .field {
   display: grid;
@@ -236,6 +305,21 @@ select {
   border-radius: var(--radius-field);
   padding: var(--space-3);
   max-width: 100%;
+  min-height: var(--touch-target-min);
+  transition: border-color var(--motion-fast) var(--ease-standard);
+}
+input:not(:disabled):hover,
+textarea:not(:disabled):hover,
+select:not(:disabled):hover {
+  border-color: var(--color-border-strong);
+}
+input:active,
+textarea:active,
+select:active {
+  border-color: var(--color-focus);
+}
+[aria-invalid="true"] {
+  border-color: var(--color-danger);
 }
 .field small {
   color: var(--color-text-muted);
@@ -275,6 +359,8 @@ dialog {
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-card);
   padding: var(--space-7);
+  box-shadow: var(--shadow-pixel);
+  z-index: var(--z-dialog);
 }
 dialog::backdrop {
   background: var(--color-overlay);
@@ -312,7 +398,9 @@ dialog::backdrop {
     display: flex;
   }
   .site-nav a {
-    padding: var(--space-3) 0;
+    padding: var(--nav-hit-padding-block) 0;
+    margin: 0;
+    min-height: var(--touch-target-min);
   }
   .hero {
     padding: var(--space-hero-mobile) 0;

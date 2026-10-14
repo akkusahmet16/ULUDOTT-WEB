@@ -725,3 +725,11 @@ Arcade istenen border-strong tonu #4a4a7a → #5f5f8f olarak açıldı (bg oran�
 - `useSyncExternalStore` DOM attribute, MutationObserver ve sekmeler arası storage olayını izler. Layout effect yalnız Next dev/StrictMode attribute sıfırlamasını ilk boyamadan önce onarır. Tema değiştirici UI eklenmedi.
 - Admin sarmalayıcısı Classic tokenlarını font/color/background üzerinde yeniden tüketir; hesaplanmış Arcade body fontunu miras almaz. Backend ve admin robots metadata değişmedi.
 - Kanıt: önce yeni iki test modül eksikliğinde kırmızı; ardından `pnpm typecheck`, `pnpm lint` çıkış 0, `pnpm test`: 21 dosya / 197 test geçti (12.28 sn). Gerçek tarayıcı FOUC/ağ/admin kanıtları 1.8'de tamamlanacak.
+
+### Faz 1 / 1.6 — Bileşen durumları
+
+- Button/etkileşim içeren Card/Field/Dialog/Status mevcut sınıfları merkezi tokenları tüketir. Arcade piksel gölge, hover kayması, pressed translate/gölge ve sert focus outline kullanır; Classic gölge/transform değerleri none'dır. Etkileşimsiz article/span'a sahte button semantiği eklenmedi.
+- CTA fontu ayrı tokenla Arcade VT323 24px, Classic mevcut Arial 16px; başlık ağırlığı Arcade 400, Classic 700. Başlıklar dar ekran/kolonda uzun sözcükleri kırabilir.
+- Nav/footer hedefleri padding ve dengeleyen negatif margin ile genişletildi; metin akış ölçüsü korunur. Mobil açık menü ve form alanları en az 48px.
+- Scanline yalnız genel main arka plan katmanındadır (Arcade opacity .04, Classic 0); metin/kontrastı ve admini örtmez. Animasyonlarda mevcut yıldız oyununun reduced-motion=none davranış sözleşmesi korunur, diğer geçişler reduced altında 10ms olur.
+- Kanıt: `pnpm typecheck`, `pnpm lint` çıkış 0; `pnpm test`: 21 dosya / 197 test geçti (11.76 sn). Görsel eşitlik ve gerçek hedef boyutları 1.8'de ölçülecek.
