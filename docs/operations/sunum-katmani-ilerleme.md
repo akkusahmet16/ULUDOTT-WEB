@@ -754,3 +754,83 @@ Mobil Lighthouse koşulu için projede/yerel PATH'te Lighthouse bulunmadı. Uygu
 - Son üretim işlevsel komut: PATH'e yerel pnpm spawn adaptörü ve Git/OpenSSL eklendikten sonra `ULUDOTT_E2E_PRODUCTION=1 ULUDOTT_E2E_REBUILD=1 pnpm test:e2e`: **56/56 geçti (2.9 dk), atlanan test yok**. Mevcut yayınla/yayından kaldır/medya/auth/noindex davranışları korunur. Axe dokuz rotada iki tema için **18/18, violations=[]** (mevcut beklenti daraltılmadı).
 - Üç font × 12 Türkçe glif: **36/36 gerçek custom font**; CDP aile/PostScript adı ve glyphCount kaydı, sessiz fallback yok. `faz1-turkish-glyphs.png` görsel olarak da incelendi. Classic soğuk context'te font isteği **0**, preload **0**. İki temada da preload:false; Arcade CSS/font-face üzerinden kendi alanından yüklenir.
 - Scanner review sırasında computed style anahtarları, *Color vendor özellikleri, SVG expression literal'leri, shorthand renkler, opaque/spread style ve gömülü SVG data URI kaçışları da kapatıldı; negatif örnekler eklendi. Son `pnpm typecheck`, `pnpm lint`: exit 0; `pnpm test`: **23 dosya / 204 test geçti (9.34 sn)**. Son entegrasyon: **11 dosya / 95 test geçti (13.09 sn)**.
+
+## Faz 1 bitiş — 2026-10-14
+
+Faz 1 tamamlandı. Dal `sunum/faz-1`; Faz 0 bitişi `6cd0936` esas alındı. Tema doğruluk kaynağı `themes.css`, varsayılan Arcade, yönetim alt ağacı Classic. Tema değiştirici UI, metin/i18n, rota config, yeni uygulama bağımlılığı, backend/DB/auth değişikliği yapılmadı. Push ve merge yapılmadı.
+
+### Değişen dosyalar
+
+| Alan | Dosyalar / sonuç |
+| --- | --- |
+| Tema CSS | `src/styles/tokens.css` → `src/styles/base.css`; yeni `src/styles/themes.css`; eski 12 takma ad kaldırıldı, iki temada 146'şar eş token |
+| Merkezi config | `src/config/{theme.config,storage-keys,fonts,boot-script}.ts` |
+| İlk boyama / provider | `src/components/boot/BootScript.tsx`, `src/components/theme/{ThemeProvider.tsx,theme-store.ts}` |
+| Layout | `src/app/layout.tsx` (import/font/boot/provider), `src/app/admin/layout.tsx` (Classic wrapper; robots aynı) |
+| Birim denetimi | `tests/unit/theme-{boot,centralization,contrast,fonts,parity,store}.test.ts`; `tests/helpers/{theme-css,theme-source}.ts` |
+| Tarayıcı / görsel | `tests/e2e/{theme,visual-classic}.spec.ts`, `tests/helpers/visual-setup.ts`, `playwright.visual.config.ts`, `playwright.config.ts`, iki temaya genişletilen `tests/accessibility/shell.spec.ts` |
+| Kanıt | `tests/e2e/__evidence__/README.md`, `faz1-{classic-diff,font-metrics,build-metrics,lighthouse}.json`, `faz1-turkish-glyphs.png` |
+| Ortam / rapor | `eslint.config.mjs` (doğru TS config kökü, kullanıcının bağımsız iç Git deposunu dışlama); bu ilerleme raporu |
+
+`git diff 6cd0936` korunan DB/lib/application/domain/infrastructure/route.ts/scripts/next.config.ts/package.json/pnpm-lock.yaml/tsconfig.json yollarında **boş**. Kullanıcının bağımsız `ULUDOTT-WEB/` iç Git deposu değiştirilmedi, stage edilmedi; önceden var olan untracked öğe olarak kalır. `.env.local` ve `.local/garage-rpc.secret` SHA256 karşılaştırmaları **aynı**; içerikleri raporlanmadı.
+
+### Son komutlar ve çıktı özeti
+
+| Komut | Kanıt |
+| --- | --- |
+| `pnpm typecheck` | exit 0; strict gevşetilmedi |
+| `pnpm lint` | exit 0; warning 0 |
+| `pnpm test` | 23 dosya, **204/204**, 9.34 sn (son scanner incelemesi dahil) |
+| `pnpm test:integration` | 11 dosya, **95/95**, 13.09 sn |
+| `ULUDOTT_E2E_PRODUCTION=1 ULUDOTT_E2E_REBUILD=1 pnpm test:e2e` | **56/56**, 2.9 dk; atlama yok; mevcut davranışlar ve iki tema axe dahil |
+| `pnpm test:e2e --config playwright.visual.config.ts` | **16/16**, 17.9 sn; bütün RGBA farkları **%0** |
+| `pnpm build` | exit 0; son build ana boş DB ile ve yalnız komut ortamında NODE_ENV=production / APP_URL=https://127.0.0.1:3443 / OBJECT_STORAGE_ENDPOINT=https://127.0.0.1:9443; compile 1.545 sn, TypeScript 2.3 sn, statik üretim 615 ms |
+| `pnpm dlx lighthouse@13.5.0 …` | yerel HTTPS üretim ana sayfası; mobil **100/100/96/100**; aşağıdaki ölçüm |
+| `rg` renk taraması + `theme-centralization` | themes.css/DB hariç yalnız onaylı JPEG sabiti; **0 UI renk literal'i**, 1 gerekçeli dokunulmaz JPEG kullanımı |
+| Yerel sağlık denetimi | 42 public tablo, dolu tablo **0**, migration **8**, kalan test DB **0** |
+
+Windows komut düzeni: mevcut `.local/pnpm-bin` adaptörü PATH'e eklenir; üretim fixture'ın TLS sertifikası için `C:/Program Files/Git/usr/bin` OpenSSL PATH'i kullanılır. E2E sonrası doğrulanmış izole fixture temizliği çalıştırıldı. Görsel fixture kendi global teardown closure'ıyla PID/DB temizler. Geçici Lighthouse runner `pnpm exec` ile doğrudan çağrıldığında Windows junction kopyasının modül arama yolu `pnpm run` ile eşitlendi (`NODE_PATH` yerel pnpm virtual store); ilk iki başarısız denetim başlangıcı bundan kaynaklandı. Bir sonraki başlangıçta test pnpm.exe adaptörünün boşluk içeren Chrome argümanlarını reddetmesi gerçek pnpm CLI girişiyle giderildi. Bunlar yerel denetim düzeneği sorunlarıdır; ürün/config/backend değiştirilmedi. Soğuk build de ayrıca başarılı alındı.
+
+### CSS, font ve mobil performans
+
+| Ölçüm | Faz 0 | Faz 1 | Fark / açıklama |
+| --- | ---: | ---: | --- |
+| Derlenen toplam CSS | 5.651 B | 22.570 B | +16.919 B; iki tema + font-face + bileşen durumları |
+| CSS gzip (level 9) | 1.940 B | 4.979 B | +3.039 B; son CSS yaklaşık 4,86 KiB |
+| Yayımlanan font varlıkları | 0 | 81.720 B / 11 WOFF2 | Google CSS'nin unicode alt kümeleri; hepsi her gezinmede indirilmez |
+| Arcade ana sayfa font ağı | 0 | 64.016 B / 6 istek | Latin/latin-ext; tamamı aynı origin `/_next/static/media/` |
+| Classic font ağı | 0 | **0 istek** | Soğuk context'te doğrulandı |
+| Font preload listesi | boş | **boş** | Üç next/font preload:false; Classic'e koşulsuz font indirilmez |
+| Ana sayfa ilk yük JS gzip | — | **143.343 B (139,98 KiB)** | <150 KB hedefi sağlandı; LH gerçek Script istekleri, gzip level 9 |
+
+Lighthouse **13.5.0**, HeadlessChrome **155**, mobil 412×823/DPR1.75, CPU yavaşlatma 4×, RTT150ms/1638.4Kbps simülasyonu; yerel üretim HTTPS ana sayfası. [Resmî sürüm](https://github.com/GoogleChrome/lighthouse/releases/tag/v13.5.0). Performance **100**, Accessibility **100**, Best Practices **96**, SEO **100**; LCP **1.528 ms**, CLS **0,02568**, TBT **62 ms**. CLS tam sıfır değildir; ölçülen küçük kayma açıkça kaydedildi. Best Practices puanındaki eksik mevcut `/favicon.ico` 404 konsol kaydıdır; ≥90 eşiği geçer. Favicon/metadata işi bu tema fazına eklenmedi. Ham yerel JSON/HTML `.local/faz1-lighthouse-arcade.report.*`; hash ve taşınabilir özet `faz1-lighthouse.json`. Bu ölçüm VDS kapasite veya canlı site performansı iddiası değildir.
+
+### Kabul ölçütleri
+
+| Ölçüt | Sonuç | Kanıt |
+| --- | --- | --- |
+| Tema dışı UI renk literal'i yok | ✓ | rg + centralization; kullanıcının onayladığı tek JPEG sabiti ayrı, değişmeden durur |
+| Aynı token kümesi / tanımsız var() yok | ✓ | Arcade/Classic **146/146**, parity testi; yinelenen token/blok da hata |
+| Kontrast eşikleri | ✓ | 24/24 çift; yukarıdaki oran tablosu ve build-metrics; en düşük metin5,423, güçlü panel sınırı3,022 |
+| Classic regresyon ≤%1 | ✓ | 16/16; gerçek değişen piksel **%0**; Faz 0 dosyalarında git diff yok |
+| Türkçe glif kaydı / Classic sıfır font | ✓ | PNG görsel incelemesi, 36/36 CDP custom glif; production theme testi |
+| İlk boyama / güvenli tercih / admin izolasyonu | ✓ | DOMContentLoaded computed style, storage throw/invalid, cross-tab, admin ve nested font E2E |
+| Bileşen durumları / hareket / hedefler | ✓ | Token hover/active/disabled/focus; mevcut reduced-motion sözleşmesi; gerçek ≥48px ve taşmasız viewport testleri |
+| İki temada erişilebilirlik | ✓ | 18 axe denetimi, `violations=[]`; Lighthouse Accessibility100 |
+| CSS/font boyutu ve preload raporu | ✓ | Yukarıdaki tablo, build/font/Lighthouse JSON kanıtları |
+| Mobil üretim ≥90 / LCP≤2.5sn / JS<150KB | ✓ | 100/100/96/100; LCP1.53sn; JS143.343B gzip |
+| typecheck/lint/test/integration/e2e/build | ✓ | Son komut tablosundaki çıkışlar ve sayılar |
+| Dokunulmazlar / secrets / bağımlılıklar | ✓ | Korunan yolların diff'i boş, iki secret hash aynı; uygulama manifest/lockfile aynı |
+
+### Faz 0 → Faz 1 rota kontrolü
+
+| Rota grubu | Faz 0 bitiş | Faz 1 bitiş |
+| --- | --- | --- |
+| `/` | ○ ISR30sn | ○ ISR30sn |
+| `/duyurular`, `/etkinlikler`, `/linkler`, `/oyunlar` | ○ ISR30sn | ○ ISR30sn |
+| `/hakkimizda`, `/destek`, `/robots.txt`, `/_not-found` | ○ | ○ |
+| `/ulujam`, `/sitemap.xml`, içerik slug'ları | ƒ | ƒ |
+| `/admin/**`, `/api/**`, `/l/[id]`, `/media/[variantId]` | ƒ | ƒ |
+| Toplam rota | 9 statik / 23 dinamik | **9 statik / 23 dinamik** |
+
+Açık karar/onay: **Faz 1 için yok**. JPEG sabiti kullanıcı onayıyla korunmuştur. Mevcut favicon404 ve ölçülen CLS0,02568 sonraki sunum çalışmaları için kayıtlıdır. Canlı sisteme, yedek hedefine erişim; push/merge yapılmadı. İleride tema eklenince CSS bloğu/THEMES ile birlikte registry labelKey tamlığı derleyici tarafından zorlanır; sözlük tipi Faz 3'te daraltılır.
