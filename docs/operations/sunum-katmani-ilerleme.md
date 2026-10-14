@@ -5,9 +5,11 @@
 Tarih: 10 Ekim 2026 (Europe/Istanbul). Dal: `sunum/faz-0`.
 Başlangıç commit'i: `b731d00`. İlk incelemede çalışma ağacı temizdi.
 
-**Güncel durum (14 Ekim 2026):** 0.1 referans hattı yeşil: 141/141 test,
-93/93 integration, 27/27 e2e ve üretim build'i geçti. 16 deterministik klasik
-görüntü kaydedildi. 0.2–0.6 uygulaması sırada; Faz 0 bütünü henüz tamamlanmadı.
+**Güncel durum (14 Ekim 2026): Faz 0 / 0.1–0.6 tamamlandı.** Son zincir:
+typecheck/lint/build exit 0, 162/162 test, 95/95 integration, 37/37 e2e.
+Üretim e2e ayrıca 37/37 ve izole sayaç testi 1/1. 16 görsel başlangıç/bitişte
+birebir eşit. VDS ölçüm eşikleri kullanıcı tarafından onaylandı. Bitiş raporu,
+rota karşılaştırması ve açık operasyon onayları dosyanın sonunda.
 Önceki başarısız koşular aşağıda tarihsel kayıt olarak korunuyor.
 
 **İlk deneme (tarihsel): 0.1 ortam kurulumu engellendi.** Referans
@@ -471,3 +473,167 @@ kurulum adaptörleri, indirilen örnekler/arşivler ve ham loglar ignore altınd
 - `docs/operations/backup-restore.md`: ayrı/boş prova DB, checksum/TOC, tek transaction `pg_restore`, migration/tablo/kayıt/index/constraint/orphan sorguları, medya/anahtar/global rol envanteri ve prova raporu. Dump/retention/restore veya hedef bağlantısı **çalıştırılmadı/doğrulanmadı**. `bash -n infrastructure/backup/pg-backup.sh`: exit 0; yalnız parse kontrolü, betik gövdesi çalışmaz.
 - `docs/operations/vds-olcum.md`: 4 GB/2 vCPU ve botla ortak yük; free/df/vmstat/pidstat/systemd-cgtop/PG bağlantı ve shared_buffers kontrolleri, referans/tepe/toparlanma protokolü. RAM/swap/CPU/disk/bağlantı başlangıç ölçüm eşikleri önerildi; kullanıcı **14 Ekim 2026'da “Ölçüm eşiklerini onaylıyorum”** yanıtıyla onayladı. Canlı ölçüm ve kapasite kabulü hâlâ **doğrulanmadı**. Yedek sağlayıcısı, süre/şifreleme/RPO/RTO onayı ayrı olarak bekliyor.
 - `pnpm typecheck`, `pnpm lint`: exit 0; `pnpm test`: **162/162**, 17 dosya, 7,11 sn. Belge/betik adımı için çalışma zamanı testi yapılmadı; yedek çalıştırmama kuralı korundu. Değişenler: yeni backup betiği, iki operasyon belgesi, dar LF kuralı ve bu rapor. 0.6 hazırlık kabulü **✓**.
+
+## Faz 0 bitiş — kabul (14 Ekim 2026)
+
+Dal: `sunum/faz-0`. Uygulama adımları yerel commit'lerle kayıtlı: 0.1 `363f2f7`, 0.2 `abd93fe`, 0.3 `3831e85`, 0.4 `3da7345`, 0.5 `539942e`, 0.6 `6632dfa`. Önceki ortam engeli kayıtları `07ce585`/`c9cb08b` tarihsel kanıttır. Push/merge yapılmadı. Bu bölüm son doğrulama sonrası ayrı rapor commit'iyle kaydedilir.
+
+### Son doğrulama zinciri
+
+Komutlar aşağıdaki sırada çalıştırıldı; her biri exit 0. Ham loglar `.local/faz0-final-*.log`, zaman/exit kaydı `.local/faz0-final-results.json`. Süreler komut duvar süresidir; kullanıcıya özel sırlar loglanmadı.
+
+| Komut | Sonuç özeti | Süre |
+|---|---|---|
+| `pnpm typecheck` | tsc --noEmit, hata yok | 2,97 sn |
+| `pnpm lint` | eslint --max-warnings=0, hata/uyarı yok | 3,66 sn |
+| `pnpm test` | **162/162**, 17 dosya (Vitest 11,41 sn) | 13,71 sn |
+| `pnpm test:integration` | **95/95**, 11 dosya, gerçek yerel PG/Garage (Vitest 11,73 sn) | 13,10 sn |
+| `pnpm test:e2e` | **37/37**, 2 worker (Playwright 37,9 sn) | 40,23 sn |
+| `pnpm build` | Next **16.3.8**, Turbopack; compile/TS/prerender başarılı | 13,55 sn |
+
+Üretim config doğrulaması HTTPS istediğinden build komutunda yalnız süreç ortamına `APP_URL=https://127.0.0.1:3443`, `OBJECT_STORAGE_ENDPOINT=https://127.0.0.1:9443` verildi. Ana yerel DB kullanıldı; `.env.local` değiştirilmedi, canlıya istek gönderilmedi. Üretim e2e için bu portlarda mevcut test düzeneğinin yerel TLS geçitleri ve kendi seed'li izole DB'si kullanıldı. Üretim e2e **37/37**, ayrı sayaç üretim e2e **1/1** kanıtları 0.4 bölümünde; yerel Windows sonuçları Linux VDS kapasitesi/deploy kanıtı sayılmaz.
+
+Ek son kontroller:
+
+- Aynı çekim koşullarında ayrı boş DB ile `.local/baseline-faz0-finish/` üretildi. Kayıtlı klasik referansla **16/16 PNG SHA256 birebir eşit**. Başlangıç baseline'ı değiştirilmedi.
+- Üretim CSS başlangıç/bitiş: **5651 / 5651 bayt**, gzip level 9 **1940 / 1940 bayt**, aynı SHA256 `5f2bd63bda302fb49a83f6fe9e9248de08f8ccb494495d46a077e8ab286b1ae1`. UI/tema değişimi yok.
+- `.env.local` ve `.local/garage-rpc.secret` başlangıç/son SHA256 eşitliği **true / true** (sır/hash değerleri rapora yazılmadı).
+- Son yerel DB kontrolü: **42 public tablo, 0 dolu tablo, 8 uygulanmış migration, 0 kalan test DB**. Ürün DB'sine test/HEIC/uydurma içerik seed edilmedi.
+- Yerel Compose: PostgreSQL healthy, Garage Up, secret-init Exited(0). Windows'a özel ignore edilmiş overlay kullanıldı; takip edilen Compose ve secret dosyaları aynı.
+- `git diff --check`: temiz. `src/db/**`, `drizzle.config.ts`, auth/oturum/CSRF/MFA, mevcut config/database altyapısı, l/media işleyicileri, mevcut scripts ve bağımlılık/lock sürümleri değişmedi. Önceden gerekçelendirilmiş eklemeler: salt okunur sitemap servisi, yeni cache altyapısı ve COMMIT sonrası HTTP etiket çağrıları.
+
+### Bitiş rota tablosu (gerçek pnpm build çıktısı)
+
+```text
+Route (app)                   Revalidate  Expire
+┌ ○ /                                30s      1y
+├ ○ /_not-found
+├ ƒ /admin
+├ ƒ /admin/duyurular
+├ ƒ /admin/etkinlikler
+├ ƒ /admin/galeri
+├ ƒ /admin/linkler
+├ ƒ /admin/medya
+├ ƒ /api/admin/announcements
+├ ƒ /api/admin/csrf
+├ ƒ /api/admin/events
+├ ƒ /api/admin/gallery
+├ ƒ /api/admin/links
+├ ƒ /api/admin/login
+├ ƒ /api/admin/logout
+├ ƒ /api/admin/media
+├ ƒ /api/admin/session
+├ ƒ /api/admin/session/renew
+├ ƒ /api/links/[id]/qr
+├ ○ /destek
+├ ○ /duyurular                       30s      1y
+├ ƒ /duyurular/[slug]
+├ ○ /etkinlikler                     30s      1y
+├ ƒ /etkinlikler/[slug]
+├ ○ /hakkimizda
+├ ƒ /l/[id]
+├ ○ /linkler                         30s      1y
+├ ƒ /media/[variantId]
+├ ○ /oyunlar                         30s      1y
+├ ○ /robots.txt
+├ ƒ /sitemap.xml
+└ ƒ /ulujam
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+```
+
+### Başlangıç / bitiş karşılaştırması
+
+| Rota veya grup | Faz 0 başlangıç | Faz 0 bitiş | Gerekçe |
+|---|---|---|---|
+| `/` | ƒ, force-dynamic | ○, 30 sn | Öne çıkan veri etiketli; root force-dynamic kaldırıldı |
+| `/etkinlikler`, `/duyurular` | ƒ | ○, 30 sn | Liste verisi önbellekli |
+| `/linkler`, `/oyunlar` | ƒ | ○, 30 sn | Link pencereleri/hedefleri ve tarihî sonuçlar önbellekli |
+| `/ulujam` | ƒ, force-dynamic | ƒ, connection() | Veri önbellekli; initialNow her istekte taze |
+| Etkinlik/duyuru `[slug]` | ƒ, force-dynamic | ƒ | Dinamik parametre; detay verisi etiketli, force-dynamic yok |
+| `/hakkimizda`, `/destek`, `/_not-found` | ○ | ○ | Statik davranış korunur |
+| `/admin/**`, `/api/**`, `/l/[id]`, `/media/[variantId]` | ƒ | ƒ | Özel/HTTP okuma ve güvenlik davranışı korunur |
+| `/robots.txt` | Yok | ○ | Yeni metadata rotası |
+| `/sitemap.xml` | Yok | ƒ | Yeni metadata rotası; yayımlanmış slug verisi önbellekli |
+| Toplam | 30 rota: **3 ○ / 27 ƒ** | 32 rota: **9 ○ / 23 ƒ** | Beş rota ön üretilir, iki metadata rotası eklenir |
+
+Buradaki rota ön üretimi veri cache'inin sonucudur; page/layout seviyesinde yeni `revalidate` ayarı veya genel Cache Components geçişi yapılmadı. Gelecekte kök layout dil çerezi okuyup dinamik olduğunda bu DB okuma önbellekleri çalışmaya devam eder. Build'in `Expire 1y` sütunu zaman tabanlı SWR için framework varsayılanıdır; veri 30 sn revalidation kullanır, yönetici mutasyonunda `{ expire: 0 }` uygulanır.
+
+### Kabul ölçütleri
+
+| Ölçüt | Sonuç | Kanıt |
+|---|---|---|
+| Referans hat kayıtlı | ✓ | 0.1: config/migrate/type/lint/test/integration/e2e/build exit 0, **141/93/27** |
+| 16 deterministik klasik görsel kayıtlı | ✓ | PNG + manifest + README; iki başlangıç koşusu ve bitişte **16/16 SHA eşit** |
+| Genel sayfalarda HTTP/meta noindex yok | ✓ | Sekiz public rota indexability e2e; üretimde de 37/37 suite |
+| `/admin` ve `/api/admin` noindex korunur | ✓ | Admin meta + yanıt başlığı, API session yanıt başlığı e2e |
+| Robots/sitemap doğru, taslak dışarıda | ✓ | Gerçek PG sitemap testleri (taslak/arşiv/gelecek/bitmiş pencere/101+ kayıt/audit zamanı) + e2e |
+| Ana sayfa force-dynamic değil | ✓ | Son kaynak + build `/` ○ / 30s |
+| Yayınla → görünür; yayından kaldır → kaybolur | ✓ | Sıcak home/list/detail/sitemap cache ile featured-event e2e, geliştirme ve üretim |
+| Veri cache'i ve COMMIT sonrası invalidation | ✓ | Typed etiketler, TTL 30, Date/cache kaynak ayrımı ve bütün mevcut HTTP mutasyonları unit + e2e |
+| Countdown ≤1 sn sapma, hidrasyon uyarısı yok | ✓ | İzole gerçek tarayıcı testinde iki sıcak istek, üç evre ve draft sonrası Yakında; dev/prod 1/1 |
+| Bütün zorunlu son komutlar yeşil | ✓ | Yukarıdaki sıralı zincir; **162 / 95 / 37**, build exit 0 |
+| Kalıcı kural belgesi eksiksiz | ✓ | `docs/design/sunum-katmani-kurallari.md`, özgün dokuz madde |
+| Denetim/yedek/kapasite hazırlığı | ✓ | Audit yerel HTTP/Node CLI testleri; backup yalnız bash -n; restore/VDS belgeleri, ölçüm eşikleri onaylı |
+| Arka uç/domain/auth/schema ve görsel kaynak sınırları | ✓ | Diff kontrolü; yalnız raporlanmış salt okunur/performans HTTP eklemeleri; CSS ve 16 görsel eşit |
+
+### Değişen dosyalar
+
+Başlangıç `b731d00` → bitiş: **58 takip edilen dosya**, bunun 16'sı PNG. Tam dosya listesi (`*.png` satırı 16 referansı birlikte gösterir):
+
+```text
+.gitattributes
+package.json
+playwright.config.ts
+playwright.countdown.config.ts
+docs/design/sunum-katmani-kurallari.md
+docs/operations/sunum-katmani-ilerleme.md
+docs/operations/backup-restore.md
+docs/operations/vds-olcum.md
+infrastructure/backup/pg-backup.sh
+scripts/live-audit.ts
+src/app/layout.tsx
+src/app/page.tsx
+src/app/robots.ts
+src/app/sitemap.ts
+src/app/(public)/destek/page.tsx
+src/app/(public)/hakkimizda/page.tsx
+src/app/(public)/ulujam/page.tsx
+src/app/(public)/oyunlar/page.tsx
+src/app/(public)/linkler/page.tsx
+src/app/(public)/etkinlikler/page.tsx
+src/app/(public)/etkinlikler/[slug]/page.tsx
+src/app/(public)/duyurular/page.tsx
+src/app/(public)/duyurular/[slug]/page.tsx
+src/app/api/admin/gallery/route.ts
+src/lib/cache/tags.ts
+src/lib/cache/public-read.ts
+src/modules/publication/service.ts
+src/modules/publication/http.ts
+src/modules/publication/ui/public-queries.ts
+src/modules/events/ui/ulujam-coming-soon.tsx
+src/modules/links/application/http.ts
+src/modules/media/application/http.ts
+tests/e2e/__baseline-classic__/README.md
+tests/e2e/__baseline-classic__/manifest.json
+tests/e2e/__baseline-classic__/*.png (16)
+tests/e2e/indexability.spec.ts
+tests/e2e/featured-event.spec.ts
+tests/cache-e2e/countdown.spec.ts
+tests/helpers/start-e2e.ts
+tests/integration/sitemap-publications.test.ts
+tests/unit/cache-invalidation.test.ts
+tests/unit/public-cache.test.ts
+tests/unit/live-audit.test.ts
+```
+
+### Açık operasyon konuları / onay bekleyenler
+
+- **Yedek sağlayıcısı/erişim/şifreleme/saklama süresi/RPO/RTO/zamanlama:** onay bekliyor. Betik veya hedefe erişim, dump/restore ve VDS yük testi çalıştırılmadı; çalışma zamanı/kapasite **doğrulanmadı**. VDS başlangıç ölçüm eşikleri onaylıdır; bu onay canlı işlem izni değildir.
+- **Canlı audit:** kullanıcı daha sonra 0.5'teki komutla çalıştıracak; bu faz canlı siteye erişmedi. Canlı deploy/indexlenme durumu **doğrulanmadı**.
+- **Genel OG görseli:** onaylı kaynak verilmediği için eklenmedi/üretilmedi. Mevcut içerik detayındaki onaylı yayımlanmış medya davranışı korunur.
+- **Özgün HEIC dosyaları:** kullanıcıda yok; açık izinle indirilen geçerli örnekler yalnız ignore edilen `Media/` altında. Kapsanan test geometrileri gerçek decoder ile doğrulandı; orijinal telefon dosyalarının kanıtı değildir. Kaynak/lisans/ölçü/hashes 0.1'de kayıtlı, ürün medyası yapılmadı.
+- **Sonraki fazlar:** sitemap statik listesi `FAZ-2` işaretiyle taşınmayı bekler. İleride token'lı sayfalar eklendiğinde kendi explicit noindex meta/HTTP korumaları gerekir; şu an böyle bir sayfa uygulanmış değildir. Tarihî sonuçlarda mevcut HTTP yazma yolu yoktur; CLI seed değişikliği TTL ile yenilenir, gelecekte HTTP yönetim yolu eklendiğinde ilgili etiketi COMMIT sonrası geçersiz kılmalıdır.
+
+Faz 0 uygulama ve yerel kabul ölçütleri **tamamlandı**. Faz 1 UI/tema/i18n çalışması bu faza eklenmedi.
