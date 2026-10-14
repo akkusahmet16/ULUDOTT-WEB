@@ -453,3 +453,15 @@ kurulum adaptörleri, indirilen örnekler/arşivler ve ham loglar ignore altınd
 - `pnpm test:e2e --config playwright.countdown.config.ts`: geliştirme **1/1**, 11,8 sn; aynı senaryo üretim **1/1**, 1,6 dk. İki sıcak cache isteğinde server `initialNow` istek zamanına ±1 sn içinde; tarayıcı sayacı gerçek saate **≤1 sn** sapmalı; Yakında/counting/started ve geri çekme doğru; hydration/pageerror listesi boş. Test kendi DB'sinde çalışır, normal e2e'nin tarihsiz 2027 sözleşmesini etkilemez. Yeni senaryonun ilk geliştirme koşusunda test isteğinin secure çerez aktarımı eksikti (403); mevcut testlerdeki browser CSRF + Cookie aktarım deseni uygulandı, uygulama kimlik kodu değişmedi.
 - Ara `pnpm build`: exit 0; `/`, `/duyurular`, `/etkinlikler`, `/linkler`, `/oyunlar` **○ / 30s**; `/ulujam` **ƒ**. Faz sonundaki build ayrıca tam tabloya kaydedilecek. Loglar `.local/faz0-04-*`; her e2e sonrası doğrulanmış izole fixture DB/medyası temizlendi, kalan test DB **0**.
 - Değişenler: yeni iki lib/cache dosyası, genel UI okuma sarmalayıcısı, dokuz genel page, sitemap, sayaç server bileşeni, dört HTTP giriş noktası, cache unit/e2e testleri, üretim test düzeneğinin ek seçenekleri ve bu rapor. UI markup/stil/metin değişmedi. 0.4 kabulü **✓**.
+### 0.5 sonuç, kanıt ve elle çalıştırma talimatı
+
+- `scripts/live-audit.ts` ve `audit:live` package script'i eklendi; yalnızca Node fetch/built-in araçları, yeni bağımlılık yok. Altı anonim GET: `/`, `/robots.txt`, `/sitemap.xml`, `/admin`, geçersiz kimlikli `/l/…` ve `/media/…`. Yönlendirmeler izlenmez; istek başına 10 sn ve yanıt başına 2 MiB sınırı. Durum, X-Robots-Tag, meta robots, title, canonical, lang, skip ve site-header Markdown tablosunda görünür. Boş 404 + işleyiciye özgü başlıklar yalnızca ipucu diye raporlanır; genel HTML 404 rota kanıtı sayılmaz. Ham ağ/URL hataları kimlik bilgisi sızdırmadan özetlenir.
+- İlk yeni test eksik modülden RED. İlk uygulama koşusunda yeni test fixture'ında skip hedefi `main-content` eksikti; gerçek işaretçinin karşılığı fixture'a eklendi. Son `pnpm typecheck`, `pnpm lint`: exit 0; `pnpm test`: **162/162**, 17 dosya, 7,47 sn. Beş yeni test gerçek yerel HTTP sunucusu ve Node CLI ile argüman ayırıcısı, HTML parsing, script içindeki sahte meta, Markdown escaping, handler ipucu/genel 404 ayrımı ve ağ hatasını doğrular.
+- **Canlıya karşı çalıştırılmadı.** Kullanıcının daha sonra kendi ortamında elle çalıştıracağı komut:
+
+  ```sh
+  pnpm audit:live -- --url https://uludott.com.tr
+  ```
+
+  Çıktı Markdown'dır; istenirse kullanıcı `> live-audit.md` ile saklayabilir. Exit 0 tüm altı kontrol uygun, exit 1 eksik/belirsiz kontrol veya geçersiz argüman demektir. İşaretçiler bu deponun canlıda olduğuna dair ipucudur; deploy/commit kimliğini tek başına kanıtlamaz. Gizli yönetim erişimi veya token keşfi yapmaz.
+- Değişenler: yeni script, package.json script kaydı, yeni yerel test ve bu rapor. Lockfile/dependency sürümleri ve mevcut scripts değişmedi. 0.5 kabulü **✓**.
