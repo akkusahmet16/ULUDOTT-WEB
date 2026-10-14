@@ -1,12 +1,16 @@
 import { readFileSync } from "node:fs";
 
-export function readThemeBlocks() {
-  const source = readFileSync("src/styles/themes.css", "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+export function readThemeBlocks(input = readFileSync("src/styles/themes.css", "utf8")) {
+  const source = input.replace(/\/\*[\s\S]*?\*\//g, "");
   const blocks = new Map<string, Map<string, string>>();
   for (const rule of source.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
     for (const theme of rule[1].matchAll(/\[data-theme="([a-z-]+)"\]/g)) {
       const values = new Map<string, string>();
-      for (const declaration of rule[2].matchAll(/(--[a-z0-9-]+)\s*:\s*([^;]+);/g)) values.set(declaration[1], declaration[2].trim());
+      for (const declaration of rule[2].matchAll(/(--[a-z0-9-]+)\s*:\s*([^;]+);/g)) {
+        if (values.has(declaration[1])) throw Error(`Yinelenen token: ${declaration[1]}`);
+        values.set(declaration[1], declaration[2].trim());
+      }
+      if (blocks.has(theme[1])) throw Error(`Yinelenen tema: ${theme[1]}`);
       blocks.set(theme[1], values);
     }
   }

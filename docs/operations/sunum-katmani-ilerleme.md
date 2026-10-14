@@ -733,3 +733,10 @@ Arcade istenen border-strong tonu #4a4a7a → #5f5f8f olarak açıldı (bg oran�
 - Nav/footer hedefleri padding ve dengeleyen negatif margin ile genişletildi; metin akış ölçüsü korunur. Mobil açık menü ve form alanları en az 48px.
 - Scanline yalnız genel main arka plan katmanındadır (Arcade opacity .04, Classic 0); metin/kontrastı ve admini örtmez. Animasyonlarda mevcut yıldız oyununun reduced-motion=none davranış sözleşmesi korunur, diğer geçişler reduced altında 10ms olur.
 - Kanıt: `pnpm typecheck`, `pnpm lint` çıkış 0; `pnpm test`: 21 dosya / 197 test geçti (11.76 sn). Görsel eşitlik ve gerçek hedef boyutları 1.8'de ölçülecek.
+
+### Faz 1 / 1.7 — Zorlayıcı tema testleri
+
+- Kaynak tarayıcısı src TS/TSX/CSS dosyalarını denetler: 3/4/6/8 haneli hex, renk fonksiyonları, CSS renk adları, TSX inline renk ve SVG fill/stroke; hash href, white-space, var() ve currentColor yanlış pozitif üretmez. Negatif örnekler tarayıcının yasakları yakaladığını doğrular.
+- JPEG istisnası yalnız `src/modules/media/infrastructure/process-image.ts` içindeki tam `.flatten({background:…})` ifadesine ve tek oluşuma bağlıdır; başka renk veya ikinci kullanım hata verir. Bu, kullanıcının onayladığı tek dokunulmaz backend istisnasıdır.
+- Parity testi THEMES kimlikleri, eşit token kümeleri, bütün src var() başvuruları (fallback/iç içe dahil), yinelenen token/bloklar, storage anahtarı/font import merkeziliğini kontrol eder. Kontrast testi THEMES'ten türetilir.
+- Kanıt: `pnpm typecheck`, `pnpm lint` çıkış 0; `pnpm test`: 23 dosya / 203 test geçti (6.71 sn). İlk koşuda JPEG boşluk/tek tırnak bağlamı testi kırmızıydı; backend değiştirilmeden testin tam ifade eşlemesi düzeltildi.

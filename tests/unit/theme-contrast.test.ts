@@ -1,5 +1,6 @@
 import { expect, it } from "vitest";
 import { contrast, readThemeBlocks, resolveHex } from "../helpers/theme-css.ts";
+import { THEMES } from "../../src/config/theme.config.ts";
 
 const pairs = [
   ["text", "bg", 4.5], ["text", "surface", 4.5],
@@ -10,7 +11,7 @@ const pairs = [
   ["border-strong", "surface", 3],
 ] as const;
 
-for (const theme of ["arcade", "classic"] as const) {
+for (const theme of THEMES) {
   it.each(pairs)(`${theme}: %s / %s kontrastı ≥%s`, (foreground, background, minimum) => {
     const tokens = readThemeBlocks().get(theme);
     if (!tokens) throw Error(`Tema bloğu yok: ${theme}`);
