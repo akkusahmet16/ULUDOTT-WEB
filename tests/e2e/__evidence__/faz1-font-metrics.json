@@ -1,0 +1,463 @@
+{
+  "glyphs": [
+    {
+      "family": "display",
+      "glyph": "İ",
+      "fonts": [
+        {
+          "familyName": "Press Start 2P",
+          "postScriptName": "PressStart2P-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "display",
+      "glyph": "ı",
+      "fonts": [
+        {
+          "familyName": "Press Start 2P",
+          "postScriptName": "PressStart2P-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "display",
+      "glyph": "Ğ",
+      "fonts": [
+        {
+          "familyName": "Press Start 2P",
+          "postScriptName": "PressStart2P-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "display",
+      "glyph": "ğ",
+      "fonts": [
+        {
+          "familyName": "Press Start 2P",
+          "postScriptName": "PressStart2P-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "display",
+      "glyph": "Ş",
+      "fonts": [
+        {
+          "familyName": "Press Start 2P",
+          "postScriptName": "PressStart2P-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "display",
+      "glyph": "ş",
+      "fonts": [
+        {
+          "familyName": "Press Start 2P",
+          "postScriptName": "PressStart2P-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "display",
+      "glyph": "Ç",
+      "fonts": [
+        {
+          "familyName": "Press Start 2P",
+          "postScriptName": "PressStart2P-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "display",
+      "glyph": "ç",
+      "fonts": [
+        {
+          "familyName": "Press Start 2P",
+          "postScriptName": "PressStart2P-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "display",
+      "glyph": "Ö",
+      "fonts": [
+        {
+          "familyName": "Press Start 2P",
+          "postScriptName": "PressStart2P-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "display",
+      "glyph": "ö",
+      "fonts": [
+        {
+          "familyName": "Press Start 2P",
+          "postScriptName": "PressStart2P-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "display",
+      "glyph": "Ü",
+      "fonts": [
+        {
+          "familyName": "Press Start 2P",
+          "postScriptName": "PressStart2P-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "display",
+      "glyph": "ü",
+      "fonts": [
+        {
+          "familyName": "Press Start 2P",
+          "postScriptName": "PressStart2P-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "body",
+      "glyph": "İ",
+      "fonts": [
+        {
+          "familyName": "Space Grotesk Light",
+          "postScriptName": "Space-Grotesk-Light",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "body",
+      "glyph": "ı",
+      "fonts": [
+        {
+          "familyName": "Space Grotesk Light",
+          "postScriptName": "Space-Grotesk-Light",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "body",
+      "glyph": "Ğ",
+      "fonts": [
+        {
+          "familyName": "Space Grotesk Light",
+          "postScriptName": "Space-Grotesk-Light",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "body",
+      "glyph": "ğ",
+      "fonts": [
+        {
+          "familyName": "Space Grotesk Light",
+          "postScriptName": "Space-Grotesk-Light",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "body",
+      "glyph": "Ş",
+      "fonts": [
+        {
+          "familyName": "Space Grotesk Light",
+          "postScriptName": "Space-Grotesk-Light",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "body",
+      "glyph": "ş",
+      "fonts": [
+        {
+          "familyName": "Space Grotesk Light",
+          "postScriptName": "Space-Grotesk-Light",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "body",
+      "glyph": "Ç",
+      "fonts": [
+        {
+          "familyName": "Space Grotesk Light",
+          "postScriptName": "Space-Grotesk-Light",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "body",
+      "glyph": "ç",
+      "fonts": [
+        {
+          "familyName": "Space Grotesk Light",
+          "postScriptName": "Space-Grotesk-Light",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "body",
+      "glyph": "Ö",
+      "fonts": [
+        {
+          "familyName": "Space Grotesk Light",
+          "postScriptName": "Space-Grotesk-Light",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "body",
+      "glyph": "ö",
+      "fonts": [
+        {
+          "familyName": "Space Grotesk Light",
+          "postScriptName": "Space-Grotesk-Light",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "body",
+      "glyph": "Ü",
+      "fonts": [
+        {
+          "familyName": "Space Grotesk Light",
+          "postScriptName": "Space-Grotesk-Light",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "body",
+      "glyph": "ü",
+      "fonts": [
+        {
+          "familyName": "Space Grotesk Light",
+          "postScriptName": "Space-Grotesk-Light",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "label",
+      "glyph": "İ",
+      "fonts": [
+        {
+          "familyName": "VT323",
+          "postScriptName": "VT323-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "label",
+      "glyph": "ı",
+      "fonts": [
+        {
+          "familyName": "VT323",
+          "postScriptName": "VT323-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "label",
+      "glyph": "Ğ",
+      "fonts": [
+        {
+          "familyName": "VT323",
+          "postScriptName": "VT323-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "label",
+      "glyph": "ğ",
+      "fonts": [
+        {
+          "familyName": "VT323",
+          "postScriptName": "VT323-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "label",
+      "glyph": "Ş",
+      "fonts": [
+        {
+          "familyName": "VT323",
+          "postScriptName": "VT323-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "label",
+      "glyph": "ş",
+      "fonts": [
+        {
+          "familyName": "VT323",
+          "postScriptName": "VT323-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "label",
+      "glyph": "Ç",
+      "fonts": [
+        {
+          "familyName": "VT323",
+          "postScriptName": "VT323-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "label",
+      "glyph": "ç",
+      "fonts": [
+        {
+          "familyName": "VT323",
+          "postScriptName": "VT323-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "label",
+      "glyph": "Ö",
+      "fonts": [
+        {
+          "familyName": "VT323",
+          "postScriptName": "VT323-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "label",
+      "glyph": "ö",
+      "fonts": [
+        {
+          "familyName": "VT323",
+          "postScriptName": "VT323-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "label",
+      "glyph": "Ü",
+      "fonts": [
+        {
+          "familyName": "VT323",
+          "postScriptName": "VT323-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "family": "label",
+      "glyph": "ü",
+      "fonts": [
+        {
+          "familyName": "VT323",
+          "postScriptName": "VT323-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    }
+  ],
+  "preload": [],
+  "requests": [
+    {
+      "url": "/_next/static/media/0c8c4ded07fff55c-s.2tcyrya9o07vu.woff2",
+      "bytes": 7192
+    },
+    {
+      "url": "/_next/static/media/0c89a48fa5027cee-s.2cyn07wtgehh0.woff2",
+      "bytes": 22320
+    },
+    {
+      "url": "/_next/static/media/de161955856a921d-s.0fxeqrss3ag9h.woff2",
+      "bytes": 4704
+    },
+    {
+      "url": "/_next/static/media/28868e710e86be81-s.2eksvhm1z0jwa.woff2",
+      "bytes": 18924
+    },
+    {
+      "url": "/_next/static/media/674d141a92451548-s.2n-wf6s8aqfs0.woff2",
+      "bytes": 7172
+    },
+    {
+      "url": "/_next/static/media/96074e70a40501da-s.1dfv6z-5f19bh.woff2",
+      "bytes": 3704
+    }
+  ]
+}

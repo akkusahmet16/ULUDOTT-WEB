@@ -51,3 +51,8 @@ it("kalıcı depo kullanılamasa da DOM teması değişir; restore varsayılana 
   expect(() => restoreSavedTheme()).not.toThrow();
   expect(getThemeSnapshot()).toBe(DEFAULT_THEME);
 });
+it("JavaScript sınırından geçersiz tema gelirse DOM ve depo değişmez", () => {
+  Reflect.apply(setTheme, undefined, ["unknown"]);
+  expect(getThemeSnapshot()).toBe(DEFAULT_THEME);
+  expect(storage.setItem).not.toHaveBeenCalled();
+});

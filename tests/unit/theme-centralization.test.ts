@@ -23,6 +23,9 @@ it("tarayıcı hex, fonksiyon, ad, inline style ve SVG renklerini yakalar", () =
     expect(colorViolations("example.css", `.a { color: ${value}; }`)).not.toEqual([]);
   }
   expect(colorViolations("example.tsx", '<a href="#abc" style={{ color: "red" }}><svg fill="blue" /></a>')).not.toEqual([]);
+  for (const source of ['<svg fill={"red"} />', '<svg stroke={"blue"} />', '<a style={{border:"1px solid red"}} />', '<a style={{outline:"1px solid blue"}} />', '<a style={{textDecorationColor:"red"}} />', '<a style={opaqueObject} />', '<a style={{...opaqueObject}} />']) expect(colorViolations("example.tsx", source)).not.toEqual([]);
+  for (const source of ['<a style={{["color"]:"red"}} />', '<a style={{[dynamicKey]:"red"}} />', '<a style={{borderBlockStartColor:"red"}} />', '<a style={{borderInlineEndColor:"red"}} />', '<a style={{WebkitTextFillColor:"red"}} />']) expect(colorViolations("example.tsx", source)).not.toEqual([]);
   expect(colorViolations("example.tsx", '<a href="#abc" style={{ color: "var(--color-text)", "--example": "inherit" }}><svg fill="currentColor" /></a>')).toEqual([]);
   expect(colorViolations("example.css", '.a { white-space: pre-wrap; color: var(--color-text); background: transparent; }')).toEqual([]);
+  expect(colorViolations("example.css", '.a { background:url("data:image/svg+xml,<svg fill=red />"); }')).not.toEqual([]);
 });

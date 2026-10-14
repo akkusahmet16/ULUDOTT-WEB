@@ -135,6 +135,7 @@ img {
 }
 .site-nav a {
   display: inline-block;
+  min-height: var(--touch-target-min);
   padding: var(--nav-hit-padding-block) var(--space-1);
   margin: var(--nav-hit-margin-block) var(--nav-hit-margin-inline);
   text-decoration: none;
@@ -276,6 +277,7 @@ select:disabled {
 }
 .site-footer a {
   display: inline-block;
+  min-height: var(--touch-target-min);
   padding: var(--nav-hit-padding-block) var(--space-1);
   margin: var(--nav-hit-margin-block) var(--nav-hit-margin-inline);
 }

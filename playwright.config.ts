@@ -4,6 +4,8 @@ export default defineConfig({
   testDir: "./tests",
   workers: 2,
   testMatch: ["e2e/**/*.spec.ts", "accessibility/**/*.spec.ts"],
+  // Boş DB ile kilitli Faz 0 referansları ayrı visual config'te çalışır.
+  testIgnore: ["e2e/visual-classic.spec.ts"],
   use: {
     baseURL:
       process.env.ULUDOTT_E2E_PRODUCTION === "1"

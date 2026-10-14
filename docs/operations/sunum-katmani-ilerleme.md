@@ -740,3 +740,17 @@ Arcade istenen border-strong tonu #4a4a7a → #5f5f8f olarak açıldı (bg oran�
 - JPEG istisnası yalnız `src/modules/media/infrastructure/process-image.ts` içindeki tam `.flatten({background:…})` ifadesine ve tek oluşuma bağlıdır; başka renk veya ikinci kullanım hata verir. Bu, kullanıcının onayladığı tek dokunulmaz backend istisnasıdır.
 - Parity testi THEMES kimlikleri, eşit token kümeleri, bütün src var() başvuruları (fallback/iç içe dahil), yinelenen token/bloklar, storage anahtarı/font import merkeziliğini kontrol eder. Kontrast testi THEMES'ten türetilir.
 - Kanıt: `pnpm typecheck`, `pnpm lint` çıkış 0; `pnpm test`: 23 dosya / 203 test geçti (6.71 sn). İlk koşuda JPEG boşluk/tek tırnak bağlamı testi kırmızıydı; backend değiştirilmeden testin tam ifade eşlemesi düzeltildi.
+
+#### Üretim performans denetimi aracı gerekçesi
+
+Mobil Lighthouse koşulu için projede/yerel PATH'te Lighthouse bulunmadı. Uygulama bağımlılığı eklemeden, tek seferlik `pnpm dlx lighthouse@13.5.0` denetim aracı kullanılacak (tam sürüm sabit, package.json/lockfile değişmez). Resmî sürüm: https://github.com/GoogleChrome/lighthouse/releases/tag/v13.5.0 . Yalnız yerel üretim sunucusu denetlenir; canlı siteye erişilmez.
+
+### Faz 1 / 1.8 — Tarayıcı ve görsel kanıtlar
+
+- Yeni `theme.spec.ts`: varsayılan Arcade, DOMContentLoaded öncesi Classic computed font/zemin (FOUC yok), geçersiz/erişilemez storage, admin Classic izolasyonu, gerçek sekmeler arası storage, iki yönlü alt tema fontları, 320/375/901/1024/1280px taşma ve ≥48px hedefler.
+- İlk dev E2E: 52 geçti, glif üretim testi atlandı, tek yeni hedef testi 47.984375px yüksekliği yakaladı. Test eşiği gevşetilmeden nav/footer `min-height` 48px tokenı eklendi; üretim koşusunda hedefler geçti.
+- Classic görsel koşusu ayrı globalSetup ile yalnız kendi PID ağacı/UUID DB'sini oluşturur ve temizler. Migration sonrası 42 tablonun her biri boş; seed yok. Port doluluğu, kendi process ready çıktısı, spawn hatası ve sınırlı shutdown beklemesi kontrol edilir. Baseline SHA/browser kilidi ve updateSnapshots:none vardır.
+- Son görsel komut: `pnpm test:e2e --config playwright.visual.config.ts`: **16/16 geçti (17.9 sn)**. 1280×800 / 375×812, tr-TR/Istanbul/DPR1, sabit 2026-10-10T09:00:01Z ve kapalı animasyon koşulları Faz 0 ile aynıdır. Antialias dahil birebir RGBA sayımında **16 görüntünün tamamı 0 değişen piksel (%0)**; `faz1-classic-diff.json`. Hiçbir Faz 0 PNG/manifest değişmedi.
+- Son üretim işlevsel komut: PATH'e yerel pnpm spawn adaptörü ve Git/OpenSSL eklendikten sonra `ULUDOTT_E2E_PRODUCTION=1 ULUDOTT_E2E_REBUILD=1 pnpm test:e2e`: **56/56 geçti (2.9 dk), atlanan test yok**. Mevcut yayınla/yayından kaldır/medya/auth/noindex davranışları korunur. Axe dokuz rotada iki tema için **18/18, violations=[]** (mevcut beklenti daraltılmadı).
+- Üç font × 12 Türkçe glif: **36/36 gerçek custom font**; CDP aile/PostScript adı ve glyphCount kaydı, sessiz fallback yok. `faz1-turkish-glyphs.png` görsel olarak da incelendi. Classic soğuk context'te font isteği **0**, preload **0**. İki temada da preload:false; Arcade CSS/font-face üzerinden kendi alanından yüklenir.
+- Scanner review sırasında computed style anahtarları, *Color vendor özellikleri, SVG expression literal'leri, shorthand renkler, opaque/spread style ve gömülü SVG data URI kaçışları da kapatıldı; negatif örnekler eklendi. Son `pnpm typecheck`, `pnpm lint`: exit 0; `pnpm test`: **23 dosya / 204 test geçti (9.34 sn)**. Son entegrasyon: **11 dosya / 95 test geçti (13.09 sn)**.

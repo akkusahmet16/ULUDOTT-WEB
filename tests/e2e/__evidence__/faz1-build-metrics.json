@@ -1,0 +1,193 @@
+{
+  "css": [
+    {
+      "path": "chunks\\35un57h92io1p.css",
+      "bytes": 22570,
+      "gzipBytes": 4979,
+      "sha256": "c94f4f700fe249805531716dc50e0da6fcc1bec22645a63e6c286d9ed673c8c6"
+    }
+  ],
+  "cssBytes": 22570,
+  "cssGzipBytes": 4979,
+  "fonts": [
+    {
+      "path": "media\\0c89a48fa5027cee-s.2cyn07wtgehh0.woff2",
+      "bytes": 22320
+    },
+    {
+      "path": "media\\0c8c4ded07fff55c-s.2tcyrya9o07vu.woff2",
+      "bytes": 7192
+    },
+    {
+      "path": "media\\28868e710e86be81-s.2eksvhm1z0jwa.woff2",
+      "bytes": 18924
+    },
+    {
+      "path": "media\\32687112bd2dd8db-s.1gepa_7fcx9fm.woff2",
+      "bytes": 6772
+    },
+    {
+      "path": "media\\3f10656f33c57dec-s.1x_wmg1bpi7y6.woff2",
+      "bytes": 2656
+    },
+    {
+      "path": "media\\42b07301cbfb88de-s.01esg-5vzborl.woff2",
+      "bytes": 3380
+    },
+    {
+      "path": "media\\56eb15be423b6220-s.321_9ike18iql.woff2",
+      "bytes": 2408
+    },
+    {
+      "path": "media\\674d141a92451548-s.2n-wf6s8aqfs0.woff2",
+      "bytes": 7172
+    },
+    {
+      "path": "media\\96074e70a40501da-s.1dfv6z-5f19bh.woff2",
+      "bytes": 3704
+    },
+    {
+      "path": "media\\cdf703449fd42bc8-s.3gh0it7uhdum8.woff2",
+      "bytes": 2488
+    },
+    {
+      "path": "media\\de161955856a921d-s.0fxeqrss3ag9h.woff2",
+      "bytes": 4704
+    }
+  ],
+  "emittedFontBytes": 81720,
+  "themes": [
+    {
+      "name": "arcade",
+      "tokenCount": 146,
+      "contrast": [
+        {
+          "pair": "text/bg",
+          "minimum": 4.5,
+          "ratio": 17.962959404785554
+        },
+        {
+          "pair": "text/surface",
+          "minimum": 4.5,
+          "ratio": 16.559368729793565
+        },
+        {
+          "pair": "text-muted/bg",
+          "minimum": 4.5,
+          "ratio": 7.100007637225173
+        },
+        {
+          "pair": "text-muted/surface",
+          "minimum": 4.5,
+          "ratio": 6.545226863778331
+        },
+        {
+          "pair": "primary-contrast/primary",
+          "minimum": 4.5,
+          "ratio": 5.423355082304482
+        },
+        {
+          "pair": "secondary-contrast/secondary",
+          "minimum": 4.5,
+          "ratio": 14.665194537256246
+        },
+        {
+          "pair": "accent-contrast/accent",
+          "minimum": 4.5,
+          "ratio": 17.041241310937117
+        },
+        {
+          "pair": "primary/bg",
+          "minimum": 3,
+          "ratio": 5.423355082304482
+        },
+        {
+          "pair": "secondary/bg",
+          "minimum": 3,
+          "ratio": 14.665194537256246
+        },
+        {
+          "pair": "focus/bg",
+          "minimum": 3,
+          "ratio": 17.041241310937117
+        },
+        {
+          "pair": "border-strong/bg",
+          "minimum": 3,
+          "ratio": 3.278522790525233
+        },
+        {
+          "pair": "border-strong/surface",
+          "minimum": 3,
+          "ratio": 3.022345402777868
+        }
+      ]
+    },
+    {
+      "name": "classic",
+      "tokenCount": 146,
+      "contrast": [
+        {
+          "pair": "text/bg",
+          "minimum": 4.5,
+          "ratio": 14.801672482008621
+        },
+        {
+          "pair": "text/surface",
+          "minimum": 4.5,
+          "ratio": 13.114307658118339
+        },
+        {
+          "pair": "text-muted/bg",
+          "minimum": 4.5,
+          "ratio": 8.95438640778498
+        },
+        {
+          "pair": "text-muted/surface",
+          "minimum": 4.5,
+          "ratio": 7.933601988836179
+        },
+        {
+          "pair": "primary-contrast/primary",
+          "minimum": 4.5,
+          "ratio": 14.345633131667501
+        },
+        {
+          "pair": "secondary-contrast/secondary",
+          "minimum": 4.5,
+          "ratio": 7.689753387787371
+        },
+        {
+          "pair": "accent-contrast/accent",
+          "minimum": 4.5,
+          "ratio": 8.469468644751643
+        },
+        {
+          "pair": "primary/bg",
+          "minimum": 3,
+          "ratio": 14.345633131667501
+        },
+        {
+          "pair": "secondary/bg",
+          "minimum": 3,
+          "ratio": 7.689753387787371
+        },
+        {
+          "pair": "focus/bg",
+          "minimum": 3,
+          "ratio": 14.345633131667501
+        },
+        {
+          "pair": "border-strong/bg",
+          "minimum": 3,
+          "ratio": 3.4999343041778657
+        },
+        {
+          "pair": "border-strong/surface",
+          "minimum": 3,
+          "ratio": 3.1009479032846583
+        }
+      ]
+    }
+  ]
+}

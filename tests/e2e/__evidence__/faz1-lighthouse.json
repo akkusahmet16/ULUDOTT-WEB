@@ -1,0 +1,162 @@
+{
+  "version": "13.5.0",
+  "fetchTime": "2026-10-14T19:38:05.002Z",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+  "localUrl": "https://127.0.0.1:3443/",
+  "formFactor": "mobile",
+  "screenEmulation": {
+    "mobile": true,
+    "width": 412,
+    "height": 823,
+    "deviceScaleFactor": 1.75,
+    "disabled": false
+  },
+  "throttling": {
+    "rttMs": 150,
+    "throughputKbps": 1638.4,
+    "requestLatencyMs": 562.5,
+    "downloadThroughputKbps": 1474.5600000000002,
+    "uploadThroughputKbps": 675,
+    "cpuSlowdownMultiplier": 4
+  },
+  "scores": {
+    "performance": 100,
+    "accessibility": 100,
+    "best-practices": 96,
+    "seo": 100
+  },
+  "metrics": {
+    "LCP": 1527.605,
+    "CLS": 0.025677151855148135,
+    "TBT": 61.999999999999545
+  },
+  "preload": [],
+  "scripts": [
+    {
+      "path": "/_next/static/chunks/1of7er5v4tw-g.js",
+      "bytes": 5597,
+      "gzipBytes": 2027,
+      "transferBytes": 2424
+    },
+    {
+      "path": "/_next/static/chunks/2k2m2gi3whrwc.js",
+      "bytes": 28984,
+      "gzipBytes": 7657,
+      "transferBytes": 8078
+    },
+    {
+      "path": "/_next/static/chunks/2fv5nd9k_322b.js",
+      "bytes": 228920,
+      "gzipBytes": 71416,
+      "transferBytes": 72019
+    },
+    {
+      "path": "/_next/static/chunks/3j7xb6ql_q2wj.js",
+      "bytes": 166003,
+      "gzipBytes": 45047,
+      "transferBytes": 45603
+    },
+    {
+      "path": "/_next/static/chunks/turbopack-03gx-j4jvd6jk.js",
+      "bytes": 9721,
+      "gzipBytes": 3852,
+      "transferBytes": 4248
+    },
+    {
+      "path": "/_next/static/chunks/1c1_k7mud9u0q.js",
+      "bytes": 15590,
+      "gzipBytes": 4123,
+      "transferBytes": 4528
+    },
+    {
+      "path": "/_next/static/chunks/2y0x-ddz2_wys.js",
+      "bytes": 25430,
+      "gzipBytes": 9221,
+      "transferBytes": 9629
+    }
+  ],
+  "firstLoadJsGzipBytes": 143343,
+  "fonts": [
+    {
+      "path": "/_next/static/media/0c8c4ded07fff55c-s.2tcyrya9o07vu.woff2",
+      "bytes": 7192,
+      "transferBytes": 7491
+    },
+    {
+      "path": "/_next/static/media/0c89a48fa5027cee-s.2cyn07wtgehh0.woff2",
+      "bytes": 22320,
+      "transferBytes": 22620
+    },
+    {
+      "path": "/_next/static/media/de161955856a921d-s.0fxeqrss3ag9h.woff2",
+      "bytes": 4704,
+      "transferBytes": 5003
+    },
+    {
+      "path": "/_next/static/media/674d141a92451548-s.2n-wf6s8aqfs0.woff2",
+      "bytes": 7172,
+      "transferBytes": 7471
+    },
+    {
+      "path": "/_next/static/media/28868e710e86be81-s.2eksvhm1z0jwa.woff2",
+      "bytes": 18924,
+      "transferBytes": 19224
+    },
+    {
+      "path": "/_next/static/media/96074e70a40501da-s.1dfv6z-5f19bh.woff2",
+      "bytes": 3704,
+      "transferBytes": 4002
+    }
+  ],
+  "firstLoadFontBytes": 64016,
+  "incompleteAudits": [
+    {
+      "id": "first-contentful-paint",
+      "title": "First Contentful Paint",
+      "score": 0.99,
+      "displayValue": "1.1 s"
+    },
+    {
+      "id": "max-potential-fid",
+      "title": "Max Potential First Input Delay",
+      "score": 0.94,
+      "displayValue": "110 ms"
+    },
+    {
+      "id": "errors-in-console",
+      "title": "Browser errors were logged to the console",
+      "score": 0
+    },
+    {
+      "id": "interactive",
+      "title": "Time to Interactive",
+      "score": 0.97,
+      "displayValue": "2.8 s"
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "score": 0.5,
+      "displayValue": "Est savings of 29 KiB"
+    },
+    {
+      "id": "legacy-javascript-insight",
+      "title": "Legacy JavaScript",
+      "score": 0.5,
+      "displayValue": "Est savings of 14 KiB"
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "score": 0
+    },
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "score": 0,
+      "displayValue": "Est savings of 240 ms"
+    }
+  ],
+  "rawReportPath": ".local/faz1-lighthouse-arcade.report.json",
+  "rawReportSha256": "9c08b481e39b764cc38a50f391b69b43d6927b0a890f5e01ef4220b697adbe20"
+}
