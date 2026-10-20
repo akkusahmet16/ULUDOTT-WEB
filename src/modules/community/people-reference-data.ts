@@ -13,6 +13,7 @@ export type Chapter = {
   role: string;
   color: string;
   video: string;
+  videoVisible?: boolean;
   videoReference: boolean;
   poster: string;
   members: Member[];
@@ -63,10 +64,11 @@ export const peopleChapters: Chapter[] = [
   },
   {
     slug: "sosyal-medya-ekip",
-    title: "Sosyal Medya Ekibi",
-    role: "Sosyal medya",
+    title: "Sosyal Medya",
+    role: "Sosyal Medya Departmanı",
     color: "#213949",
     video: `${reference}/cal.mp4`,
+    videoVisible: false,
     videoReference: true,
     poster: `${community}/sosyal-medya-ekip/smd-baskan-ahmet.webp`,
     members: [
@@ -100,13 +102,25 @@ export const peopleChapters: Chapter[] = [
   },
   {
     slug: "etkinlik-ekip",
-    title: "Etkinlik Ekibi",
-    role: "Etkinlikler",
+    title: "Halis Can Sağır",
+    role: "Etkinlik Departmanı Başkanı",
     color: "#382e40",
-    video: `${reference}/drequan.mp4`,
-    videoReference: true,
-    poster: `${community}/etkinlik-ekip/etkinlik-ekip-efe-tutucu.webp`,
+    video: `${community}/etkinlik-ekip/ed-baskan/ed-baskan-halis-acilis.mp4`,
+    videoReference: false,
+    poster: `${community}/etkinlik-ekip/ed-baskan/ed-baskan-halis-detay.webp`,
     members: [
+      {
+        slug: "etkinlik-baskani-halis",
+        name: "Halis Can Sağır",
+        role: "Etkinlik Departmanı Başkanı",
+        quote: "Eski Çaycı",
+        details: [
+          "Bilgisayar ve Öğretim Teknolojileri Eğitimi 2. Sınıf",
+          "Çaylarrrr",
+        ],
+        photo: `${community}/etkinlik-ekip/ed-baskan/ed-baskan-halis-detay.webp`,
+        photoReference: false,
+      },
       {
         slug: "efe-tutucu",
         name: "Efe Tutucu",
@@ -144,24 +158,21 @@ export const peopleChapters: Chapter[] = [
     ],
   },
   {
-    slug: "cayci-halis",
-    title: "Halis Can Sağır",
+    slug: "cayci-2ce",
+    title: "Tuğçe",
     role: "Çaycı",
     color: "#313929",
-    video: `${community}/cayci-halis/cayci-halis-acilis.mp4`,
+    video: "",
     videoReference: false,
-    poster: `${community}/cayci-halis/cayci-halis-detay-2026-10-07.webp`,
+    poster: "",
     members: [
       {
-        slug: "cayci-halis",
-        name: "Halis Can Sağır",
+        slug: "cayci-2ce",
+        name: "Tuğçe",
         role: "Çaycı",
-        quote: "Çav yok bok için",
-        details: [
-          "Bilgisayar ve Öğretim Teknolojileri Eğitimi 2. Sınıf",
-          "Çaylarrrr",
-        ],
-        photo: `${community}/cayci-halis/cayci-halis-detay-2026-10-07.webp`,
+        quote: "Çaylak çaycı.",
+        details: ["BÖTE 2. sınıf"],
+        photo: "",
         photoReference: false,
       },
     ],

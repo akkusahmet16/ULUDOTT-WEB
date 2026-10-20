@@ -47,8 +47,8 @@ for (const width of [390, 1440])
     await page.goto("/hakkimizda#yonetim-kurulu");
     await expect(page.locator(".header-page-name")).toHaveText("Hakkımızda");
     await expect(page.locator(".people-chapter")).toHaveCount(5);
-    await expect(page.locator(".people-chapter video")).toHaveCount(5);
-    await expect(page.locator(".people-gallery img")).toHaveCount(8);
+    await expect(page.locator(".people-chapter video")).toHaveCount(4);
+    await expect(page.locator(".people-gallery img")).toHaveCount(10);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,

@@ -51,7 +51,8 @@ export function LinkEditor() {
         setChosenGroup(result.groupId);
       }
       if (action === "save_group") setGroup(result);
-      if (action === "hide") setLink((current) => current?.id === result.id ? result : current);
+      if (action === "hide")
+        setLink((current) => (current?.id === result.id ? result : current));
       if (action.startsWith("reorder")) {
         setLink(null);
         setGroup(null);
@@ -149,7 +150,14 @@ export function LinkEditor() {
         </Button>
         <Button
           disabled={busy}
-          onClick={() => void refresh().then(() => { setLink(null); setGroup(null); }).catch((e) => setMessage(e.message))}
+          onClick={() =>
+            void refresh()
+              .then(() => {
+                setLink(null);
+                setGroup(null);
+              })
+              .catch((e) => setMessage(e.message))
+          }
         >
           Listeyi yenile
         </Button>
@@ -189,9 +197,7 @@ export function LinkEditor() {
         ) : (
           <form
             className="content-form"
-            key={
-              link ? `${link.id}-${link.revision}` : `new-link-${chosenGroup}`
-            }
+            key={link ? `${link.id}-${link.revision}` : "new-link"}
             onSubmit={linkSubmit}
           >
             <label className="field">

@@ -16,7 +16,9 @@ import {
   readFormVersion,
 } from "../infrastructure/form-repository.ts";
 import { emailIdentity } from "../domain/email-identity.ts";
+import { validateFormDefinition } from "../domain/form-version.ts";
 import { settingsSchema } from "../domain/form-settings.ts";
+import { buildUlujamFormDefinition } from "../../applications/domain/ulujam-input.ts";
 async function locked(tx: DbTx, actor: Actor, id: string, revision?: number) {
   z.uuid().parse(id);
   const [f] = await tx
@@ -54,7 +56,7 @@ export async function createDraftForm(
   const v = values(input);
   return withTransaction(async (tx) => {
     const [e] = await tx
-      .select({ id: events.id })
+      .select({ id: events.id, kind: events.kind })
       .from(events)
       .where(eq(events.id, eventId));
     if (!e) throw Error("Etkinlik bulunamadı");
@@ -62,6 +64,17 @@ export async function createDraftForm(
       .insert(forms)
       .values({ ...v, eventId })
       .returning();
+    if (e.kind === "ulujam") {
+      const version = await createDraftVersion(
+        tx,
+        f.id,
+        buildUlujamFormDefinition(eventId),
+      );
+      await tx
+        .update(forms)
+        .set({ draftVersionId: version.id })
+        .where(eq(forms.id, f.id));
+    }
     await appendAudit(
       tx,
       actor,
@@ -79,7 +92,20 @@ export async function saveDraftForm(
   revision: number,
 ) {
   return withTransaction(async (tx) => {
-    await locked(tx, actor, id, revision);
+    const form = await locked(tx, actor, id, revision);
+    if (form.eventId) {
+      const [event] = await tx
+        .select({ kind: events.kind })
+        .from(events)
+        .where(eq(events.id, form.eventId));
+      if (
+        event?.kind === "ulujam" &&
+        validateFormDefinition(definition).fields.some(
+          (field) => field.type === "file",
+        )
+      )
+        throw Error("UluJam formunda dosya alanı kullanılamaz");
+    }
     const v = await createDraftVersion(tx, id, definition);
     const [f] = await tx
       .update(forms)

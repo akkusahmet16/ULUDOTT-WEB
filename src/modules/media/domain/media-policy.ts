@@ -1,7 +1,7 @@
 import "server-only";
 export const MAX_BYTES = 8 * 1024 * 1024;
 export const MAX_PIXELS = 25_000_000;
-export type MediaPurpose = "photo" | "poster" | "game" | "social";
+export type MediaPurpose = "photo" | "poster" | "event-poster" | "game" | "social";
 export function validateMedia(
   data: Uint8Array,
   mime: string,

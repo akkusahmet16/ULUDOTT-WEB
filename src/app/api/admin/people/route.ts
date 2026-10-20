@@ -1,3 +1,5 @@
+import { revalidateTag } from "next/cache";
+import { CACHE_TAGS } from "../../../../lib/cache/tags.ts";
 import { z } from "zod";
 import { SESSION_COOKIE, resolveSession } from "../../../../lib/auth/session";
 import { readCookie, verifyCsrf } from "../../../../lib/auth/csrf";
@@ -5,6 +7,8 @@ import { readJson } from "../../../../lib/http/read-json";
 import {
   listPeopleContent,
   savePeopleContent,
+  savePeopleMember,
+  removePeopleMember,
 } from "../../../../modules/community/people-content";
 
 export const runtime = "nodejs";
@@ -32,19 +36,32 @@ async function handle(request: Request) {
       return json({ items: await listPeopleContent(session.actor) });
     const input = z
       .strictObject({
-        slot: z.string().max(120),
-        expectedRevision: z.int().nonnegative(),
-        fields: z.unknown(),
+        action: z.enum(["save", "create", "remove"]).default("save"),
+        slot: z.string().max(120).optional(),
+        expectedRevision: z.int().nonnegative().optional(),
+        fields: z.unknown().optional(),
       })
       .parse(await readJson(request, 16 * 1024));
-    return json(
-      await savePeopleContent(
-        session.actor,
-        input.slot,
-        input.fields,
-        input.expectedRevision,
-      ),
+    if (input.action === "create") {
+      const result = await savePeopleMember(session.actor, input.fields);
+      revalidateTag(CACHE_TAGS.people, { expire: 0 });
+      return json(result, 201);
+    }
+    const slot = z.string().min(1).parse(input.slot);
+    const revision = z.int().nonnegative().parse(input.expectedRevision);
+    if (input.action === "remove") {
+      const result = await removePeopleMember(session.actor, slot, revision);
+      revalidateTag(CACHE_TAGS.people, { expire: 0 });
+      return json(result);
+    }
+    const result = await savePeopleContent(
+      session.actor,
+      slot,
+      input.fields,
+      revision,
     );
+    revalidateTag(CACHE_TAGS.people, { expire: 0 });
+    return json(result);
   } catch (error) {
     const message = error instanceof Error ? error.message : "";
     if (message === "Yetki yok") return json({ error: message }, 403);
@@ -56,6 +73,9 @@ async function handle(request: Request) {
     if (
       [
         "Bilinmeyen alan",
+        "Bilinmeyen bölüm",
+        "İzin verilmeyen medya yolu",
+        "Medya dosyası bulunamadı veya izin verilmiyor",
         "Medya yayında değil",
         "Medya dosyası bulunamadı",
       ].includes(message)

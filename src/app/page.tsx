@@ -1,21 +1,40 @@
 import { CoffeeTalkCard } from "../components/layout/coffee-talk-card";
 import { StoryPanels } from "../components/layout/story-panels";
-import { listPublicHistoricalResults } from "../modules/games/application/historical-results";
-import { ResultCard } from "../modules/games/ui/result-card";
+import { DegreeGames } from "../modules/games/ui/degree-games";
 import Image from "next/image";
 import Link from "next/link";
 import { PublicShell } from "../components/layout/public-shell";
 import { OpeningGlow } from "../components/layout/opening-glow";
-import { getFeaturedEvents } from "../modules/events/application/event-service";
+import { coffeeTalkEndsAt } from "../modules/events/domain/legacy-coffee-talk";
+import { PastEventsCarousel } from "../modules/events/ui/past-events-carousel";
 import { EventCard } from "../modules/events/ui/event-card";
+import {
+  readHomeEvents,
+  readHistoricalResults,
+  readUlujamPresentation,
+} from "../modules/publication/ui/public-queries";
 import styles from "../styles/home.module.css";
-export const dynamic = "force-dynamic";
-const SHOW_HOME_GAMES = false;
+export const metadata = { alternates: { canonical: "/" } };
 export default async function HomePage() {
-  const [featured, results] = await Promise.all([
-    getFeaturedEvents(),
-    listPublicHistoricalResults(2026),
+  const [events, results, ulujam] = await Promise.all([
+    readHomeEvents(),
+    readHistoricalResults(2026),
+    readUlujamPresentation(),
   ]);
+  const pastSlides = events.past.map((event) => ({
+    id: event.id,
+    title: event.title,
+    endedAt: (event.endsAt ?? event.startsAt)?.getTime() ?? 0,
+    content: <EventCard event={event} />,
+  }));
+  if (events.showLegacyCoffeeTalk)
+    pastSlides.push({
+      id: "legacy-coffee-talk",
+      title: "Coffee Talk",
+      endedAt: coffeeTalkEndsAt.getTime(),
+      content: <CoffeeTalkCard />,
+    });
+  pastSlides.sort((a, b) => b.endedAt - a.endedAt || a.id.localeCompare(b.id));
   return (
     <PublicShell>
       <section className={`clone-opening ${styles.opening}`}>
@@ -57,13 +76,8 @@ export default async function HomePage() {
         </a>
       </section>
       <StoryPanels
-        degreeContent={
-          <div className="grid">
-            {results.map((result) => (
-              <ResultCard key={result.id} result={result} />
-            ))}
-          </div>
-        }
+        degreeContent={<DegreeGames results={results} />}
+        presentation={ulujam}
       />
       <section className={styles.intro} data-sky="#24223b">
         <p className="eyebrow">Oyunlar, fikirler ve birlikte üretmek.</p>
@@ -78,63 +92,26 @@ export default async function HomePage() {
         </p>
       </section>
       <section
-        className={styles.destinations}
-        aria-label="Buluşmalar"
+        className={styles.news}
+        aria-label="Yaklaşan etkinlikler"
         data-sky="#17303c"
       >
-        <Link
-          href="/etkinlikler"
-          className={`${styles.destination} ${styles.meetings}`}
-        >
-          <div className={styles.destinationArt}>
-            <Image
-              src="/community/04-etkinlikler/etkinlik-coffe-talk/etkinlik-coffe-talk-afis.webp"
-              alt="Coffee Talk tanışma etkinliği afişi"
-              width={1080}
-              height={1350}
-              sizes="(max-width: 699px) 100vw, 40vw"
-            />
-          </div>
-          <div>
-            <span className="eyebrow">Buluşmalar</span>
-            <h2>
-              Sohbet et.
-              <br />
-              Yeni şeyler dene.
-            </h2>
-            <p>Etkinlikleri keşfet, toplulukla buluş.</p>
-            <span className={styles.cta}>
-              Etkinlikleri keşfet <span aria-hidden="true">→</span>
-            </span>
-          </div>
-        </Link>
-        {SHOW_HOME_GAMES && (
-          <Link
-            href="/oyunlar"
-            className={`${styles.destination} ${styles.games}`}
-          >
-            <div className={styles.destinationArt}>
-              <Image
-                src="/theme/reference/world.avif"
-                alt=""
-                width={1920}
-                height={1080}
-                sizes="(max-width: 699px) 100vw, 40vw"
-              />
-            </div>
-            <div>
-              <span className="eyebrow">Oyunlar</span>
-              <h2>
-                Birlikte üretmenin
-                <br />
-                oyun hâli.
-              </h2>
-              <p>Topluluğun yayımlanan oyunlarını ve yapımcılarını keşfet.</p>
-              <span className={styles.cta}>
-                Oyunlara göz at <span aria-hidden="true">→</span>
-              </span>
-            </div>
+        <div className={styles.sectionHeading}>
+          <h2>Yaklaşan etkinlikler</h2>
+          <Link href="/etkinlikler">
+            Tüm etkinlikler <span aria-hidden="true">↗</span>
           </Link>
+        </div>
+        {events.upcoming.length ? (
+          <div className={`featured-events ${styles.eventList}`}>
+            {events.upcoming.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+        ) : (
+          <p className={styles.emptyEvents}>
+            Yeni buluşmalarımız yakında burada.
+          </p>
         )}
       </section>
       <section
@@ -168,23 +145,22 @@ export default async function HomePage() {
       </section>
       <section
         className={styles.news}
-        aria-label="Etkinlikler"
+        aria-label="Geçmiş etkinlikler"
         data-sky="#3e2b40"
       >
         <div className={styles.sectionHeading}>
-          <h2>Yaklaşan buluşmalar</h2>
+          <h2>Geçmiş etkinlikler</h2>
           <Link href="/etkinlikler">
             Tüm etkinlikler <span aria-hidden="true">↗</span>
           </Link>
         </div>
-        {featured.length > 0 && (
-          <div className="grid">
-            {featured.map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
+        {pastSlides.length ? (
+          <PastEventsCarousel slides={pastSlides} />
+        ) : (
+          <p className={styles.emptyEvents}>
+            Geçmiş buluşmalarımız burada yer alacak.
+          </p>
         )}
-        <CoffeeTalkCard />
       </section>
       <section
         className={styles.sponsors}

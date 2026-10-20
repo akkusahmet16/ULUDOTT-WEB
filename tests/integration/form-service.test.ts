@@ -176,3 +176,37 @@ it("yayımlı form ayarı mevcut sürümün e-posta kimliğini bozmaz", async ()
     ),
   ).rejects.toThrow("Tekrar politikası");
 });
+
+it("yeni UluJam formu başvuru ve takım şablonuyla gerçek taslak olarak oluşturulur", async () => {
+  await local.sql`update events set kind='ulujam' where id=${eventId}`;
+  const created = await createDraftForm(actor, eventId, settings);
+  const form = await getForm(actor, created.id);
+  expect(form.eventKind).toBe("ulujam");
+  expect(form.status).toBe("draft");
+  expect(form.revision).toBe(created.revision);
+  expect(form.current).toBeNull();
+  expect(form.draft?.definition.fields).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({ type: "email", required: true }),
+      expect.objectContaining({
+        id: "15000000-0000-4000-8000-000000000004",
+        options: [
+          { value: "solo", label: "Tek başına katılıyorum" },
+          { value: "seeking", label: "Takım arıyorum" },
+          { value: "new", label: "Yeni takım kuruyorum" },
+          { value: "existing", label: "Mevcut takıma katılıyorum" },
+        ],
+      }),
+      expect.objectContaining({
+        id: "15000000-0000-4000-8000-000000000007",
+        condition: {
+          op: "eq",
+          fieldId: "15000000-0000-4000-8000-000000000004",
+          value: "new",
+        },
+      }),
+    ]),
+  );
+  await publishForm(actor, created.id, created.revision);
+  expect((await getForm(actor, created.id)).status).toBe("published");
+});

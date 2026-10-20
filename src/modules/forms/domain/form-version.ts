@@ -60,6 +60,8 @@ const definitionSchema = z.strictObject({
 export function validateFormDefinition(input: unknown): ValidFormDefinition {
   boundedJson(input);
   const d = definitionSchema.parse(input);
+  if (d.fields.filter((field) => field.type === "file").length > 3)
+    throw Error("Bir formda en fazla 3 dosya sorusu olabilir");
   if (new Set(d.fields.map((f) => f.id)).size !== d.fields.length)
     throw Error("Tekrarlı alan kimliği");
   for (const f of d.fields) validateField(f);

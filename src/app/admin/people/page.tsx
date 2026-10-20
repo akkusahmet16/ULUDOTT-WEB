@@ -23,15 +23,14 @@ export default async function Page() {
   return (
     <main>
       <Link href="/admin">Yönetime dön</Link>
-      <h1>Yönetim kurulu içerikleri</h1>
+      <h1>Hakkımızda</h1>
       <p>
-        Beş bölüm ve sekiz kişi sabit sıralanır. Her kişi için bir detay
-        görseli, her bölüm için bir açılış videosu düzenlenir.
+        Kişi ekleyin, bilgilerini düzenleyin, bölümünü ve sırasını belirleyin.
+        Kaydettiğiniz değişiklikler Hakkımızda sayfasında görünür.
       </p>
       <p>
-        Görselleri <Link href="/admin/medya">Medya</Link> bölümünde yayımlayın;
-        yayımlanan görselin <code>/media/…</code> yolunu buraya yazın. Açılış
-        videoları <code>/community/…</code> dosyalarından sunulur.
+        Fotoğraf ve videoları önceden yüklenmiş dosyalar arasından seçin. Kişiyi
+        silmek görsel dosyasını silmez.
       </p>
       <PeopleEditor />
     </main>

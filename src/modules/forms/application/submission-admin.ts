@@ -11,6 +11,7 @@ import {
   forms,
   submissions,
   submissionAnswers,
+  submissionFiles,
   submissionStatusHistory,
   consents,
 } from "../../../db/schema/forms.ts";
@@ -21,6 +22,7 @@ import { validateSubmission } from "./form-validator.ts";
 import { settingsSchema } from "../domain/form-settings.ts";
 import { emailIdentity } from "../domain/email-identity.ts";
 import type { Answers } from "../domain/field-types.ts";
+import { removePrivate, readPrivate } from "../../media/infrastructure/object-store.ts";
 export const statusSchema = z.enum([
   "received",
   "pending",
@@ -191,6 +193,10 @@ export async function getSubmission(actor: Actor, id: string) {
       })
       .from(consents)
       .where(eq(consents.submissionId, id));
+    const files = await tx.select({ id: submissionFiles.id, fieldKey: submissionFiles.fieldKey,
+      fileName: submissionFiles.fileName, mimeType: submissionFiles.mimeType,
+      byteSize: submissionFiles.byteSize }).from(submissionFiles)
+      .where(eq(submissionFiles.submissionId, id));
     return {
       id: s.id,
       formId: s.formId,
@@ -206,7 +212,19 @@ export async function getSubmission(actor: Actor, id: string) {
       ) as Answers,
       history,
       consents: consentRows,
+      files,
     };
+  });
+}
+export async function getSubmissionFile(actor: Actor, submissionId: string, fileId: string) {
+  return withTransaction(async (tx) => {
+    await locked(tx, actor, submissionId, "applications.read");
+    const [file] = await tx.select().from(submissionFiles).where(and(
+      eq(submissionFiles.id, z.uuid().parse(fileId)),
+      eq(submissionFiles.submissionId, submissionId),
+    ));
+    if (!file) throw Error("Dosya bulunamadı");
+    return { bytes: await readPrivate(file.objectKey), name: file.fileName, mime: file.mimeType };
   });
 }
 const transitions: Record<string, SubmissionStatus[]> = {
@@ -367,6 +385,9 @@ async function linked(tx: DbTx, id: string) {
   );
 }
 async function erase(tx: DbTx, id: string) {
+  const files = await tx.select({ objectKey: submissionFiles.objectKey }).from(submissionFiles)
+    .where(eq(submissionFiles.submissionId, id));
+  await tx.delete(submissionFiles).where(eq(submissionFiles.submissionId, id));
   await tx
     .delete(idempotencyRecords)
     .where(eq(idempotencyRecords.resourceId, id));
@@ -378,17 +399,18 @@ async function erase(tx: DbTx, id: string) {
     .delete(submissionStatusHistory)
     .where(eq(submissionStatusHistory.submissionId, id));
   await tx.delete(submissions).where(eq(submissions.id, id));
+  return files.map((file) => file.objectKey);
 }
 export async function deleteSubmission(
   actor: Actor,
   id: string,
   revision: number,
 ) {
-  return withTransaction(async (tx) => {
+  const keys = await withTransaction(async (tx) => {
     await locked(tx, actor, id, "applications.write", revision);
     if (await linked(tx, id))
       throw Error("Bağlı katılımcı kaydı önce yönetilmelidir");
-    await erase(tx, id);
+    const removed = await erase(tx, id);
     await appendAudit(
       tx,
       actor,
@@ -396,11 +418,13 @@ export async function deleteSubmission(
       { type: "submission", id },
       { revision },
     );
-    return { deleted: true };
+    return removed;
   });
+  await Promise.allSettled(keys.map(removePrivate));
+  return { deleted: true };
 }
 export async function purgeExpiredSubmissions(actor: Actor, formId: string) {
-  return withTransaction(async (tx) => {
+  const result = await withTransaction(async (tx) => {
     await scopedForm(tx, actor, formId, "applications.write");
     const rows = await tx
       .select({ id: submissions.id })
@@ -414,6 +438,7 @@ export async function purgeExpiredSubmissions(actor: Actor, formId: string) {
       .orderBy(asc(submissions.expiresAt), asc(submissions.id))
       .limit(1000)
       .for("update");
+    const keys: string[] = [];
     let deleted = 0,
       blocked = 0;
     for (const s of rows) {
@@ -421,7 +446,7 @@ export async function purgeExpiredSubmissions(actor: Actor, formId: string) {
         blocked++;
         continue;
       }
-      await erase(tx, s.id);
+      keys.push(...await erase(tx, s.id));
       deleted++;
     }
     await appendAudit(
@@ -431,6 +456,8 @@ export async function purgeExpiredSubmissions(actor: Actor, formId: string) {
       { type: "form", id: formId },
       { recordCount: deleted },
     );
-    return { deleted, blocked };
+    return { deleted, blocked, keys };
   });
+  await Promise.allSettled(result.keys.map(removePrivate));
+  return { deleted: result.deleted, blocked: result.blocked };
 }

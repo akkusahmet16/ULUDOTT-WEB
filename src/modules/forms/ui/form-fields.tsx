@@ -9,6 +9,7 @@ export const typeLabels: Record<string, string> = {
   phone: "Telefon",
   number: "Sayı",
   date: "Tarih",
+  file: "Dosya yükleme",
   single_choice: "Tek seçim",
   multiple_choice: "Çoklu seçim",
   dropdown: "Açılır liste",
@@ -26,6 +27,8 @@ export function FormFields({
   prefix = "answer",
   readOnlyConsent = false,
   fieldErrors = {},
+  onFileChange,
+  fileNames = {},
 }: {
   definition: ValidFormDefinition;
   answers: Answers;
@@ -33,6 +36,8 @@ export function FormFields({
   prefix?: string;
   readOnlyConsent?: boolean;
   fieldErrors?: Record<string, string>;
+  onFileChange?: (id: string, file: File | null) => void;
+  fileNames?: Record<string, string>;
 }) {
   const visible = new Set(evaluateVisibility(definition, answers));
   function change(id: string, value: Answer | undefined) {
@@ -144,7 +149,25 @@ export function FormFields({
           return (
             <div className="field" key={f.id}>
               <label htmlFor={id}>{label}</label>
-              {f.type === "long_text" ? (
+              {f.type === "file" ? (
+                readOnlyConsent ? (
+                  <p>{String(v ?? "Dosya yok")}</p>
+                ) : (
+                  <input
+                    id={id}
+                    type="file"
+                    accept=".pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/png,image/jpeg,image/webp"
+                    required={f.required}
+                    aria-describedby={describedBy}
+                    aria-invalid={error ? true : undefined}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] ?? null;
+                      onFileChange?.(f.id, file);
+                      change(f.id, file?.name);
+                    }}
+                  />
+                )
+              ) : f.type === "long_text" ? (
                 <textarea
                   {...props}
                   value={String(v ?? "")}
@@ -198,6 +221,7 @@ export function FormFields({
                 />
               )}{" "}
               {helpText && <small id={help}>{helpText}</small>}
+              {f.type === "file" && !readOnlyConsent && <small>PDF, PNG, JPEG veya WebP · en fazla 5 MiB. {fileNames[f.id] ?? ""}</small>}
               {error && <small id={errorId}>{error}</small>}
             </div>
           );

@@ -2,7 +2,10 @@
 import { buildUlujamFormDefinition } from "../../applications/domain/ulujam-input";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { ValidFormDefinition } from "../domain/form-version";
+import {
+  validateFormDefinition,
+  type ValidFormDefinition,
+} from "../domain/form-version";
 import { fieldTypes, choiceTypes, displayTypes } from "../domain/field-types";
 import type { Condition } from "../domain/condition";
 import type { FormSettings as Settings } from "../domain/form-settings";
@@ -11,18 +14,63 @@ import { FormPreview } from "./form-preview";
 import { typeLabels } from "./form-fields";
 import { formRequest } from "./admin-fetch";
 type Field = ValidFormDefinition["fields"][number];
+type DraftQuestion = {
+  id: string;
+  type: Field["type"];
+  label: string;
+  required: boolean;
+  helpText: string;
+  choices: string;
+};
+const draftQuestion = (): DraftQuestion => ({
+  id: crypto.randomUUID(),
+  type: "short_text",
+  label: "",
+  required: true,
+  helpText: "",
+  choices: "",
+});
+function toField(question: DraftQuestion): Field {
+  return {
+    id: question.id,
+    type: question.type,
+    label: question.label.trim(),
+    required: question.required,
+    ...(question.helpText.trim() ? { helpText: question.helpText.trim() } : {}),
+    ...(choiceTypes.includes(question.type)
+      ? {
+          options: question.choices
+            .split("\n")
+            .map((x) => x.trim())
+            .filter(Boolean)
+            .map((label, index) => ({ value: `secenek-${index + 1}`, label })),
+        }
+      : {}),
+    ...(question.type === "file"
+      ? { helpText: "PDF, PNG, JPEG veya WebP · en fazla 5 MiB" }
+      : {}),
+  };
+}
 export function FormCreator({
   events,
 }: {
-  events: { id: string; title: string }[];
+  events: { id: string; title: string; kind: string }[];
 }) {
   const router = useRouter(),
     [eventId, setEvent] = useState(events[0]?.id ?? ""),
+    [questions, setQuestions] = useState<DraftQuestion[]>([draftQuestion()]),
     [message, setMessage] = useState(""),
     [busy, setBusy] = useState(false);
+  const isUlujam =
+    events.find((event) => event.id === eventId)?.kind === "ulujam";
   return (
-    <section>
+    <section className="admin-form-creator">
+      <p className="eyebrow">01 / FORM OLUŞTUR</p>
       <h2>Yeni form</h2>
+      <p>
+        Başvuru veya anket sorularını burada belirleyin. Taslak oluşturulduktan
+        sonra gelişmiş koşullar ve önizleme düzenlenebilir.
+      </p>
       <p role="status">{message}</p>
       <label className="field">
         Etkinlik
@@ -34,6 +82,139 @@ export function FormCreator({
           ))}
         </select>
       </label>
+      {isUlujam ? (
+        <section aria-label="UluJam başvuru şablonu">
+          <h3>UluJam başvuru şablonu</h3>
+          <p>
+            Katılımcı bilgileri, beceriler ve takım seçenekleri hazır gelir.
+            Taslağı oluşturduktan sonra soruları ve başvuru tarihlerini
+            düzenleyebilirsiniz.
+          </p>
+          <FormPreview
+            key={eventId}
+            definition={buildUlujamFormDefinition(eventId)}
+          />
+        </section>
+      ) : (
+        <div className="admin-question-list">
+          {questions.map((question, index) => (
+            <fieldset key={question.id} className="admin-question-card">
+              <legend>Soru {index + 1}</legend>
+              <label className="field">
+                Soru / alan başlığı
+                <input
+                  value={question.label}
+                  maxLength={160}
+                  onChange={(e) =>
+                    setQuestions(
+                      questions.map((q) =>
+                        q.id === question.id
+                          ? { ...q, label: e.target.value }
+                          : q,
+                      ),
+                    )
+                  }
+                />
+              </label>
+              <label className="field">
+                Yanıt türü
+                <select
+                  value={question.type}
+                  onChange={(e) =>
+                    setQuestions(
+                      questions.map((q) =>
+                        q.id === question.id
+                          ? { ...q, type: e.target.value as Field["type"] }
+                          : q,
+                      ),
+                    )
+                  }
+                >
+                  {fieldTypes
+                    .filter(
+                      (type) =>
+                        !["info", "section", "consent"].includes(type) &&
+                        !(
+                          type === "file" &&
+                          events.find((event) => event.id === eventId)?.kind ===
+                            "ulujam"
+                        ),
+                    )
+                    .map((type) => (
+                      <option key={type} value={type}>
+                        {typeLabels[type]}
+                      </option>
+                    ))}
+                </select>
+              </label>
+              {choiceTypes.includes(question.type) && (
+                <label className="field">
+                  Seçenekler (her satıra bir seçenek)
+                  <textarea
+                    value={question.choices}
+                    onChange={(e) =>
+                      setQuestions(
+                        questions.map((q) =>
+                          q.id === question.id
+                            ? { ...q, choices: e.target.value }
+                            : q,
+                        ),
+                      )
+                    }
+                  />
+                </label>
+              )}
+              <label className="field">
+                Yardımcı açıklama
+                <input
+                  value={question.helpText}
+                  maxLength={500}
+                  onChange={(e) =>
+                    setQuestions(
+                      questions.map((q) =>
+                        q.id === question.id
+                          ? { ...q, helpText: e.target.value }
+                          : q,
+                      ),
+                    )
+                  }
+                />
+              </label>
+              <label className="check-field">
+                <input
+                  type="checkbox"
+                  checked={question.required}
+                  onChange={(e) =>
+                    setQuestions(
+                      questions.map((q) =>
+                        q.id === question.id
+                          ? { ...q, required: e.target.checked }
+                          : q,
+                      ),
+                    )
+                  }
+                />{" "}
+                Zorunlu yanıt
+              </label>
+              <button
+                type="button"
+                disabled={questions.length === 1}
+                onClick={() =>
+                  setQuestions(questions.filter((q) => q.id !== question.id))
+                }
+              >
+                Soruyu kaldır
+              </button>
+            </fieldset>
+          ))}
+          <button
+            type="button"
+            onClick={() => setQuestions([...questions, draftQuestion()])}
+          >
+            + Soru ekle
+          </button>
+        </div>
+      )}
       {events.length ? (
         <FormSettings
           initial={emptySettings}
@@ -41,10 +222,32 @@ export function FormCreator({
           onSave={async (settings) => {
             setBusy(true);
             try {
+              if (
+                !isUlujam &&
+                questions.some(
+                  (question) =>
+                    !question.label.trim() ||
+                    (choiceTypes.includes(question.type) &&
+                      !question.choices.trim()),
+                )
+              )
+                throw Error("Soruların başlığını ve seçeneklerini doldurun.");
+              const definition = isUlujam
+                ? null
+                : validateFormDefinition({
+                    schemaVersion: 1,
+                    fields: questions.map(toField),
+                  });
               const r = await formRequest("/api/admin/forms", {
                 eventId,
                 settings,
               });
+              if (definition)
+                await formRequest("/api/admin/forms/" + r.id, {
+                  action: "definition",
+                  expectedRevision: r.revision,
+                  input: definition,
+                });
               router.push("/admin/formlar/" + r.id);
             } catch (e) {
               setMessage(e instanceof Error ? e.message : "Kaydedilemedi");
@@ -54,41 +257,90 @@ export function FormCreator({
           }}
         />
       ) : (
-        <p>Yetkili olduğunuz etkinlik bulunmuyor.</p>
+        <p>
+          Başvuru formu oluşturmak için önce Etkinlikler bölümünden bir etkinlik
+          ekleyin.
+        </p>
       )}
     </section>
   );
 }
-function OptionsEditor({
+export function OptionsEditor({
   options,
   onChange,
 }: {
   options: Field["options"];
   onChange: (options: NonNullable<Field["options"]>) => void;
 }) {
-  const [text, setText] = useState(
-    options?.map((o) => o.value).join("\n") ?? "",
-  );
+  const items = options ?? [];
+  function move(index: number, delta: number) {
+    const next = [...items];
+    [next[index], next[index + delta]] = [next[index + delta], next[index]];
+    onChange(next);
+  }
   return (
-    <label className="field">
-      Seçenekler (her satıra bir değer)
-      <textarea
-        value={text}
-        onChange={(e) => {
-          const raw = e.target.value;
-          setText(raw);
-          onChange(
-            raw
-              .split("\n")
-              .filter(Boolean)
-              .map((value) => ({
-                value,
-                label: options?.find((o) => o.value === value)?.label ?? value,
-              })),
-          );
-        }}
-      />
-    </label>
+    <section aria-label="Seçenekler">
+      <p>
+        Seçenek metinlerini düzenleyin. Kayıtlı yanıtlar ve görünürlük kuralları
+        korunur.
+      </p>
+      {items.map((option, index) => (
+        <div className="admin-question-card" key={option.value}>
+          <label className="field">
+            {index + 1}. seçenek
+            <input
+              value={option.label}
+              maxLength={160}
+              onChange={(event) =>
+                onChange(
+                  items.map((item, i) =>
+                    i === index ? { ...item, label: event.target.value } : item,
+                  ),
+                )
+              }
+            />
+          </label>
+          <div className="actions">
+            <button
+              type="button"
+              aria-label={`${index + 1}. seçeneği yukarı taşı`}
+              disabled={index === 0}
+              onClick={() => move(index, -1)}
+            >
+              Yukarı taşı
+            </button>
+            <button
+              type="button"
+              aria-label={`${index + 1}. seçeneği aşağı taşı`}
+              disabled={index === items.length - 1}
+              onClick={() => move(index, 1)}
+            >
+              Aşağı taşı
+            </button>
+            <button
+              type="button"
+              aria-label={`${index + 1}. seçeneği kaldır`}
+              disabled={items.length === 1}
+              onClick={() => onChange(items.filter((_, i) => i !== index))}
+            >
+              Seçeneği kaldır
+            </button>
+          </div>
+        </div>
+      ))}
+      <button
+        type="button"
+        disabled={items.length >= 50}
+        onClick={() =>
+          onChange([
+            ...items,
+            { value: crypto.randomUUID(), label: "Yeni seçenek" },
+          ])
+        }
+      >
+        Seçenek ekle
+      </button>
+    </section>
   );
 }
 export function FormBuilder({
@@ -198,7 +450,10 @@ export function FormBuilder({
         onSave={(s) => action("settings", s)}
       />
       <h2>Alanlar</h2>
-      <p>Dosya yükleme bu sürümde desteklenmiyor.</p>
+      <p>
+        PDF ve görsel dosya soruları özel depoda saklanır; indirmeye yalnız
+        yetkili yöneticiler erişir.
+      </p>
       {fields.map((f, i) => {
         const c = f.condition && "fieldId" in f.condition ? f.condition : null;
         return (
@@ -237,11 +492,13 @@ export function FormBuilder({
                   );
                 }}
               >
-                {fieldTypes.map((t) => (
-                  <option value={t} key={t}>
-                    {typeLabels[t]}
-                  </option>
-                ))}
+                {fieldTypes
+                  .filter((t) => !(form.isUlujam && t === "file"))
+                  .map((t) => (
+                    <option value={t} key={t}>
+                      {typeLabels[t]}
+                    </option>
+                  ))}
               </select>
             </label>
             <label className="field">

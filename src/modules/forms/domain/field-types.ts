@@ -9,6 +9,7 @@ export const fieldTypes = [
   "phone",
   "number",
   "date",
+  "file",
   "single_choice",
   "multiple_choice",
   "dropdown",
@@ -159,5 +160,7 @@ export function parseAnswer(f: Field, input: unknown): Answer {
   if (f.type === "phone" && !/^\+[1-9]\d{7,14}$/.test(s))
     throw Error("Telefon E.164 olmalı");
   if (f.type === "date" && !validDate(s)) throw Error("Geçersiz tarih");
+  if (f.type === "file" && (!s.trim() || s.length > 250))
+    throw Error("Geçersiz dosya adı");
   return s;
 }

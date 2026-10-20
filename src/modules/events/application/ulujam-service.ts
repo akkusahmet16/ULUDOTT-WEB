@@ -23,7 +23,7 @@ export async function publishedYearStart(year: number): Promise<Date | null> {
 export async function galleryImages(year: number): Promise<GalleryImage[]> {
   return withTransaction(async (tx) => {
     const rows = await tx.execute(
-      sql`select v.id,a.alt_text from event_gallery g join events e on e.id=g.event_id join event_years y on y.event_id=e.id join media_assets a on a.id=g.media_id join media_variants v on v.asset_id=a.id where y.year=${year} and e.kind='ulujam' and e.status!='archived' and g.verified_at<=now() and a.status='ready' and nullif(btrim(a.alt_text),'') is not null and v.purpose='webp' and v.mime_type='image/webp' and v.published_at<=now() order by g.position limit 50`,
+      sql`select v.id,a.alt_text from event_gallery g join events e on e.id=g.event_id join event_years y on y.event_id=e.id join media_assets a on a.id=g.media_id join lateral (select id from media_variants where asset_id=a.id and mime_type='image/webp' and published_at<=now() order by id limit 1) v on true where y.year=${year} and e.kind='ulujam' and e.status!='archived' and g.verified_at<=now() and a.status='ready' and nullif(btrim(a.alt_text),'') is not null order by g.position limit 50`,
     );
     return rows.map((r) => ({
       id: r.id as string,
@@ -79,7 +79,7 @@ export async function saveGallery(actor: Actor, input: unknown): Promise<void> {
         .where(
           and(
             eq(mediaVariants.assetId, d.mediaId),
-            eq(mediaVariants.purpose, "webp"),
+            eq(mediaVariants.mimeType, "image/webp"),
           ),
         );
       if (!variant || variant.mimeType !== "image/webp")

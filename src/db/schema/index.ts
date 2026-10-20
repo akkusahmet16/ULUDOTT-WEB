@@ -7,3 +7,5 @@ export * from "./links.ts";
 export * from "./operations.ts";
 export * from "./gallery.ts";
 export * from "./people.ts";
+export * from "./site-games.ts";
+export * from "./site-settings.ts";

@@ -7,6 +7,7 @@ import { verifyCsrf } from "../../../lib/auth/csrf.ts";
 import { readJson } from "../../../lib/http/read-json.ts";
 import { SubmissionError } from "../domain/submission-error.ts";
 import { submitForm } from "./submit-form.ts";
+import { MAX_FORM_FILE_BYTES } from "./file-policy.ts";
 import { getReceipt } from "./receipt-service.ts";
 export const publicPrivateHeaders = {
   "Cache-Control": "no-store",
@@ -21,6 +22,35 @@ export async function publicSubmit(req: Request, slug: string) {
   try {
     verifyCsrf(req);
     await rate("public_form_submit");
+    const files = new Map<string, File>();
+    let raw: unknown;
+    if (req.headers.get("content-type")?.startsWith("multipart/form-data")) {
+      const reader = req.body?.getReader();
+      if (!reader) throw new SubmissionError(400, "Dosya isteği geçersiz");
+      const chunks: Uint8Array[] = [];
+      let size = 0;
+      try {
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          size += value.byteLength;
+          if (size > 3 * MAX_FORM_FILE_BYTES + 128 * 1024)
+            throw new SubmissionError(413, "Toplam dosya boyutu sınırı aşıldı");
+          chunks.push(value);
+        }
+      } finally { reader.releaseLock(); }
+      const body = await new Request(req.url, {
+        method: "POST", headers: { "content-type": req.headers.get("content-type")! },
+        body: Buffer.concat(chunks),
+      }).formData();
+      raw = JSON.parse(String(body.get("payload") ?? ""));
+      for (const [name, value] of body) {
+        if (name === "payload") continue;
+        if (!name.startsWith("file:") || !(value instanceof File) || files.has(name.slice(5)))
+          throw new SubmissionError(400, "Dosya alanları geçersiz");
+        files.set(name.slice(5), value);
+      }
+    } else raw = await readJson(req, 128 * 1024);
     const d = z
       .strictObject({
         answers: z.unknown(),
@@ -29,11 +59,11 @@ export async function publicSubmit(req: Request, slug: string) {
         website: z.string().max(512).default(""),
         botToken: z.string().max(2048).optional(),
       })
-      .parse(await readJson(req, 128 * 1024));
+      .parse(raw);
     if (d.website) throw new SubmissionError(400, "İstek doğrulanamadı");
     await verifyBotToken(d.botToken, "form_submit");
     const receipt = await submitForm(slug, d.answers, d.idempotencyKey, {
-      versionId: d.versionId,
+      versionId: d.versionId, files,
     });
     return Response.json(receipt, {
       status: 201,

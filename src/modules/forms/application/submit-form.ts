@@ -8,6 +8,7 @@ import {
   forms,
   submissions,
   submissionAnswers,
+  submissionFiles,
   submissionStatusHistory,
   consents,
 } from "../../../db/schema/forms.ts";
@@ -24,6 +25,9 @@ import {
   decryptReplay,
 } from "../infrastructure/submission-repository.ts";
 import { validateSubmission } from "./form-validator.ts";
+import { validateFormFile } from "./file-policy.ts";
+import { applicationEnabled } from "../../site-settings/application/application-gate.ts";
+import { putPrivate, removePrivate } from "../../media/infrastructure/object-store.ts";
 export const receiptSchema = z.strictObject({
   id: z.uuid(),
   receiptToken: z.string().regex(/^[A-Za-z0-9_-]{43}$/),
@@ -35,18 +39,24 @@ export async function submitForm(
   slug: string,
   input: unknown,
   key: string,
-  context: { versionId?: string },
+  context: { versionId?: string; files?: Map<string, File> },
 ): Promise<Receipt> {
-  return withTransaction((tx) =>
-    submitFormInTransaction(tx, slug, input, key, context),
-  );
+  const uploadedKeys: string[] = [];
+  try {
+    return await withTransaction((tx) =>
+      submitFormInTransaction(tx, slug, input, key, { ...context, uploadedKeys }),
+    );
+  } catch (error) {
+    await Promise.allSettled(uploadedKeys.map(removePrivate));
+    throw error;
+  }
 }
 export async function submitFormInTransaction(
   tx: DbTx,
   slug: string,
   input: unknown,
   key: string,
-  context: { versionId?: string; ulujam?: boolean },
+  context: { versionId?: string; ulujam?: boolean; files?: Map<string, File>; uploadedKeys?: string[] },
 ): Promise<Receipt> {
   z.string()
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
@@ -109,6 +119,7 @@ export async function submitFormInTransaction(
   if (prior) await tx.delete(idempotencyRecords).where(where);
   if (
     f.status !== "published" ||
+    !(await applicationEnabled(tx, f.id)) ||
     !f.currentVersionId ||
     !f.opensAt ||
     f.opensAt > currentTime ||
@@ -123,8 +134,18 @@ export async function submitFormInTransaction(
   const version = await readFormVersion(tx, f.currentVersionId);
   if (!version.publishedAt)
     throw new SubmissionError(409, "Form şu anda başvuru almıyor");
+  const fileFields = new Set(version.definition.fields.filter((field) => field.type === "file").map((field) => field.id));
+  const files = context.files ?? new Map<string, File>();
+  if (files.size > 3 || [...files.keys()].some((id) => !fileFields.has(id)))
+    throw new SubmissionError(400, "Dosya alanları geçersiz");
+  const supplied = { ...(input as Record<string, unknown>) };
+  for (const id of fileFields) {
+    if (supplied[id] !== undefined && !files.has(id))
+      throw new SubmissionError(400, "Dosya yeniden seçilmeli");
+    if (files.has(id)) supplied[id] = files.get(id)!.name;
+  }
   const settings = settingsSchema.parse(f.settings),
-    answers = validateSubmission(version, input),
+    answers = validateSubmission(version, supplied),
     identity = emailIdentity(version.definition),
     email = identity ? String(answers[identity.id]).trim().toLowerCase() : null;
   if (settings.duplicatePolicy === "reject") {
@@ -184,6 +205,17 @@ export async function submitFormInTransaction(
     value,
   }));
   if (rows.length) await tx.insert(submissionAnswers).values(rows);
+  for (const [fieldKey, file] of files) {
+    const validated = await validateFormFile(file);
+    const objectKey = `form-uploads/${validated.id}`;
+    context.uploadedKeys?.push(objectKey);
+    await putPrivate(objectKey, validated.bytes, validated.mimeType);
+    await tx.insert(submissionFiles).values({
+      id: validated.id, submissionId: s.id, fieldKey, objectKey,
+      fileName: validated.fileName, mimeType: validated.mimeType,
+      byteSize: validated.bytes.length,
+    });
+  }
   await tx
     .insert(submissionStatusHistory)
     .values({ submissionId: s.id, status });

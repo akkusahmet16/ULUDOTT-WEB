@@ -197,6 +197,7 @@ it("duyuru taslak/planlı/yayımlı, kaldırma, slug ve önizleme", async () => 
 it("özel afiş yayını engeller; form bağlı olsa da görev 14 öncesi CTA yok", async () => {
   const asset = randomUUID();
   await local.sql`insert into media_assets(id,original_key,mime_type,byte_size,alt_text,status) values(${asset},${randomUUID()},'image/png',10,'Test afişi','ready')`;
+  await local.sql`insert into media_variants(asset_id,purpose,object_key,width,height,mime_type) values(${asset},'event-poster-webp',${randomUUID()},1080,1350,'image/webp')`;
   const e = await saveEvent(actor, {
     ...base,
     slug: "poster-test",
@@ -206,7 +207,7 @@ it("özel afiş yayını engeller; form bağlı olsa da görev 14 öncesi CTA yo
   await expect(publishEvent(e.id, actor, e.revision)).rejects.toThrow(
     "Afiş yayımlanmalı",
   );
-  await local.sql`insert into media_variants(asset_id,purpose,object_key,width,height,mime_type,published_at) values(${asset},'photo-webp',${randomUUID()},80,40,'image/webp',now())`;
+  await local.sql`update media_variants set published_at=now() where asset_id=${asset}`;
   const form = randomUUID();
   await local.sql`insert into forms(id,event_id,title,slug,status) values(${form},${e.id},'Test form','test-form','draft')`;
   const updated = await saveEvent(
@@ -307,6 +308,7 @@ it("genel liste son 100 taslaktan etkilenmez", async () => {
 it("hasarlı afiş kaydı yayından kaldırmayı engellemez", async () => {
   const asset = randomUUID();
   await local.sql`insert into media_assets(id,original_key,mime_type,byte_size,status) values(${asset},${randomUUID()},'image/png',10,'ready')`;
+  await local.sql`insert into media_variants(asset_id,purpose,object_key,width,height,mime_type) values(${asset},'event-poster-webp',${randomUUID()},1080,1350,'image/webp')`;
   const e = await saveEvent(actor, {
     ...base,
     slug: "archive-broken-cover",

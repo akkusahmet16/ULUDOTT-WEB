@@ -25,32 +25,40 @@ export function PeopleStory({
           id={`people-${chapter.slug}`}
           aria-label={chapter.title}
         >
-          <div className="people-video-track">
-            <div className="people-hero">
-              <SceneVideo
-                src={chapter.video}
-                poster={chapter.poster}
-                label={`${chapter.title} açılış videosu`}
-                reference={chapter.videoReference}
-              />
-              <div className="people-copy">
-                <p className="eyebrow">{chapter.role}</p>
-                <h2>{chapter.title}</h2>
-                <p>Uludott Yönetim Kurulu</p>
+          {chapter.video && chapter.videoVisible !== false ? (
+            <div className="people-video-track">
+              <div className="people-hero">
+                <SceneVideo
+                  src={chapter.video}
+                  poster={chapter.poster}
+                  label={`${chapter.title} açılış videosu`}
+                  reference={chapter.videoReference}
+                />
+                <div className="people-copy">
+                  <p className="eyebrow">{chapter.role}</p>
+                  <h2>{chapter.title}</h2>
+                  <p>Uludott Yönetim Kurulu</p>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <header className="people-chapter-heading">
+              <h2>{chapter.title}</h2>
+            </header>
+          )}
           {chapter.members.map((member) => (
             <div
-              className="people-detail"
+              className={`people-detail${member.photo ? "" : " people-detail-text-only"}`}
               key={member.slug}
               id={`people-${member.slug}-detay`}
             >
-              <PhotoGallery
-                photos={[member.photo]}
-                name={member.name}
-                reference={member.photoReference}
-              />
+              {member.photo && (
+                <PhotoGallery
+                  photos={[member.photo]}
+                  name={member.name}
+                  reference={member.photoReference}
+                />
+              )}
               <div className="people-detail-copy">
                 <p className="eyebrow">{member.role}</p>
                 <h3>{member.name}</h3>

@@ -36,8 +36,7 @@ test("üyeler güncel ekip sırası ve teslim edilen detay fotoğraflarıyla gö
   await expect(chapters.locator("h2")).toHaveText([
     "Hamza Yiğit Adıgüzel",
     "Batuhan Özdemir",
-    "Sosyal Medya Ekibi",
-    "Etkinlik Ekibi",
+    "Ahmet Akkuş",
     "Halis Can Sağır",
   ]);
   await expect(chapters.nth(1)).toContainText("Uludott Dergi Yazarı");
@@ -47,22 +46,22 @@ test("üyeler güncel ekip sırası ve teslim edilen detay fotoğraflarıyla gö
     "Melek",
   ]);
   await expect(chapters.nth(3).locator(".people-detail h3")).toHaveText([
+    "Halis Can Sağır",
     "Efe Tutucu",
     "Aybey",
     "Fatih Soyer",
     "Eren Bozacı",
   ]);
   for (let i = 0; i < 5; i++) {
-    await expect(chapters.nth(i).locator("video")).toHaveCount(1);
+    await expect(chapters.nth(i).locator("video")).toHaveCount(i === 4 ? 0 : 1);
     await expect(chapters.nth(i).locator(".people-gallery img")).toHaveCount(
-      [1, 1, 3, 4, 1][i],
+      [1, 1, 3, 5, 0][i],
     );
-    for (const selector of ["video", ".people-gallery img"]) {
-      const src = await chapters
-        .nth(i)
-        .locator(selector)
-        .first()
-        .getAttribute("src");
+    for (const media of await chapters
+      .nth(i)
+      .locator("video, .people-gallery img")
+      .all()) {
+      const src = await media.getAttribute("src");
       expect((await request.get(src!)).status()).toBe(200);
     }
   }
@@ -70,15 +69,14 @@ test("üyeler güncel ekip sırası ve teslim edilen detay fotoğraflarıyla gö
     "src",
     /baskan-yard-batu-acilis/,
   );
-  await expect(chapters.nth(4).locator(".people-gallery img")).toHaveAttribute(
+  await expect(chapters.nth(4)).toContainText("Tuğçe");
+  await expect(chapters.nth(4)).toContainText("BÖTE 2. sınıf");
+  await expect(chapters.nth(4)).toContainText("Çaylak çaycı.");
+  await expect(chapters.nth(3).locator("video")).toHaveAttribute(
     "src",
-    /cayci-halis-detay-2026-10-07/,
+    /ed-baskan-halis-acilis/,
   );
   for (const i of [2, 3]) {
-    await expect(chapters.nth(i).locator("video")).toHaveAttribute(
-      "src",
-      /theme\/reference/,
-    );
     for (const image of await chapters
       .nth(i)
       .locator(".people-gallery img")
@@ -96,4 +94,33 @@ test("üyeler güncel ekip sırası ve teslim edilen detay fotoğraflarıyla gö
     "src",
     /baskan-yard-batu-detay\.webp/,
   );
+});
+
+test("ortak menü yalnız teslim edilen iki görsel arasında geçiş yapar", async ({
+  page,
+  request,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Menü", exact: true }).click();
+  const art = page.locator(".menu-scene-art");
+  const menu = page.getByRole("navigation", { name: "Ana menü" });
+  for (const name of [
+    "Ana sayfa",
+    "Hakkımızda",
+    "UluJam",
+    "Etkinlikler",
+    "Oyunlar",
+    "İletişim",
+  ]) {
+    await menu.getByRole("link", { name, exact: true }).hover();
+    await expect(art).toHaveAttribute(
+      "src",
+      name === "Hakkımızda"
+        ? "/community/00-ortak/menu-people.webp"
+        : "/community/00-ortak/menu-topluluk.webp",
+    );
+    expect((await request.get((await art.getAttribute("src"))!)).status()).toBe(
+      200,
+    );
+  }
 });

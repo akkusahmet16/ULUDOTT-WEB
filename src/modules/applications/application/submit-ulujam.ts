@@ -31,10 +31,6 @@ import {
   joinTeam,
 } from "../../teams/application/team-service.ts";
 import { teamRate } from "../../teams/application/team-rate.ts";
-import {
-  LOCAL_DEMO_FORM_SLUG,
-  localDemoEnabled,
-} from "../../../lib/config/local-demo.ts";
 const envelope = z.strictObject({
   slug: z.string().regex(/^[a-z0-9-]{1,100}$/),
   versionId: z.uuid(),
@@ -62,8 +58,6 @@ export async function submitUlujam(
   key: string,
 ): Promise<UlujamReceipt> {
   const input = envelope.parse(raw);
-  if (input.slug === LOCAL_DEMO_FORM_SLUG && !localDemoEnabled())
-    throw new SubmissionError(404, "Form bulunamadı");
   z.string()
     .regex(/^[A-Za-z0-9_-]{16,200}$/)
     .parse(key);

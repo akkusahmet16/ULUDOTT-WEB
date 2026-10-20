@@ -94,7 +94,7 @@ export const formFields = pgTable(
     check("form_field_position", sql`${t.position}>=0`),
     check(
       "form_field_type",
-      sql`${t.type} IN ('short_text','long_text','email','phone','number','date','single_choice','multiple_choice','dropdown','checkbox','radio','rating','info','section','consent')`,
+      sql`${t.type} IN ('short_text','long_text','email','phone','number','date','file','single_choice','multiple_choice','dropdown','checkbox','radio','rating','info','section','consent')`,
     ),
   ],
 );
@@ -177,6 +177,20 @@ export const submissionAnswers = pgTable(
     }),
   ],
 );
+export const submissionFiles = pgTable("submission_files", {
+  id: id(),
+  submissionId: uuid("submission_id").notNull().references(() => submissions.id),
+  fieldKey: uuid("field_key").notNull(),
+  objectKey: text("object_key").notNull().unique(),
+  fileName: text("file_name").notNull(),
+  mimeType: text("mime_type").notNull(),
+  byteSize: integer("byte_size").notNull(),
+  createdAt: createdAt(),
+}, (t) => [
+  unique("submission_file_field_unique").on(t.submissionId, t.fieldKey),
+  check("submission_file_size", sql`${t.byteSize}>0 AND ${t.byteSize}<=5242880`),
+  index("submission_files_submission_idx").on(t.submissionId),
+]);
 export const submissionStatusHistory = pgTable(
   "submission_status_history",
   {

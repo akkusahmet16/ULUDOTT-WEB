@@ -1,0 +1,191 @@
+.intro {
+  max-width: 760px;
+  color: #d7ccdf;
+  line-height: 1.65;
+}
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0;
+}
+.status {
+  min-height: 24px;
+  color: #fff1bc;
+  overflow-wrap: anywhere;
+}
+.card {
+  padding: clamp(18px, 3vw, 30px);
+  margin: 20px 0;
+  border: 1px solid #ffffff2b;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #30263d, #211c32);
+  min-width: 0;
+}
+.card summary {
+  cursor: pointer;
+  padding: 4px;
+  font-weight: 600;
+}
+.card summary small {
+  display: inline-block;
+  margin-left: 12px;
+  color: #d0bed8;
+  font-weight: 400;
+}
+.form {
+  display: grid;
+  gap: 20px;
+  margin-top: 24px;
+  min-width: 0;
+}
+.form label {
+  min-width: 0;
+}
+.form > .card { display: grid; gap: 20px; }
+.form fieldset { min-width: 0; }
+.toggle { display: flex; gap: 12px; align-items: center; padding: 12px 0; }
+.form input[type="checkbox"] { width: 22px; height: 22px; flex: none; }
+.form :is(input, select, textarea) {
+  width: 100%;
+  min-width: 0;
+}
+.row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.danger {
+  border: 1px solid #f7a9b8 !important;
+  color: #ffd0da !important;
+  background: transparent !important;
+}
+.workspace button {
+  min-height: 44px;
+  cursor: pointer;
+}
+.workspace button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+.workspace :is(button, summary, input, select, textarea):focus-visible {
+  outline: 3px solid #ffd1e1;
+  outline-offset: 4px;
+}
+.picker {
+  padding: 18px;
+  border: 1px solid #ffffff30;
+  border-radius: 14px;
+  background: #171526;
+  min-width: 0;
+}
+.pickerLabel {
+  margin: 0 0 14px;
+  font-weight: 600;
+}
+.selected {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  min-width: 0;
+  margin-bottom: 12px;
+}
+.selected :is(img, video) {
+  width: 100px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 8px;
+  flex: none;
+  background: #0f0e18;
+}
+.path {
+  overflow-wrap: anywhere;
+  color: #cbbbd4;
+  font-size: 0.8rem;
+}
+.picker details > summary {
+  cursor: pointer;
+  padding: 12px 0;
+  color: #ffe0ed;
+}
+.pickerControls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+.assetGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 6px;
+}
+.workspace .picker .asset {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 9px;
+  align-content: start;
+  align-items: start;
+  justify-content: stretch;
+  width: 100%;
+  margin: 0;
+  padding: 10px;
+  border: 1px solid #ffffff24;
+  border-radius: 12px;
+  background: #282138;
+  color: #fff;
+  text-align: left;
+  min-width: 0;
+}
+.workspace .picker .asset[aria-pressed="true"] {
+  border: 2px solid #ffd1e1;
+  background: #433047;
+}
+.workspace .picker .asset:hover {
+  background: #433047;
+  color: #fff;
+  transform: none;
+}
+.asset :is(img, video) {
+  width: 100%;
+  height: 90px;
+  object-fit: contain;
+  background: #12111c;
+  border-radius: 6px;
+}
+.asset span {
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+.preview {
+  max-width: 640px;
+  margin: 24px 0;
+}
+.preview > a {
+  min-height: 350px;
+}
+.empty {
+  color: #cbbbd4;
+  padding: 18px 0;
+}
+@media (max-width: 620px) {
+  .row,
+  .pickerControls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .selected {
+    align-items: flex-start;
+  }
+  .card {
+    padding: 18px;
+  }
+}

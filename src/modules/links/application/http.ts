@@ -1,4 +1,6 @@
 import "server-only";
+import { revalidateTag } from "next/cache";
+import { CACHE_TAGS } from "../../../lib/cache/tags.ts";
 import { z } from "zod";
 import { readJson } from "../../../lib/http/read-json.ts";
 import { SESSION_COOKIE, resolveSession } from "../../../lib/auth/session.ts";
@@ -50,18 +52,27 @@ export async function handleLinks(request: Request) {
         expectedRevisions: z.record(z.uuid(), z.int().positive()).optional(),
       })
       .parse(await readJson(request));
-    if (d.action === "save_link")
-      return json(await saveLink(session.actor, d.input));
-    if (d.action === "save_group")
-      return json(await saveGroup(session.actor, d.input));
+    if (d.action === "save_link") {
+      const result = await saveLink(session.actor, d.input);
+      revalidateTag(CACHE_TAGS.links, { expire: 0 });
+      return json(result);
+    }
+    if (d.action === "save_group") {
+      const result = await saveGroup(session.actor, d.input);
+      revalidateTag(CACHE_TAGS.links, { expire: 0 });
+      return json(result);
+    }
     if (d.action === "hide") {
       if (!d.id || !d.expectedRevision) throw Error("Geçersiz istek");
-      return json(await hideLink(session.actor, d.id, d.expectedRevision));
+      const result = await hideLink(session.actor, d.id, d.expectedRevision);
+      revalidateTag(CACHE_TAGS.links, { expire: 0 });
+      return json(result);
     }
     if (!d.orderedIds || !d.expectedRevisions) throw Error("Geçersiz istek");
     if (d.action === "reorder_links")
       await reorderLinks(session.actor, d.orderedIds, d.expectedRevisions);
     else await reorderGroups(session.actor, d.orderedIds, d.expectedRevisions);
+    revalidateTag(CACHE_TAGS.links, { expire: 0 });
     return json({ ok: true });
   } catch (e) {
     const m = e instanceof Error ? e.message : "";

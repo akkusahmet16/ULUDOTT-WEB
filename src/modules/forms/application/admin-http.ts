@@ -1,4 +1,6 @@
 import "server-only";
+import { revalidateTag } from "next/cache";
+import { CACHE_TAGS } from "../../../lib/cache/tags.ts";
 import { z } from "zod";
 import { resolveSession, SESSION_COOKIE } from "../../../lib/auth/session.ts";
 import { readCookie, verifyCsrf } from "../../../lib/auth/csrf.ts";
@@ -45,6 +47,7 @@ export function formError(e: unknown) {
     "Form henüz yayımlanmadı",
     "Form bulunamadı",
     "Tekrar politikası tek zorunlu koşulsuz e-posta alanı gerektirir",
+    "UluJam formunda dosya alanı kullanılamaz",
   ];
   const status =
     m === "Yetki yok"
@@ -79,10 +82,10 @@ export async function handleForms(req: Request, id?: string) {
       const d = z
         .strictObject({ eventId: z.uuid(), settings: z.unknown() })
         .parse(await readJson(req, 128 * 1024));
-      return Response.json(
-        await createDraftForm(actor, d.eventId, d.settings),
-        { status: 201, headers: privateHeaders },
-      );
+      const created = await createDraftForm(actor, d.eventId, d.settings);
+      revalidateTag(CACHE_TAGS.events, { expire: 0 });
+      revalidateTag(CACHE_TAGS.ulujam, { expire: 0 });
+      return Response.json(created, { status: 201, headers: privateHeaders });
     }
     const d = z
       .strictObject({
@@ -101,6 +104,8 @@ export async function handleForms(req: Request, id?: string) {
             : d.action === "pause"
               ? await pauseForm(actor, id, d.expectedRevision)
               : await closeForm(actor, id, d.expectedRevision);
+    revalidateTag(CACHE_TAGS.events, { expire: 0 });
+    revalidateTag(CACHE_TAGS.ulujam, { expire: 0 });
     return Response.json(result, { headers: privateHeaders });
   } catch (e) {
     return formError(e);

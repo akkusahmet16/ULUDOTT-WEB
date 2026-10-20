@@ -1,43 +1,33 @@
-import type { PublicGameView } from "../../games/infrastructure/game-repository";
 import Image from "next/image";
-import type { HistoricalResult } from "../../games/domain/historical-result";
-import type { GalleryImage } from "../application/ulujam-service";
-import { degreeGames } from "../../games/domain/degree-games";
-export function UlujamArchive({
-  year,
-  results,
-  gallery,
-}: {
-  year: number;
-  results: (HistoricalResult | PublicGameView)[];
-  gallery: GalleryImage[];
-}) {
+import type { ArchiveFields } from "../../site-settings/domain/archives";
+export function UlujamArchive({ archive }: { archive: ArchiveFields }) {
   return (
-    <section aria-label={`UluJam ${year} arşivi`} className="section">
-      <h2>UluJam {year} arşivi</h2>
+    <section aria-label={`UluJam ${archive.year} arşivi`} className="section">
+      <h2>UluJam {archive.year} arşivi</h2>
+      {archive.description && <p className="lede">{archive.description}</p>}
       <section aria-label="Arşiv galerisi">
         <h3>Galeri</h3>
-        {gallery.length ? (
+        {archive.gallery.length ? (
           <div className="archive-gallery-mosaic">
-            {gallery.map((image, index) => (
+            {archive.gallery.map((image, index) => (
               <figure
-                key={image.id}
-                className={`archive-gallery-item ${
-                  index === 0
-                    ? "archive-gallery-featured"
-                    : "archive-gallery-side"
-                }`}
+                key={`${image.src}:${index}`}
+                className={`archive-gallery-item ${index === 0 ? "archive-gallery-featured" : "archive-gallery-side"}`}
               >
                 <Image
-                  unoptimized
                   src={image.src}
                   alt={image.alt}
                   width={640}
                   height={480}
+                  sizes={index === 0
+                    ? "(max-width: 699px) 100vw, (max-width: 1500px) 67vw, 960px"
+                    : "(max-width: 699px) 100vw, (max-width: 1500px) 33vw, 460px"}
                   className="event-cover"
                 />
                 <figcaption>
-                  <span className="eyebrow">UluJam 2026 / 0{index + 1}</span>
+                  <span className="eyebrow">
+                    UluJam {archive.year} / {String(index + 1).padStart(2, "0")}
+                  </span>
                   <span>{image.alt}</span>
                 </figcaption>
               </figure>
@@ -48,32 +38,32 @@ export function UlujamArchive({
         )}
       </section>
       <h3>İlk üç oyun</h3>
-      {results.length ? (
+      {archive.games.length ? (
         <div className="grid degree-games">
-          {results.map((result, index) => {
-            const game = degreeGames[index];
-            if (!game) return null;
-            return (
-              <article className="degree-game-card" key={result.id}>
+          {[...archive.games]
+            .sort((a, b) => a.rank - b.rank)
+            .map((game) => (
+              <article className="degree-game-card" key={game.rank}>
                 <Image
                   src={game.image}
                   alt={game.title}
                   width={1600}
                   height={900}
-                  sizes="(max-width: 699px) 100vw, 33vw"
+                  sizes="(max-width: 699px) 100vw, (max-width: 1500px) 33vw, 470px"
                 />
-                <p className="eyebrow">{index + 1}. derece</p>
+                <p className="eyebrow">{game.rank}. derece</p>
                 <h3>{game.title}</h3>
+                {game.team && <p>{game.team}</p>}
+                {game.description && <p>{game.description}</p>}
                 <a
-                  href={result.itchUrl}
+                  href={game.itchUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   {game.title} oyununu itch.io’da aç
                 </a>
               </article>
-            );
-          })}
+            ))}
         </div>
       ) : (
         <p className="empty">Henüz yayımlanmış derece bağlantısı yok.</p>

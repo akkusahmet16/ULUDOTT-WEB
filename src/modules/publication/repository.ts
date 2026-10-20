@@ -10,6 +10,7 @@ export function record(row: Record<string, unknown>): ContentRecord {
     description: null,
     body: "",
     kind: "general",
+    year: null,
     location: null,
     locationType: "physical",
     organizer: null,
@@ -36,13 +37,17 @@ export async function find(
   lock = false,
 ) {
   const rows = await tx.execute(
-    sql`select * from ${table(type)} where id=${id} ${lock ? sql`for update` : sql``}`,
+    type === "event"
+      ? sql`select e.*,(select year from event_years where event_id=e.id) as year from events e where e.id=${id} ${lock ? sql`for update` : sql``}`
+      : sql`select * from ${table(type)} where id=${id} ${lock ? sql`for update` : sql``}`,
   );
   return rows[0] ? record(rows[0]) : null;
 }
 export async function all(tx: DbTx, type: ContentType) {
   const rows = await tx.execute(
-    sql`select * from ${table(type)} order by created_at desc limit 100`,
+    type === "event"
+      ? sql`select e.*,s.position as featured_position,y.year from events e left join featured_slots s on s.event_id=e.id left join event_years y on y.event_id=e.id order by e.created_at desc limit 100`
+      : sql`select * from ${table(type)} order by created_at desc limit 100`,
   );
   return rows.map(record);
 }

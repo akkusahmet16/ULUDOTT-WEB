@@ -2,7 +2,7 @@ export { verifyCsrf as requireCsrf } from "../auth/csrf.ts";
 export type RouteClass = "private" | "public" | "asset";
 export function routeClass(path: string): RouteClass {
   if (
-    /^\/(admin(?:\/|$)|api\/(admin|forms|submissions|ulujam|team|cards|wallet)(?:\/|$)|basvuru(?:\/|$)|makbuz(?:\/|$)|kart(?:\/|$)|takim(?:\/|$)|yayin-onayi(?:\/|$))/.test(
+    /^\/(admin(?:\/|$)|api\/(admin|forms|submissions|ulujam|team|cards|wallet)(?:\/|$)|l(?:\/|$)|basvuru(?:\/|$)|makbuz(?:\/|$)|kart(?:\/|$)|takim(?:\/|$)|yayin-onayi(?:\/|$))/.test(
       path,
     )
   )

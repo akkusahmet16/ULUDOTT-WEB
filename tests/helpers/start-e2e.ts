@@ -131,6 +131,13 @@ try {
     1,
   );
   await publishForm(registrationActor, registrationForm.id, 2);
+  const panelForm = await createDraftForm(registrationActor, registrationEvent, {
+    title: "DEMO UluJam panel başvurusu", slug: "e2e-admin-ulujam-settings",
+    opensAt: "2020-01-01T00:00:00Z", closesAt: null, capacity: 30, waitlist: false,
+    duplicatePolicy: "reject", thankYou: "DEMO başvuru alındı.", retentionDays: 1,
+  });
+  await saveDraftForm(registrationActor, panelForm.id, buildUlujamFormDefinition(registrationEvent), 1);
+  await publishForm(registrationActor, panelForm.id, 2);
   const publicForm = await createDraftForm(
     formActor,
     "c0ffee00-0000-4000-8000-000000000014",
@@ -350,7 +357,7 @@ try {
   } else {
     child = spawn("pnpm", ["dev", "--port", "3100"], {
       stdio: "inherit",
-      env: process.env,
+      env: { ...process.env, ULUDOTT_E2E_BUILD_DIR: ".next/e2e" },
       detached: true,
     });
   }

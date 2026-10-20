@@ -51,21 +51,37 @@ export function PublicForm({
     } | null>(null);
   const [botToken, setBotToken] = useState(""),
     [botReset, setBotReset] = useState(0);
+  const files = useRef<Record<string, File>>({});
   const key = useRef<string | null>(null);
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setBusy(true);
     key.current ??= crypto.randomUUID();
     try {
-      const data = await publicRequest("/api/forms/" + slug + "/submit", {
+      const payload = {
         botToken,
         answers,
         versionId,
         idempotencyKey: key.current,
         website: new FormData(e.currentTarget).get("website") ?? "",
-      });
+      };
+      let data;
+      if (definition.fields.some((field) => field.type === "file")) {
+        const csrf = await fetch("/api/forms/csrf", { cache: "no-store" });
+        if (!csrf.ok) throw Error("İstek doğrulanamadı");
+        const { csrfToken } = await csrf.json();
+        const body = new FormData();
+        body.set("payload", JSON.stringify(payload));
+        for (const [id, file] of Object.entries(files.current)) body.set("file:" + id, file);
+        const response = await fetch("/api/forms/" + slug + "/submit", {
+          method: "POST", headers: { "x-csrf-token": csrfToken }, body, cache: "no-store",
+        });
+        data = await response.json();
+        if (!response.ok) throw new PublicRequestError(data.error ?? "Gönderim tamamlanamadı", data.fieldErrors);
+      } else data = await publicRequest("/api/forms/" + slug + "/submit", payload);
       setReceipt(data);
       setAnswers({});
+      files.current = {};
       setMessage("");
     } catch (e) {
       setFieldErrors(e instanceof PublicRequestError ? e.fieldErrors : {});
@@ -108,6 +124,10 @@ export function PublicForm({
             setAnswers(a);
             setFieldErrors({});
             key.current = null;
+          }}
+          onFileChange={(id, file) => {
+            if (file) files.current[id] = file;
+            else delete files.current[id];
           }}
         />
         <div style={{ display: "none" }} aria-hidden="true">

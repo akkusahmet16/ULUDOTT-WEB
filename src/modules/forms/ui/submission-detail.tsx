@@ -20,6 +20,7 @@ type Detail = {
     grantedAt: string;
     withdrawnAt: string | null;
   }[];
+  files: { id: string; fieldKey: string; fileName: string; mimeType: string; byteSize: number }[];
 };
 export function SubmissionDetail({ submission: s }: { submission: Detail }) {
   const router = useRouter(),
@@ -85,6 +86,15 @@ export function SubmissionDetail({ submission: s }: { submission: Detail }) {
           <button type="submit">Düzeltmeyi kaydet</button>
         </fieldset>
       </form>
+      {s.files?.length > 0 && (
+        <section aria-label="Yüklenen dosyalar">
+          <h2>Yüklenen dosyalar</h2>
+          <ul>{s.files.map((file) => <li key={file.id}>
+            <a href={`/api/admin/submissions/${s.id}/files/${file.id}`}>{file.fileName}</a>
+            {" · "}{Math.ceil(file.byteSize / 1024)} KiB
+          </li>)}</ul>
+        </section>
+      )}
       <fieldset disabled={busy}>
         <legend>Durum yönetimi</legend>
         <label className="field">

@@ -14,7 +14,11 @@ Tarih: 2 Ekim 2026. Durum: kullanıcı başlatma talimatıyla yürütülüyor; G
 
 ## Global kısıtlar
 
+**20 Ekim 2026 People ve menü eki:** Kullanıcı iki ortak menü görseli kullanılmasını, sosyal medya ve etkinlik departmanı başkanlarının açılış videosu + detay fotoğrafıyla; diğer ekip üyelerinin yalnız detay fotoğrafıyla gösterilmesini istedi. Etkinlik başkanı Halis Can Sağır, çaycı Tuğçe (2ce, BÖTE 2. sınıf; “Çaylak çaycı.”) olarak güncellenir. Teslim edilmeyen medya boş bırakılabilir; boş dosya adresiyle görsel/video üretilmez. Ahmet'in yeni açılışı gelene kadar mevcut referans video korunur. Bu ek yerel geliştirmedir; canlı yayın ve GitHub push talebi içermez.
+
 **10 Ekim 2026 yerel demo eki:** Kullanıcı yalnız yerelde yönetim, UluJam başvuru, takım ve Wallet akışını sentetik verilerle denemeyi onayladı. Ayrı DEMO etkinliği/başvurusu `LOCAL_DEMO_MODE=true`, geliştirme ortamı ve loopback `APP_URL` koşullarında açılır; üretim 2027 tarihi ve başvuru durumu değişmez. Geçici yönetim şifresi yalnız yerel veritabanında hash'lenir. Bu ek, üretimde sahte kişi/takım seed etmeme kuralını değiştirmez. Uygulama ayrıntısı `docs/superpowers/plans/2026-10-10-local-admin-ulujam-demo.md` içindedir.
+
+**10 Ekim 2026 yönetim yenileme eki:** Kullanıcı yönetim panelinin analitik, elle oluşturulan anket/başvuru formları (dosya alanı dahil) ve 1080×1350 afişli etkinlik akışıyla yeniden yapılmasını istedi. Aşağıdaki ilk sürümde kapalı dosya alanı kararı bu yeni istek için geçersizdir. Yeni dosya alanı yalnız genel formlarda özel depoda, boyut/tür/erişim/saklama sınırlarıyla açılır; UluJam'in özel başvuru kuralları korunur. Etkinliklerin yeni afiş yüklemelerinde kaynak ölçü tam 1080×1350 olmalıdır.
 
 - Genel ziyaretçi ve katılımcı için hesap açma/giriş yoktur; yalnızca yönetici hesapları, takım oturumları ve bireysel makbuz/kart erişimi vardır.
 - Yeni üretim veritabanında kişi, başvuru, takım ve kart kayıtları sıfırdır. 2026 üç derece bağlantısı ayrı, kişisel veri içermeyen idempotent editoryal başlangıç içeriğidir. Sahte takım veya kişi seed edilmez.

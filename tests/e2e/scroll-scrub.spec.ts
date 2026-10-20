@@ -9,7 +9,7 @@ test("ana sayfa etiketsiz ve mini oyunsuz; People bölüm videosu ve kişi foto�
   await expect(page.locator(".header-page-name")).toHaveText("UluJam");
   await expect(page.locator(".game-break")).toHaveCount(0);
   await page.goto("/hakkimizda");
-  await expect(page.locator(".people-gallery img")).toHaveCount(8);
+  await expect(page.locator(".people-gallery img")).toHaveCount(10);
   const counts = await page
     .locator(".people-chapter")
     .evaluateAll((nodes) =>
@@ -28,7 +28,7 @@ test("ana sayfa etiketsiz ve mini oyunsuz; People bölüm videosu ve kişi foto�
           ).size,
       ),
     );
-  expect(counts).toEqual([1, 1, 3, 2, 1]);
+  expect(counts).toEqual([1, 1, 3, 5, 0]);
 });
 for (const width of [390, 1440]) {
   test(`açılış ortada sabit kalır ve son12karede ayrılır ${width}`, async ({
@@ -116,7 +116,7 @@ for (const width of [390, 1440]) {
     ).toBe(900);
   });
 }
-test("beş açılış kısa ekranda ortada kalır ve metin taşmaz", async ({
+test("açılışlar kısa ekranda ortada kalır ve metin taşmaz", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 450 });

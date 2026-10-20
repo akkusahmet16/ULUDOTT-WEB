@@ -1,4 +1,6 @@
 import "server-only";
+import { revalidateTag } from "next/cache";
+import { CACHE_TAGS } from "../../../lib/cache/tags.ts";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { SESSION_COOKIE, resolveSession } from "../../../lib/auth/session.ts";
@@ -87,10 +89,11 @@ export async function handleMediaRequest(request: Request) {
       const file = form.get("file");
       if (!(file instanceof File)) throw new Error("Geçersiz istek");
       const purpose = z
-        .enum(["photo", "poster", "game", "social"])
+        .enum(["photo", "poster", "event-poster", "game", "social"])
         .parse(form.get("purpose"));
       const alt = z.string().parse(form.get("altText"));
       const result = await uploadMedia(session.actor, file, purpose, alt);
+      revalidateTag(CACHE_TAGS.media, { expire: 0 });
       return json({ id: result.id }, 201);
     }
     if (!request.headers.get("content-type")?.startsWith("application/json"))
@@ -106,9 +109,13 @@ export async function handleMediaRequest(request: Request) {
           Buffer.from(await boundedBody(request, 1024)).toString("utf8"),
         ),
       );
-    if (data.action === "publish")
-      return json({ url: await publishVariant(data.assetId, session.actor) });
+    if (data.action === "publish") {
+      const url = await publishVariant(data.assetId, session.actor);
+      revalidateTag(CACHE_TAGS.media, { expire: 0 });
+      return json({ url });
+    }
     await deleteMedia(session.actor, data.assetId);
+    revalidateTag(CACHE_TAGS.media, { expire: 0 });
     return json({ ok: true });
   } catch (error) {
     const m = error instanceof Error ? error.message : "";
@@ -116,6 +123,8 @@ export async function handleMediaRequest(request: Request) {
     if (m === "Medya işleme meşgul") return json({ error: m }, 429);
     if (m === "Bağlı medya silinemez") return json({ error: m }, 409);
     if (m === "Dosya boyutu sınırı") return json({ error: m }, 413);
+    if (m === "Etkinlik afişi tam 1080×1350 piksel olmalı" || m === "Etkinlik afişi PNG, JPEG veya WebP olmalı")
+      return json({ error: m }, 400);
     return json(
       {
         error:

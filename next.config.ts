@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const config: NextConfig = {
+  distDir: process.env.ULUDOTT_E2E_BUILD_DIR || ".next",
   output: "standalone",
   logging: {
     incomingRequests: {

@@ -5,6 +5,8 @@ import { resolveSession, SESSION_COOKIE } from "../../../lib/auth/session";
 import { listGames } from "../../../modules/games/application/game-service";
 import { GameList } from "../../../modules/games/ui/game-list";
 import { GameEditor } from "../../../modules/games/ui/game-editor";
+import { SiteGameEditor } from "../../../modules/games/ui/site-game-editor";
+import { listSiteGames } from "../../../modules/games/application/site-game-service";
 export default async function Page() {
   const s = await resolveSession(
     (await cookies()).get(SESSION_COOKIE)?.value ?? "",
@@ -23,9 +25,12 @@ export default async function Page() {
     <main>
       <Link href="/admin">Yönetime dön</Link>
       <h1>Oyun ve sonuç yönetimi</h1>
+      {s.actor.roles.includes("content_editor") && <SiteGameEditor initial={await listSiteGames(s.actor)} />}
+      <details className="admin-advanced"><summary>UluJam takım oyunları ve derece yönetimi</summary>
       <GameList initial={data} />
       <h2>Yeni oyun taslağı</h2>
       <GameEditor events={data.events} />
+      </details>
     </main>
   );
 }

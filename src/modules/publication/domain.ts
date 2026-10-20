@@ -4,6 +4,10 @@ export const slugSchema = z
   .min(1)
   .max(100)
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+export const slugifyContentTitle = (value: string) => value.toLocaleLowerCase("tr-TR")
+  .replaceAll("ı", "i").replaceAll("ğ", "g").replaceAll("ü", "u")
+  .replaceAll("ş", "s").replaceAll("ö", "o").replaceAll("ç", "c")
+  .normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 100).replace(/-+$/, "");
 const optionalText = z.string().trim().max(500).nullable().default(null);
 const instant = z
   .union([z.iso.datetime({ offset: true }), z.date()])
@@ -35,6 +39,7 @@ export const eventInput = z
   .strictObject({
     ...common,
     kind: z.enum(["general", "ulujam"]),
+    year: z.int().min(2000).max(2200).nullable().optional(),
     categoryId: z.uuid().nullable().default(null),
     description: z.string().trim().max(20000).nullable().default(null),
     location: optionalText,
@@ -49,6 +54,10 @@ export const eventInput = z
   })
   .refine(windowCheck, "Geçersiz yayın penceresi")
   .refine(
+    (v) => v.year == null || v.kind === "ulujam",
+    { message: "Yıl yalnız UluJam etkinliğine bağlanabilir", path: ["year"] },
+  )
+  .refine(
     (v) => !v.endsAt || (!!v.startsAt && v.endsAt > v.startsAt),
     "Geçersiz etkinlik tarihleri",
   )
@@ -62,11 +71,13 @@ const routes = new Set([
   "/ulujam",
   "/iletisim",
   "/etkinlikler",
+  "/duyurular",
+  "/oyunlar",
 ]);
 export function safeUrl(value: string) {
   if (
     routes.has(value) ||
-    /^\/(etkinlikler)\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)
+    /^\/(etkinlikler|duyurular)\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)
   )
     return true;
   try {
@@ -98,6 +109,7 @@ export type ContentRecord = {
   description: string | null;
   body: string;
   kind: string;
+  year?: number | null;
   categoryId: string | null;
   location: string | null;
   locationType: string;

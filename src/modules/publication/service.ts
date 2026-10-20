@@ -45,11 +45,15 @@ async function media(tx: DbTx, id: string | null, published = false) {
     if (!v.length || !a[0].alt_text) throw Error("Afiş yayımlanmalı");
   }
 }
+async function eventPoster(tx: DbTx, id: string) {
+  const rows = await tx.execute(sql`select id from media_variants where asset_id=${id} and purpose='event-poster-webp' and width=1080 and height=1350`);
+  if (!rows.length) throw Error("Etkinlik afişi tam 1080×1350 olmalı");
+}
 async function liveCta(tx: DbTx, url: string | null, now: Date) {
   if (!url) return true;
-  const match = /^\/(etkinlikler)\/([a-z0-9-]+)$/.exec(url);
+  const match = /^\/(etkinlikler|duyurular)\/([a-z0-9-]+)$/.exec(url);
   if (!match) return true;
-  const targetType = "event";
+  const targetType = match[1] === "etkinlikler" ? "event" : "announcement";
   const rows = await tx.execute(
     sql`select * from ${table(targetType)} where slug=${match[2]}`,
   );
@@ -83,6 +87,8 @@ export async function save(
       data.mediaId,
       !!current && !["draft", "archived"].includes(current.status),
     );
+    if (type === "event" && data.mediaId && data.mediaId !== current?.mediaId)
+      await eventPoster(tx, data.mediaId);
     if (current) {
       const locked = (await find(tx, type, current.id, true))!;
       checkRevision(locked, revision);
@@ -121,7 +127,35 @@ export async function save(
       (!data.startsAt || !data.location)
     )
       throw Error("Yayın için tarih ve konum gerekli");
+    const year =
+      type === "event" && "kind" in data && data.kind === "ulujam"
+        ? data.year === undefined
+          ? current?.year ?? null
+          : data.year
+        : null;
+    if (year !== null) {
+      const existing = await tx.execute(
+        sql`select event_id from event_years where year=${year}`,
+      );
+      if (existing[0] && existing[0].event_id !== current?.id)
+        throw Error("UluJam yılı başka etkinliğe bağlı");
+    }
     const result = await write(tx, type, data, id);
+    if (type === "event") {
+      if (year === null)
+        await tx.execute(
+          sql`delete from event_years where event_id=${result.id}`,
+        );
+      else
+        await tx.execute(
+          sql`insert into event_years(event_id,year) values(${result.id},${year}) on conflict(event_id) do update set year=excluded.year`,
+        );
+      result.year = year;
+      if (!current && actor.roles.includes("event_manager"))
+        await tx.execute(
+          sql`insert into admin_event_scopes(admin_id,event_id) values(${actor.adminId},${result.id}) on conflict do nothing`,
+        );
+    }
     if (type === "event" && current && current.title !== result.title) {
       const affected = await tx.execute(
         sql`select id from applications where event_id=${result.id}::uuid order by id`,
@@ -220,6 +254,7 @@ export async function transition(
       sql`update ${table(type)} set status=${next}, publish_at=${publishAt?.toISOString() ?? null}, unpublish_at=${status === "draft" ? null : (row.unpublishAt?.toISOString() ?? null)},revision=revision+1 where id=${id} returning *`,
     );
     const result = record(rows[0]);
+    result.year = row.year;
     await appendAudit(
       tx,
       actor,
@@ -359,3 +394,31 @@ export async function editorOptions(actor: Actor) {
     };
   });
 }
+
+const indexablePublication = z.object({
+  slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+  lastModified: z.coerce.date(),
+});
+
+// Salt okunur sitemap entegrasyonu: şema/mutasyon değiştirmeden gerçek son
+// düzenleme zamanını mevcut audit indeksinden alır; 100 kayıt sınırı yoktur.
+export async function listIndexablePublications(
+  type: ContentType,
+  now = new Date(),
+) {
+  return withTransaction(async (tx) => {
+    const rows = await tx.execute(sql`
+      select c.slug, coalesce(
+        (select max(a.created_at) from audit_logs a where a.object_type=${type} and a.object_id=c.id),
+        c.created_at
+      ) as "lastModified"
+      from ${table(type)} c
+      where c.status in ('scheduled','published','ended','cancelled')
+        and c.publish_at<=${now.toISOString()}
+        and (c.unpublish_at is null or c.unpublish_at>${now.toISOString()})
+      order by c.slug
+    `);
+    return z.array(indexablePublication).parse(rows);
+  });
+}
+

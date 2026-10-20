@@ -1,3 +1,5 @@
+import { revalidateTag } from "next/cache";
+import { CACHE_TAGS } from "../../../../lib/cache/tags.ts";
 import { resolveSession, SESSION_COOKIE } from "../../../../lib/auth/session";
 import { readCookie, verifyCsrf } from "../../../../lib/auth/csrf";
 import { readJson } from "../../../../lib/http/read-json";
@@ -30,6 +32,7 @@ async function handle(req: Request) {
         ),
       );
     await saveGallery(session.actor, await readJson(req));
+    revalidateTag(CACHE_TAGS.ulujam, { expire: 0 });
     return json({ ok: true });
   } catch (e) {
     const message = e instanceof Error ? e.message : "";

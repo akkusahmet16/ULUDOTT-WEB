@@ -2,14 +2,17 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { SESSION_COOKIE, resolveSession } from "../../../lib/auth/session";
+import { canCreateEvent } from "../../../modules/admin/domain/modules";
 import { EventEditor } from "../../../modules/events/ui/event-editor";
 export default async function Page() {
-  const s = await resolveSession(
+  const session = await resolveSession(
     (await cookies()).get(SESSION_COOKIE)?.value ?? "",
   );
-  if (!s) redirect("/admin");
+  if (!session) redirect("/admin");
   if (
-    !s.actor.roles.some((r) => ["content_editor", "event_manager"].includes(r))
+    !session.actor.roles.some((role) =>
+      ["content_editor", "event_manager"].includes(role),
+    )
   )
     return (
       <main>
@@ -19,9 +22,12 @@ export default async function Page() {
     );
   return (
     <main>
-      <Link href="/admin">Yönetime dön</Link>
-      <h1>Etkinlik yönetimi</h1>
-      <EventEditor />
+      <h1>Etkinlikler</h1>
+      <p>
+        Etkinliğini hazırla, önizle ve yayımla. Tarihi geçen kayıtlar ana
+        sayfanın geçmiş etkinlikler alanında görünür.
+      </p>
+      <EventEditor canCreate={canCreateEvent(session.actor)} />
     </main>
   );
 }

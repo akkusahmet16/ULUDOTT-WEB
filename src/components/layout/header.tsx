@@ -18,7 +18,9 @@ export function Header() {
     toggle = useRef<HTMLButtonElement>(null);
   const header = useRef<HTMLElement>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
-  const [preview, setPreview] = useState("/theme/reference/community.avif");
+  const [preview, setPreview] = useState(
+    "/community/00-ortak/menu-topluluk.webp",
+  );
   useEffect(() => {
     if (!open) return;
     const previous = document.body.style.overflow;
@@ -139,10 +141,8 @@ export function Header() {
                 onMouseEnter={() =>
                   setPreview(
                     href === "/hakkimizda"
-                      ? "/theme/reference/board-1.avif"
-                      : href === "/etkinlikler" || href === "/iletisim"
-                        ? "/theme/reference/venue-1.avif"
-                        : "/theme/reference/community.avif",
+                      ? "/community/00-ortak/menu-people.webp"
+                      : "/community/00-ortak/menu-topluluk.webp",
                   )
                 }
               >

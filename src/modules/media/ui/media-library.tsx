@@ -102,6 +102,7 @@ export function MediaLibrary() {
           <select name="purpose">
             <option value="photo">Fotoğraf</option>
             <option value="poster">Afiş</option>
+            <option value="event-poster">Etkinlik afişi · 1080×1350</option>
             <option value="game">Oyun</option>
             <option value="social">Paylaşım</option>
           </select>

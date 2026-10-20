@@ -43,6 +43,8 @@ it("Dashboard isolates personal counts and failed Wallet jobs by stored event re
       capacity: 1,
       full: true,
     });
+    expect(view.analytics).toMatchObject({ total: 1, waiting: 1, approved: 0, pendingTeams: 1 });
+    expect(view.analytics.daily).toHaveLength(14);
     expect(JSON.stringify(view)).not.toContain("FOREIGN");
     expect(JSON.stringify(view)).not.toContain("DEMO kişi");
     await expect(getDashboard(x.actor, foreign)).rejects.toThrow("Yetki yok");
@@ -66,6 +68,7 @@ it("Content editor and system-only admin receive no personal metrics or system s
     expect(view.events[0].pendingTeams).toBeNull();
     expect(view.events[0].failedWalletJobs).toBeNull();
     expect(view.forms).toEqual([]);
+    expect(view.analytics.total).toBe(0);
     await expect(getSystemStatus(editor)).rejects.toThrow("Yetki yok");
     const system = { ...x.actor, roles: ["system_admin"] };
     expect((await getDashboard(system)).events).toEqual([]);

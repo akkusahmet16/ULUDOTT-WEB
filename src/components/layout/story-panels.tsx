@@ -2,7 +2,8 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-export function StoryPanels({ degreeContent }: { degreeContent: ReactNode }) {
+import type { UlujamPresentation } from "../../modules/site-settings/domain/ulujam";
+export function StoryPanels({ degreeContent, presentation }: { degreeContent: ReactNode; presentation: UlujamPresentation }) {
   const [active, setActive] = useState<"ulujam" | "games" | null>(null);
   const [playing, setPlaying] = useState(false);
   const jam = useRef<HTMLDialogElement>(null),
@@ -36,8 +37,8 @@ export function StoryPanels({ degreeContent }: { degreeContent: ReactNode }) {
           [
             [
               "ulujam",
-              "UluJam",
-              "Bir fikir. Bir takım. Bir oyun.",
+              presentation.panelTitle,
+              presentation.panelDescription,
               "ulujam",
               "UluJam içeriklerini aç",
             ],
@@ -75,7 +76,7 @@ export function StoryPanels({ degreeContent }: { degreeContent: ReactNode }) {
             />
             <span className="panel-caption">
               <span className="eyebrow">
-                {id === "ulujam" ? "Birlikte üret" : "UluJam 2026"}
+                {id === "ulujam" ? presentation.application.open ? "Başvurular açık" : "Birlikte üret" : "UluJam 2026"}
               </span>
               <strong>{title}</strong>
               <span>{description}</span>
@@ -102,11 +103,16 @@ export function StoryPanels({ degreeContent }: { degreeContent: ReactNode }) {
             ×
           </button>
         </div>
-        <div className="vlog-player" data-video-id="_ECGC1V__xo">
+        {presentation.applicationPublished && <section className="jam-application-callout" aria-label="UluJam başvuruları">
+          <p className="eyebrow">UluJam {presentation.year}</p><h2>{presentation.application.title}</h2>
+          <p>{presentation.application.description}</p>
+          {presentation.application.url ? <Link className="button" href={presentation.application.url} onClick={close}>{presentation.application.buttonLabel}</Link> : <p role="status">{presentation.application.message}</p>}
+        </section>}
+        {presentation.videoId && <div className="vlog-player" data-video-id={presentation.videoId}>
           {playing ? (
             <iframe
-              src="https://www.youtube-nocookie.com/embed/_ECGC1V__xo?autoplay=0&rel=0"
-              title="UluJam vlog"
+              src={`https://www.youtube-nocookie.com/embed/${presentation.videoId}?autoplay=0&rel=0`}
+              title={presentation.videoTitle}
               allow="encrypted-media; picture-in-picture; fullscreen"
               allowFullScreen
               referrerPolicy="strict-origin-when-cross-origin"
@@ -118,7 +124,7 @@ export function StoryPanels({ degreeContent }: { degreeContent: ReactNode }) {
               onClick={() => setPlaying(true)}
             >
               <Image
-                src="/community/02-ulujam/ulujam-vlog-kapak.webp"
+                src={presentation.videoCover}
                 alt=""
                 width={2560}
                 height={1440}
@@ -127,28 +133,25 @@ export function StoryPanels({ degreeContent }: { degreeContent: ReactNode }) {
               <span aria-hidden="true">▶</span>
             </button>
           )}
-        </div>
+        </div>}
         <div className="dialog-description">
           <div>
             <p className="eyebrow">Birlikte üret</p>
-            <h2>UluJam vlog</h2>
+            <h2>{presentation.videoId ? presentation.videoTitle : presentation.panelTitle}</h2>
           </div>
           <div>
-            <p>UluJam’i birlikte yaşadığımız anlara bir bakış.</p>
-            <p>
-              Başvuru durumu kapalı. Güncel bilgi ve arşive UluJam sayfasından
-              ulaşabilirsin.
-            </p>
+            <p>{presentation.videoDescription}</p>
+            {!presentation.applicationPublished && <p>{presentation.application.message}</p>}
             <Link className="button secondary" href="/ulujam" onClick={close}>
               UluJam’i keşfet
             </Link>
-            <a
-              href="https://youtu.be/_ECGC1V__xo"
+            {presentation.videoId && <a
+              href={`https://youtu.be/${presentation.videoId}`}
               target="_blank"
               rel="noopener noreferrer"
             >
               YouTube’da izle ↗
-            </a>
+            </a>}
           </div>
         </div>
       </dialog>
@@ -170,10 +173,10 @@ export function StoryPanels({ degreeContent }: { degreeContent: ReactNode }) {
         </div>
         <div className="degree-dialog-cover">
           <Image
-            src="/theme/reference/community.avif"
+            src="/community/06-oyunlar/derece-oyunlari-kapak.webp"
             alt=""
-            width={1600}
-            height={900}
+            width={1920}
+            height={1080}
             unoptimized
           />
           <h2>Derece oyunları</h2>

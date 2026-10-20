@@ -23,6 +23,7 @@ export default async function Page() {
     <main>
       <Link href="/admin">Yönetime dön</Link>
       <h1>Bağlantı yönetimi</h1>
+      <p><Link href="/admin/iletisim">İletişim sayfası ve sitenin alt bağlantılarını düzenle ↗</Link></p>
       <p>
         Yalnız doğrulanmış adresleri yayımlayın. Zamanlar İstanbul saatindedir.
       </p>

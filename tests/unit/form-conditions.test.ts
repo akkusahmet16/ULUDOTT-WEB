@@ -47,7 +47,7 @@ it.each(fields)(
 it("bilinmeyen tür/config/operatör, referans ve döngüyü reddeder", () => {
   const base = { id: id(1), type: "short_text", label: "Ad" };
   for (const f of [
-    { ...base, type: "file" },
+    { ...base, type: "unknown" },
     { ...base, script: "eval()" },
     { ...base, condition: { op: "execute", fieldId: id(1) } },
     { ...base, condition: { op: "eq", fieldId: id(2), value: "x" } },

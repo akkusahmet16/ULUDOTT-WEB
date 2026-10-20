@@ -1,3 +1,5 @@
+import { PublicShell } from "../../../../components/layout/public-shell";
+import { getUlujamPresentation } from "../../../../modules/site-settings/application/ulujam-settings";
 import { headers } from "next/headers";
 import { botConfiguration } from "../../../../lib/security/turnstile";
 import { notFound } from "next/navigation";
@@ -19,29 +21,41 @@ export default async function Page({
     nonce: (await headers()).get("x-nonce") ?? undefined,
   };
   if (!f) notFound();
+  const presentation = await getUlujamPresentation();
+  const selected = presentation.formId === f.formId;
   return (
-    <main>
-      <h1>{f.title}</h1>
-      {f.state === "open" && f.version ? (
-        f.eventKind === "ulujam" && f.eventId ? (
-          <UlujamForm
-            botConfig={botConfig}
-            eventId={f.eventId}
-            definition={f.version.definition}
-            publicForm={{ slug: formSlug, versionId: f.version.id }}
-            teamOptions={await getUlujamTeams(formSlug)}
-          />
+    <PublicShell>
+      <section className="section application-page">
+        <p className="eyebrow">
+          {f.eventKind === "ulujam" ? "UluJam · Başvuru" : "Uludott · Başvuru"}
+        </p>
+        <h1>{selected ? presentation.application.title : f.title}</h1>
+        {selected && (
+          <p className="lede">{presentation.application.description}</p>
+        )}
+        {f.state === "open" && f.version ? (
+          f.eventKind === "ulujam" && f.eventId ? (
+            <UlujamForm
+              botConfig={botConfig}
+              eventId={f.eventId}
+              definition={f.version.definition}
+              publicForm={{ slug: formSlug, versionId: f.version.id }}
+              teamOptions={await getUlujamTeams(formSlug)}
+            />
+          ) : (
+            <PublicForm
+              botConfig={botConfig}
+              slug={formSlug}
+              versionId={f.version.id}
+              definition={f.version.definition}
+            />
+          )
         ) : (
-          <PublicForm
-            botConfig={botConfig}
-            slug={formSlug}
-            versionId={f.version.id}
-            definition={f.version.definition}
-          />
-        )
-      ) : (
-        <p>{f.state}</p>
-      )}
-    </main>
+          <p role="status">
+            {selected ? presentation.application.message : f.state}
+          </p>
+        )}
+      </section>
+    </PublicShell>
   );
 }

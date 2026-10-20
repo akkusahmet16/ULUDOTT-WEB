@@ -8,10 +8,14 @@ import {
 } from "../../modules/admin/infrastructure/admin-repository.ts";
 import { randomToken, tokenHash } from "./crypto.ts";
 import { appendAudit, type Actor } from "../logging/audit.ts";
-export const SESSION_COOKIE = "__Host-uludott_admin";
+import { authCookiePolicy } from "./cookie-policy.ts";
+export const authCookies = authCookiePolicy(
+  process.env.APP_URL ?? "https://uludott.invalid",
+);
+export const SESSION_COOKIE = authCookies.sessionName;
 export const cookieOptions = {
   httpOnly: true,
-  secure: true,
+  secure: authCookies.secure,
   sameSite: "strict" as const,
   path: "/",
 };

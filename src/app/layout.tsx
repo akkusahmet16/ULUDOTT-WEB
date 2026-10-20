@@ -4,6 +4,7 @@ import "../styles/cinematic.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import localFont from "next/font/local";
+import { loadServerConfig } from "../lib/config/server.ts";
 
 const bodyFont = localFont({
   src: [
@@ -21,11 +22,17 @@ const displayFont = localFont({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Uludott — Dijital Oyun Tasarım Topluluğu",
-  description: "Uludott topluluğu için etkinlik ve oyun üretim platformu.",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  await connection();
+  return {
+    metadataBase: new URL(loadServerConfig().appUrl),
+    title: {
+      default: "Uludott — Dijital Oyun Tasarım Topluluğu | ULUDOTT",
+      template: "%s | ULUDOTT",
+    },
+    description: "Uludott topluluğu için etkinlik ve oyun üretim platformu.",
+  };
+}
 
 export default async function RootLayout({
   children,

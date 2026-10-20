@@ -1,8 +1,12 @@
-# People medya teslimi
+# Sosyal medya ekibi medya teslimi
 
-Kişi başına yalnız **bir açılış videosu ve bir detay fotoğrafı**. Detay fotoğrafı video kapağında da kullanılır.
+20 Ekim 2026: Sosyal Medya Departmanı Başkanı **Ahmet Akkuş** açılış videosu ve detay fotoğrafı kullanır. Emir ve Melek yalnız detay fotoğrafı kullanır.
 
-| Dosya | Boyut | Alan |
+| Dosya | Ölçü | Kullanım / durum |
 |---|---|---|
-| `people-03-acilis.mp4` | 1920×1080 | Üye 03 açılış kaydırma videosu |
-| `people-03-detay.webp` | 1600×1100 | Üye 03 tek detay fotoğrafı / video kapağı |
+| `SMD-baskan/smd-baskan-ahmet-acilis.mp4` | 1920×1080 | Ahmet açılışı; henüz teslim edilmedi |
+| `SMD-baskan/smd-baskan-ahmet.webp` | 1600×1100 | Ahmet detay / video kapağı; yerleştirildi |
+| `smd-ekip-emir.webp` | 1600×1100 | Emir detay; yerleştirildi |
+| `smd-ekip-melek.webp` | 1600×1100 | Melek detay; yerleştirildi |
+
+Sıra: Ahmet → Emir → Melek. Ahmet'in yeni videosu gelene kadar mevcut geçici GTA VI videosu korunur. Başkan bilgisi `SMD-baskan/sosyal-medya-ahmet.md` dosyasındadır. Ekibe ortak açılış videosu gerekmez.

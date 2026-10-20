@@ -34,6 +34,8 @@ const required = [
   "event_years",
   "event_gallery",
   "people_overrides",
+  "site_game_entries",
+  "site_settings",
   "announcements",
   "featured_slots",
   "media_assets",
@@ -44,6 +46,7 @@ const required = [
   "form_rules",
   "submissions",
   "submission_answers",
+  "submission_files",
   "submission_status_history",
   "consents",
   "applications",
@@ -330,7 +333,7 @@ describe("etkinlik ve sürüm izolasyonu", () => {
       local.sql`insert into submissions(form_id,version_id,event_id,snapshot,receipt_token_hash) values (${f1.id},${v.id},${b},'{}',${randomUUID()})`,
     ).rejects.toMatchObject({ code: "23503" });
   });
-  it("cevaplar başka sürümdeki alan anahtarına bağlanamaz ve dosya alanı kapalıdır", async () => {
+  it("cevaplar başka sürümdeki alan anahtarına bağlanamaz ve dosya alanı açılabilir", async () => {
     const [f] =
       await local.sql`insert into forms(title,slug) values ('Form',${randomUUID()}) returning id`;
     const [v1] =
@@ -344,9 +347,8 @@ describe("etkinlik ve sürüm izolasyonu", () => {
     await expect(
       local.sql`insert into submission_answers(submission_id,version_id,field_key,value) values (${s.id},${v1.id},${field},'"test"')`,
     ).rejects.toMatchObject({ code: "23503" });
-    await expect(
-      local.sql`insert into form_fields(version_id,field_key,type,label,position) values (${v1.id},${randomUUID()},'file','Dosya',1)`,
-    ).rejects.toMatchObject({ code: "23514" });
+    const [fileField] = await local.sql`insert into form_fields(version_id,field_key,type,label,position) values (${v1.id},${randomUUID()},'file','Dosya',1) returning field_key`;
+    expect(fileField.field_key).toBeTruthy();
   });
   it("üye ve takım farklı etkinlikten olamaz, beceri seviyesi 1–5 dışına çıkamaz", async () => {
     const a = await event(),

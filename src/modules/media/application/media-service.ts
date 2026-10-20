@@ -20,6 +20,7 @@ import {
   type MediaPurpose,
 } from "../domain/media-policy.ts";
 import { processImage } from "../infrastructure/process-image.ts";
+import { requireEventPosterDimensions } from "./event-poster-policy.ts";
 import {
   putPrivate,
   readPrivate,
@@ -40,7 +41,7 @@ export async function uploadMedia(
 ): Promise<MediaAsset> {
   requirePermission(actor, "media.write");
   const alt = z.string().trim().min(1).max(250).parse(altText);
-  z.enum(["photo", "poster", "game", "social"]).parse(purpose);
+  z.enum(["photo", "poster", "event-poster", "game", "social"]).parse(purpose);
   if (!file.size || file.size > MAX_BYTES)
     throw new Error("Dosya boyutu sınırı");
   const written: string[] = [];
@@ -52,6 +53,7 @@ export async function uploadMedia(
       if (!lock[0]?.acquired) throw new Error("Medya işleme meşgul");
       const bytes = Buffer.from(await file.arrayBuffer()),
         kind = validateMedia(bytes, file.type);
+      if (purpose === "event-poster") await requireEventPosterDimensions(bytes, file.type);
       const outputs = await processImage(bytes, kind === "heic");
       const id = randomUUID(),
         originalKey = `originals/${randomUUID()}`;
@@ -119,6 +121,7 @@ export async function listMedia(actor: Actor) {
           width: v.width,
           height: v.height,
           published: !!v.publishedAt,
+          purpose: v.purpose,
         })),
       })),
     );

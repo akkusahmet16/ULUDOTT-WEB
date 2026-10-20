@@ -1,9 +1,9 @@
 import "server-only";
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, eq, inArray, sql, gte } from "drizzle-orm";
 import { z } from "zod";
 import { getDatabase } from "../../../lib/database/client.ts";
 import { events } from "../../../db/schema/content.ts";
-import { forms } from "../../../db/schema/forms.ts";
+import { forms, submissions } from "../../../db/schema/forms.ts";
 import { outbox } from "../../../db/schema/operations.ts";
 import { googleReadiness } from "../../../lib/config/wallet.ts";
 import { loadServerConfig } from "../../../lib/config/server.ts";
@@ -34,7 +34,9 @@ export type DashboardForm = {
 export type DashboardView = {
   events: DashboardEvent[];
   forms: DashboardForm[];
+  analytics: { total: number; waiting: number; approved: number; pendingTeams: number; daily: { day: string; count: number }[] };
 };
+const emptyAnalytics = () => ({ total: 0, waiting: 0, approved: 0, pendingTeams: 0, daily: [] as { day: string; count: number }[] });
 export type IntegrationStatus = {
   database: "reachable";
   googleWallet: string;
@@ -52,7 +54,7 @@ export async function getDashboard(
   const scopes = actor.roles.includes("event_manager") ? actor.eventScopes : [];
   if (eventScope && !content && !scopes.includes(eventScope))
     throw Error("Yetki yok");
-  if (!content && !scopes.length) return { events: [], forms: [] };
+  if (!content && !scopes.length) return { events: [], forms: [], analytics: emptyAnalytics() };
   const visible = content ? undefined : inArray(events.id, scopes);
   const personal = scopes.length ? inArray(events.id, scopes) : sql`false`;
   const participants = sql<number | null>`case when ${personal} then
@@ -102,6 +104,31 @@ export async function getDashboard(
         .where(inArray(forms.eventId, formScopes))
         .orderBy(forms.title, forms.id)
     : [];
+  const analytics = emptyAnalytics();
+  analytics.pendingTeams = eventRows.reduce((total, event) => total + (event.pendingTeams ?? 0), 0);
+  if (formRows.length) {
+    const formIds = formRows.map((form) => form.id);
+    const statusRows = await getDatabase().select({ status: submissions.status,
+      count: sql<number>`count(*)::int` }).from(submissions)
+      .where(and(inArray(submissions.formId, formIds), sql`${submissions.expiresAt}>now()`))
+      .groupBy(submissions.status);
+    analytics.total = statusRows.reduce((total, row) => total + row.count, 0);
+    analytics.waiting = statusRows.filter((row) => ["received", "pending", "waitlisted"].includes(row.status))
+      .reduce((total, row) => total + row.count, 0);
+    analytics.approved = statusRows.find((row) => row.status === "approved")?.count ?? 0;
+    const since = new Date(Date.now() - 14 * 86400000);
+    const days = await getDatabase().select({ day: sql<string>`to_char(${submissions.createdAt} at time zone 'Europe/Istanbul', 'YYYY-MM-DD')`,
+      count: sql<number>`count(*)::int` }).from(submissions)
+      .where(and(inArray(submissions.formId, formIds), gte(submissions.createdAt, since), sql`${submissions.expiresAt}>now()`))
+      .groupBy(sql`to_char(${submissions.createdAt} at time zone 'Europe/Istanbul', 'YYYY-MM-DD')`);
+    const byDay = new Map(days.map((day) => [day.day, day.count]));
+    const today = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Istanbul", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+    const [year, month, day] = today.split("-").map(Number);
+    analytics.daily = Array.from({ length: 14 }, (_, index) => {
+      const date = new Date(Date.UTC(year, month - 1, day - 13 + index)).toISOString().slice(0, 10);
+      return { day: date, count: byDay.get(date) ?? 0 };
+    });
+  }
   return {
     events: eventRows.map((e) => ({
       ...e,
@@ -115,6 +142,7 @@ export async function getDashboard(
       ...f,
       full: f.capacity !== null && f.used >= f.capacity,
     })),
+    analytics,
   };
 }
 export async function getSystemStatus(

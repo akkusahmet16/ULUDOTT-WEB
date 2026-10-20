@@ -1,43 +1,65 @@
+"use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 import type { Actor } from "../../../lib/logging/audit";
-import styles from "./dashboard.module.css";
+import { adminModulesFor } from "../domain/modules";
+import styles from "./admin-workspace.module.css";
 export function AdminNavigation({ actor }: { actor: Actor }) {
-  const content = actor.roles.some((r) =>
-    ["content_editor", "event_manager"].includes(r),
+  const pathname = usePathname();
+  const [expanded, setExpanded] = useState(false);
+  const entries = adminModulesFor(actor);
+  const current = entries.find(
+    (item) =>
+      item.href === pathname ||
+      (item.href !== "/admin" && pathname.startsWith(item.href + "/")),
   );
-  const event = actor.roles.includes("event_manager");
-  const entries = [
-    { href: "/admin", label: "Operasyon özeti" },
-    ...(content
-      ? [
-          { href: "/admin/medya", label: "Medya" },
-          { href: "/admin/people", label: "Yönetim kurulu" },
-          { href: "/admin/etkinlikler", label: "Etkinlikler" },
-          { href: "/admin/linkler", label: "Bağlantılar" },
-          { href: "/admin/galeri", label: "Galeri" },
-          { href: "/admin/oyunlar", label: "Oyunlar" },
-        ]
-      : []),
-    ...(event
-      ? [
-          { href: "/admin/formlar", label: "Formlar" },
-          { href: "/admin/basvurular", label: "Başvurular" },
-          { href: "/admin/takim-arayanlar", label: "Takım arayanlar" },
-          { href: "/admin/takim-onaylari", label: "Takım onayları" },
-          { href: "/admin/check-in", label: "QR kontrolü" },
-        ]
-      : []),
-    ...(actor.roles.includes("system_admin")
-      ? [{ href: "/admin/sistem", label: "Sistem" }]
-      : []),
-  ];
   return (
     <nav className={styles.navigation} aria-label="Yönetim modülleri">
-      {entries.map((e) => (
-        <Link key={e.href} href={e.href}>
-          {e.label}
+      <div className={styles.brandRow}>
+        <Link href="/admin" className={styles.brand}>
+          ULUDOTT<span>İÇERİK STÜDYOSU</span>
         </Link>
-      ))}
+        <button
+          className={styles.menuToggle}
+          type="button"
+          aria-expanded={expanded}
+          aria-controls="admin-module-links"
+          aria-label={
+            expanded ? "Yönetim menüsünü kapat" : "Yönetim menüsünü aç"
+          }
+          onClick={() => setExpanded(!expanded)}
+        >
+          {expanded ? "Kapat ×" : "Menü ☰"}
+        </button>
+      </div>
+      <p className={styles.mobileCurrent}>{current?.label ?? "Yönetim"}</p>
+      <div
+        id="admin-module-links"
+        className={styles.moduleLinks}
+        data-expanded={expanded}
+      >
+        {entries.map((entry, index) => (
+          <div key={entry.href}>
+            {(index === 0 || entries[index - 1].group !== entry.group) && (
+              <p className={styles.navGroup}>{entry.group}</p>
+            )}
+            <Link
+              href={entry.href}
+              onClick={() => setExpanded(false)}
+              aria-current={current?.href === entry.href ? "page" : undefined}
+            >
+              <span className={styles.navMark} aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              {entry.label}
+            </Link>
+          </div>
+        ))}
+      </div>
+      <Link href="/" className={styles.siteLink}>
+        Siteyi görüntüle <span aria-hidden="true">↗</span>
+      </Link>
     </nav>
   );
 }

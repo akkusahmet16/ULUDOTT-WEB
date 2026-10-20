@@ -1,3 +1,5 @@
+import { revalidateTag } from "next/cache";
+import { CACHE_TAGS } from "../../../../lib/cache/tags.ts";
 import { z } from "zod";
 import { verifyCsrf } from "../../../../lib/auth/csrf";
 import { readJson } from "../../../../lib/http/read-json";
@@ -16,15 +18,14 @@ export async function POST(req: Request) {
         expectedRevision: z.int().positive(),
       })
       .parse(await readJson(req));
-    return Response.json(
-      await approvePublicationName(
-        d.token,
-        d.publicationName,
-        d.consent,
-        d.expectedRevision,
-      ),
-      { headers: privateHeaders },
+    const result = await approvePublicationName(
+      d.token,
+      d.publicationName,
+      d.consent,
+      d.expectedRevision,
     );
+    revalidateTag(CACHE_TAGS.games, { expire: 0 });
+    return Response.json(result, { headers: privateHeaders });
   } catch (e) {
     return gameError(e);
   }

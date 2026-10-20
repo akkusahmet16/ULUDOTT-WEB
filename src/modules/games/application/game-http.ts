@@ -1,4 +1,6 @@
 import "server-only";
+import { revalidateTag } from "next/cache";
+import { CACHE_TAGS } from "../../../lib/cache/tags.ts";
 import { z } from "zod";
 import {
   adminActor,
@@ -81,7 +83,10 @@ export async function gameRequest(req: Request, id?: string) {
       const d = z
         .strictObject({ eventId: z.uuid(), input: z.unknown() })
         .parse(await readJson(req, 64 * 1024));
-      return Response.json(await saveGameDraft(actor, d.eventId, d.input), {
+      const created = await saveGameDraft(actor, d.eventId, d.input);
+      revalidateTag(CACHE_TAGS.games, { expire: 0 });
+      revalidateTag(CACHE_TAGS.historicalResults, { expire: 0 });
+      return Response.json(created, {
         status: 201,
         headers: privateHeaders,
       });
@@ -126,6 +131,8 @@ export async function gameRequest(req: Request, id?: string) {
         d.expectedRevision,
       );
     }
+    revalidateTag(CACHE_TAGS.games, { expire: 0 });
+    revalidateTag(CACHE_TAGS.historicalResults, { expire: 0 });
     return Response.json(result, { headers: privateHeaders });
   } catch (e) {
     return gameError(e);

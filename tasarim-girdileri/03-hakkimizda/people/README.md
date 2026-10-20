@@ -1,27 +1,17 @@
 # Yönetim kurulu medya teslimi
 
-Kişi başına bir açılış videosu ve bir detay fotoğrafı. Sayfa sıralaması
+Güncelleme: 20 Ekim 2026.
 
-1-Başkan
-2-Başkan yard
+| Bölüm | Kişiler, sırasıyla | Açılış |
+|---|---|---|
+| Başkan | Hamza Yiğit Adıgüzel | Mevcut başkan videosu |
+| Başkan yardımcısı | Batuhan Özdemir | Mevcut başkan yardımcısı videosu |
+| Sosyal medya | Ahmet Akkuş, Emir, Melek | Yalnız departman başkanı Ahmet |
+| Etkinlik | Halis Can Sağır, Efe Tutucu, Aybey, Fatih Soyer, Eren Bozacı | Yalnız departman başkanı Halis |
+| Çaycı | Tuğçe (2ce) | Açılış videosu yok |
 
-3- Sosyal medya ekibi (açılış videosu ekibin videosu olucak)
-    Detay fotoğraı olarak sosyal medya ekibi yer alıcak
-        Başkan ile başlayacak.
-        bilgiler yanlarında yer alıcak
+Herkes için tek detay fotoğrafı kullanılır. Ekip üyeleri için ayrı açılış videosu veya ekibe ortak video gerekmez. Başkanların detay fotoğrafları video kapağı olarak da kullanılır.
 
-        sosyal medya ekibi:
-        Ahmet
-        melek
-        emir
+Tuğçe: **BÖTE 2. sınıf** — **Çaylak çaycı.** Fotoğrafı henüz yok; teslim edilene kadar yalnız bilgileri gösterilir.
 
-4- Etklinlik Ekibi (açılış videosu ekibin videosu olucak)
-    Detay fotoğraı olarak etkinlik ekibi yer alıcak
-        Başkan ile başlayacak.
-        bilgiler yanlarında yer alıcak
-
-        etkinlik ekibi
-        efe
-        aybey
-
-5- caycı-halis de burda yer alıcak.
+Kişisel kaynak bilgiler ilgili kişi/departman alt klasöründeki `.md` dosyalarında, sitedeki varsayılan metinler `src/modules/community/people-reference-data.ts` içinde bulunur. Yönetim panelindeki People alanından yapılan kayıtlar varsayılan metinleri geçersiz kılar.

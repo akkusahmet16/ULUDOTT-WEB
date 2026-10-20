@@ -162,6 +162,27 @@
       "when": 1791133749433,
       "tag": "0022_brave_crystal",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1791644939052,
+      "tag": "0023_submission_files",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1792481320538,
+      "tag": "0024_site_game_catalog",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1792502829353,
+      "tag": "0025_site_settings",
+      "breakpoints": true
     }
   ]
 }

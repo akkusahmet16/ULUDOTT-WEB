@@ -103,7 +103,7 @@ async function coverReady(tx: DbTx, id: string | null) {
     .where(
       and(
         eq(mediaVariants.assetId, id),
-        eq(mediaVariants.purpose, "webp"),
+        eq(mediaVariants.mimeType, "image/webp"),
         sql`${mediaVariants.publishedAt} is not null`,
       ),
     );
@@ -591,12 +591,10 @@ export async function gameOptions(
     return db
       .select({ id: mediaAssets.id, label: mediaAssets.altText })
       .from(mediaAssets)
-      .innerJoin(mediaVariants, eq(mediaVariants.assetId, mediaAssets.id))
       .where(
         and(
           eq(mediaAssets.status, "ready"),
-          eq(mediaVariants.purpose, "webp"),
-          sql`${mediaVariants.publishedAt} is not null`,
+          sql`exists(select 1 from ${mediaVariants} where ${mediaVariants.assetId}=${mediaAssets.id} and ${mediaVariants.mimeType}='image/webp' and ${mediaVariants.publishedAt} is not null)`,
           filter,
         ),
       )

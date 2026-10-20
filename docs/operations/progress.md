@@ -937,6 +937,44 @@ Tekrar çalıştırılabilir kurulum bir örnek etkinlik, açılıp durdurulabil
 
 Yerel web `127.0.0.1:3001`, PostgreSQL, obje deposu ve worker açık. Tarayıcıda tek şifreli panel girişi, kurucu takım girişi, iki üyenin görünmesi ve bekleyen web kartı doğrulandı. Entegrasyon testinde form durdurma/yeniden açma, tekrar kurulumda çoğalmama, yerel dışı kurulum reddi ve onay öncesi kart reddi doğrulandı. Tam Vitest paketi 53 dosyada 283/283, typecheck, lint ve üretim derlemesi geçti. Derlemede önceden bilinen Wallet dinamik dosya izleme uyarısı sürüyor. Kart/Google Wallet/check-in ilgili 16 entegrasyon testi ayrıca geçti; Google Android cihazına gerçek kart ekleme bu oturumda yapılmadı. Apple Wallet ertelenmiş durumda. VDS ve GitHub değiştirilmedi.
 
+## Yönetim paneli, form oluşturucu ve etkinlik afişleri — 10 Ekim 2026
+
+Yönetim alanı ortak kenar menülü yeni düzene geçirildi. Ana ekran, yetkili kapsamındaki etkinlik, başvuru, bekleyen işlem ve takım sayılarını ve son 14 günün başvuru grafiğini gerçek kayıtlar üzerinden gösterir; ziyaretçi takibi yapmaz. Mevcut form, başvuru, medya, etkinlik ve sistem araçları aynı panelde korunur.
+
+Genel etkinliklere yönelik form oluşturucu, soruların başlığını, yanıt türünü, seçeneklerini, yardım metnini ve zorunluluğunu ilk oluşturma sırasında belirler. Dosya sorusu PDF/PNG/JPEG/WebP ve 5 MiB sınırıyla açıldı; form başına en fazla üç dosya alınır. Dosyalar özel nesne deposunda saklanır, yalnız yetkili yönetici başvuru detayından indirir ve başvuru silinince kaldırılır. UluJam özel başvuru akışına dosya alanı eklenmez. Yeni migration `0023_submission_files.sql` yerel veritabanına uygulandı.
+
+Etkinlik düzenleyicisi başlık, isteğe bağlı alt başlık, açıklama, tarih, başlangıç/bitiş saati ve konum alanlarını öne çıkarır. Afiş yüklemesi yalnız tam 1080×1350 JPEG/PNG/WebP kabul eder; yeni veya değiştirilen afişin yayımlanmış medya varyantı doğrulanmadan etkinlik yayımlanmaz. Yeni yayımlanan etkinlikler sırayla ana sayfadaki Yaklaşan Buluşmalar alanına alınır; afiş ve bilgiler Coffee Talk kartının düzenini kullanır. Eski etkinlik afişleri değiştirilmedikleri sürece gösterilmeye devam eder.
+
+Doğrulama: özel dosya indirme/yetki/silme, afiş yükleme/yayım ve analitik kapsamı için birim ve entegrasyon testleri eklendi. Tam Vitest 57 dosyada 288/288, typecheck, lint ve üretim derlemesi geçti. Derlemede önceden bilinen Wallet dosya izleme uyarısı sürüyor. Yerel panel tarayıcıda incelendi; ana sayfa ve etkinlik sayfası HTTP200 döndü. GitHub ve canlı VDS değiştirilmedi; yerel demo adresi `http://127.0.0.1:3001` üzerinde kalır.
+
+## Canlı iletişim bilgileri — 19 Ekim 2026
+
+İletişim sayfasına `mailto:uludott@gmail.com` ve `tel:+905323506286` bağlantıları ile Instagram, WhatsApp, X ve YouTube hesaplarının beyaz logoları eklendi. Sayfanın kendi CSS modülü masaüstünde iki, mobilde tek kolon kullanır. Yalnız iletişim sayfası ve bu stil dosyası VDS'ye aktarıldı; üretim derlemesi başarılı, standalone statik dosyaları yenilendi ve web servisi yeniden başlatıldı. Önceki sayfa VDS'de `/root/contact-page-before-20261019.tsx` olarak saklanır. Yerel diğer yönetim/form değişiklikleri bu yayına dahil edilmedi.
+
+Kabul: typecheck ve sayfa lint kontrolü geçti. Canlı `https://uludott.com.tr/iletisim` tarayıcıda HTTP200; e-posta ve telefon bağlantıları, dört sosyal bağlantı, yüklenen dört logo ve 390px genişlikte taşmama doğrulandı. Web ve worker aktif; Discord bot sürecine dokunulmadı. GitHub push yapılmadı.
+
+## People, departman başkanları ve iki görselli menü — 20 Ekim 2026
+
+Plan, son ilerleme raporu ve güncel kaynak klasörleri okunarak yerelde uygulandı. Ortak menü yalnız teslim edilen `menu-topluluk.webp` ve `menu-people.webp` görsellerini kullanır; Hakkımızda satırı People, diğer satırlar topluluk görseline geçer. Üçüncü mekân görseli gereksinimi kaldırıldı.
+
+Sosyal medya açılışı departman başkanı Ahmet Akkuş olarak adlandırıldı. Yeni Ahmet videosu teslim edilmediğinden mevcut GTA VI referansı geçici olarak korunur; güncel başkan fotoğrafı `SMD-baskan/` klasöründen alındı. Emir ve Melek yalnız detay fotoğraflarıyla sıralanır. Etkinlik başkanı Halis Can Sağır bölümün başına taşındı; `Ed-Baskan/` kaynak videosu ve detay fotoğrafı yerleştirildi. Orijinal HEVC video değiştirilmeden, sunulan kopya tarayıcı uyumluluğu ve kare arama için H.264/yuv420p, her kare anahtar kare ve faststart biçimine dönüştürüldü. Video tarayıcıda 1920×1080 ve 2,15 saniye olarak hatasız çözüldü. Efe, Aybey, Fatih ve Eren yalnız detay fotoğrafıyla devam eder.
+
+Çaycı profili Tuğçe (2ce) olarak güncellendi: “BÖTE 2. sınıf”, “Çaylak çaycı.” Fotoğrafı henüz teslim edilmedi; yerine başka kişi görseli koyulmadı. Boş medya alanları People düzenleyicisinde kaydedilebilir; sayfa boş adresli görsel/video veya uzun boş açılış alanı üretmez. Medya doluysa mevcut yol ve dosya doğrulamaları sürer. Kaynak README'ler ve görsel eksikleri raporu güncellendi.
+
+Doğrulama: boş medya kaydı önce Zod doğrulamasında başarısız oldu, düzenlemeden sonra geçti. Tam Vitest paketi 58 dosyada 291/291; People/menü/galeri/kaydırma Playwright kontrolleri 11/11; typecheck, ilgili lint ve değişen dosyaların diff kontrolü başarılı. Mobil 390px, masaüstü 1440px ve kısa ekran kontrolleri geçti. Tüm çalışma ağacındaki diff kontrolünde önceden mevcut `places/README.md` son satır boşluğu görülür; bu kullanıcı dosyasına dokunulmadı. Yerel site çalışma öncesinde kapatıldı, sonunda `http://127.0.0.1:3001` üzerinde yeniden açıldı. VDS, GitHub ve Apple Wallet değiştirilmedi.
+
+## Derece oyunları penceresi kapak teslimi — 20 Ekim 2026
+
+Kullanıcının hazır `tasarim-girdileri/06-oyunlar/derece-oyunlari-kapak.webp` dosyası `public/community/06-oyunlar/` altına alındı ve ana sayfadaki Derece oyunları penceresinin üst kapağına bağlandı. Eski GTA VI `community.avif` referansı bu alandan kaldırıldı. Kaynak 1920×1080 ölçüsünde ve sunulan kopya kaynak dosyayla birebir aynı. README ve görsel eksikleri raporunda yerleştirildi olarak güncellendi.
+
+Yerel altyapı kapalı bulunduğundan mevcut Colima profili, PostgreSQL ve Garage servisleri başlatıldı. Ana sayfa HTTP200. Mobil 390px ve masaüstü 1440px tarayıcı kontrolünde derece penceresi açılıyor, doğru kapak yükleniyor ve yatay taşma yok. İlgili ESLint ve diff kontrolü geçti. Yerel site `http://127.0.0.1:3001` üzerinde açık. Bu işlem VDS'ye yayımlanmadı, GitHub'a gönderilmedi.
+
+## Ana sayfa derece penceresi kart uyumu — 20 Ekim 2026
+
+Ana sayfadaki Derece oyunları penceresi, Oyunlar sayfasındaki aynı görsel kartları kullanır. İki görünüm `src/modules/games/ui/degree-games.tsx` bileşeninde birleştirildi; Lost Pieces, Lost Child Soul ve ProjectSW kapakları, derece sırası, başlıkları ve itch.io bağlantıları aynı düzenle sunulur. Kapak eşleştirmesi kayıt sırası yerine derece numarasına dayanır. Pencerenin altındaki “Tüm derece oyunları” butonunun üstüne 32px boşluk eklendi. Kullanıcının önceki kapak teslimi korundu.
+
+Doğrulama: 390px ve 1440px tarayıcı kontrollerinde iki sayfanın üç kart başlığı, görsel adları, bağlantıları, köşe ve zemin stilleri karşılaştırıldı; buton-kart aralığı 32px ve yatay taşma olmadığı doğrulandı. İlgili mevcut Playwright testleri 4/4, typecheck, ilgili ESLint ve değişen dosyaların diff kontrolü geçti. Yerel site çalışma öncesi durdurulup sonunda `http://127.0.0.1:3001` üzerinde yeniden açıldı. VDS ve GitHub değiştirilmedi.
+
 ## Proje sonunda gözden geçirilecek ek gereksinim — Wallet QR ile UluJam check-in (3 Ekim 2026)
 
 Durum: Kullanıcı talebi kaydedildi; bu uçtan uca akış henüz uygulanmadı. Mevcut QR doğrulama/yenileme altyapısı bu gereksinimin tamamlandığı anlamına gelmez. Mevcut görevlerin tamamlanmasının ardından en son gözden geçirilecek.

@@ -296,6 +296,13 @@
 .news {
   padding: 100px 0 20px;
 }
+.eventList {
+  margin-top: 32px;
+}
+.emptyEvents {
+  margin-top: 28px;
+  color: #d7c8df;
+}
 .sponsors {
   display: grid;
   gap: 24px;

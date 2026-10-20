@@ -2,9 +2,11 @@ import { PeopleStory } from "../../../modules/community/people-story";
 import Image from "next/image";
 import { PublicShell } from "../../../components/layout/public-shell";
 import { ButtonLink } from "../../../components/design-system/button";
-import { getPeopleContent } from "../../../modules/community/people-content";
-export const metadata = { title: "Hakkımızda — Uludott" };
-export const dynamic = "force-dynamic";
+import { readPeopleContent } from "../../../modules/publication/ui/public-queries";
+export const metadata = {
+  title: "Hakkımızda — Uludott",
+  alternates: { canonical: "/hakkimizda" },
+};
 const places = [
   {
     title: "Etkinlik kafeleri",
@@ -18,7 +20,7 @@ const places = [
   },
 ] as const;
 export default async function Page() {
-  const chapters = await getPeopleContent();
+  const chapters = await readPeopleContent();
   return (
     <PublicShell>
       <section className="hero">
