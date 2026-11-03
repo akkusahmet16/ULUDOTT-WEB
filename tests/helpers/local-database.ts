@@ -7,6 +7,8 @@ export async function createTestDatabase() {
   const url = new URL(process.env.DATABASE_URL!);
   if (!["127.0.0.1", "localhost"].includes(url.hostname))
     throw new Error("DB testleri yalnızca yerel servis üzerinde çalışır.");
+  // PostgreSQL startup parameters can override the database in the URL pathname.
+  url.search = "";
   const admin = postgres(url.toString(), { max: 1, onnotice: () => {} });
   const name = `uludott_test_${randomUUID().replaceAll("-", "")}`;
   await admin.unsafe(`CREATE DATABASE "${name}"`);

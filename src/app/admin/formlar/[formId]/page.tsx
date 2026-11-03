@@ -24,7 +24,7 @@ export default async function Page({
       <Link href="/admin/formlar">Form listesine dön</Link>
       <h1>{f.title}</h1>
       <FormBuilder
-        key={f.revision}
+        key={f.id}
         form={{
           id: f.id,
           eventId: f.eventId,

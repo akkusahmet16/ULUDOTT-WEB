@@ -11,11 +11,13 @@ async function login(page: Page) {
   ).toBeVisible();
 }
 async function peopleMutation(page: Page, body: unknown) {
-  const { csrfToken } = await (
-    await page.request.get("/api/admin/csrf")
-  ).json();
+  const csrfResponse = await page.request.get("/api/admin/csrf");
+  const { csrfToken } = await csrfResponse.json();
   const response = await page.request.post("/api/admin/people", {
-    headers: { "x-csrf-token": csrfToken, Origin: "http://127.0.0.1:3100" },
+    headers: {
+      "x-csrf-token": csrfToken,
+      Origin: new URL(csrfResponse.url()).origin,
+    },
     data: body,
   });
   expect(response.ok()).toBe(true);

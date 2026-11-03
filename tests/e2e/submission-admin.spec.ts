@@ -22,7 +22,10 @@ test("başvuru arama, sürümlü düzeltme, durum, güvenli indirme ve silme", a
   const xlsxPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "XLSX indir" }).click();
   expect((await xlsxPromise).suggestedFilename()).toMatch(/\.xlsx$/);
-  await page.getByRole("link", { name: /^Başvuru / }).click();
+  await page
+    .locator("#admin-content")
+    .getByRole("link", { name: /^Başvuru / })
+    .click();
   await page.getByLabel("Not *", { exact: true }).fill("Düzeltilmiş");
   await page.getByRole("button", { name: "Düzeltmeyi kaydet" }).click();
   await expect(page.getByRole("status")).toHaveText("Kaydedildi.");

@@ -16,7 +16,8 @@ import { randomUUID } from "node:crypto";
 import { readFile, writeFile, cp, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { createServer, type Server } from "node:https";
+import { createServer } from "node:https";
+import { trackHttpsGateway } from "./https-gateway.ts";
 import { request as proxyRequest } from "node:http";
 import { execFileSync, spawn } from "node:child_process";
 import { createTestDatabase } from "./local-database.ts";
@@ -40,7 +41,7 @@ const local = await createTestDatabase();
 let child: ReturnType<typeof spawn> | undefined;
 let cleanup: Promise<void> | undefined;
 let productionDir: string | undefined;
-const gateways: Server[] = [];
+const gateways: ReturnType<typeof trackHttpsGateway>[] = [];
 async function finish(code: number) {
   cleanup ??= (async () => {
     try {
@@ -52,10 +53,7 @@ async function finish(code: number) {
         for (const row of keys) await removePrivate(row.key);
       }
     } finally {
-      for (const gateway of gateways) {
-        gateway.closeAllConnections();
-        await new Promise<void>((resolve) => gateway.close(() => resolve()));
-      }
+      for (const closeGateway of gateways) await closeGateway();
       await closeDatabase();
       await local.cleanup();
       if (productionDir)
@@ -65,15 +63,22 @@ async function finish(code: number) {
   await cleanup;
   process.exit(code);
 }
+let stopping = false;
 for (const signal of ["SIGTERM", "SIGINT"] as const)
   process.on(signal, () => {
-    if (child?.pid) {
-      try {
-        process.kill(-child.pid, signal);
-      } catch {
-        void finish(0);
-      }
-    } else void finish(0);
+    if (stopping) return;
+    stopping = true;
+    void (async () => {
+      // Production Next waits for proxy requests to end before it exits.
+      for (const closeGateway of gateways) await closeGateway();
+      if (child?.pid) {
+        try {
+          process.kill(-child.pid, signal);
+        } catch {
+          await finish(0);
+        }
+      } else await finish(0);
+    })().catch(() => void finish(1));
   });
 try {
   process.env.DATABASE_URL = local.url;
@@ -329,16 +334,20 @@ try {
           },
         );
         upstream.on("error", () => {
-          res.writeHead(502);
+          if (res.destroyed || res.writableEnded) return;
+          if (!res.headersSent) res.writeHead(502);
           res.end();
         });
+        req.once("aborted", () => upstream.destroy());
+        res.once("close", () => upstream.destroy());
         req.pipe(upstream);
       });
+      const closeGateway = trackHttpsGateway(gateway);
       await new Promise<void>((resolve, reject) => {
         gateway.once("error", reject);
         gateway.listen(port, "127.0.0.1", resolve);
       });
-      gateways.push(gateway);
+      gateways.push(closeGateway);
     }
     child = spawn(process.execPath, ["server.js"], {
       cwd: productionDir,

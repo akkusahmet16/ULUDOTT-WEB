@@ -30,6 +30,9 @@ test("Mobil bireysel kart pending/active/revoked ve özel erişim başlıkları"
   await page.goto("/admin");
   await page.getByLabel("Özel şifre").fill("E2E-only-password-long-42");
   await page.getByRole("button", { name: "Giriş yap", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Yönetim menüsünü aç", exact: true })
+    .click();
   await page.getByRole("link", { name: "Takım onayları", exact: true }).click();
   await page
     .getByRole("combobox", { name: "Etkinlik", exact: true })

@@ -55,7 +55,7 @@ for (const width of [390, 768, 1440])
     });
     await page.goto("/ulujam");
     await expect(
-      page.getByText("Başvurular henüz açılmadı.", { exact: false }),
+      page.getByText("Başvuru durumu kapalı.", { exact: false }),
     ).toBeVisible();
     expect(await page.locator('a[href="#"]').count()).toBe(0);
   });

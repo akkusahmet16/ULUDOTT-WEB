@@ -36,8 +36,9 @@ test("üyeler güncel ekip sırası ve teslim edilen detay fotoğraflarıyla gö
   await expect(chapters.locator("h2")).toHaveText([
     "Hamza Yiğit Adıgüzel",
     "Batuhan Özdemir",
-    "Ahmet Akkuş",
+    "Sosyal Medya",
     "Halis Can Sağır",
+    "Tuğçe",
   ]);
   await expect(chapters.nth(1)).toContainText("Uludott Dergi Yazarı");
   await expect(chapters.nth(2).locator(".people-detail h3")).toHaveText([
@@ -53,7 +54,7 @@ test("üyeler güncel ekip sırası ve teslim edilen detay fotoğraflarıyla gö
     "Eren Bozacı",
   ]);
   for (let i = 0; i < 5; i++) {
-    await expect(chapters.nth(i).locator("video")).toHaveCount(i === 4 ? 0 : 1);
+    await expect(chapters.nth(i).locator("video")).toHaveCount([1, 1, 0, 1, 0][i]);
     await expect(chapters.nth(i).locator(".people-gallery img")).toHaveCount(
       [1, 1, 3, 5, 0][i],
     );

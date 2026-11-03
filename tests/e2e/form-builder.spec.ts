@@ -21,6 +21,10 @@ test("form oluşturma, klavye alanları, önizleme ve sürümlü yayın", async 
     .getByRole("button", { name: "Ayarları kaydet", exact: true })
     .click();
   await expect(page).toHaveURL(/admin\/formlar\/[^/]+$/);
+  const formId = new URL(page.url()).pathname.split("/").at(-1);
+  const created = await (
+    await page.request.get(`/api/admin/forms/${formId}`)
+  ).json();
   await page.getByLabel("Alan türü").selectOption("dropdown");
   await page.getByLabel("1. seçenek", { exact: true }).fill("Birinci");
   await page.getByRole("button", { name: "Seçenek ekle", exact: true }).focus();
@@ -29,6 +33,12 @@ test("form oluşturma, klavye alanları, önizleme ve sürümlü yayın", async 
   await page
     .getByRole("button", { name: "Alanları kaydet", exact: true })
     .click();
+  // Wait for the refreshed server revision before checking persistent feedback.
+  await expect(
+    page.getByText(`Durum: draft · Sürüm kontrolü: ${created.revision + 1}`, {
+      exact: true,
+    }),
+  ).toBeVisible();
   await expect(page.getByRole("status")).toContainText("Kaydedildi.");
   await page.reload();
   await expect(page.getByLabel("1. seçenek", { exact: true })).toHaveValue(

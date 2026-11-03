@@ -84,7 +84,7 @@ test("Coffee Talk DEMO editör yayını, site içi başvuru ve kapanış", async
     expectedRevision: 2,
   });
   const image = await sharp({
-    create: { width: 300, height: 200, channels: 3, background: "purple" },
+    create: { width: 1080, height: 1350, channels: 3, background: "purple" },
   })
     .png()
     .toBuffer();
@@ -92,7 +92,7 @@ test("Coffee Talk DEMO editör yayını, site içi başvuru ve kapanış", async
     headers: await headers(),
     multipart: {
       file: { name: "demo.png", mimeType: "image/png", buffer: image },
-      purpose: "poster",
+      purpose: "event-poster",
       altText: "Yalnız test için sentetik DEMO afişi",
     },
   });
@@ -102,7 +102,7 @@ test("Coffee Talk DEMO editör yayını, site içi başvuru ve kapanış", async
       headers: await headers(),
       multipart: {
         file: { name: "demo.png", mimeType: "image/png", buffer: image },
-        purpose: "poster",
+        purpose: "event-poster",
         altText: "Yalnız test için sentetik DEMO afişi",
       },
     });

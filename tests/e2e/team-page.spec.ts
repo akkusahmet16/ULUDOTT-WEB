@@ -40,7 +40,11 @@ test("UluJam kayıt, yeni takım makbuzu, güvenli giriş/çıkış ve kişisel 
   await expect(
     page.getByRole("heading", { name: "DEMO E2E takım", exact: true }),
   ).toBeVisible();
-  await expect(page.getByText("Üye sayısı: 1 / 2")).toBeVisible();
+  const members = page
+    .getByText("Takım üyeleri", { exact: true })
+    .locator("..");
+  await expect(members.locator("strong")).toBeVisible();
+  await expect(members.locator("strong")).toHaveText("1 / 2");
   const body = await page.locator("body").innerText();
   for (const secret of ["team-e2e@test.invalid", "+905551234567", password])
     expect(body).not.toContain(secret);

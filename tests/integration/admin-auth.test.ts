@@ -1,4 +1,11 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+
+const originalAppUrl = vi.hoisted(() => {
+  const original = process.env.APP_URL;
+  process.env.APP_URL = "https://127.0.0.1:3443";
+  return original;
+});
+
 import { randomUUID } from "node:crypto";
 import { hash } from "@node-rs/argon2";
 import { TOTP } from "otpauth";
@@ -32,9 +39,14 @@ beforeAll(async () => {
   await migrateEmptyDatabase();
 });
 afterAll(async () => {
-  await closeDatabase();
-  if (local) await local.cleanup();
-  process.env.DATABASE_URL = original;
+  try {
+    await closeDatabase();
+    if (local) await local.cleanup();
+    process.env.DATABASE_URL = original;
+  } finally {
+    if (originalAppUrl === undefined) delete process.env.APP_URL;
+    else process.env.APP_URL = originalAppUrl;
+  }
 });
 const password = "Test-only-long-password-42";
 const secret = "JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP";

@@ -19,9 +19,13 @@ async function restore(
   input: unknown,
 ) {
   const latest = await (await request.get(endpoint)).json();
-  const { csrfToken } = await (await request.get("/api/admin/csrf")).json();
+  const csrfResponse = await request.get("/api/admin/csrf");
+  const { csrfToken } = await csrfResponse.json();
   const response = await request.post(endpoint, {
-    headers: { "x-csrf-token": csrfToken, Origin: "http://127.0.0.1:3100" },
+    headers: {
+      "x-csrf-token": csrfToken,
+      Origin: new URL(csrfResponse.url()).origin,
+    },
     data: { input, expectedRevision: latest.revision },
   });
   expect(response.ok()).toBe(true);

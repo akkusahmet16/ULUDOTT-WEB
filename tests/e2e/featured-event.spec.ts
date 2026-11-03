@@ -29,7 +29,7 @@ test("Coffee Talk taslak kalır; doğrulanmış afiş ve tarih sonrası ana sayf
   await page.setViewportSize({ width: 390, height: 900 });
   await login(page);
   const image = await sharp({
-    create: { width: 640, height: 360, channels: 3, background: "#b7a0ff" },
+    create: { width: 1080, height: 1350, channels: 3, background: "#b7a0ff" },
   })
     .png()
     .toBuffer();
@@ -38,7 +38,7 @@ test("Coffee Talk taslak kalır; doğrulanmış afiş ve tarih sonrası ana sayf
       headers: await authHeaders(page),
       multipart: {
         file: { name: "test.png", mimeType: "image/png", buffer: image },
-        purpose: "poster",
+        purpose: "event-poster",
         altText: "Sentetik test afişi",
       },
     });
@@ -62,7 +62,12 @@ test("Coffee Talk taslak kalır; doğrulanmış afiş ve tarih sonrası ana sayf
   await page
     .getByLabel("Başlık", { exact: true })
     .fill("Coffee Talk test taslağı");
-  await page.getByLabel("Slug", { exact: true }).fill("coffee-talk-test");
+  await page
+    .getByText("Gelişmiş etkinlik ayarları", { exact: true })
+    .click();
+  await page
+    .getByLabel("Etkinlik adresi (boşsa başlıktan oluşturulur)", { exact: true })
+    .fill("coffee-talk-test");
   await page
     .getByRole("button", { name: "Taslağı kaydet", exact: true })
     .click();
@@ -86,11 +91,12 @@ test("Coffee Talk taslak kalır; doğrulanmış afiş ve tarih sonrası ana sayf
   expect(
     (await page.request.get("/etkinlikler/coffee-talk-test")).status(),
   ).toBe(404);
-  await page.getByLabel("Başlangıç (İstanbul)").fill("2030-01-02T15:00");
-  await page.getByLabel("Bitiş (İstanbul)").fill("2030-01-02T17:00");
+  await page
+    .getByLabel("Tarih ve başlangıç saati (İstanbul)")
+    .fill("2030-01-02T15:00");
+  await page.getByLabel("Bitiş saati / tarih (İstanbul)").fill("2030-01-02T17:00");
   await page.getByLabel("Konum", { exact: true }).fill("Yalnız test konumu");
-  await page.getByLabel("Ana sayfa sırası").fill("0");
-  await page.getByLabel("Afiş").selectOption(mediaId);
+  await page.getByRole("combobox", { name: "Afiş", exact: true }).selectOption(mediaId);
   await page.getByRole("button", { name: "Değişiklikleri kaydet" }).click();
   await expect(page.getByRole("status")).toContainText("Kaydedildi");
   await page.getByRole("button", { name: "Önizleme", exact: true }).click();

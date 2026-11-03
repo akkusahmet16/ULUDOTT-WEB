@@ -56,21 +56,72 @@ test("galeri API yetkisiz mutasyonu reddeder", async ({ request }) => {
   expect((await request.post("/api/admin/gallery")).status()).toBe(403);
 });
 
-test("galeri yönetim slotları ve medya listesi erişilebilir", async ({
+test("eski galeri adresi güncel arşiv düzenleyiciye gider; klasör fotoğrafı taslakta kalıcıdır", async ({
   page,
 }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
   await page.goto("/admin");
   await page.getByLabel("Özel şifre").fill("E2E-only-password-long-42");
   await page.getByRole("button", { name: "Giriş yap", exact: true }).click();
   await expect(page.getByText("Yönetim oturumu açık.")).toBeVisible();
   await page.goto("/admin/galeri");
-  await expect(
-    page.getByRole("combobox", { name: "Arşiv medyası", exact: true }),
-  ).toBeVisible();
-  await page
-    .getByRole("button", { name: "Galeri slotunu kaydet", exact: true })
+  await expect(page).toHaveURL(/\/admin\/ulujam-arsivleri$/);
+  const editor = page.getByRole("region", {
+    name: "UluJam arşiv düzenleyici",
+    exact: true,
+  });
+  await editor
+    .getByRole("button", { name: "Yeni arşiv ekle", exact: true })
     .click();
-  await expect(page.getByRole("status")).toContainText("Galeri kaydedildi.");
+  await editor.getByLabel("Arşiv yılı", { exact: true }).fill("2025");
+  await editor
+    .getByLabel("Arşiv açıklaması", { exact: true })
+    .fill("DEMO E2E taslak arşiv; gerçek tarihî kayıt değildir.");
+  await editor
+    .getByRole("button", { name: "Fotoğraf ekle", exact: true })
+    .click();
+  const photo = editor.getByRole("group", {
+    name: "1. arşiv fotoğrafı",
+    exact: true,
+  });
+  await photo.getByText("Klasörden görsel seç", { exact: true }).click();
+  const asset = photo.getByRole("button", {
+    name: "ulujam-2026-galeri-01.webp",
+    exact: true,
+  });
+  await expect(asset).toBeVisible();
+  await asset.click();
+  await editor
+    .getByLabel("Fotoğraf açıklaması", { exact: true })
+    .fill("DEMO taslak fotoğrafı");
+  const saved = page.waitForResponse(
+    (r) =>
+      r.url().endsWith("/api/admin/ulujam-archives") &&
+      r.request().method() === "POST",
+  );
+  await editor
+    .getByRole("button", { name: "Taslağı kaydet", exact: true })
+    .click();
+  expect((await saved).ok()).toBe(true);
+  await expect(editor.getByRole("status")).toHaveText(
+    "Arşiv taslak olarak kaydedildi. Sitede görünmez.",
+  );
+  await page.reload();
+  await editor
+    .getByRole("button", { name: "UluJam 2025 düzenle", exact: true })
+    .click();
+  await expect(
+    editor.getByLabel("Fotoğraf açıklaması", { exact: true }),
+  ).toHaveValue("DEMO taslak fotoğrafı");
+  await expect(
+    photo.getByRole("img", {
+      name: "1. arşiv fotoğrafı önizlemesi",
+      exact: true,
+    }),
+  ).toHaveAttribute(
+    "src",
+    "/community/02-ulujam/2026-arsiv/ulujam-2026-galeri-01.webp",
+  );
   expect(
     (
       await new AxeBuilder({ page })
@@ -78,4 +129,13 @@ test("galeri yönetim slotları ve medya listesi erişilebilir", async ({
         .analyze()
     ).violations,
   ).toEqual([]);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page.goto("/ulujam");
+  await expect(
+    page.getByRole("region", { name: "UluJam 2025 arşivi", exact: true }),
+  ).toHaveCount(0);
 });

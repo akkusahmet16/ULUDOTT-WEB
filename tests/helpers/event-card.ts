@@ -8,6 +8,6 @@ export async function openEventWithoutApplication(page: Page, title: string) {
     card.getByRole("link", { name: "Başvur", exact: true }),
   ).toHaveCount(0);
   await card
-    .getByRole("link", { name: "Etkinlik ayrıntıları", exact: true })
+    .getByRole("link", { name: "Etkinliği incele", exact: true })
     .click();
 }

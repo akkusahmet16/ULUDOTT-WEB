@@ -146,11 +146,13 @@ test("oyun kartı mobil panelden klasör kapağıyla taslak, yayın ve kaldırma
     (item: { title: string }) => item.title === "Panelden Yeni Oyun",
   );
   const { id, revision, ...fields } = game;
-  const { csrfToken } = await (
-    await page.request.get("/api/admin/csrf")
-  ).json();
+  const csrfResponse = await page.request.get("/api/admin/csrf");
+  const { csrfToken } = await csrfResponse.json();
   const concurrent = await page.request.post("/api/admin/game-catalog", {
-    headers: { "x-csrf-token": csrfToken, Origin: "http://127.0.0.1:3100" },
+    headers: {
+      "x-csrf-token": csrfToken,
+      Origin: new URL(csrfResponse.url()).origin,
+    },
     data: {
       action: "save",
       id,
