@@ -138,11 +138,11 @@ export const readGalleryImages = cachePublicRead(
   [CACHE_TAGS.events, CACHE_TAGS.ulujam, CACHE_TAGS.media],
   (year: number) => galleryImages(year),
 );
-export const readHistoricalResults = cachePublicRead(
-  "historical-results",
-  [CACHE_TAGS.historicalResults, CACHE_TAGS.media],
-  (year: number) => listPublicHistoricalResults(year),
-);
+// Historical links depend on live event/publication state too. CLI changes
+// cannot invalidate a Next cache, so preserve the service's fresh decision.
+export async function readHistoricalResults(year: number) {
+  return listPublicHistoricalResults(year);
+}
 export const readPeopleContent = cachePublicRead(
   "people-content",
   [CACHE_TAGS.people],
@@ -153,16 +153,16 @@ export const readPublishedSiteGames = cachePublicRead(
   [CACHE_TAGS.siteGames],
   () => listPublishedSiteGames(),
 );
-export const readPublicGames = cachePublicRead(
-  "public-games",
-  [CACHE_TAGS.games, CACHE_TAGS.media],
-  (cursor?: string) => listPublicGames({ cursor }),
-);
-export const readPublicGame = cachePublicRead(
-  "public-game",
-  [CACHE_TAGS.games, CACHE_TAGS.media],
-  (slug: string) => getPublicGame(slug),
-);
+// Names and eligibility must come from the same current SQL snapshot. A
+// persistent snapshot can outlive consent, roster changes or retention expiry;
+// extra tags cannot cover the database clock and standalone worker/CLI writes.
+// Keep eligibility before LIMIT inside the existing repository query.
+export async function readPublicGames(cursor?: string) {
+  return listPublicGames({ cursor });
+}
+export async function readPublicGame(slug: string) {
+  return getPublicGame(slug);
+}
 export const readContactSettings = cachePublicRead(
   "contact-settings",
   [CACHE_TAGS.siteSettings],
@@ -173,8 +173,8 @@ export const readUlujamPresentation = cachePublicRead(
   [CACHE_TAGS.siteSettings, CACHE_TAGS.ulujam, CACHE_TAGS.events],
   () => getUlujamPresentation(),
 );
-export const readPublishedArchives = cachePublicRead(
-  "ulujam-archives",
-  [CACHE_TAGS.siteSettings, CACHE_TAGS.ulujam],
-  () => listPublishedArchives(),
-);
+// The revision-0 default archive filters by live historical results. The
+// service deliberately keeps saved editorial archives independently governed.
+export async function readPublishedArchives() {
+  return listPublishedArchives();
+}

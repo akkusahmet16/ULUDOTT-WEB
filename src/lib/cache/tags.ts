@@ -13,7 +13,7 @@ export const CACHE_TAGS = {
 
 export type CacheTag = (typeof CACHE_TAGS)[keyof typeof CACHE_TAGS];
 
-// Yayın pencereleri, etkinlik durumları ve geri sayım evreleri zamanla değişir.
-// Mutasyon olmasa da 30 sn sonrasındaki okuma zaman tabanlı yenilemeyi tetikler.
-// TTL yenilemesi SWR'dir; yönetici mutasyonu expire: 0 ile anında sona erdirir.
+// Genel katalog okumalarında TTL yenilemesi SWR'dir; yönetici mutasyonu
+// expire: 0 ile sonraki okumayı blocking yeniler. İzin/uygunluk/kişi adı içeren
+// oyun ve tarihî sonuç okumaları bu TTL'yi kullanmaz; her istekte günceldir.
 export const PUBLIC_READ_REVALIDATE_SECONDS = 30;
