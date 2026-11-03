@@ -191,7 +191,7 @@ Bu tek sahne de güncel v0.1 ile v0.2 arasında eşitliği doğrular; dondurulmu
 
 ### 24 Ekim — resmi Playwright koşucusunda aynı sahnenin tekrar doğrulaması
 
-Özel tanı yakalamasının başlangıç görünüm boyutu etkisini dışlamak için sahne bu kez gerçek `visual-cinematic.spec.ts` testiyle, aynı `playwright.visual.config.ts`, varsayılan 1280×720 bağlamı ve testin 1280×800’e geçiş adımıyla ayrı ayrı çalıştırıldı. Koşu `68043c7140d1217802ae0e3c99836072`, referans `889ccbd63d50300f6dcca80ad290b06a`, v0.1 kaynak özeti `2e869c5b2f4ef4bab796338ea6e186f49022b1711535d711428844d5074f80`, aday özeti `e31c83438ca4dd7ff471d12554c8c98038e86c89f4a13d863e03628d9cb7c214` ile gerçekleşti. Testler baseline'a yazmadı; yalnızca `compare` yolunu kullandı.
+Özel tanı yakalamasının başlangıç görünüm boyutu etkisini dışlamak için sahne bu kez gerçek `visual-cinematic.spec.ts` testiyle, aynı `playwright.visual.config.ts`, varsayılan 1280×720 bağlamı ve testin 1280×800’e geçiş adımıyla ayrı ayrı çalıştırıldı. Koşu `68043c7140d1217802ae0e3c99836072`, referans `889ccbd63d50300f6dcca80ad290b06a`, v0.1 kaynak özeti `2e869c5b2f4ef4bab796338ea636e186f49022b1711535d711428844d5074f80`, aday özeti `e31c83438ca4dd7ff471d12554c8c98038e86c89f4a13d863e03628d9cb7c214` ile gerçekleşti. Testler baseline'a yazmadı; yalnızca `compare` yolunu kullandı.
 
 Resmî koşucuda v0.1 ve v0.2 testlerinin ikisi de aynı nedenle başarısız oldu: **97 piksel**, aynı `fec0c2ab30fe031fa8c0a7f4ea92595f41062cd48aff24d9614645d8671fe522` PNG özeti. Bu iki PNG ayrıca birbirleriyle sıfır piksel farkında. Dolayısıyla başlangıç görünüm boyutu veya özel tanı yakalayıcısı da farkı açıklamıyor; mevcut v0.1 kaynak çıktısı dondurulmuş PNG’yle uyuşmazken v0.2 aynı çıktıyı veriyor.
 
@@ -201,7 +201,7 @@ Test çıktıları yalnız `.local/phase-0c/degree3-real-playwright/` altında s
 
 ### 24 Ekim — aynı v0.1 sahnesinin beş resmi tekrar koşusu
 
-Tekrarlanabilirliği ölçmek için `repeat-scene` tanı koşusu `db93174fafecfd0af7e60172a477b489`, exact v0.1 kaynak özeti `2e869c5b2f4ef4bab796338ea6e186f49022b1711535d711428844d5074f80` ile aynı resmi Playwright sahnesini beş ayrı test sürecinde ve beş ayrı geçici üretim sunucusunda çalıştırdı. Her koşu dondurulmuş referansla karşılaştırıldı; hiçbir baseline dosyası yazılmadı.
+Tekrarlanabilirliği ölçmek için `repeat-scene` tanı koşusu `db93174fafecfd0af7e60172a477b489`, exact v0.1 kaynak özeti `2e869c5b2f4ef4bab796338ea636e186f49022b1711535d711428844d5074f80` ile aynı resmi Playwright sahnesini beş ayrı test sürecinde ve beş ayrı geçici üretim sunucusunda çalıştırdı. Her koşu dondurulmuş referansla karşılaştırıldı; hiçbir baseline dosyası yazılmadı.
 
 Beş test de aynı 97 pikselde başarısız oldu. Üretilen beş PNG’nin SHA-256 karması `fec0c2ab30fe031fa8c0a7f4ea92595f41062cd48aff24d9614645d8671fe522`; görüntüler arası dört karşılaştırmanın tamamı **0 fark**. Bu nedenle mevcut v0.1 çiziminde fark, tek bir yakalama anına özgü kararsızlık olarak tekrarlanmadı. Bu, geçmiş referansın neden farklı raster ürettiğini açıklamaz; bu koşunun da durumu başarısızdır ve baseline yenileme onayı oluşturmaz.
 
@@ -209,7 +209,7 @@ Beş açık/sentetik karşılaştırma PNG’si `.local/phase-0c/degree3-repeats
 
 ### 24 Ekim — boş profilin dört masaüstü sahnesinde resmi koşucu doğrulaması
 
-Önceki özel yakalamanın ilk pencere boyutundan etkilenip etkilenmediğini ayırmak için bu kez gerçek Playwright koşucusu ve test yapılandırması kullanıldı. `efaf4f5ca501ff5551e1acc253c12b0c` koşusunda aynı dört `empty/.../1280x800` sahnesi, önceki 647 referansının `empty` fikstürü, varsayılan 1280×720 başlangıcı ve kanonik 1280×800 yeniden boyutlandırmasıyla v0.1 ve v0.2’de ayrı ayrı çalıştırıldı. Kaynak özetleri referans `2e869c5b2f4ef4bab796338ea6e186f49022b1711535d711428844d5074f80`, aday `e31c83438ca4dd7ff471d12554c8c98038e86c89f4a13d863e03628d9cb7c214`; referans dosyaları salt okunur kaldı.
+Önceki özel yakalamanın ilk pencere boyutundan etkilenip etkilenmediğini ayırmak için bu kez gerçek Playwright koşucusu ve test yapılandırması kullanıldı. `efaf4f5ca501ff5551e1acc253c12b0c` koşusunda aynı dört `empty/.../1280x800` sahnesi, önceki 647 referansının `empty` fikstürü, varsayılan 1280×720 başlangıcı ve kanonik 1280×800 yeniden boyutlandırmasıyla v0.1 ve v0.2’de ayrı ayrı çalıştırıldı. Kaynak özetleri referans `2e869c5b2f4ef4bab796338ea636e186f49022b1711535d711428844d5074f80`, aday `e31c83438ca4dd7ff471d12554c8c98038e86c89f4a13d863e03628d9cb7c214`; referans dosyaları salt okunur kaldı.
 
 Sekiz testin tamamı baseline karşılaştırmasında başarısız oldu; fakat v0.1 ile v0.2 aynı sahne için bire bir aynı PNG karmasını üretti:
 
