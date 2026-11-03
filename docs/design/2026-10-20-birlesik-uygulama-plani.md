@@ -1,165 +1,276 @@
-# Uludott Web v0.2 — GitHub Issue #1 (Faz 0–7) Uyumlu Master Uygulama Planı
+# ULUDOTT v0.2 — Birleşik uygulama planı, revizyon 3
 
-**Tarih:** 20 Ekim 2026  
-**Çalışma Dizini:** `/Users/taklalie60/Desktop/ULUDOTT/Uludott Web v0.2`  
-**Git Dalı (Branch):** `feat/unified-clean-v0.2`  
-**Referans Mimari Belgesi:** [`docs/design/github-issue-1-mimari-plan.md`](./github-issue-1-mimari-plan.md) (`akkusahmet16/ULUDOTT-WEB#1`)  
-**Temel Kural Belgesi:** [`docs/design/sunum-katmani-kurallari.md`](./sunum-katmani-kurallari.md)  
-**Canlıya Alma Kuralı:** **ASLA canlıya (VDS) alınmayacak.** Tüm fazlar tamamlanıp yerel ortamda (`127.0.0.1`) uçtan uca doğrulanana kadar yalnızca yerelde test edilecek.
+**İlk tarih:** 20 Ekim 2026. **İnceleme ve revizyon:** 21 Ekim 2026.
+**Durum:** İş 0A ve 0B kabul edildi; 0C açık. Faz 0 tamamlanmadan Faz 1 başlamaz.
+**Hedef:** /Users/taklalie60/Desktop/ULUDOTT/Uludott Web v0.2
+**Mevcut dal:** feat/unified-clean-v0.2
+**İncelenen başlangıç commit'i:** b8578cf3546416dd88d8dc0c1cff81c59998caf7
 
----
+> **KESİN GÖRSEL KİLİT — kullanıcının 21 Ekim 2026 talebi:** “v0.1 teması ve görsel dili vs. asla değişmemeli.” Görsel doğruluk kaynağı v0.1'in mevcut çalışma hâlidir; yalnız Git HEAD değildir. Renk/palet, ArtDeco fontları ve metrikleri, tipografi, ölçü/boşluk, hizalama, yerleşim, breakpoint, görsel/video seçimi ve kırpması, ikonlar, animasyon/scroll davranışı, menü, form, özel sayfa ve yönetim görünümü korunur. v0.2 yalnız teknik uygulama tabanıdır. GitHub uyumu, merkezileştirme, performans, i18n veya erişilebilirlik gerekçesi görünür değişiklik yapmaya izin vermez. Görsel fark üreten adım kabul edilmez; mevcut görünüm korunarak çözülemeyen gereksinim açık uyuşmazlık olarak raporlanır. Yeni görünür kontrol, bölüm, ekran veya etkileşim eklenmez.
 
-## 1. Mimari Sentez ve Kilitli İlkeler
+> Uygulayıcı: işleri sırayla, her işin testi ve kabul kaydıyla yürüt. Yeni işlev veya mimari karar bu belgenin kapsamını aşıyorsa önce ayrı tasarım oluştur. Mevcut Superpowers yürütme akışı kullanılacaksa executing-plans veya subagent-driven-development becerisini oku. Bu revizyon uygulama kodunun tamamlandığı anlamına gelmez.
 
-1. **Görsel Tasarım Sadakati (`Uludott Web v0.1` — Sıfır Tasarımsal Değişiklik):**
-   - Sitenin mevcut sinematik/ArtDeco görsel dili (`ArtDeco` font ailesi, `StoryPanels`, `PeopleStory` scroll-scrubbing video/portre akışı, yaklaşan/geçmiş etkinlik karuseli, derece oyunları vitrini, `AdminWorkspace` ve `public/community/` varlıkları) **piksel ve düzen olarak birebir korunur**.
-   - GitHub Issue #1'de tarif edilen "Arcade (`#0b0b16`, Press Start 2P, PressStartIntro, ArcadeCabinetMenu)" görsel giydirmesi **uygulanmaz**; bunun yerine Issue #1'deki **tüm teknik ve mimari merkezileştirme kuralları** mevcut sinematik tasarımın altına inşa edilir.
-2. **Ürün ve Arka Uç Tamlığı (`v0.1`'in `batu-try`'da Eksik Kalan Tüm Özellikleri):**
-   - 26 veritabanı migration'ı (`0000`–`0025`), genel ve UluJam form oluşturucu (`forms`, `form_versions`, `form_fields`), dosya yüklemeli başvurular (`submission_files`), takım oluşturma/onay/eşleştirme (`/takim/[token]`), katılımcı kartı (`/kart/[token]`), yayın onayı (`/yayin-onayi/[token]`), Google Wallet, QR Check-in (`/admin/check-in`), arka plan işçisi (`src/worker/main.ts`) ve yeni yönetim modülleri (`people`, `game-catalog`, `contact-settings`, `ulujam-settings`, `ulujam-archives`) eksiksiz korunur.
-3. **Sıfır Demo / Sıfır Test Verisi (`uludott_v02`):**
-   - Kod tabanındaki tüm yerel demo (`LOCAL_DEMO_MODE`, `demo-ulujam-yerel`, `setup-local-demo.ts`) kaldırılmıştır.
-   - Yerel PostgreSQL `uludott_v02` veritabanında kişisel/demo/test verisi `0` satırdır; yalnızca UluJam 2026 gerçek derece oyunları ve 2027 tarihsiz taslağı mevcuttur.
-4. **GitHub Issue #1 Teknik Merkezileştirme Standartları (Faz 0–7):**
-   - **Merkezi Tema ve Token Sistemi (`src/styles/themes.css`):** Renk kodu (`#hex`, `rgb()`, `hsl()`, `oklch()`) içeren **tek** dosya `src/styles/themes.css` olur; `base.css` ve tüm CSS modülleri yalnızca `var(--...)` tüketir (`theme-centralization.test.ts` ve `theme-parity.test.ts` ile zorlanır).
-   - **Merkezi Rota ve Navigasyon Kayıt Defteri (`src/config/routes.config.ts`):** `Header`, `Footer`, `sitemap.ts`, `robots.ts` ve sayfa metadata'sı (`src/seo/build-metadata.ts`) tek bir `ROUTES` dizisinden beslenir (`routes-integrity.test.ts` ve `seo.test.ts` ile zorlanır).
-   - **Merkezi İkon Kayıt Defteri (`src/components/ui/icons/`):** Dağınık inline SVG'ler yerine merkezi `IconId` ve `<Icon />` bileşeni kullanılır.
-   - **Merkezi Depolama ve Çerez Anahtarları (`src/config/storage-keys.ts`):** Tüm `localStorage`, `sessionStorage` ve `cookie` anahtar adları tek dosyada tanımlanır.
-   - **%100 Merkezi i18n (`src/i18n/dictionaries/{tr,en}.ts`):** Genel yüzeydeki ve yönetim panelindeki tüm kullanıcıya görünür metinler (`JSX text`, `aria-label`, `alt`, `title`, `placeholder`, boş/hata durumları, metadata) sözlükten gelir; TypeScript derleyici API'siyle çalışan `no-hardcoded-text.test.ts` ve `i18n-parity.test.ts` ile sıfır hardcode metin kuralı zorlanır. Tarih/saat biçimlendirme yalnızca `src/i18n/format.ts` (`Intl.*` + `Europe/Istanbul`) üzerinden yapılır.
-   - **Kalite Kapıları, Erişilebilirlik, 404/Hata Sayfaları ve CI (Faz 5 & Faz 7):** `src/app/not-found.tsx`, `src/app/error.tsx`, `tests/perf/budgets.ts`, Lighthouse/Axe/klavye/reflow testleri, `.github/workflows/ci.yml` ve operasyon/dağıtım kabul belgeleri tamamlanır.
+**Amaç:** v0.1'den gelen sinematik tasarımı ve v0.2'nin ürün davranışlarını koruyarak sunum katmanını tema, rota, ikon ve dil kaynaklarında merkezileştirmek.
+**Mimari:** v0.2 ana tabandır. Mevcut application/domain/infrastructure katmanları yeniden yazılmaz; sunum adaptörleri bunları kullanır. batu-try yalnızca doğrulanmış Faz 0 fikirleri ve test senaryoları için referanstır.
+**Teknoloji:** Depodaki tam sürümler: Next 16.3.8, React 19.3.0, Node 24.21.0, pnpm 11.19.0, TypeScript strict, Drizzle/PostgreSQL, S3 uyumlu depo, Vitest, Playwright.
+**Tasarım ve kapsam sözleşmesi:** [sunum-katmani-kurallari.md](./sunum-katmani-kurallari.md).
+**Kanıtlı değerlendirme:** [21 Ekim plan analizi](../operations/2026-10-21-birlesik-plan-analizi.md).
+**Özgün gereksinim:** [GitHub Issue #1](https://github.com/akkusahmet16/ULUDOTT-WEB/issues/1); [yerel gövde kaydı](./github-issue-1-mimari-plan.md).
 
----
+## 1. Kaynakların önceliği ve karar kaydı
 
-## 2. Faz Faz Uygulama Planı (Faz 0 – Faz 7)
+Bu belge Issue #1'in birebir uygulaması değildir; mevcut ürüne uyarlanmış sürümüdür. Öncelik: kullanıcının güncel açık talebi → bu revizyonun açık kararları + kapsam sözleşmesi → Issue #1 → eski plan/raporlar. Yerel Issue gövde kaydı tarihî kaynaktır, yeni kararlarla yeniden yazılmaz. Yeni belgeler eski kabul raporlarını bugünkü v0.2 kabulü sayamaz.
 
-### FAZ 0 — Temel Hat, İndekslenebilirlik, Etiketli Önbellek, Operasyon Zemini ve Sıfır Demo DB ✅ *(Tamamlandı)*
+| Karar | Bu uygulamada karşılığı | Issue #1'den fark / gerekçe |
+|---|---|---|
+| K1 — Görsel temel | Genel, özel ve admin yüzeyleri v0.1 ile aynı tema/görünüm/etkileşimi korur; kesin görsel kilit bütün işlere uygulanır. | Arcade paleti, PressStartIntro, ArcadeCabinetMenu veya başka bir yeniden tasarım uygulanmaz. |
+| K2 — Tema kapsamı | Tema isimleri yalnız teknik kayıttır; public/admin hesaplanmış stilleri ve etkin varsayılanları v0.1 envanterinden aynen taşınır. Yeni palet, tema tercihi veya tema seçicisi yoktur. | classic adı eski/batu paletini yönetim paneline uygulama izni değildir; iki yeni genel tema geliştirilmez. |
+| K3 — Ürün korunumu | Form, dosya başvurusu, takım, kart, onay, outbox/worker, Google Wallet ve check-in kodu korunur. Her biri ayrı testle kabul edilir. | Issue'da ertelenen 15–24 görevlerinin mevcut kodu silinmez. Var olması gerçek sağlayıcı/cihaz kabulünün tamamlandığı anlamına gelmez. Apple Wallet ve sonradan istenen iOS→check-in→Wallet QR kaldırma zinciri ayrı kapsamdır. |
+| K4 — Dil ve içerik | Mevcut TR metinler/görünüm korunur; public TR/EN sözlük altyapısı hazırlanır. Yeni dil kontrolü ve varsayılan dil değişimi eklenmez; EN senaryoları test bağlamında doğrulanır. Admin TR ve yönetilebilir veri kaynağı korunur. | Dil desteği menüye kontrol veya noscript formu ekleme izni değildir. Çeviri için font/ölçü/yerleşim değiştirilmez; CMS çevirisi icat edilmez. |
+| K5 — Özel rotalar | /basvuru dahil mevcut özel rota politikası noindex, no-store, no-referrer olarak korunur. | Issue'ın isteğe bağlı indekslenebilir form seçeneği uygulanmaz. Sonradan açılması ayrı açık karar + şema/SEO incelemesi gerektirir. |
+| K6 — Güvenlik | Mevcut nonce içeren enforced CSP, oturum, CSRF ve hassas HTTP başlıkları korunur. BootScript mevcut nonce ile entegre edilir. | Issue'ın sıfırdan Report-Only ile başlama tarifi mevcut enforced CSP'yi gevşetmez. HSTS yeri bu sunum işi içinde taşınmaz. |
+| K7 — Eski URL'ler | /duyurular, /linkler, /destek şu an v0.2'de uygulanmamış eski URL'ler olarak kaydedilir; menü/sitemap'e eklenmez. | “Yönlendirme rotası” oldukları iddiası kaldırıldı. İçerik eşdeğerliği belirlenmeden alakasız hedefe 301 yazılmaz. |
+| K8 — Yerel çalışma | Yalnız 127.0.0.1. Canlıya dağıtım, canlı denetim, push/merge bu planın yürütmesinde yoktur. | Operasyon belgeleri hazırlanır; gerçek sunucu/sağlayıcı kabulü ayrı durum olarak kalır. |
 
-- [x] **0.0 Klasör, Branch ve Sıfır Demo Temizliği:**
-  - `/Users/taklalie60/Desktop/ULUDOTT/Uludott Web v0.2` oluşturuldu (`feat/unified-clean-v0.2` dalı).
-  - `LOCAL_DEMO_MODE`, `setup-local-demo.ts`, `local-demo.ts` ve ilgili test/CSS/dokümanlar silindi.
-  - Sıfır demo/test verili `uludott_v02` veritabanı kuruldu (`26 migration` + `seed-ulujam-years.ts`).
-- [x] **0.2 Kalıcı Kural Belgesi:**
-  - [`docs/design/sunum-katmani-kurallari.md`](./sunum-katmani-kurallari.md) birebir oluşturuldu.
-- [x] **0.3 İndekslenebilirlik (`robots.ts`, `sitemap.ts`, Kanonik URL):**
-  - [`src/app/layout.tsx`](../../src/app/layout.tsx) üzerinde kök `noindex` kaldırıldı, `metadataBase` (`loadServerConfig().appUrl`) ve `%s | ULUDOTT` başlık şablonu tanımlandı.
-  - Tüm genel sayfalara (`/`, `/hakkimizda`, `/ulujam`, `/etkinlikler`, `/etkinlikler/[slug]`, `/oyunlar`, `/oyunlar/[slug]`, `/iletisim`) `canonical` URL eklendi; `/admin`, `/api`, `/l/` ve özel token rotalarında `noindex` korundu.
-  - [`src/app/robots.ts`](../../src/app/robots.ts), [`src/app/sitemap.ts`](../../src/app/sitemap.ts) ve [`listIndexablePublications`](../../src/modules/publication/service.ts) eklendi.
-- [x] **0.4 Veri Seviyesinde Etiketli Önbellek (`cachePublicRead` + `revalidateTag`):**
-  - [`src/lib/cache/tags.ts`](../../src/lib/cache/tags.ts), [`src/lib/cache/public-read.ts`](../../src/lib/cache/public-read.ts) (30 sn TTL, SHA256 DB+APP_URL izolasyonu) ve [`src/modules/publication/ui/public-queries.ts`](../../src/modules/publication/ui/public-queries.ts) eklendi.
-  - Tüm admin/mutasyon HTTP işleyicilerine transaction `COMMIT` sonrası `revalidateTag(tag, { expire: 0 })` eklendi.
-  - [`UlujamComingSoon`](../../src/modules/events/ui/ulujam-coming-soon.tsx) içinde `await connection()` ile `initialNow` sapmasının $\le 1\text{ sn}$ olması sağlandı.
-- [x] **0.5 & 0.6 Canlı Denetim Aracı ve Yedekleme/Ölçüm Belgeleri:**
-  - [`scripts/live-audit.ts`](../../scripts/live-audit.ts) (`pnpm audit:live`), [`infrastructure/backup/pg-backup.sh`](../../infrastructure/backup/pg-backup.sh), [`.gitattributes`](../../.gitattributes) ve [`docs/operations/vds-olcum.md`](../operations/vds-olcum.md) eklendi.
-  - `public-cache.test.ts`, `cache-invalidation.test.ts`, `live-audit.test.ts`, `sitemap-publications.test.ts` ve `indexability.spec.ts` testleri eklendi ve doğrulandı.
-- [ ] **0.1 Görsel Regresyon Baseline Kaydı (`tests/e2e/__baseline-classic__/`):**
-  - Faz 1'de CSS/token merkezileştirmesine geçmeden hemen önce mevcut sinematik tasarımın masaüstü (`1280×800`) ve mobil (`375×812`) deterministik ekran görüntüleri `tests/e2e/__baseline-classic__/` altına kaydedilecek; böylece Faz 1–7 boyunca görsel tasarımın 1 piksel bile bozulmadığı otomatik testle kanıtlanacak.
+K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizliği çözen bu revizyonun uygulama sözleşmesidir; kaynak Issue ile farkları nihai kabul tablosunda da gösterilir.
 
----
+**Revizyon 3 kapsam düzeltmesi:** Revizyon 2'deki yeni dil seçici, lightbox, özel hata ekranı, koşullu iletişim formu ve “belgeli görsel değişiklik” izinleri kaldırılmıştır. Issue'daki bu gereksinimler görsel kilitle uyuşmayan ayrı maddeler olarak kaydedilir; bu plan bunları uygulama yetkisi vermez.
 
-### FAZ 1 — %100 Merkezi Tema ve Token Sistemi (`themes.css` + Görsel Sadakat Koruma)
+## 2. Değişmezler ve test sınırları
 
-> **Amaç:** Mevcut sinematik/ArtDeco görsel tasarımını **hiç değiştirmeden**, tüm CSS dosyalarındaki (`tokens.css`, `cinematic.css`, `home.module.css`, `people-story.module.css`, `past-events-carousel.module.css`, `contact.module.css`, `admin-workspace.module.css`, `content-workspace.module.css`, `event-editor.module.css`) renk kodlarını ve tasarım sabitlerini tek bir merkezi `src/styles/themes.css` dosyasında toplamak.
+- Koddan önce hedef klasörün AGENTS.md dosyası ve node_modules/next/dist/docs içindeki ilgili rehber okunur. Kurulu sürümün API'si esastır.
+- v0.1'in mevcut kaydedilmemiş işleri ve batu-try dosyaları değiştirilmez. v0.2'ye büyük klasör kopyalama/şema değiştirme yapılmaz. Her geçişte yalnız ilgili dosyalar eklenir; toplu git add . kullanılmaz.
+- 0000–0025 mevcut migration dosyaları yeniden yazılmaz. Yeni migration bu sunum işinin varsayılan parçası değildir.
+- Application/domain/infrastructure ve src/lib değişiklikleri yalnız belgelenmiş zorunlu adaptasyon içindir: önbellek doğruluğu, aynı anahtarı koruyan import taşıması, nonce aktarımı veya salt okunur SEO adaptörü. Önce dosya + gerekçe + test kaydı, sonra en küçük değişiklik. İş kuralı/izin/oturum davranışı değiştirilmez.
+- Yerel çalışma DB'si ile otomatik test DB'si ayrılır. “Demo yok” gerçek çalışma verisine ilişkindir; otomatik testlerde sentetik fixture gerekir. Testler yalnız geçici uludott_test_* DB ve ayrılmış nesne anahtarı alanlarında çalışır. İş bitince yalnız kendilerinin oluşturduğu kaynakları temizler.
+- Sıfır kişisel veri iddiası yerine “çalışma DB'sinde yapay başvuru/takım/kart yok” denir. Onaylı gerçek public kişi içerikleri, dosya içindeki referanslar ve DB kayıtları ayrı envanterdir. Sayım/izinler görülmeden sıfır satır iddiası yazılmaz.
+- Tüm ağ/DB sınırları mevcut Zod doğrulamasını korur; strict gevşetilmez. Sırlar, token URL'leri ve kişisel veriler rapora/baseline'a girmez.
+- Standart kapı: pnpm typecheck, pnpm lint, pnpm test, pnpm test:integration, pnpm test:e2e, pnpm build, pnpm db:check, pnpm security:source. pnpm test mevcut yapılandırmada entegrasyonu da içerir; DB olmadan unit testi diye çalıştırılmaz.
+- Tam kapı Faz 0'da ve her faz sonunda, hedefli testler her küçük değişiklikte çalışır. İş tamam sayılmadan standart scriptlerin kendi adlarıyla geçmesi gerekir; eşdeğer alt komutlar sadece teşhis kanıtıdır.
+- Her faz için commit/çalışma ağacı, tam komut, runtime, veri senaryosu, çıkış kodu, özet ve artifact yolu [ilerleme kaydına](../operations/sunum-katmani-ilerleme.md) yazılır. Çalıştırılmayan kontrol “doğrulanmadı”; sağlayıcı bekleyen kabul “dış bağımlılık” olur.
 
-- [ ] **1.1 Token ve Renk Envanteri:**
-  - `src/**/*.{ts,tsx,css}` içindeki tüm hex/rgb/hsl/oklch renk değerleri, gölgeler, yarıçaplar, geçiş süreleri ve z-index katmanları çıkarılıp `docs/operations/sunum-katmani-ilerleme.md` içine kaydedilir.
-- [ ] **1.2 `src/styles/themes.css` ve `src/styles/base.css`:**
-  - `src/styles/themes.css`: Projede renk kodu içeren **tek** dosya olur. Mevcut sinematik/ArtDeco tasarımının tüm renk, tipografi (`--font-display`, `--font-body`, `--font-mono`), boşluk (`--space-*`), radius (`--radius-*`), gölge, hareket (`--motion-*`) ve katman (`--z-*`) değişkenlerini `:root, [data-theme="cinematic"], [data-theme="classic"]` altında eksiksiz tanımlar.
-  - `src/styles/tokens.css` → `src/styles/base.css` olarak taşınır; `cinematic.css` ve tüm `*.module.css` dosyalarındaki literal renk kodları `var(--...)` referanslarına dönüştürülür.
-- [ ] **1.3 Merkezi Konfigürasyon Dosyaları:**
-  - `src/config/storage-keys.ts`: `STORAGE_KEYS` ve `COOKIE_KEYS` (`locale: "uludott-lang"` vb.) için tek doğruluk kaynağı.
-  - `src/config/theme.config.ts`: `THEMES`, `ThemeId`, `DEFAULT_THEME`, `ADMIN_THEME`, `isThemeId`, `THEME_REGISTRY`.
-  - `src/config/fonts.ts`: Mevcut yerel `ArtDeco` font tanımları (`bodyFont`, `displayFont`) `src/app/layout.tsx` içinden `src/config/fonts.ts` dosyasına taşınır.
-  - `src/config/boot-script.ts` + `src/components/boot/BootScript.tsx` ve `src/components/theme/ThemeProvider.tsx` (`useSyncExternalStore` tabanlı, FOUC'suz).
-- [ ] **1.4 Zorlayıcı Birim ve Görsel Regresyon Testleri:**
-  - `tests/unit/theme-centralization.test.ts`: `src/styles/themes.css` dışında hiçbir `.ts`, `.tsx`, `.css` dosyasında hex/rgb/hsl/oklch renk kodu veya inline renk stili bulunmadığını doğrular.
-  - `tests/unit/theme-parity.test.ts`: `src/**` içinde kullanılan her `var(--x)` değişkeninin `themes.css` içinde tanımlı olduğunu doğrular.
-  - `tests/unit/theme-contrast.test.ts`: Temel metin/arka plan çiftlerinin WCAG 2.2 AA kontrast oranlarını doğrular.
-  - `tests/e2e/visual-classic.spec.ts`: Faz 0.1'de alınan ekran görüntüleriyle karşılaştırarak görsel tasarımın değişmediğini (`maxDiffPixelRatio <= 0.01`) kanıtlar.
-- [ ] **1.5 Faz 1 Doğrulama Ritüeli:**
-  - `pnpm typecheck && pnpm lint && pnpm test && pnpm test:integration && pnpm test:e2e && pnpm build`.
+## 3. İnceleme odağı
 
----
+| Risk | Zorunlu davranış / sahibi |
+|---|---|
+| Sıcak önbellekte etkinlik iptali, takım reddi veya yayın uygunluğu kaybı | Sonraki genel okumada uygun olmayan oyun/isim görünmez; yalnız TTL'ye güvenilmez. Faz 0 / İş 0B. |
+| Boş DB'de kaybolan etkileşimler | Boş durum + sentetik dolu içerik + gerçek onaylı görsel referansı ayrı baseline senaryolarıdır. İş 0C. |
+| Dil çerezinin HTML/cache karışımı ve uzun EN metni | İstekler arası dil sızıntısı, hydration hatası ve 320px taşma olmaz; CMS dili dürüstçe gösterilir. İş 2A, 3A–3B. |
+| Gizli rotada tema/dil betiği ve genel başlıkların çakışması | CSP ihlali veya özel başlık kaybı olmaz; token içeriği ortak cache'e girmez. İş 1B, 4A, 7A. |
+| Aynı idempotency anahtarı, farklı içerik veya dosya; eşzamanlı gönderim | İkinci kayıt açılmadan sözleşmeye göre replay/409; kapasite ve dosya temizliği korunur. İş 6A. |
 
-### FAZ 2 — Config-Güdümlü Rotalar (`routes.config.ts`), Gezinme, SEO Merkezi ve İkon Kayıt Defteri
+## 4. Faz 0 — Başlangıç kanıtı ve regresyon güvenliği
 
-> **Amaç:** Menü (`Header`), alt bilgi (`Footer`), `/sitemap.xml`, `/robots.ts` ve sayfa metadata tanımlarını tek bir `src/config/routes.config.ts` kaynağından beslemek; tüm ikonları merkezi `src/components/ui/icons/` kayıt defterine taşımak.
+**Durum: KISMİ.** 0A ortam/envanter ve tam başlangıç kapısı 21 Ekim'de, 0B cache uygunluğu 22 Ekim'de kabul edildi. 0C görsel baseline açık; Faz 0 bütünü tamamlanmış değildir. Eski tamamlandı işaretleri kanıtsız taşınmadı.
 
-- [ ] **2.1 Sözlük İskeleti (Faz 3 Temeli):**
-  - `src/i18n/dictionaries/tr.ts`: `brand`, `nav`, `footer`, `meta`, `a11y` ad alanlarıyla mevcut Türkçe metinleri birebir taşır.
-  - `src/i18n/keys.ts`: `DictionaryKey` özyinelemeli yaprak yolu tipi.
-  - `src/i18n/translate.ts`: `getTranslator()` ve `{param}` enterpolasyonlu `TranslateFn`.
-- [ ] **2.2 `src/config/routes.config.ts`:**
-  - Mevcut genel rotalar (`/`, `/hakkimizda`, `/ulujam`, `/etkinlikler`, `/oyunlar`, `/iletisim`), alt menü kırılımları (`/hakkimizda#yonetim-kurulu`, `/hakkimizda#mekanlar`, `/oyunlar#derece-oyunlari`, `/oyunlar#yayinlanan-oyunlar`), `NON_INDEXABLE_PREFIXES` (`/admin`, `/api`, `/l/`, `/basvuru`, `/makbuz`, `/takim`, `/kart`, `/yayin-onayi`) ve `UNLISTED_ROUTES` (`/duyurular`, `/linkler`, `/destek` yönlendirme rotaları) tek merkezde tanımlanır.
-- [ ] **2.3 Merkezi İkon Kayıt Defteri (`src/components/ui/icons/`):**
-  - `IconId` tipi ve `<Icon />` bileşeni oluşturulur; `social-icon.tsx` ve `links` adaptörü bu kayıt defterine bağlanır.
-- [ ] **2.4 Gezinme (`Header`, `Footer`, `PublicShell`) ve SEO Merkezi (`src/seo/build-metadata.ts`):**
-  - Görsel tasarım ve DOM sınıfları (`site-header`, `menu-scene`, `site-nav`, `site-footer` vb.) **birebir korunarak** `Header` ve `Footer` rota listesini `routes.config.ts` ve `getTranslator()` üzerinden alır.
-  - `src/seo/build-metadata.ts`: `buildMetadata(routeId)` ile tüm genel sayfaların `generateMetadata` çıktıları (başlık, açıklama, kanonik URL, OpenGraph/Twitter metin alanları) merkezileştirilir.
-  - `src/app/sitemap.ts` ve `src/app/robots.ts` doğrudan `ROUTES` ve `NON_INDEXABLE_PREFIXES` sabitlerinden beslenir (`// FAZ-2` geçici işaretleri kaldırılır).
-- [ ] **2.5 Zorlayıcı Testler:**
-  - `tests/unit/routes-integrity.test.ts`: Dosya sistemindeki her genel `page.tsx` rotasının `ROUTES` veya `UNLISTED_ROUTES` içinde kayıtlı olduğunu ve sözlük anahtarlarının varlığını doğrular.
-  - `tests/unit/seo.test.ts`: Sitemap ve robots çıktılarının `routes.config.ts` ile tam uyumunu doğrular.
-- [ ] **2.6 Faz 2 Doğrulama Ritüeli:**
-  - `pnpm typecheck && pnpm lint && pnpm test && pnpm test:integration && pnpm test:e2e && pnpm build`.
+### İş 0A — Doğru çalışma tabanı ve tekrar üretilebilir ortam
 
----
+**Dosyalar:** package.json, pnpm-lock.yaml, AGENTS.md, playwright.config.ts, vitest.config.ts, tests/helpers/local-database.ts, tests/helpers/start-e2e.ts; değişecek kayıt docs/operations/sunum-katmani-ilerleme.md.
+**Girdi:** mevcut v0.2 ve yerel geliştirme yapılandırması. **Çıktı:** yeniden üretilebilir başlangıç kabulü.
 
-### FAZ 3 — %100 Merkezi i18n (TR/EN): Tek Sözlük, Sıfır Hardcode Metin ve `Intl` Biçimlendirme
+- [x] Hedef klasör, dal, HEAD ve kirli dosyaları kaydet. v0.1'in son kaydedilmemiş değişikliklerinin v0.2'de karşılığı olup olmadığını dosya bazında kontrol et; eksikse seçerek aktarım listesi çıkar.
+- [x] Node 24.21.0 ve pnpm 11.19.0 ile frozen lockfile kurulumu/çalıştırmayı doğrula. Engine kontrolünü kapatarak başarı üretme. 21 Ekim'deki pnpm 11.25.0 uyuşmazlığını çözmeden standart scriptleri geçti sayma.
+- [x] Yerel DB/S3 erişimini sırları yazdırmadan doğrula. createTestDatabase'ın yerel host ve ürettiği DB adı güvencesi, E2E'nin özgün APP_URL/port/build dizini ve nesne alanı izolasyonu test edilir. Eksik izolasyon varsa tests/helpers altında en küçük düzeltme yapılır.
+- [x] Çalışma DB'sinin migration sürümü ve tablo sayımlarını salt okunur raporla; gerçek başlangıç kayıtlarını izinli envanterle karşılaştır. Demo silme/yeniden seed işlemini varsayılan adım yapma. Yeni yerel DB gerekiyorsa yalnız yeni DB'de migration uygula.
+- [x] Tam standart kapıyı sırayla çalıştır; üretim build rota tablosunu, statik/dinamik durumunu ve mevcut uyarıları kaydet. Başlangıç hatasını sonraki refactor'a taşıma.
+- [x] Kabul: bütün komutlar kanıtlı; geliştirme verisine fixture karışmamış; yinelenebilir ortam ve mevcut ürün envanteri kayıtlı.
 
-> **Amaç:** Kullanıcıya görünen tüm sabit metinleri (`JSX text`, `aria-label`, `alt`, `title`, `placeholder`, boş/hata durumları) `src/i18n/dictionaries/{tr,en}.ts` içine taşımak, derleme zamanı TR/EN tip eşliğini sağlamak ve AST tabanlı `no-hardcoded-text.test.ts` ile kodda sabit metin yazılmasını engellemek.
+**21 Ekim 0A kabul kaydı:** Genel paket 381/381, ayrı entegrasyon 226/226; tam üretim TLS E2E 101/101, HTTP'ye özgü iki senaryo ayrıca 2/2 geçti. Tip/kod/derleme/DB/config, bağımlılık ve kaynak/paket güvenlik kapıları yeşil. Çalışma DB'si 47 tablo/26 migration ile değişmedi; testler kendi DB'lerini temizledi, dokuz eski DB korundu. v0.1 kaynakları ve tüm tema/görsel varlıklar aynı; yalnız v0.2'de mevcut form başarı mesajını koruyan tek key satırı düzeltildi. Kapsam eşlemesi, önceki kırmızı koşular ve son kanıtlar [0A kabul raporunda](../operations/2026-10-21-faz-0a-baslangic-kabulu.md). 0B/0C ve Faz 1 başlamadı.
 
-- [ ] **3.1 Metin Envanteri ve Sözlük Mimarisi:**
-  - `src/i18n/config.ts`: `LOCALES = ["tr", "en"] as const`, `DEFAULT_LOCALE = "tr"`, `LOCALE_BCP47`, `DISPLAY_TIME_ZONE = "Europe/Istanbul"`.
-  - `src/i18n/dictionaries/tr.ts` (kaynak sözlük ve `Dictionary` tipi) + `src/i18n/dictionaries/en.ts` (`export const en: Dictionary` — eksik/fazla anahtar derleme hatası verir).
-  - `src/i18n/server.ts` (`getLocale()`, `getTranslator()`, `getDictionarySlice()`), `src/i18n/client.tsx` (`I18nProvider`, `useTranslator()` — yalnızca istemci ad alanları dilimlenir, tam sözlük istemci bundle'ına girmez), `src/i18n/format.ts` (`Intl.DateTimeFormat` / `Intl.NumberFormat` + `Europe/Istanbul`), `src/i18n/actions.ts` (`setLocaleAction`).
-- [ ] **3.2 Bileşen ve Sayfa Dönüşümü (Görsel Tasarım Değişmeden):**
-  - Genel sayfalar (`/`, `/hakkimizda`, `/ulujam`, `/etkinlikler`, `/oyunlar`, `/iletisim`, `/basvuru/[formSlug]`, `/makbuz`, `/kart/[token]`, `/takim/[token]`, `/yayin-onayi/[token]`), `components/**`, `modules/*/ui/**` ve `modules/community/**` içindeki sabit metinler sözlüğe taşınır.
-  - Yönetim paneli (`src/app/admin/**`, `modules/admin/ui/**`) `admin.*` ad alanından sabit TR olarak beslenir.
-  - Dağınık `toLocaleDateString("tr-TR")` çağrıları `src/i18n/format.ts` yardımcılarına geçirilir.
-- [ ] **3.3 Zorlayıcı AST ve Eşlik Testleri:**
-  - `tests/unit/i18n-parity.test.ts`: Genel ad alanlarında TR ve EN anahtar kümelerinin ve `{param}` yer tutucularının birebir aynı olduğunu doğrular.
-  - `tests/unit/no-hardcoded-text.test.ts`: TypeScript AST taramasıyla UI bileşenlerinde sözlük dışı sabit metin (`JsxText`, `alt`, `aria-label`, `placeholder`, `title`) bulunmadığını doğrular.
-  - `tests/unit/i18n-unused.test.ts`: Kullanılmayan sözlük anahtarlarını raporlar.
-- [ ] **3.4 Faz 3 Doğrulama Ritüeli:**
-  - `pnpm typecheck && pnpm lint && pnpm test && pnpm test:integration && pnpm test:e2e && pnpm build`.
+### İş 0B — Önbellek bağımlılıklarını tamamla
 
----
+**Dosyalar:** src/lib/cache/{tags,public-read}.ts, src/modules/publication/ui/public-queries.ts, src/modules/publication/http.ts, src/modules/{teams,forms,cards,media,site-settings}/application ilgili HTTP adaptörleri; tests/unit/{public-cache,cache-invalidation}.test.ts; yeni tests/integration/public-cache-eligibility.test.ts, tests/e2e/public-cache-eligibility.spec.ts.
+**Arayüz:** cachePublicRead(key, tags, read) mevcut sözleşmesi ve mevcut readPublic* dışa aktarımları korunur. İş kuralının kaynağı repository/service olmaya devam eder.
 
-### FAZ 4 & FAZ 5 — Sunum Katmanı Bütünlüğü, 404/Hata Sayfaları (`not-found.tsx`, `error.tsx`) ve Erişilebilirlik
+- [x] Önce başarısız testi yaz: oyun liste/detay cache'i sıcakken etkinlik cancelled/archived olduğunda sonraki istek oyunu kaldırmalı; takım/başvuru uygunluğu kaybında kredi adları da görünmemeli. Tarihî sonuçlar ve varsayılan arşiv derece görünürlüğünü de kapsa.
+- [x] Okuma→veri bağımlılığı→mutasyon→etiket matrisini çıkar. Mevcut games okumaları events/team/application/consent/submission yaşam döngüsüne de bağlıdır. Yalnız games+media etiketi yeterli değildir.
+- [x] Etiketleri ve COMMIT sonrası HTTP invalidation noktalarını inceleyip güncellik politikasını tamamla. Seçilen çözüm: dört hassas okumayı cache dışında tut; mevcut katalog etiketleri/COMMIT sırası korunur. Worker/CLI'ye Next API taşınmaz; saklama süresi dolması SWR'ye bırakılmaz.
+- [x] Genel katalog verisi 30sn SWR olabilir; görünürlüğe yetki/onay veren verinin güncellik sözleşmesi ayrı test edilir. revalidateTag(tag, { expire: 0 }) sözleşmesi korunur; gerçek üretim HTTP ve normal NextLink istemci geçişinde güncellik ölçüldü.
+- [x] Date serileştirme ve DB+APP_URL cache alanı testlerini koru. Dil gelince ham veriyi dilden bağımsız cache'le; yerelleştirilmiş çıktı cache'lenirse locale anahtarın parçasıdır.
+- [x] Sayaç sıcak cache testi batu-try/tests/cache-e2e/countdown.spec.ts senaryosundan güncel giriş akışına uyarlanır; standart Playwright test listesinde gerçekten seçildiği doğrulanır.
+- [x] Kabul: hedefli test kırmızı→yeşil, üretim cache davranışı kanıtlı ve tam kapı yeşil. Faz 0 bütünü için 0C hâlâ gereklidir.
 
-> **Amaç:** Mevcut sinematik ana sayfa (`StoryPanels`, `PastEventsCarousel`) ve alt sayfa kompozisyonlarını (`PeopleStory`, `DegreeGames`, `SiteGameCard`, `UlujamComingSoon`, `Contact`) koruyarak Faz 4–5'in teknik gereksinimlerini (özel 404/hata sayfaları, klavye/odak yönetimi, `prefers-reduced-motion`, semantik başlık hiyerarşisi) tamamlamak.
+**22 Ekim 0B kabul kaydı:** Dört hassas okuma aynı SQL/service'i cache dışında kullanıyor; uygunluk LIMIT'ten önce, oyun ve ad aynı snapshot'ta. 12 gerçek DB regresyonu kırmızı→yeşil; genel paket 393/393, ayrı entegrasyon 238/238, üretim TLS 105/105 ve HTTP ek koşusu 2/2 geçti. Normal istemci gezinmesi ve sıcak sayaç kontrolü dahil. v0.1, tema/DOM/stiller ve 114 public varlık aynı; çalışma DB'si ve dokuz eski test DB'si korundu. [Bağımlılık matrisi, karar ve tam kanıt](../operations/2026-10-22-faz-0b-cache-kabulu.md). 0C ve Faz 1 başlamadı.
 
-- [ ] **5.1 Özel 404 ve Hata Sayfaları:**
-  - `src/app/not-found.tsx`: Sinematik tasarıma uygun, sözlük tabanlı (TR/EN), ana sayfaya dönüş bağlantılı ve `noindex` korumalı 404 sayfası.
-  - `src/app/error.tsx`: Client Component; arka uç/sır ayrıntısını kullanıcıya sızdırmadan `errors` sözlük dilimiyle güvenli hata ekranı sunar.
-- [ ] **5.2 Erişilebilirlik ve Etkileşim Kontrolleri:**
-  - Tüm genel rotalarda tek `<h1>` ve doğru başlık seviyesi sırası (`h1` → `h2` → `h3`).
-  - Diyalog/çekmece/karusel/video kontrollerinde klavye erişimi (`Escape`, odak iadesi, `:focus-visible`) ve `prefers-reduced-motion: reduce` uyumu.
-  - Mini oyun (`pair-match`, `star-catch`) ve etkileşimli bileşenlerin birim/erişilebilirlik testlerinin doğrulanması.
-- [ ] **5.3 Faz 4–5 Doğrulama Ritüeli:**
-  - `pnpm typecheck && pnpm lint && pnpm test && pnpm test:integration && pnpm test:e2e && pnpm build`.
+### İş 0C — Görsel ve davranış referansı
 
----
+**Dosyalar:** yeni tests/e2e/visual-cinematic.spec.ts, tests/e2e/__baseline-cinematic__/README.md ve onaylı PNG'ler; mevcut presentation-panels, scroll-scrub, people-editor, event-sections, admin-rebuild E2E testleri.
 
-### FAZ 6 — Form Motoru, Başvurular, UluJam ve İletişim Modüllerinin Merkezileştirme Uyumu
+- [ ] Aynı sabit Chromium sürümü/OS/font ve doğal DPR=2 ile 1280×800 ve 375×812 CSS boyutlarını kullan. PNG boyutları bunların tam iki katıdır; yeniden boyutlandırma yapılmaz. Gerçek DPR, CSS boyutları ve zoom=1 doğrulanır. Saat, timezone, rastgelelik, font ve görsel yüklenmesi deterministik olur. DPR=1 hikâye blur kararsızlığı nedeniyle yapılan bu teknik yakalama revizyonu [0C kaydında](../operations/2026-10-22-faz-0c-gorsel-kabulu.md) açıklanır; DPR=1 piksel eşliği iddia edilmez.
+- [ ] Üç veri senaryosu kullan: boş veri, izole sentetik dolu akışlar, onaylı mevcut statik varlıklarla görsel referans. Çalışma DB'sine test için kayıt ekleme.
+- [ ] Önce v0.1'in mevcut çalışma dosyalarından salt okunur görsel manifest/referans al; aynı içerik ve durumda v0.2 ile karşılaştır. Fark varsa v0.2 referansını doğru kabul etme. Genel/özel/admin ekranlar, detaylar, açık/kapalı menü/alt menü/diyalog, People/video, karusel ve hover/focus/active/disabled/loading/error/boş/dolu durumları kapsanır. 320/375/390/768/1280/1440 genişlikleri ve mevcut breakpoint çevreleri incelenir.
+- [ ] Video currentTime/seeking ve animasyonlar için sabit yakalama noktası belirle; reduced-motion görüntüsü gerçek kaydırma davranışı testinin yerine geçmez.
+- [ ] Aynı sabit ortam/içerik/durumda kararlı alanlarda maxDiffPixels=0 kabul kapısıdır. Raster/video belirsizliği tasarım farkına izin değildir; önce yakalama deterministikleştirilir, çözülemeyen fark doğrulanmadı kalır. Renk/font/yerleşim/etkileşim farkını maskeyle veya eşik yükselterek gizleme. v0.1 referansı yeni tasarımı kabul ettirmek için güncellenmez.
+- [ ] Kabul: v0.1'e sabitlenmiş PNG + manifest + komut + ekran durumları ve aynı görsel/etkileşim kanıtı var. Erişilebilirlik dahil hiçbir gerekçe otomatik görsel istisna oluşturmaz.
 
-> **Not:** Issue #1'in Faz 6'da talep ettiği Görev 11–14 (ve hatta 15–25) arka uç ve yönetim modülleri `Uludott Web v0.2` içinde zaten eksiksiz mevcuttur. Bu fazda mevcut modüllerin Faz 1–3 merkezileştirme kurallarıyla (`themes.css`, `routes.config.ts`, `i18n` sözlüğü, WCAG 2.2 AA form etiket/hata semantiği) %100 uyumu doğrulanır.
+**Faz 0 çıkışı:** 0A, 0B ve 0C tamam; [ilerleme kaydı](../operations/sunum-katmani-ilerleme.md) kanıtlı. Sonraki fazlar bu kapıya bağlıdır.
 
-- [ ] **6.1 Form ve Başvuru Yüzeylerinin Kontrolü:**
-  - `/basvuru/[formSlug]`, `/makbuz`, `/kart/[token]`, `/takim/[token]`, `/yayin-onayi/[token]` ve `/iletisim` sayfalarının `no-hardcoded-text`, `theme-centralization` ve `axe` erişilebilirlik testlerinden sıfır hatayla geçmesi.
-  - İdempotency (`Review Focus #1`: aynı idempotency anahtarı + farklı gövde → `409`), CSRF, oturum ve izin matrisi testlerinin doğrulanması.
-- [ ] **6.2 Faz 6 Doğrulama Ritüeli:**
-  - `pnpm typecheck && pnpm lint && pnpm test && pnpm test:integration && pnpm test:e2e && pnpm build`.
+## 5. Faz 1 — Merkezi tema, font ve tercih altyapısı
 
----
+### İş 1A — Token çıkarımı; aynı görünüm
 
-### FAZ 7 — Sertleştirme, Kalite Kapıları (`budgets.ts`), CI İş Akışı ve Nihai Kabul Belgesi
+**Dosyalar:** yeni src/styles/themes.css, src/styles/base.css; mevcut src/styles/tokens.css, cinematic.css, home.module.css ve tüm sunum CSS modülleri; src/app/layout.tsx içinde yalnız aşağıdaki atomik font değişkeni ayrımı; yeni tests/unit/theme-{centralization,parity,contrast}.test.ts.
+**Arayüz:** mevcut className/DOM sözleşmesi korunur; token adları envanterde eski→yeni eşlenir.
 
-- [ ] **7.1 Performans ve Bütçe Kapısı (`tests/perf/budgets.ts`):**
-  - Kategori eşikleri, LCP ($\le 2.5\text{ sn}$), CLS ($\approx 0$), JS bundle bütçesi ve rota listesini içeren `tests/perf/budgets.ts` oluşturulur.
-- [ ] **7.2 Erişilebilirlik, Klavye ve Reflow Kapısı:**
-  - Tüm genel rotalarda masaüstü (`1280px`) ve mobil (`375px` / `320px` reflow) `axe` taraması (0 serious/critical) ve klavye gezinti doğrulaması.
-- [ ] **7.3 Genişletilebilirlik Provası (Kanıtlı, Ardından Geri Alınan Prova):**
-  - `routes.config.ts` içine geçici bir rota + `page.tsx` + sözlük girdisi eklenerek menü ve sitemap'e otomatik yansıdığı kanıtlanır ve geri alınır.
-- [ ] **7.4 CI İş Akışı (`.github/workflows/ci.yml`) ve Dağıtım/Operasyon Dokümanları:**
-  - Node `24.21.0` ve `pnpm 11.19.0` ile statik kontroller (`typecheck`, `lint`, `unit` + merkezileştirme bekçileri), PostgreSQL/S3 entegrasyon testleri, Playwright E2E ve `build` adımlarını içeren `.github/workflows/ci.yml` hazırlanır (içinde hiçbir sır veya VDS bilgisi yer almaz).
-  - `README.md` ("Yeni sayfa ekle", "Yeni tema token'ı ekle", "Yeni dil ekle" rehberleriyle) güncellenir ve `docs/operations/sunum-katmani-kabul.md` nihai kabul tablosu oluşturulur.
+- [ ] Renk, gradient, gölge, tipografi, boşluk, radius, süre/easing, z-index ve breakpoint envanterini çıkar; CSS cascade/specificity sırasını koru.
+- [ ] themes.css tema token'larının tek tanım kaynağı olur. cinematic ve admin classic değerleri mevcut hesaplanmış stillerden alınır. Önce değerleri kayıpsız taşı; benzer renkleri birleştirerek tasarımı değiştirme.
+- [ ] next/font tarafından üretilen --font-artdeco-body / --font-artdeco-display değişkenleri ile --font-body / --font-display tasarım token'larını ayrı tut; döngüsel var referansı oluşturma. Ön koşul: mevcut layout.tsx üretici adlarını ve aynı font ailelerine çözülen tasarım takma adlarını 1A içinde atomik taşı; üretici yeniden adlandırmasını 1B'ye bırakıp kendine referans veren alias ekleme. Font dosyası, ağırlığı, metrikleri, gerçek font seçimi ve fallback davranışı aynı kalır; kapsamlı font config çıkarımı 1B'dedir.
+- [ ] Merkezi kural yalnız tasarım token'larına uygulanır. --menu-index, pointer konumu, scroll ilerlemesi, oran ve kullanıcıdan gelen ölçüm gibi doğrulanmış çalışma anı custom property değerleri yerel kalabilir. Breakpoint sabitleri CSS media kısıtı nedeniyle belgeli istisnadır.
+- [ ] Tarayıcı UI renkleri themes.css dışında yasaklanır. Backend görsel üretimindeki renkler, QR/Wallet çıktısı ve özgün SVG varlığı UI rengi sayılmaz; tam dosya + nedenle denetlenen istisna manifestine alınır. src/modules veya src/lib bütünüyle hariç tutulmaz.
+- [ ] Testler href fragment/UUID/hash değerlerini renk sanmamalı; named color, rgb/rgba, hsl/hsla, oklab/oklch ve fallback renklerini de yakalamalı. Var eşliği yerel runtime/next-font değişkenlerini ayırmalı; aynı kapsamda eksik/çevrimli token test edilmeli.
+- [ ] Kabul: v0.1 referansları korunur; kontrast ölçülür. Mevcut palet/ölçü değişmeden karşılanamayan a11y koşulu açık uyuşmazlıktır; renk veya yerleşim kendiliğinden değiştirilmez, kapı geçti sayılmaz.
+
+### İş 1B — Font, storage ve nonce uyumlu açılış
+
+**Dosyalar:** yeni src/config/{theme.config,storage-keys,fonts,boot-script}.ts, src/components/boot/BootScript.tsx, src/components/theme/ThemeProvider.tsx; src/app/layout.tsx, src/app/admin/layout.tsx; yeni tests/unit/theme-runtime.test.ts ve tests/e2e/theme-runtime.spec.ts.
+
+- [ ] THEMES, ThemeId, DEFAULT_THEME, ADMIN_THEME, isThemeId ve THEME_REGISTRY yalnız v0.1'in gerçek public/admin envanterini tarif eder. cinematic/classic adları teknik etiket olabilir; yeni palet/varsayılan veya saklanan tercihi başka görünüme çeviren migration yoktur. Mevcut tercih yoksa sırf kayıt defteri var diye tercih davranışı eklenmez. ArtDeco dosyaları/ağırlıkları, font metrikleri ve ilk boyamadaki görünüm korunur.
+- [ ] STORAGE_KEYS ve COOKIE_KEYS mevcut adları/attribute sözleşmesini değiştirmeden taşır. Auth/CSRF cookie adları salt import adaptasyonudur; oturumları düşüren yeniden adlandırma yapılmaz.
+- [ ] BootScript mevcut proxy'nin x-nonce değeriyle üretim CSP altında hydration öncesi çalışır. Tek sabit üretim kaynağı ve typed ayar kullanılır; raw kullanıcı metni script içine gömülmez.
+- [ ] ThemeProvider kullanılırsa yalnız mevcut görünümü koruyan teknik senkronizasyon yapar. Storage erişilemese/geçersiz olsa da v0.1'deki görünüm çıkar; admin'e eski classic paleti uygulanmaz. Yeni tema davranışı veya görünür seçici eklenmez.
+- [ ] CSP, JS kapalı, storage SecurityError, eski/geçersiz değer, ilk boyama ve hydration testlerini yaz. Public iki profil iddiası üretilmez.
+- [ ] Kabul: FOUC/hydration/CSP hatası yok; mevcut özel başlıklar korunmuş; görsel referans ve tam kapı yeşil.
+
+## 6. Faz 2 — Rota/SEO ve ikon kayıtları
+
+### İş 2A — Erken i18n çekirdeği ve typed route sözleşmesi
+
+**Dosyalar:** yeni src/i18n/{config,keys,translate}.ts, src/i18n/dictionaries/{tr,en}.ts; src/config/routes.config.ts; tests/unit/{routes-integrity,seo,i18n-core}.test.ts.
+**Üretilen arayüzler:**
+- Locale = tr | en; DictionaryKey yalnız public sözlük yaprağı; TranslateFn(key, params?) eksik anahtarı tipte/testte reddeder.
+- getTranslator(locale) istek dışı saf fonksiyon; src/i18n/server.ts içindeki getRequestTranslator() ileride istek çerezini okur. Aynı ada farklı imza yüklenmez.
+- RouteId; RouteDefinition: id, path/pattern, labelKey, visibility, indexable, canonical, metadataKey ve opsiyonel children. Menü görünürlüğü, URL varlığı ve indekslenebilirlik ayrı alanlardır.
+- buildRoute(routeId, params) path parametrelerini doğrular/encode eder. Gizli token URL'leri statik config'e gerçek değerle yazılmaz.
+
+- [ ] Sayfa dosya sistemini route-group ve dinamik segmentleri çözerek tara; altı genel sayfa, iki dinamik detay, özel/admin/API sınıfları ayrı kaydedilir. API'leri menü kaydı olmaya zorlama.
+- [ ] /duyurular, /linkler, /destek için LEGACY_UNIMPLEMENTED_ROUTES kaydı kullan; varmış gibi sitemap/nav üretme. Yeni yönlendirme ancak aynı içerik hedefi ve kalıcı URL kararı ayrı görevde belirlendiğinde eklenir.
+- [ ] Alt menü fragment'lerinin gerçek DOM id karşılığını test et. ROUTES menü/metadata/SEO politikasının kaynağıdır; footer sosyal URL'leri mevcut panel ayarları kaynağında kalır.
+- [ ] Dil URL politikası: mevcut Türkçe URL'ler ve cookie tabanlı dil korunur; /en veya hreflang alternatifi uydurulmaz. canonical aynı içerik URL'sidir, query cursor için ana liste canonical'ı seçilir.
+- [ ] Kabul: sözlük çekirdeği TR/EN olarak kullanılabilir; route taraması sahte rota ve eksik anchor'ı kırmızıya düşürür.
+
+### İş 2B — Menü, metadata ve sitemap entegrasyonu
+
+**Dosyalar:** src/components/layout/{header,footer,public-shell}.tsx, src/app/{sitemap,robots}.ts, genel page.tsx metadata'ları; yeni src/seo/build-metadata.ts ve tests/e2e/routes-seo.spec.ts.
+**Arayüz:** buildMetadata({ routeId, locale, params?, content? }): Metadata; ham CMS başlık/açıklama input olarak alınır. Fonksiyon DB'ye erişmez ve token/noindex sınıfını korur.
+
+- [ ] Header'ın route dizisini merkezileştir; görünümü/DOM sınıflarını koru. Footer'a yeni menü ekleme; mevcut sosyal veri akışını koru.
+- [ ] Sitemap: altı statik rota + yalnız yayımlanmış/uygun etkinlik ve oyun detayları. Dinamik içerik mevcut servislerden alınır; liste pagination'ının yalnız ilk 20 kaydıyla sınırlı sitemap üretme.
+- [ ] Gerekirse oyunlar için salt okunur, sayfalama tamamını kapsayan listIndexableGames() adaptörü ekle; lastModified gerçek veriden gelir. Taslak/iptal/uygunsuz oyun/özel form/token girmez.
+- [ ] Title şablonu tek kez marka ekler; mevcut “— Uludott | ULUDOTT” tekrarını kaldırır. Hatalı slug/404 noindex olur; query/token metadata'ya sızmaz.
+- [ ] robots ve response/meta noindex ayrı test edilir; robots engeli erişim kontrolü sayılmaz. NON_INDEXABLE_PREFIXES ortak, client-safe politikadır; next.config.ts ve src/lib/security/headers.ts aynı sınıfları tüketir veya geçiş sırasında birebir parity testiyle korunur. Auth kodunu client import zincirine sokma.
+- [ ] Kabul: merkezi kaynaklar kullanılıyor; detay canonical/sitemap testleri ve mevcut indexability E2E yeşil; tam kapı yeşil.
+
+### İş 2C — Merkezi ikon kaydı
+
+**Dosyalar:** yeni src/components/ui/icons/{index,icon}.tsx; src/modules/site-settings/ui/social-icon.tsx ve UI ikon tüketicileri; tests/unit/icons.test.ts.
+
+- [ ] IconId ve Icon({ id, label?, decorative?, size? }) oluştur. Mevcut SVG path/viewBox, fill/stroke, çok renkli yapı, çizgi kalınlığı ve boyutları aynen korunur. currentColor yalnız kaynak ikon zaten öyleyse kullanılır; merkezileştirme ikonu yeniden çizme/değiştirme izni değildir.
+- [ ] Dekoratif ikon aria-hidden, anlamlı ikon erişilebilir ad alır. Kullanıcı içeriği QR/SVG çıktısını ikon testiyle engelleme.
+- [ ] Kabul: yeni emoji ikon yok; a11y adları/snapshot ve tam kapı yeşil.
+
+## 7. Faz 3 — Arayüz TR/EN ve sunucu/istemci sınırı
+
+### İş 3A — Dil altyapısı
+
+**Dosyalar:** src/i18n/{server,format}.ts, src/i18n/client.tsx ve dictionaries; src/app/layout.tsx; yeni tests/unit/{i18n-parity,i18n-format}.test.ts ve tests/e2e/locale.spec.ts. Yeni LanguageToggle, noscript formu veya menü öğesi oluşturulmaz.
+
+- [ ] getLocale(): Promise<Locale>, getRequestTranslator(), getDictionarySlice(locale, namespace), I18nProvider/useTranslator tanımla. Locale whitelist ile doğrulanır; varsayılan ve geçersiz değer tr. EN altyapısı test bağlamında locale/cookie girdisiyle denenir; yeni dil değiştirme akışı eklenmez.
+- [ ] TR kaynak değerlerini literal string tipine kilitleme; yapıyı koruyan genişletilmiş public Dictionary tipi EN çeviriye izin verir. Admin sözlüğü ayrı TR tipidir; public TR/EN anahtar ve placeholder eşliği derlemede/testte zorlanır.
+- [ ] <html lang> ve metadata çözümlenen dille eşleşir; admin kökü lang=tr olur. Locale okuması yalnız server.ts içindedir; oturum/CSRF cookie politikası değişmez. Tarayıcı diliyle otomatik EN açılmaz; mevcut TR görünümü değişmez.
+- [ ] Görünür dil kontrolü bu kapsamdan çıkarılmıştır. JS açık/kapalı hâllerde v0.1'de olmayan kontrol eklenmediği test edilir. Metin çevirisi için font küçültme, boşluk/yerleşim/breakpoint değiştirme veya yeni kontrol ekleme yapılmaz; çözülemeyen EN taşma uyumsuzluk olarak raporlanır.
+- [ ] Biçimlendirme yalnız format.ts, Intl, tr-TR/en-GB ve Europe/Istanbul üzerinden yapılır. formatDate, formatDateTime, formatNumber, formatRelativeTime ve selectPlural yardımcılarının locale açık parametresi vardır. Tarihsiz UluJam'a tarih icat etme; ISO saklama sözleşmesi değişmez.
+- [ ] Client yalnız CLIENT_NAMESPACES kayıt listesinde gereken namespace dilimini alır. Tam sözlük veya server config client bundle'a girmez. İki locale eşzamanlı istek ve cookie değişimi cache/hydration testi yapılır; başlangıç/sonrası istemci JS ve üretim TTFB farkı raporlanır. EN çeviriler boş/TODO/lorem denetimi ve doğal dil incelemesinden geçer.
+- [ ] Kabul: mevcut URL'ler değişmeden dil/metaveri/format doğru; standart kapı yeşil.
+
+### İş 3B — Ekran dönüşümü ve doğrulama bekçileri
+
+**Dosyalar:** src/app genel/özel/admin UI, src/components, modules UI ve community sunum dosyaları; yeni tests/unit/{no-hardcoded-text,i18n-unused}.test.ts, tests/unit/i18n-guard-fixtures/* ve docs/operations/i18n-content-policy.md.
+
+- [ ] Önce ortak metinler; ardından genel sayfalar; sonra formlar/özel akışlar; en son admin olarak küçük dilimler halinde taşı. Her dilimde mevcut TR metin ve görünüm korunur.
+- [ ] Panelden gelen form alanı/başlığı, kişi alıntısı, oyun adı/açıklaması, arşiv metni ve alt metinler CMS verisidir; sözlüğe taşınarak panel düzenlemesi devre dışı bırakılmaz. Çevirisi yoksa özgün metin korunur, uygun içerik lang=tr işaretlenir. “Tüm içerik İngilizce” iddiası yazılmaz.
+- [ ] Backend hata mesajlarını doğrudan basan tüketicileri envanterle. Sabit statü/izin/doğrulama mesajlarını UI adaptöründe bilinen hata→anahtar eşlemesi ve güvenli yerelleştirilmiş fallback ile sun; alan yollarını koru. API yanıtı/DB enum değeri çevrilmez. Kararlı ek hata kodu zorunluysa kapsam istisnası + sözleşme testiyle eklenir.
+- [ ] AST bekçisi JsxText/attribute yanında UI string değişkeni, object/array değeri, ternary, template expression ve toast/error/status akışını kapsar. Route label'ları, dekoratif boş alt, teknik ID/URL, marka/ad ve doğrulanmış CMS verisi için dar, gerekçeli istisnalar vardır.
+- [ ] Bekçinin kendisi pozitif/negatif fixture ile test edilir; yalnız dizin hariç tutarak sıfır ihlal üretme. Dinamik sözlük anahtarlarını unused testinde referans manifestiyle açıkla.
+- [ ] Tarih/etiket/Intl çağrılarını merkezileştir. EN uzun metin, Türkçe glif ve 320px reflow ile her yüzeyi test et.
+- [ ] Kabul: public sözlük eşliği, hardcode bekçisi, metadata, TR baseline ve iki dil işlev testleri yeşil; CMS kaydet→genel sayfada görünür testi yeşil; tam kapı yeşil.
+
+## 8. Faz 4 — Ortak sunum bütünlüğü
+
+### İş 4A — Mevcut kompozisyon ve etkileşimleri koru
+
+**Dosyalar:** src/app/page.tsx, src/components/layout/story-panels.tsx, src/modules/community/people-story.tsx, src/modules/events/ui/{past-events-carousel,ulujam-coming-soon}.tsx ve mevcut tasarım sistemi; ilgili mevcut E2E'ler.
+
+- [ ] Issue Faz 4 arcade ana sayfa yerine mevcut intro/panel/karusel/People etkileşimlerinin aynı davranışını test et. Panel/kişiler/veri yönetiminin yeni merkezi katmanla çalıştığını kanıtla.
+- [ ] Mevcut menü/diyalog odak, Escape, odak iadesi, skip bağlantısı ve reduced-motion davranışını doğrula. Semantik/ARIA düzeltmesi görünümü ve mevcut etkileşimi değiştirmiyorsa yapılabilir; yeni kontrol, farklı odak stili veya hareket tasarımı eklenmez. Görsel kilitle çözülemeyen erişilebilirlik bulgusu açık kaydedilir.
+- [ ] Mouse/touch/klavye, kısa ekran ve scroll-scrub video hazır olmaması durumlarını test et. Dış embed ve boot betiği enforced CSP altında çalışmalı.
+- [ ] Mini oyun mantığı değişmez; gerçek button, anlamlı ad, aria-pressed/aria-live, klavye alternatifi ve hareket azaltma doğrulanır.
+- [ ] Kabul: görsel referans + eski işlev testleri + erişilebilirlik + tam kapı yeşil.
+
+## 9. Faz 5 — Detay sayfaları, galeri ve hata yüzeyleri
+
+### İş 5A — Mevcut galeri ve hata durumlarının korunması
+
+**Dosyalar:** src/modules/events/ui/ulujam-archive.tsx ve mevcut hata yüzeyleri; tests/e2e/error-pages.spec.ts ve görsel referans testleri. Yeni lightbox/trigger veya farklı görünümlü hata sayfası oluşturulmaz.
+
+- [ ] Galeri mozaik düzenini, görsel kırpmasını, başlık/alt metin konumunu ve mevcut etkileşimini v0.1 ile aynı tut.
+- [ ] Issue'ın yeni lightbox gereği görsel/etkileşim kilidi nedeniyle bu kapsamda uygulanmaz; tamamlandı sayılmaz ve açık fark olarak raporlanır.
+- [ ] Mevcut 404/hata yanıtlarının durum/noindex ve sır sızdırmama sözleşmesini doğrula. Mevcut görünümü değiştiren özel hata ekranı ekleme; böyle bir gereksinim açık uyuşmazlık olarak kaydedilir.
+- [ ] Etkinlik/oyun detayları, UluJam tarihsiz/tarihli/başladı durumları ve bilinmeyen tarihî alanlar için boş/sınır durumlarını doğrula.
+- [ ] Kabul: galeri/hata durumları v0.1 referansıyla aynı; mevcut klavye ve güvenlik sözleşmesi testli. Yeni lightbox/özel hata tasarımı nihai açık fark listesinde; varmış gibi test/kabul üretilmez.
+
+## 10. Faz 6 — Ürün akışlarının regresyon kabulü
+
+### İş 6A — Form, başvuru ve mevcut operasyon modülleri
+
+**Dosyalar:** mevcut forms/teams/cards/check-in/games/outbox UI ve tests/integration + tests/e2e akışları; docs/operations/sunum-katmani-kabul.md.
+
+- [ ] Form oluştur→önizle→yayınla→açık gönderim→makbuz→liste/detay/export/silme; değişmez sürümler, gerçek PublicForm ile önizleme, klavyeyle alan sıralama, koşullu/dosya alanları, kapasite/kapalı/sürüm değişimi, 409 ve özel dosya yetkisini mevcut testlerle doğrula. Eksik klavye alternatifi yeni görünür kontrol veya etkileşim tasarımı gerektiriyorsa açık bulgudur; otomatik eklenmez.
+- [ ] Coffee Talk senaryosu sentetik izole fixture ile taslak→gerçek veri alanları dolu→yayın→ana sayfada afiş/tarih/form CTA zincirini doğrular. Gerçek çalışma verisine tarih/konum eklenmez. Eksik Turnstile/bildirim/hukuk bağımlılığı kapalı feature flag/adaptör kabulüyle ayrı kaydedilir.
+- [ ] Aynı anahtar+aynı gövde replay; aynı anahtar+farklı gövde 409; dosyalı gönderimde içerik hash sözleşmesi ve eşzamanlı gönderimde tek kayıt/kapasite güvencesi test edilir. CSV formül kaçışı ve anonimleştirme/denetim kaydı korunur.
+- [ ] Takım kurucu/üye, onay/reddetme, kart uygunluğu/iptali, yayın onayı ve oyun kredi görünürlüğü uçtan uca doğrulanır. Yetkisiz/CSRF reddi ve etkinlik bazlı izin matrisi korunur.
+- [ ] Worker/outbox retry/idempotency, Google Wallet disabled/mock/gerçek sağlayıcı durumları ayrı kaydedilir. Gerçek sağlayıcı/Android cihaz kabulü yapılmadan “Google Wallet tamam” denmez; testler dış bildirim göndermeyen adaptörle çalışır.
+- [ ] Check-in mevcut sunucu davranışı test edilir; iOS okuyucu ve Wallet'tan QR kaldırma otomatik olarak kapsamda sayılmaz. Apple Wallet mevcut erteleme/kapalı durumu korunur.
+- [ ] İletişim mevcut yönetilen kanalları ve v0.1 düzenini aynen korur. Koşullu yeni form bölümü görsel kilit nedeniyle bu kapsamda uygulanmaz; 6B ayrı açık fark kaydıdır. Hukuk metni uydurulmaz.
+- [ ] Her modül için durum: kaynak var / otomatik test geçti / gerçek dış kabul bekliyor / ayrı geliştirme. “Eksiksiz mevcut” toplu ifadesi kullanılmaz.
+- [ ] Kabul: mevcut ürün zinciri iki genel dilde işlevsel, admin TR, hassas başlık/yetki/dosya davranışı korunmuş; tam kapı yeşil.
+
+### İş 6B — Kapsam dışı kayıt: yeni iletişim formu
+
+**Durum:** Uygulanmayacak; aktif uygulama sırasının dışındadır. Issue #1'deki koşullu iletişim formu mevcut v0.1 sayfasına yeni görünür bölüm ve akış ekler. Son kullanıcı talebi önceliklidir; form bölümü, yeni bağlantı veya seed oluşturulmaz. Mevcut iletişim görünümü ve işlevi korunur. Bu madde tamamlandı sayılmaz; nihai Issue farkları içinde kapsam dışı olarak açıklanır.
+
+## 11. Faz 7 — Ölçülebilir kalite, mevcut CI ve yerel teslim
+
+### İş 7A — Performans/erişilebilirlik kapıları
+
+**Dosyalar:** yeni tests/perf/budgets.ts, scripts/perf-lighthouse.ts, package.json içindeki perf:lighthouse komutu; tests/accessibility; mevcut security/header/cache testleri.
+**Tek eşik kaynağı:** public rota matrisi + temsilî dolu detaylar, gerçek izole fixture ile.
+
+- [ ] Üretim build üzerinde mobil/masaüstü; public cinematic × TR/EN × 375/1280. Yönetim classic/TR ve özel akışlar a11y/işlev matrisinde ayrıca. 320px ve %200 reflow, reduced-motion ve forced-colors kapsanır.
+- [ ] pnpm perf:lighthouse komutu izole 127.0.0.1 üretim sunucusunu kullanır; port/DB/build dizini çalışma ortamından ayrılır. JSON raporları .local/lighthouse/, özet tablo ilerleme kaydındadır. Eşik altı veya eksik ölçüm nonzero çıkış üretir; yeni araç gerekiyorsa tam sürüm ve gerekçe kaydedilir.
+- [ ] Lighthouse dört kategori ≥90; LCP ≤2500ms, CLS ≤0.1 (hedef 0), TBT ≤200ms, ana sayfa ilk yük first-party JS toplam gzip <150×1024 byte. Donanım/throttle/Chromium sabit, 3 koşu medyanı; cold cache ölçülür. Eşikler ölçmeden gevşetilmez.
+- [ ] JS bütçesi main bundle ile sınırlanmaz; ilk navigation'ın indirttiği runtime/framework/RSC istemci bağımlılıkları dahil, tekrar eden URL bir kez sayılır. Görsel/animasyon kaldırma, görsel kalite/kırpma veya font değiştirme ile bütçe tutturulmaz.
+- [ ] Axe 0 serious/critical gerekli fakat WCAG tam kabulünün yerine geçmez: klavye/odak, screen-reader adı, kontrast ve dokunma hedefleri kontrol edilir. Görsel kilitle uyuşmayan bulgu raporlanır; eşik düşürme veya kendiliğinden tasarım değişimiyle başarı üretilmez. Görünümü koruyan çözüm bulunamazsa ilgili kabul açık kalır.
+- [ ] Private noindex sayfaların Lighthouse SEO puanı public hedefe dahil edilmez; gerçek HTTP noindex/no-store/no-referrer ve CSP nonce testleri zorunludur. Mevcut enforced CSP zayıflatılmaz; HSTS bu kapsamda değiştirilmez.
+- [ ] Kabul: her rota için JSON/özet ölçüm var. Araç çalışmadıysa “doğrulanmadı”; başarısız veya ölçülmemiş kalite kapısıyla nihai kabul verilemez.
+
+### İş 7B — Mevcut CI'ı genişlet ve teslimi kaydet
+
+**Dosyalar:** .github/workflows/ci.yml, scripts/ci-check.sh, tests/operations/ci-gate.test.ts, README.md, docs/operations/{sunum-katmani-kabul,deploy,rollback,backup-restore,vds-olcum}.md.
+
+- [ ] Var olan Acceptance verify/package işlerini güncelle; sıfırdan yazıp image build, worker, audit, source/wallet security, db:check veya load güvencelerini düşürme.
+- [ ] Tam sürümler/frozen lockfile, geçici PostgreSQL/S3, production E2E, merkezileştirme testleri, Lighthouse ve başarısızlıkta trace/screenshot/log artifact'leri zorunlu. Workflow yeni feat dalında manuel/PR ile seçilebilir olmalı; dal adı yanlışsa sessiz test yokluğu başarı sayılmaz.
+- [ ] İzole CI yük testi korunur; VDS'ye yük/backup/live-audit komutu çalıştırılmaz. Backup provası yalnız yeni throwaway yerel DB/hedefe yapılır ve geri yükleme sayım/checksum kanıtı alınır.
+- [ ] Üç bağımsız genişleme provası yalnız izole throwaway kopyada yapılır: route+page+sözlük, ek tema profili, ek public locale. Ana uygulamaya profil/palet/kontrol/varsayılan taşıma yoktur; prova sonunda ağaç ve v0.1 referansları değişmemiş olmalıdır.
+- [ ] README yeni sayfa/token/dil ekleme adımları gerçek provadan üretilir. Faz bazlı küçük commit ve etiketli yerel kabul noktası önerilir; push/merge/dağıtım yapılmaz.
+- [ ] deploy/rollback/worker/backup belgeleri mevcut yapı ile karşılaştırılır; DB+nesne deposu birlikte geri yükleme ve migration öncesi yedek politikası yer alır. Önceden onaylı VDS ölçüm eşikleri korunur; gerçek kapasite ölçülmemişse ayrı açık madde kalır.
+- [ ] Nihai kabul: Faz 0–7 kutuları + komut/çıktı/artifact; Issue farkları K1–K8; sağlayıcı/cihaz/hukuk/görsel eksikleri. Yerel uygulama kabulü, dış hizmet kabulü ve canlıya alma izni ayrı kaydedilir.
+
+## 12. Uygulama sırası ve kapanış ölçütü
+
+0A → 0B → 0C → 1A → 1B → 2A → 2B → 2C → 3A → 3B → 4A → 5A → 6A → 7A → 7B. İş 6B aktif sıranın dışındadır. 15 aktif iş + 1 kapsam dışı kayıt vardır.
+
+2C yalnız ikon bağımlılığı taşır; ortak bileşen dosyaları nedeniyle farklı fazlarla aynı anda yazılmaz. Test/okuma incelemeleri paralel yapılabilir. Her iş tek inceleme birimidir; büyük 3B ve 6A kendi içinde ekran/akış dilimlerine ayrılır, her dilim aynı kabul sözleşmesini taşır.
+
+**Geri dönüş:** Her fazdan önce ilgili dosya diff'i ve son çalışan commit kaydedilir. Başarısız değişiklik yalnız kendi commit/dosya kümesiyle geri alınır; kullanıcı değişikliklerine reset/clean uygulanmaz. DB şeması bu işte değişmediği için şema rollback gerekmez; zorunlu ek migration ayrı tasarım ve geri yükleme planına bağlıdır.
+
+**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** 0A ve 0B kabul edildi; sıradaki iş 0C'dir. pnpm sürüm uyuşmazlığı ve hassas oyun cache açığı giderildi. Görsel referans kabulü açık olduğundan Faz 1 için izin veren Faz 0 çıkış kapısı henüz geçilmedi.
