@@ -64,6 +64,9 @@ pnpm test:load
 
 `ci:check`: typegen/ts, lint, migration metadata, birim+gerçek PG/S3 entegrasyon+restore, build, üretim TLS Playwright/axe, production audit ve kaynak/Wallet paket sır taraması. Playwright chromium gerekir: `pnpm exec playwright install chromium`; k6 yük aracı ayrıca kuruludur. CI workflow aynı zincir ve k6'ı çalıştırır, başarısız verify paket işini durdurur; otomatik canlı deploy yok. [Yük](docs/operations/load-report.md), [güvenlik](docs/operations/security-test-report.md), [erişilebilirlik](docs/operations/accessibility-report.md).
 
+### Tema Altın Liste (Faz 1 — İş 1A)
+`tests/fixtures/golden-declarations.json` dosyası `1715682f396d1698871c6615766623cacb0d8405` commit'inden üretilmiş sabit altın listedir. `scripts/build-golden-declarations.ts` betiği yalnızca tek seferlik üretim içindir; açık izin ve onay olmadan yeniden üretilmez.
+
 ## İşletme rehberleri
 
 [Deploy/ortam](docs/operations/deploy.md) · [eşlenmiş yedek/restore](docs/operations/backup-restore.md) · [rollback](docs/operations/rollback.md) · [etkinlik/afiş](docs/operations/events.md) · [form/başvuru/export](docs/operations/forms.md) · [linkler](docs/operations/links.md) · [takımlar](docs/operations/teams.md) · [Wallet](docs/operations/wallet.md) · [veri hakları](docs/operations/data-rights.md) · [VDS değerlendirmesi](docs/operations/vds-assessment.md).
