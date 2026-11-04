@@ -203,3 +203,37 @@ Açık yedi senaryo: admin-operations (1), form-builder (1), games (1), link-hub
 - Bağımsız son incelemede açık Critical/Important bulgu yok. Push/merge/dağıtım yok. [Komut özeti](../../.local/phase-0b/verification.json).
 
 **Sıradaki iş:** 0C — v0.1'e sabitlenmiş deterministik görsel ve davranış referansı. Faz 0 bütünü için bu kabul hâlâ gerekli.
+
+## 3 Kasım 2026 — Devir notu (çalışma klasörü: yedek-v0.2-20261102)
+
+Bu oturumdan itibaren tek çalışma klasörü `yedek-v0.2-20261102`dir; orijinal klasörlere dokunulmaz. Faz 1 başlamadı; **0C açık**.
+
+### Yapılan ve kanıtı
+
+- **Commit'ler (bu klasörde):** `dae902d` 0A (26 dosya), `19ad112` 0B (7), `08b4324` 0C altyapı (30), `090737c` belgeler (7), `5427877` rapor hash düzeltmesi (1). Tag `faz-0ab-kabul` → `090737c`. Baseline PNG'ler ve `.portfolio/` `.git/info/exclude` ile commit dışıdır. Hiçbir commit'te `git add .` kullanılmadı; push yok.
+- **Kaynak özeti:** manifest `source.digest` ve v0.1'den `createSourceManifest` ile hesaplanan değer ikisi de `2e869c5b2f4ef4bab796338ea636e186f49022b1711535d711428844d5074f80` (eşit). Raporda üç satırda `...338ea6e186...` yazılmıştı; düzeltildi.
+- **Dondurulmuş referans:** manifestteki beş sahnenin PNG SHA-256 değerleri diskteki dosyalarla eşit.
+- **v0.1 dokunulmazlığı:** Adım 3 öncesi/sonrası dosya hash listesi ve `git status` farkı 0 satır (`.local/phase-0c/step3/`).
+- **Fark ölçümü** (2560×1600, doğru RGB okumasıyla, mevcut tanı çıktılarına karşı): degree-3 97 piksel (en büyük kanal sapması 4); places-heading 1.430.865; place-cafes 1.658.588; place-venues 1.769.402; cafes-hover 859.580 (sapmalar 184–250). Sayılar önceki resmî kayıtlarla aynı.
+
+### Düzeltmeler ve doğrulanmayanlar
+
+- `.local/phase-0c/step4/*-diff.png` hatalıdır (PNG 3 kanallı, 4 kanal varsayılmıştı); kullanılmaz. Sahne yorumları görsele bakılarak doğrulanmadı.
+- **Yeni yakalama yapılmadı.** 5 sahnenin v0.1'den 3 kez yeniden kaydı ve dört mekân sahnesinin tam boş profil akışında 2 kez kaydı **çalıştırılmadı: doğrulanmadı.** Kullanılan hash'ler eski tanı koşularından gelir.
+- Boş profilin 84 sahnesi hiç koşmadı. `playwright.visual.config.ts` içindeki `maxFailures: 0` Playwright 1.63.0 tiplerine göre "sınır yok" demektir; config değişikliği gerekmez. Büyük olasılıkla neden `scripts/visual-cinematic.ts` içindeki `run()` fonksiyonunun sıfır olmayan çıkış kodunda hata fırlatması ve profil döngüsünü durdurmasıdır. Bu kod okumasına dayanır; **çalıştırılarak doğrulanmadı.**
+- **Ortam farkı:** manifest Chromium 153.0.8010.12 / revizyon 1243; yerelde yalnız `chromium-1248` kurulu. Bugün 1243 ile görsel koşu yapılamaz. Capture girdi hash'leri (21) ve `pnpm-lock.yaml` manifestle aynı.
+- **Çelişkili kanıt (doğrulanmadı):** `.local/phase-0c/CURRENT.md` çalışma notlarında 23 Ekim tarihli ara denemelerde sorunlu mekân sahnelerinin referansla sıfır fark verdiği yazılmış olsa da, bu iddia bağımsız log ve kalıcı görsel kanıtlarla doğrulanmamıştır (doğrulanmadı).
+
+### Açık kalanlar
+
+0C'nin 647 genel + 26 özel sıfır-fark kapısı; boş profil; 5 sahne uyuşmazlığının nedeni; Chromium 1243 yokluğu; `visual-cinematic.ts` profil döngüsü davranışı; son kaynak/DB/güvenlik denetimleri.
+
+### Sıradaki adım
+
+Kullanıcı kararlarından sonra: (1) Chromium 1243 kurulumu (ağ gerekir) veya farkın kabul edilip belgelenmesi; (2) `visual-cinematic.ts` döngüsünün hata listeleyip devam eden hâli (önce kırmızı test; eşik sıfır kalır); (3) 5 sahne ve boş profil için yeni yakalamalar; (4) referans yenileme kararı yalnız kullanıcıya aittir.
+
+### Bekleyen kararlar
+
+- Chromium 1243 indirilsin mi?
+- Betik değişikliği uygulansın mı?
+- Referans yenileme (yalnız kullanıcı "referansı güncelle" derse).
