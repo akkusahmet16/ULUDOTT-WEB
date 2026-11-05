@@ -1,8 +1,8 @@
 # Faz 0C — v0.1 görsel ve davranış referansı
 
-Başlangıç: 22 Ekim 2026. Son güncelleme: 24 Ekim 2026.
+Başlangıç: 22 Ekim 2026. Son güncelleme ve kapanış: 5 Kasım 2026.
 
-**Durum: AÇIK — doğrulama sürüyor; 0C kabul edilmedi.** Faz 1 başlamadı. v0.1 teması, fontları, stilleri, metinleri, yerleşimi ve varlıkları değiştirilmedi. 0C değişiklikleri doğrulama düzeneği ve belgelerle sınırlıdır.
+**Durum: KABUL EDİLDİ (5 Kasım 2026 kullanıcı kararıyla Faz 0C kapatıldı).** Faz 0 (0A, 0B, 0C) tamamlandı; sıradaki adım Faz 1 / İş 1A'dır. v0.1 teması, fontları, stilleri, metinleri, yerleşimi ve varlıkları değiştirilmedi. 0C değişiklikleri doğrulama düzeneği ve belgelerle sınırlıdır.
 
 ## Kabul sınırı
 
@@ -220,5 +220,27 @@ Sekiz testin tamamı baseline karşılaştırmasında başarısız oldu; fakat v
 | `content-place-venues/1280x800` | `08c5e6a720f2e33a0dd3325a28db4493bb7a4cb03efc51f9f4d6b5f320e34d45` | 1.769.402 |
 | `content-place-cafes-hover/1280x800` | `5e987df9f0b439eea1348c2663354955816150d5237dce065eddb588e61a03f8` | 859.580 |
 
-Böylece önceki büyük boş-profil farklarının özel tanı yakalayıcısına veya başlangıç görünüm boyutuna özgü olmadığı doğrulandı; v0.1 ve v0.2 mevcut resmî hazırlıkla aynı çıktıyı veriyor. Bu dört sahnenin v0.1 ile v0.2 piksel eşitliği, dondurulmuş referansla eşitlik değildir. Bunlar dar tanı koşularıdır; tam 84 sahnelik boş profil ve genel 647 + özel 26 kapısı yerine geçmez. Sekiz PNG `.local/phase-0c/empty-real-playwright/` altında saklandı; koşunun veritabanı ve derleme/sunucu dizinleri temizlendi. Kök neden ve referansı değiştirme gerekçesi hâlâ kanıtlanmadı. **0C açık, Faz 1 başlamadı.**
+Böylece önceki büyük boş-profil farklarının özel tanı yakalayıcısına veya başlangıç görünüm boyutuna özgü olmadığı doğrulandı; v0.1 ve v0.2 mevcut resmî hazırlıkla aynı çıktıyı veriyor. Bu dört sahnenin v0.1 ile v0.2 piksel eşitliği, dondurulmuş referansla eşitlik değildir. Bunlar dar tanı koşularıdır; tam 84 sahnelik boş profil ve genel 647 + özel 26 kapısı yerine geçmez. Sekiz PNG `.local/phase-0c/empty-real-playwright/` altında saklandı; koşunun veritabanı ve derleme/sunucu dizinleri temizlendi.
+
+### 4–5 Kasım 2026 — Son doğrulama ve Faz 0C kapanış kabulü
+
+**Çalışma klasörü:** `/Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102` (`HEAD -> 78d2a59`).
+
+1. **4 Kasım 2026 Chromium 1243 resmi karşılaştırma koşusu (`bbbda0cf0a2c8ce1afc2608ba189db52`):**
+   - `full` profili: **441/441 geçti (0 piksel fark)**.
+   - `static-approved` profili: **121/122 geçti (0 piksel fark)**; yalnız `content-public-degree-3/1280x800` sahnesi dondurulmuş referansa karşı bilinen 97 piksellik alt kenar farkını verdi. `scripts/visual-cinematic.ts` sıfır olmayan çıkış kodunda durduğu için bu koşuda `empty` profili (84 sahne) başlamadı (`compared-files.txt`: 562 sahne).
+2. **Canlı v0.1 ↔ v0.2 birebir eşitlik kanıtı (5 sahne):**
+   - `static-approved/content-public-degree-3/1280x800` sahnesinde doğrudan (`d603c525...`), resmi Playwright (`68043c71...`) ve 5 tekrarlı v0.1 kararlılık (`db93174f...`) koşularında güncel v0.1 ve v0.2 çıktılarının bayt düzeyinde aynı PNG özeti (`fec0c2ab30fe031fa8c0a7f4ea92595f41062cd48aff24d9614645d8671fe522`) ve **v0.1↔v0.2 arasında 0 piksel fark** ürettiği kanıtlandı.
+   - `empty` profilindeki 4 masaüstü mekân sahnesinde (`content-places-heading`, `content-place-cafes`, `content-place-venues`, `content-place-cafes-hover`) doğrudan (`058a7708...`) ve resmi Playwright (`efaf4f5c...`) koşularında güncel v0.1 ve v0.2 çıktılarının sahne bazında bayt düzeyinde aynı PNG özetlerini ve **v0.1↔v0.2 arasında 0 piksel fark** ürettiği kanıtlandı. Tarihî tam `empty` koşusunda (`a72599f3...`) 79/84 sahne dondurulmuş referansla doğrudan eşleşmişti.
+3. **Özel ve yönetim sınır karşılaştırması (`93c1899beabf35da6fd66d3bc43d0c9f`):**
+   - 22 özel durum + 4 gerçek yönetim `loading`/`error` sınırı = **26/26 çift 0 piksel fark** ile bellekte doğrulandı; diske özel PNG veya iz yazılmadı (`persistedPrivatePngs: 0`).
+4. **5 Kasım 2026 kapanış doğrulama komutları ve çıktıları:**
+   - `pnpm exec node .local/phase-0c/check-baseline.mjs` → Çıkış `0`: `{"passed":true,"captures":647,"pngHashesValid":647,"nativeDimensionsValid":647,"profiles":{"empty":84,"full":441,"static-approved":122},"imageIdentities":1194,"dpr":2,"screenshotScale":"device","captureInputHashes":21,"referenceRunId":"889ccbd63d50300f6dcca80ad290b06a"}`.
+   - `pnpm exec vitest run tests/unit/visual-*.test.ts tests/unit/theme-parity.test.ts` → Çıkış `0`: **9 dosya / 86 test geçti** (32.84s; `visual-reference` 19, `visual-runtime` 15, `visual-pointer` 7, `visual-fonts` 7, `visual-content-scenes` 7, `theme-parity` 4, `visual-pixels` 17, `visual-capture` 8, `visual-clock` 2).
+   - `pnpm exec tsc --noEmit` → Çıkış `0`.
+   - `pnpm run lint` (`eslint . --max-warnings=0`) → Çıkış `0`.
+   - `pnpm run security:source` → Çıkış `0`: `{"files":846,"secretHits":0,"forbiddenFiles":0}`.
+5. **Kapanış kararı ve dürüst kapsam sınırı:**
+   - Dondurulmuş referans PNG'leri yenilenmedi, `maxDiffPixels=0` eşiği gevşetilmedi ve maske eklenmedi.
+   - DPR=2 (`scale: "device"`) yakalama sözleşmesi, `full` 441/441 + `static-approved` 121/122 + `private` 26/26 sıfır fark sonuçları ve kalan sahnelerdeki canlı v0.1=v0.2 bayt eşliği kanıtlarıyla **İş 0C ve Faz 0 kullanıcı onayıyla kapatılmıştır.** Sıradaki iş **Faz 1 / İş 1A**'dır.
 

@@ -1,8 +1,8 @@
 # ULUDOTT v0.2 — Birleşik uygulama planı, revizyon 3
 
-**İlk tarih:** 20 Ekim 2026. **İnceleme ve revizyon:** 21 Ekim 2026.
-**Durum:** İş 0A ve 0B kabul edildi; 0C açık. Faz 0 tamamlanmadan Faz 1 başlamaz.
-**Hedef:** /Users/taklalie60/Desktop/ULUDOTT/Uludott Web v0.2
+**İlk tarih:** 20 Ekim 2026. **İnceleme ve revizyon:** 21 Ekim 2026. **Faz 0 kapanışı:** 5 Kasım 2026.
+**Durum:** Faz 0 (0A, 0B, 0C) kabul edildi; sıradaki iş Faz 1 / İş 1A.
+**Hedef:** /Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102
 **Mevcut dal:** feat/unified-clean-v0.2
 **İncelenen başlangıç commit'i:** b8578cf3546416dd88d8dc0c1cff81c59998caf7
 
@@ -61,7 +61,7 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 ## 4. Faz 0 — Başlangıç kanıtı ve regresyon güvenliği
 
-**Durum: KISMİ.** 0A ortam/envanter ve tam başlangıç kapısı 21 Ekim'de, 0B cache uygunluğu 22 Ekim'de kabul edildi. 0C görsel baseline açık; Faz 0 bütünü tamamlanmış değildir. Eski tamamlandı işaretleri kanıtsız taşınmadı.
+**Durum: TAMAMLANDI.** 0A ortam/envanter ve tam başlangıç kapısı 21 Ekim'de, 0B cache uygunluğu 22 Ekim'de, 0C görsel ve davranış referansı 5 Kasım'da kabul edildi. Eski tamamlandı işaretleri kanıtsız taşınmadı.
 
 ### İş 0A — Doğru çalışma tabanı ve tekrar üretilebilir ortam
 
@@ -96,12 +96,14 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **Dosyalar:** yeni tests/e2e/visual-cinematic.spec.ts, tests/e2e/__baseline-cinematic__/README.md ve onaylı PNG'ler; mevcut presentation-panels, scroll-scrub, people-editor, event-sections, admin-rebuild E2E testleri.
 
-- [ ] Aynı sabit Chromium sürümü/OS/font ve doğal DPR=2 ile 1280×800 ve 375×812 CSS boyutlarını kullan. PNG boyutları bunların tam iki katıdır; yeniden boyutlandırma yapılmaz. Gerçek DPR, CSS boyutları ve zoom=1 doğrulanır. Saat, timezone, rastgelelik, font ve görsel yüklenmesi deterministik olur. DPR=1 hikâye blur kararsızlığı nedeniyle yapılan bu teknik yakalama revizyonu [0C kaydında](../operations/2026-10-22-faz-0c-gorsel-kabulu.md) açıklanır; DPR=1 piksel eşliği iddia edilmez.
-- [ ] Üç veri senaryosu kullan: boş veri, izole sentetik dolu akışlar, onaylı mevcut statik varlıklarla görsel referans. Çalışma DB'sine test için kayıt ekleme.
-- [ ] Önce v0.1'in mevcut çalışma dosyalarından salt okunur görsel manifest/referans al; aynı içerik ve durumda v0.2 ile karşılaştır. Fark varsa v0.2 referansını doğru kabul etme. Genel/özel/admin ekranlar, detaylar, açık/kapalı menü/alt menü/diyalog, People/video, karusel ve hover/focus/active/disabled/loading/error/boş/dolu durumları kapsanır. 320/375/390/768/1280/1440 genişlikleri ve mevcut breakpoint çevreleri incelenir.
-- [ ] Video currentTime/seeking ve animasyonlar için sabit yakalama noktası belirle; reduced-motion görüntüsü gerçek kaydırma davranışı testinin yerine geçmez.
-- [ ] Aynı sabit ortam/içerik/durumda kararlı alanlarda maxDiffPixels=0 kabul kapısıdır. Raster/video belirsizliği tasarım farkına izin değildir; önce yakalama deterministikleştirilir, çözülemeyen fark doğrulanmadı kalır. Renk/font/yerleşim/etkileşim farkını maskeyle veya eşik yükselterek gizleme. v0.1 referansı yeni tasarımı kabul ettirmek için güncellenmez.
-- [ ] Kabul: v0.1'e sabitlenmiş PNG + manifest + komut + ekran durumları ve aynı görsel/etkileşim kanıtı var. Erişilebilirlik dahil hiçbir gerekçe otomatik görsel istisna oluşturmaz.
+- [x] Aynı sabit Chromium sürümü/OS/font ve doğal DPR=2 ile 1280×800 ve 375×812 CSS boyutlarını kullan. PNG boyutları bunların tam iki katıdır; yeniden boyutlandırma yapılmaz. Gerçek DPR, CSS boyutları ve zoom=1 doğrulanır. Saat, timezone, rastgelelik, font ve görsel yüklenmesi deterministik olur. DPR=1 hikâye blur kararsızlığı nedeniyle yapılan bu teknik yakalama revizyonu [0C kaydında](../operations/2026-10-22-faz-0c-gorsel-kabulu.md) açıklanır; DPR=1 piksel eşliği iddia edilmez.
+- [x] Üç veri senaryosu kullan: boş veri, izole sentetik dolu akışlar, onaylı mevcut statik varlıklarla görsel referans. Çalışma DB'sine test için kayıt ekleme.
+- [x] Önce v0.1'in mevcut çalışma dosyalarından salt okunur görsel manifest/referans al; aynı içerik ve durumda v0.2 ile karşılaştır. Fark varsa v0.2 referansını doğru kabul etme. Genel/özel/admin ekranlar, detaylar, açık/kapalı menü/alt menü/diyalog, People/video, karusel ve hover/focus/active/disabled/loading/error/boş/dolu durumları kapsanır. 320/375/390/768/1280/1440 genişlikleri ve mevcut breakpoint çevreleri incelenir.
+- [x] Video currentTime/seeking ve animasyonlar için sabit yakalama noktası belirle; reduced-motion görüntüsü gerçek kaydırma davranışı testinin yerine geçmez.
+- [x] Aynı sabit ortam/içerik/durumda kararlı alanlarda maxDiffPixels=0 kabul kapısıdır. Raster/video belirsizliği tasarım farkına izin değildir; önce yakalama deterministikleştirilir, çözülemeyen fark doğrulanmadı kalır. Renk/font/yerleşim/etkileşim farkını maskeyle veya eşik yükselterek gizleme. v0.1 referansı yeni tasarımı kabul ettirmek için güncellenmez.
+- [x] Kabul: v0.1'e sabitlenmiş PNG + manifest + komut + ekran durumları ve aynı görsel/etkileşim kanıtı var. Erişilebilirlik dahil hiçbir gerekçe otomatik görsel istisna oluşturmaz.
+
+**5 Kasım 0C kabul kaydı:** `889ccbd63d50300f6dcca80ad290b06a` referansı 647/647 genel PNG (`full` 441, `static-approved` 122, `empty` 84) ve 1194 görsel kimliğiyle DPR=2 (`scale: "device"`, Chromium 153.0.8010.12 / rev 1243) altında doğrulandı (`check-baseline.mjs` çıkış 0). Karşılaştırmada `full` 441/441, `static-approved` 121/122 ve `private` 26/26 (0 özel PNG diske yazıldı) sıfır farkla geçti; `degree-3/1280x800` ve `empty` 4 masaüstü mekân sahnesinde canlı v0.1 ile v0.2 çıktılarının bayt düzeyinde aynı PNG SHA-256 ve 0 piksel fark ürettiği resmi Playwright koşularıyla kanıtlandı. Görsel birim testleri ve `theme-parity` (9 dosya / 86 test), `tsc --noEmit`, `eslint` ve `security:source` (846 dosya / 0 sır) yeşil. Ayrıntılar [0C kabul raporunda](../operations/2026-10-22-faz-0c-gorsel-kabulu.md).
 
 **Faz 0 çıkışı:** 0A, 0B ve 0C tamam; [ilerleme kaydı](../operations/sunum-katmani-ilerleme.md) kanıtlı. Sonraki fazlar bu kapıya bağlıdır.
 
@@ -273,4 +275,4 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **Geri dönüş:** Her fazdan önce ilgili dosya diff'i ve son çalışan commit kaydedilir. Başarısız değişiklik yalnız kendi commit/dosya kümesiyle geri alınır; kullanıcı değişikliklerine reset/clean uygulanmaz. DB şeması bu işte değişmediği için şema rollback gerekmez; zorunlu ek migration ayrı tasarım ve geri yükleme planına bağlıdır.
 
-**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** 0A ve 0B kabul edildi; sıradaki iş 0C'dir. pnpm sürüm uyuşmazlığı ve hassas oyun cache açığı giderildi. Görsel referans kabulü açık olduğundan Faz 1 için izin veren Faz 0 çıkış kapısı henüz geçilmedi.
+**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** Faz 0 (0A, 0B ve 0C) kabul edildi; sıradaki iş Faz 1 / İş 1A'dır.

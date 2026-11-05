@@ -237,3 +237,34 @@ Kullanıcı kararlarından sonra: (1) Chromium 1243 kurulumu (ağ gerekir) veya 
 - Chromium 1243 indirilsin mi?
 - Betik değişikliği uygulansın mı?
 - Referans yenileme (yalnız kullanıcı "referansı güncelle" derse).
+
+## 5 Kasım 2026 — Faz 0C nihai kabulü ve Faz 0 kapanışı (devir notu)
+
+**Çalışma klasörü:** `/Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102` (`HEAD -> 78d2a59`, dal `feat/unified-clean-v0.2`).
+**Durum:** Kullanıcı kararıyla **İş 0C ve Faz 0 (0A, 0B, 0C) kapatıldı.** Sıradaki iş **Faz 1 / İş 1A**'dır.
+
+### Yapılan ve kanıtı
+
+- **4 Kasım 2026 yapılanlar (kayıt):**
+  - Token envanteri (`.local/phase-1/1a-i-envanter.md`), `scripts/build-golden-declarations.ts`, `tests/fixtures/golden-declarations.json`, `tests/unit/theme-parity.test.ts` (`6c54c61`) ve henüz hiçbir yerden import edilmeyen `scripts/generate-themes.ts` + `src/styles/themes.css` (`78d2a59`) oluşturuldu.
+  - Chromium 1243 ile resmi 0C karşılaştırma koşusu (`bbbda0cf0a2c8ce1afc2608ba189db52`) çalıştırıldı: `full` **441/441** geçti; `static-approved` **121/122** geçti (`content-public-degree-3/1280x800` sahnesindeki bilinen 97px fark nedeniyle `visual-cinematic.ts` çıkışı `1` oldu ve `empty` 84 sahneye geçmeden durdu; `compared-files.txt`: 562 sahne).
+- **Canlı v0.1 ↔ v0.2 eşlik kanıtları ve özel kapı:**
+  - `static-approved/content-public-degree-3/1280x800` (`d603c525...`, `68043c71...`, `db93174f...`) ve `empty` 4 masaüstü mekân sahnesinde (`058a7708...`, `efaf4f5c...`) canlı v0.1 ve v0.2 çıktılarının bayt düzeyinde aynı PNG SHA-256 ve **0 piksel fark** ürettiği doğrulandı.
+  - Özel + yönetim sınır kapısı (`93c1899beabf35da6fd66d3bc43d0c9f`) **26/26 çift 0 piksel fark** ve **0 kalıcı özel PNG** ile geçti.
+- **5 Kasım 2026 kapanış doğrulama komutları ve sonuçları:**
+  - `pnpm exec node .local/phase-0c/check-baseline.mjs` → Çıkış `0` (`captures: 647`, `pngHashesValid: 647`, `nativeDimensionsValid: 647`, `imageIdentities: 1194`, `dpr: 2`).
+  - `pnpm exec vitest run tests/unit/visual-*.test.ts tests/unit/theme-parity.test.ts` → Çıkış `0` (**9 dosya / 86 test geçti**, 32.84s).
+  - `pnpm exec tsc --noEmit` → Çıkış `0`.
+  - `pnpm run lint` (`eslint . --max-warnings=0`) → Çıkış `0`.
+  - `pnpm run security:source` → Çıkış `0` (`846 dosya, 0 sır, 0 yasak dosya`).
+- **Kapanış belgeleri güncellendi:** [2026-10-22-faz-0c-gorsel-kabulu.md](./2026-10-22-faz-0c-gorsel-kabulu.md), [2026-10-20-birlesik-uygulama-plani.md](../design/2026-10-20-birlesik-uygulama-plani.md), `.superpowers/sdd/2026-10-20-birlesik-uygulama-plani/progress.md` ve bu devir notu. Dondurulmuş referans PNG'leri değiştirilmedi, maske veya tolerans eklenmedi.
+
+### Açık kalanlar (İş 1A kapsamı)
+
+- `src/app/layout.tsx` içinde `--font-artdeco-body` / `--font-artdeco-display` üretici değişkeni ayrımı ve `themes.css` içinde `--font-body` / `--font-display` tasarım takma adı bağlantısı.
+- `src/styles/base.css` çıkarımı ve `src/styles/tokens.css` ile 11 CSS dosyasının tasarım sabitlerinin `src/styles/themes.css` üzerinden kayıpsız bağlanması (çalışma anı `--menu-index`, `--glow-x`, `--glow-y`, `--page-scroll`, `--scene-bg` değişkenleri yerel kalır).
+- `tests/unit/theme-centralization.test.ts` ve `tests/unit/theme-contrast.test.ts` testlerinin yazılması, `tests/unit/theme-parity.test.ts` ve tam Faz 1A kapısının çalıştırılması.
+
+### Sıradaki adım ve bekleyen kararlar
+
+- Kullanıcıya sunulan **İş 1A uygulama planı** için onay bekleniyor. Onay gelmeden uygulama/stil dosyalarına dokunulmaz.
