@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { DEFAULT_LOCALE, type Locale } from "../../i18n/config.ts";
+import { formatDateTime } from "../../i18n/format.ts";
 export const slugSchema = z
   .string()
   .min(1)
@@ -151,10 +153,12 @@ export function displayStatus(row: ContentRecord, now: Date) {
     return "ended";
   return "published";
 }
-export function formatInstant(date: Date | string) {
-  return new Intl.DateTimeFormat("tr-TR", {
+export function formatInstant(
+  date: Date | string,
+  locale: Locale = DEFAULT_LOCALE,
+) {
+  return formatDateTime(date, locale, {
     dateStyle: "long",
     timeStyle: "short",
-    timeZone: "Europe/Istanbul",
-  }).format(new Date(date));
+  });
 }

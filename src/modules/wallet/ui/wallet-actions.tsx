@@ -1,45 +1,50 @@
+import { DEFAULT_LOCALE, type Locale } from "../../../i18n/config.ts";
+import { getTranslator } from "../../../i18n/translate.ts";
 import { GoogleAction } from "./google-action";
 import type { getWalletStatus } from "../application/wallet-service";
 export function WalletActions({
   status,
   cardToken,
+  locale = DEFAULT_LOCALE,
 }: {
   status: Awaited<ReturnType<typeof getWalletStatus>>;
   cardToken: string;
+  locale?: Locale;
 }) {
+  const t = getTranslator(locale);
   return (
     <section aria-labelledby="wallet-heading">
-      <h2 id="wallet-heading">Wallet kartları</h2>
+      <h2 id="wallet-heading">{t("cards.walletHeading")}</h2>
       {status.eligibility !== "active" ? (
         <p>
           {status.eligibility === "revoked"
-            ? "Wallet hakkı iptal edildi."
-            : "Wallet için katılım onayı bekleniyor."}
+            ? t("cards.walletRevokedCopy")
+            : t("cards.walletPendingApprovalCopy")}
         </p>
       ) : (
         <>
           <p>
-            Google Wallet:{" "}
+            {t("cards.googleWalletPrefix")}{" "}
             {status.providers.google.readiness === "unconfigured"
-              ? "Hazır değil; sağlayıcı kimliği bekleniyor."
+              ? t("cards.googleReadinessUnconfigured")
               : status.providers.google.readiness === "published"
-                ? "Yayın erişimi yapılandırıldı."
-                : "Test / yayın onayı bekliyor."}
+                ? t("cards.googleReadinessPublished")
+                : t("cards.googleReadinessTesting")}
           </p>
           <p>
-            Google kart durumu:{" "}
+            {t("cards.googleCardStatusPrefix")}{" "}
             {status.providers.google.status === "active"
-              ? "Aktif"
+              ? t("cards.statusActive")
               : status.providers.google.status === "revoked"
-                ? "İptal"
+                ? t("cards.statusRevoked")
                 : status.providers.google.status === "failed"
-                  ? "Tekrar deneme bekliyor"
-                  : "Sağlayıcıyı bekliyor"}
+                  ? t("cards.googleStatusFailed")
+                  : t("cards.googleStatusPendingProvider")}
           </p>
           {status.providers.google.readiness !== "unconfigured" && (
             <GoogleAction cardToken={cardToken} />
           )}
-          <p>Apple Wallet: Hazır değil; sertifika ve cihaz testi bekleniyor.</p>
+          <p>{t("cards.appleWalletNotReadyCopy")}</p>
         </>
       )}
     </section>

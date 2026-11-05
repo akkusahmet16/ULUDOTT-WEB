@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { formatLocaleShortDate } from "../../../i18n/format.ts";
 import { formRequest } from "../../forms/ui/admin-fetch";
 import { skillLabels } from "../../matching/domain/skills";
 import type { ApprovalQueueData } from "../application/approval-service";
@@ -114,10 +115,7 @@ export function ApprovalQueue({
                 {m.skills
                   .map((s) => `${skillLabels[s.skill]} ${s.level}/5`)
                   .join(" · ")}{" "}
-                · {m.cardStatus} ·{" "}
-                {new Date(m.createdAt).toLocaleDateString("tr-TR", {
-                  timeZone: "Europe/Istanbul",
-                })}
+                · {m.cardStatus} · {formatLocaleShortDate(m.createdAt, "tr")}
               </li>
             ))}
           </ul>

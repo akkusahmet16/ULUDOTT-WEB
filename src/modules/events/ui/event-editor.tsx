@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import { Dialog } from "../../../components/design-system/dialog";
+import { formatDate } from "../../../i18n/format.ts";
 import { ContentView } from "../../publication/ui/content-view";
 import {
   formatInstant,
@@ -382,10 +383,9 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
                 <h3>{item.title}</h3>
                 <p>
                   {item.startsAt
-                    ? new Intl.DateTimeFormat("tr-TR", {
+                    ? formatDate(item.startsAt, "tr", {
                         dateStyle: "medium",
-                        timeZone: "Europe/Istanbul",
-                      }).format(new Date(item.startsAt))
+                      })
                     : "Tarih belirlenmedi"}
                 </p>
                 <button

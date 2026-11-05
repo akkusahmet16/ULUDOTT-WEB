@@ -1,5 +1,6 @@
 "use client";
 import { useState, type FormEvent } from "react";
+import { formatIstanbulDateTimeLocalInput } from "../../../i18n/format.ts";
 import type { FormSettings as Settings } from "../domain/form-settings";
 export const emptySettings: Settings = {
   title: "",
@@ -13,18 +14,7 @@ export const emptySettings: Settings = {
   retentionDays: 180,
 };
 function localTime(s: string | null) {
-  if (!s) return "";
-  return new Intl.DateTimeFormat("sv-SE", {
-    timeZone: "Europe/Istanbul",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  })
-    .format(new Date(s))
-    .replace(" ", "T");
+  return formatIstanbulDateTimeLocalInput(s);
 }
 export function FormSettings({
   initial,

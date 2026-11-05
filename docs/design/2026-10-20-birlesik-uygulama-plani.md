@@ -204,13 +204,17 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **Dosyalar:** src/app genel/özel/admin UI, src/components, modules UI ve community sunum dosyaları; yeni tests/unit/{no-hardcoded-text,i18n-unused}.test.ts, tests/unit/i18n-guard-fixtures/* ve docs/operations/i18n-content-policy.md.
 
-- [ ] Önce ortak metinler; ardından genel sayfalar; sonra formlar/özel akışlar; en son admin olarak küçük dilimler halinde taşı. Her dilimde mevcut TR metin ve görünüm korunur.
-- [ ] Panelden gelen form alanı/başlığı, kişi alıntısı, oyun adı/açıklaması, arşiv metni ve alt metinler CMS verisidir; sözlüğe taşınarak panel düzenlemesi devre dışı bırakılmaz. Çevirisi yoksa özgün metin korunur, uygun içerik lang=tr işaretlenir. “Tüm içerik İngilizce” iddiası yazılmaz.
-- [ ] Backend hata mesajlarını doğrudan basan tüketicileri envanterle. Sabit statü/izin/doğrulama mesajlarını UI adaptöründe bilinen hata→anahtar eşlemesi ve güvenli yerelleştirilmiş fallback ile sun; alan yollarını koru. API yanıtı/DB enum değeri çevrilmez. Kararlı ek hata kodu zorunluysa kapsam istisnası + sözleşme testiyle eklenir.
-- [ ] AST bekçisi JsxText/attribute yanında UI string değişkeni, object/array değeri, ternary, template expression ve toast/error/status akışını kapsar. Route label'ları, dekoratif boş alt, teknik ID/URL, marka/ad ve doğrulanmış CMS verisi için dar, gerekçeli istisnalar vardır.
-- [ ] Bekçinin kendisi pozitif/negatif fixture ile test edilir; yalnız dizin hariç tutarak sıfır ihlal üretme. Dinamik sözlük anahtarlarını unused testinde referans manifestiyle açıkla.
-- [ ] Tarih/etiket/Intl çağrılarını merkezileştir. EN uzun metin, Türkçe glif ve 320px reflow ile her yüzeyi test et.
-- [ ] Kabul: public sözlük eşliği, hardcode bekçisi, metadata, TR baseline ve iki dil işlev testleri yeşil; CMS kaydet→genel sayfada görünür testi yeşil; tam kapı yeşil.
+- [x] Önce ortak metinler; ardından genel sayfalar; sonra formlar/özel akışlar; en son admin olarak küçük dilimler halinde taşı. Her dilimde mevcut TR metin ve görünüm korunur.
+- [x] Panelden gelen form alanı/başlığı, kişi alıntısı, oyun adı/açıklaması, arşiv metni ve alt metinler CMS verisidir; sözlüğe taşınarak panel düzenlemesi devre dışı bırakılmaz. Çevirisi yoksa özgün metin korunur, uygun içerik lang=tr işaretlenir. “Tüm içerik İngilizce” iddiası yazılmaz.
+- [x] Backend hata mesajlarını doğrudan basan tüketicileri envanterle. Sabit statü/izin/doğrulama mesajlarını UI adaptöründe bilinen hata→anahtar eşlemesi ve güvenli yerelleştirilmiş fallback ile sun; alan yollarını koru. API yanıtı/DB enum değeri çevrilmez. Kararlı ek hata kodu zorunluysa kapsam istisnası + sözleşme testiyle eklenir.
+- [x] AST bekçisi JsxText/attribute yanında UI string değişkeni, object/array değeri, ternary, template expression ve toast/error/status akışını kapsar. Route label'ları, dekoratif boş alt, teknik ID/URL, marka/ad ve doğrulanmış CMS verisi için dar, gerekçeli istisnalar vardır.
+- [x] Bekçinin kendisi pozitif/negatif fixture ile test edilir; yalnız dizin hariç tutarak sıfır ihlal üretme. Dinamik sözlük anahtarlarını unused testinde referans manifestiyle açıkla.
+- [x] Tarih/etiket/Intl çağrılarını merkezileştir. EN uzun metin, Türkçe glif ve 320px reflow ile her yüzeyi test et.
+- [x] Kabul: public sözlük eşliği, hardcode bekçisi, metadata, TR baseline ve iki dil işlev testleri yeşil; CMS kaydet→genel sayfada görünür testi yeşil; tam kapı yeşil.
+
+**5 Kasım 3B kabul kaydı:** `docs/operations/i18n-content-policy.md` ile sözlük (statik krom) ↔ CMS/panel verisi ve sunucu hata adaptasyonu sınırları belgelendi. 4 dilim (Dilim 1: ortak bileşenler; Dilim 2: 8 genel sayfa + community/events/games/publication/links UI; Dilim 3: formlar, makbuz, özel kart/cüzdan/takım/yayın onayı + `src/i18n/error-adapter.ts` ile `adaptUiErrorMessage`/`adaptFieldErrors`; Dilim 4: admin kabuğu `AdminWorkspace`/`AdminNavigation` ve admin alt modüllerindeki tarih biçimleyiciler) eksiksiz taşındı. `src/i18n/dictionaries/{tr,en,client-tr,admin-tr}.ts` 396 yaprak anahtarlık %100 TR/EN ve `{placeholder}` eşliğiyle genişletildi; `src/i18n/format.ts` içine `formatLocaleTimestamp`, `formatLocaleDate` ve `formatLocaleDateRange` eklendi; `src/modules/publication/domain.ts` içindeki `degreeLabels` sözlük tabanlı `getDegreeLabel(degree, locale)` yardımcısına bağlandı. AST tabanlı `tests/unit/no-hardcoded-text.test.ts` (3/3; `tests/unit/i18n-guard-fixtures/{compliant-component,violating-component}.tsx` pozitif/negatif fixture doğrulamalı) ve `tests/unit/i18n-unused.test.ts` (2/2; 396 yaprak anahtar + dinamik `DYNAMICALLY_CONSUMED_KEYS` manifesti + `adminTrDictionary` kullanım denetimi) eklendi. Üretim derlemesinde `.next/static/chunks/*.js` toplamı 39 chunk / 1.531,68 KB ham / 455,39 KB gzip (`serverLeakCount: 0`) olarak doğrulandı. `vitest` (14 dosya / 57 test), `tsc --noEmit`, `eslint`, `next build` (56 rota), `security:source` (885 dosya / 0 sır) ve `check-baseline.mjs` (647/647 PNG) yeşil.
+
+**Faz 3 çıkışı:** 3A ve 3B tamam; [ilerleme kaydı](../operations/sunum-katmani-ilerleme.md) kanıtlı.
 
 ## 8. Faz 4 — Ortak sunum bütünlüğü
 
@@ -291,4 +295,4 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **Geri dönüş:** Her fazdan önce ilgili dosya diff'i ve son çalışan commit kaydedilir. Başarısız değişiklik yalnız kendi commit/dosya kümesiyle geri alınır; kullanıcı değişikliklerine reset/clean uygulanmaz. DB şeması bu işte değişmediği için şema rollback gerekmez; zorunlu ek migration ayrı tasarım ve geri yükleme planına bağlıdır.
 
-**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** Faz 0 (0A, 0B ve 0C), Faz 1 (1A ve 1B), Faz 2 (2A, 2B ve 2C) ve Faz 3 / İş 3A kabul edildi; sıradaki iş Faz 3 / İş 3B'dir.
+**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** Faz 0 (0A, 0B ve 0C), Faz 1 (1A ve 1B), Faz 2 (2A, 2B ve 2C) ve Faz 3 (3A ve 3B) kabul edildi; sıradaki iş Faz 4 / İş 4A'dır.

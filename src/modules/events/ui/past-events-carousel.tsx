@@ -6,10 +6,12 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useTranslator } from "../../../i18n/client.tsx";
 import styles from "./past-events-carousel.module.css";
 
 export type PastEventSlide = { id: string; title: string; content: ReactNode };
 export function PastEventsCarousel({ slides }: { slides: PastEventSlide[] }) {
+  const t = useTranslator();
   const track = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -70,8 +72,8 @@ export function PastEventsCarousel({ slides }: { slides: PastEventSlide[] }) {
     <div
       className={styles.carousel}
       role="region"
-      aria-label="Geçmiş etkinlikler galerisi"
-      aria-roledescription="slayt gösterisi"
+      aria-label={t("events.carouselRegionAria")}
+      aria-roledescription={t("events.carouselRoleDesc")}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocusCapture={(event) => {
@@ -83,7 +85,7 @@ export function PastEventsCarousel({ slides }: { slides: PastEventSlide[] }) {
         ref={track}
         className={styles.track}
         role="group"
-        aria-label="Etkinlikleri kaydır"
+        aria-label={t("events.carouselTrackAria")}
         tabIndex={count > 1 ? 0 : undefined}
         onKeyDown={(event) => {
           if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
@@ -110,8 +112,12 @@ export function PastEventsCarousel({ slides }: { slides: PastEventSlide[] }) {
             key={slide.id}
             className={styles.slide}
             role="group"
-            aria-roledescription="slayt"
-            aria-label={`${index + 1} / ${count}: ${slide.title}`}
+            aria-roledescription={t("events.slideRoleDesc")}
+            aria-label={t("events.slideAriaLabel", {
+              current: index + 1,
+              total: count,
+              title: slide.title,
+            })}
             aria-hidden={index !== active}
             inert={index !== active}
           >
@@ -124,7 +130,7 @@ export function PastEventsCarousel({ slides }: { slides: PastEventSlide[] }) {
           <div className={styles.navigation}>
             <button
               type="button"
-              aria-label="Önceki etkinlik"
+              aria-label={t("events.prevEventAria")}
               onClick={() => goTo(active - 1)}
             >
               ←
@@ -134,7 +140,7 @@ export function PastEventsCarousel({ slides }: { slides: PastEventSlide[] }) {
             </p>
             <button
               type="button"
-              aria-label="Sonraki etkinlik"
+              aria-label={t("events.nextEventAria")}
               onClick={() => goTo(active + 1)}
             >
               →
@@ -144,12 +150,16 @@ export function PastEventsCarousel({ slides }: { slides: PastEventSlide[] }) {
             type="button"
             data-autoplay-control
             aria-label={
-              paused ? "Otomatik geçişi başlat" : "Otomatik geçişi duraklat"
+              paused
+                ? t("events.autoplayResume")
+                : t("events.autoplayPause")
             }
             onClick={() => setPaused(!paused)}
           >
             <span aria-hidden="true">{paused ? "▶" : "Ⅱ"}</span>{" "}
-            {paused ? "Otomatik geçişi başlat" : "Otomatik geçişi duraklat"}
+            {paused
+              ? t("events.autoplayResume")
+              : t("events.autoplayPause")}
           </button>
         </div>
       )}

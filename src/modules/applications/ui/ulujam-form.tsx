@@ -2,6 +2,8 @@
 import { BotChallenge, type BotConfig } from "../../forms/ui/bot-challenge";
 import { useState, useRef } from "react";
 import { z } from "zod";
+import { useLocale, useTranslator } from "../../../i18n/client.tsx";
+import { adaptUiErrorMessage } from "../../../i18n/error-adapter.ts";
 import { FormFields } from "../../forms/ui/form-fields";
 import { publicRequest } from "../../forms/ui/public-form";
 import type { ValidFormDefinition } from "../../forms/domain/form-version";
@@ -32,6 +34,8 @@ export function UlujamForm({
   publicForm?: { slug: string; versionId: string };
   teamOptions?: { items: TeamOption[]; nextCursor: string | null };
 }) {
+  const locale = useLocale();
+  const t = useTranslator();
   const [answers, setAnswers] = useState<Answers>({ [f.mode]: "solo" }),
     [password, setPassword] = useState(""),
     [teamId, setTeamId] = useState(""),
@@ -76,12 +80,12 @@ export function UlujamForm({
           if (field.required) throw Error("required");
         } else parseAnswer(field, value);
       } catch {
-        found[field.id] = "Bu alanı kontrol edin.";
+        found[field.id] = t("errors.checkField");
       }
     }
     if (Object.keys(found).length) {
       setErrors(found);
-      setMessage("İşaretli alanları kontrol edin.");
+      setMessage(t("errors.checkMarkedFields"));
       return false;
     }
     const mode = answers[f.mode],
@@ -114,9 +118,7 @@ export function UlujamForm({
     try {
       validateUlujamInput(raw);
       setErrors({});
-      setMessage(
-        publicForm ? "" : "Önizleme doğrulandı; başvuru kaydedilmedi.",
-      );
+      setMessage(publicForm ? "" : t("errors.previewValidatedNoSave"));
       return true;
     } catch (e) {
       if (e instanceof z.ZodError)
@@ -138,13 +140,11 @@ export function UlujamForm({
                         : f.skillDescription;
           found[target] =
             prop === "expectedSize"
-              ? "Toplam kişi sayısı tamsayı olmalıdır."
-              : "Bu alanı kontrol edin.";
+              ? t("errors.expectedSizeInt")
+              : t("errors.checkField");
         }
       setErrors(found);
-      setMessage(
-        "Telefon, beceri seviyeleri, açıklama ve takım alanlarını kontrol edin.",
-      );
+      setMessage(t("errors.ulujamValidationSummary"));
       return false;
     }
   }
@@ -169,8 +169,13 @@ export function UlujamForm({
     } catch (e) {
       setMessage(
         e instanceof Error
-          ? e.message
-          : "Gönderim tamamlanamadı. Aynı yanıtla tekrar deneyin.",
+          ? adaptUiErrorMessage(
+              e.message,
+              t,
+              "errors.submissionFailedRetry",
+              locale,
+            )
+          : t("errors.submissionFailedRetry"),
       );
     } finally {
       setBotToken("");
@@ -190,41 +195,52 @@ export function UlujamForm({
         { cache: "no-store" },
       );
       const data = await response.json();
-      if (!response.ok) throw Error("Takımlar yüklenemedi.");
+      if (!response.ok) throw Error(t("errors.teamsLoadFailed"));
       setOptions([
         ...options,
         ...data.items.filter(
-          (t: TeamOption) => !options.some((o) => o.id === t.id),
+          (tItem: TeamOption) => !options.some((o) => o.id === tItem.id),
         ),
       ]);
       setCursor(data.nextCursor);
     } catch {
-      setMessage("Takımlar yüklenemedi.");
+      setMessage(t("errors.teamsLoadFailed"));
     } finally {
       setBusy(false);
     }
   }
   if (receipt)
     return (
-      <section aria-label="Başvuru makbuzu">
-        <h2>Başvuru alındı</h2>
-        <p>{receipt.message}</p>
+      <section aria-label={t("forms.receiptSectionAria")}>
+        <h2>{t("forms.receiptHeading")}</h2>
+        <p>
+          {adaptUiErrorMessage(
+            receipt.message,
+            t,
+            "forms.receiptHeading",
+            locale,
+          )}
+        </p>
         <a href={"/makbuz#token=" + receipt.receiptToken}>
-          Makbuzu ve durumu görüntüle
+          {t("forms.viewReceiptAndStatusLink")}
         </a>
         {receipt.card && (
           <p>
-            Kart bağlantınızı güvenli bir yerde saklayın.{" "}
-            <a href={"/kart/" + receipt.card.token}>Bireysel kartımı aç</a>
+            {t("forms.cardStorageNotice")}{" "}
+            <a href={"/kart/" + receipt.card.token}>
+              {t("forms.openPersonalCardLink")}
+            </a>
           </p>
         )}
         {receipt.team && (
           <>
-            <p>Takım bağlantınızı güvenli bir yerde saklayın.</p>
-            <a href={"/takim/" + receipt.team.token}>Takım sayfasını aç</a>
+            <p>{t("forms.teamStorageNotice")}</p>
+            <a href={"/takim/" + receipt.team.token}>
+              {t("forms.openTeamPageLink")}
+            </a>
             {receipt.team.password && (
               <p>
-                Yeni takım parolası:{" "}
+                {t("forms.newTeamPasswordPrefix")}{" "}
                 <code data-testid="new-team-password">
                   {receipt.team.password}
                 </code>
@@ -237,16 +253,13 @@ export function UlujamForm({
   return (
     <section
       aria-label={
-        publicForm ? "UluJam başvuru formu" : "UluJam özel form önizlemesi"
+        publicForm ? t("forms.ulujamFormAria") : t("forms.ulujamPreviewAria")
       }
     >
       {!publicForm && (
         <>
-          <p>Bu önizleme başvuru kaydetmez.</p>
-          <p>
-            Takım parolası yalnız geçici olarak bu ekranda tutulur; takım
-            erişimi burada doğrulanmaz.
-          </p>
+          <p>{t("forms.previewDoesNotSaveNotice")}</p>
+          <p>{t("forms.previewPasswordNotice")}</p>
         </>
       )}
       <form
@@ -259,7 +272,7 @@ export function UlujamForm({
         }}
       >
         <fieldset disabled={busy}>
-          <legend>Başvuru bilgileri</legend>
+          <legend>{t("forms.applicationInfoLegend")}</legend>
           <FormFields
             definition={rendered}
             answers={answers}
@@ -271,7 +284,9 @@ export function UlujamForm({
             <>
               {publicForm && (
                 <div className="field">
-                  <label htmlFor="ulujam-team">Katılacağınız takım *</label>
+                  <label htmlFor="ulujam-team">
+                    {t("forms.joinTeamLabel")}
+                  </label>
                   <select
                     id="ulujam-team"
                     value={teamId}
@@ -288,19 +303,19 @@ export function UlujamForm({
                       key.current = null;
                     }}
                   >
-                    <option value="">Seçin</option>
-                    {options.map((t) => (
-                      <option key={t.id} value={t.id}>
-                        {t.name}
+                    <option value="">{t("common.selectOption")}</option>
+                    {options.map((tItem) => (
+                      <option key={tItem.id} value={tItem.id}>
+                        {tItem.name}
                       </option>
                     ))}
                   </select>
                   {!options.length && (
-                    <p>Katılabileceğiniz bir takım henüz yok.</p>
+                    <p>{t("forms.noAvailableTeamsNotice")}</p>
                   )}
                   {cursor && (
                     <button type="button" onClick={() => void more()}>
-                      Daha fazla takım yükle
+                      {t("forms.loadMoreTeamsButton")}
                     </button>
                   )}
                   {errors[f.teamId] && (
@@ -309,7 +324,9 @@ export function UlujamForm({
                 </div>
               )}
               <div className="field">
-                <label htmlFor="ulujam-password">Takım parolası *</label>
+                <label htmlFor="ulujam-password">
+                  {t("forms.teamPasswordRequiredLabel")}
+                </label>
                 <input
                   id="ulujam-password"
                   type="password"
@@ -346,10 +363,10 @@ export function UlujamForm({
             disabled={!!publicForm && botConfig?.required && !botToken}
           >
             {busy
-              ? "Gönderiliyor…"
+              ? t("forms.submittingButton")
               : publicForm
-                ? "Başvuruyu gönder"
-                : "Alanları kontrol et"}
+                ? t("forms.submitApplicationButton")
+                : t("forms.checkFieldsButton")}
           </button>
         </fieldset>
         <p role="status" aria-live="polite">

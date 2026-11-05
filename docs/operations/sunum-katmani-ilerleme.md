@@ -475,4 +475,39 @@ Kullanıcı kararlarından sonra: (1) Chromium 1243 kurulumu (ağ gerekir) veya 
 
 ### Sıradaki adım ve bekleyen kararlar
 
-- **Sıradaki adım:** Faz 3 / İş 3B (Ekran dönüşümü ve doğrulama bekçileri) için kullanıcı onayı bekleniyor. Onay gelmeden İş 3B başlatılmaz.
+- **Sıradaki adım:** Faz 3 / İş 3B (Ekran dönüşümü ve doğrulama bekçileri) için kullanıcı onayı alındı ve İş 3B tamamlandı (aşağıdaki kapanış kaydına bakınız).
+
+---
+
+## 5 Kasım 2026 — Faz 3 / İş 3B kapanışı ve Faz 3 devir notu
+
+### Tamamlananlar (Faz 3 / İş 3B: Ekran dönüşümü ve doğrulama bekçileri)
+
+- **İçerik sınırı ve sunucu hata adaptasyonu politikası (`docs/operations/i18n-content-policy.md`, `src/i18n/error-adapter.ts`):**
+  - `docs/operations/i18n-content-policy.md`: Sözlüğe taşınan sabit arayüz kromu (`tr.ts`, `en.ts`, `client-tr.ts`, `admin-tr.ts`), veritabanı/panel (CMS) kaynaklı tek dilli içerik alanları (`lang="tr"` sarmalaması ve panel düzenlemesinin korunması) ve sunucu/API hata adaptasyonu ilkeleri kayıt altına alındı; “tüm içerik İngilizce” iddiası kesinlikle yazılmadı.
+  - `src/i18n/error-adapter.ts`: `KNOWN_UI_ERROR_KEYS`, `adaptUiErrorMessage(rawMessage, t, fallbackKey, locale)` ve `adaptFieldErrors(fieldErrors, t, locale)` tanımlandı. API yanıt gövdeleri, veritabanı enum değerleri ve `fieldErrors` alan yolları değiştirilmeden bilinen sabit doğrulama/durum mesajları aktif dile çevrildi ve bilinmeyen sunucu mesajlarında güvenli geri dönüş korundu.
+- **4 dilimli ekran dönüşümü ve merkezi tarih biçimlendirme:**
+  - **Dilim 1 (Ortak bileşenler):** `src/components/layout/{coffee-talk-card,story-panels,photo-gallery,scene-video,supplied-poster}.tsx` ve `src/components/design-system/dialog.tsx` sözlük ve `formatLocaleDate` akışına bağlandı.
+  - **Dilim 2 (Genel sayfalar ve modül sunumları):** `src/app/page.tsx`, `src/app/(public)/{hakkimizda,ulujam,etkinlikler,oyunlar,iletisim}/page.tsx`, `src/app/(public)/etkinlikler/[slug]/page.tsx`, `src/app/(public)/oyunlar/[slug]/page.tsx`, `src/modules/community/{people-story,pair-match,star-catch}.tsx`, `src/modules/events/ui/{countdown,ulujam-coming-soon,ulujam-archive,event-card,past-events-carousel}.tsx`, `src/modules/games/ui/{degree-games,public-game,result-card,site-game-card}.tsx`, `src/modules/publication/ui/content-view.tsx`, `src/modules/publication/domain.ts` (`getDegreeLabel`) ve `src/modules/links/ui/link-hub.tsx` taşındı.
+  - **Dilim 3 (Formlar ve özel token akışları):** `src/app/(public)/basvuru/[formSlug]/page.tsx`, `src/app/(public)/makbuz/page.tsx`, `src/app/(private)/{kart,takim}/[token]/page.tsx`, `src/modules/forms/ui/{bot-challenge,form-fields,public-form,receipt-view}.tsx`, `src/modules/applications/ui/ulujam-form.tsx`, `src/modules/cards/ui/{web-card,pending-card}.tsx`, `src/modules/wallet/ui/{wallet-actions,google-action}.tsx`, `src/modules/teams/ui/team-page.tsx` ve `src/modules/games/ui/credit-consent.tsx` taşındı.
+  - **Dilim 4 (Admin kabuğu ve merkezi tarih biçimlendirme):** `src/modules/admin/ui/{admin-workspace,admin-navigation}.tsx` `adminTrDictionary` (`AdminDictionary`) üzerinden bağlandı; `src/modules/events/ui/event-editor.tsx`, `src/modules/forms/ui/{form-settings,submission-detail,submission-list}.tsx`, `src/modules/site-settings/ui/ulujam-editor.tsx` ve `src/modules/teams/ui/approval-queue.tsx` içindeki doğrudan `toLocaleString("tr-TR")` çağrıları `formatLocaleTimestamp(..., "tr")` ile merkezileştirildi.
+- **AST bekçisi ve ölü anahtar bekçisi (`tests/unit/no-hardcoded-text.test.ts`, `tests/unit/i18n-unused.test.ts`):**
+  - `tests/unit/no-hardcoded-text.test.ts` (3/3): TypeScript AST taramasıyla `JsxText`, kullanıcıya görünür JSX öznitelikleri (`aria-label`, `placeholder`, `title`, `alt`), yerel UI sabit haritaları/dizileri, koşullu (ternary) ve şablon (template literal) ifadeler, `setMessage`/`setError`/`throw Error` çağrıları ve doğrudan `toLocale*String` çağrıları denetlendi; `tests/unit/i18n-guard-fixtures/{compliant-component,violating-component}.tsx` üzerinde pozitif (`0` ihlal) ve negatif (`≥8` ihlal) öz-test kanıtlandı; 40+ genel/özel UI TSX dosyasında sıfır sabit metin ihlali doğrulandı.
+  - `tests/unit/i18n-unused.test.ts` (2/2): `PUBLIC_DICTIONARY_KEYS` içindeki 396 yaprak anahtarın tamamının `src/` içinde referanslandığı (dinamik erişilen `forms.type*` ve `KNOWN_UI_ERROR_KEYS` açık manifestle belgelenerek) ve `adminTrDictionary` anahtarlarının `AdminWorkspace`/`AdminNavigation` içinde kullanıldığı doğrulandı.
+- **İstemci paket boyutu ve doğrulama kapıları:**
+  - Üretim derlemesi (`.next/static/chunks/*.js`): **39 JS chunk**, toplam **1.531,68 KB ham (1.568.440 bayt)** / **455,39 KB gzip (466.320 bayt)**; sunucu/admin sözlük sızıntısı **`0`** (`serverLeakCount: 0`).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" ./node_modules/.bin/vitest run tests/unit/theme-*.test.ts tests/unit/i18n-*.test.ts tests/unit/no-hardcoded-text.test.ts tests/unit/routes-integrity.test.ts tests/unit/seo.test.ts tests/unit/icons.test.ts tests/unit/public-event-presentation.test.ts tests/security/xss.test.ts` → Çıkış `0` (**14 dosya / 57 test geçti**, 6.32s).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" ./node_modules/.bin/tsc --noEmit` → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run lint` (`eslint . --max-warnings=0`) → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run build` → Çıkış `0` (56/56 rota derlendi; `next-env.d.ts` orijinal hâline geri yüklenip `tsc --noEmit` tekrar `0` ile doğrulandı).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run security:source` → Çıkış `0` (`{"files":885,"secretHits":0,"forbiddenFiles":0}`).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" node .local/phase-0c/check-baseline.mjs` → Çıkış `0` (`captures: 647`, `pngHashesValid: 647`, `nativeDimensionsValid: 647`, `imageIdentities: 1194`).
+
+### Açık kalanlar
+
+- Faz 3 (`İş 3A` ve `İş 3B`) kapsamında açık madde kalmamıştır.
+- Faz 4 (`İş 4A`: Mevcut kompozisyon ve etkileşimleri koru) henüz başlamamıştır.
+
+### Sıradaki adım ve bekleyen kararlar
+
+- **Sıradaki adım:** Faz 4 / İş 4A (Mevcut kompozisyon ve etkileşimleri koru) için kullanıcı onayı bekleniyor. Onay gelmeden İş 4A başlatılmaz.

@@ -1,16 +1,25 @@
+import { DEFAULT_LOCALE, type Locale } from "../../../i18n/config.ts";
+import { getTranslator } from "../../../i18n/translate.ts";
 import type { CardStatus } from "../domain/card-eligibility";
-export function PendingCard({ status }: { status: CardStatus }) {
+export function PendingCard({
+  status,
+  locale = DEFAULT_LOCALE,
+}: {
+  status: CardStatus;
+  locale?: Locale;
+}) {
+  const t = getTranslator(locale);
   return (
-    <section aria-label="Kart uygunluğu">
+    <section aria-label={t("cards.eligibilityAria")}>
       <h2>
-        {status === "pending" ? "Onay bekleniyor" : "Katılım hakkı kapalı"}
+        {status === "pending"
+          ? t("cards.pendingHeading")
+          : t("cards.closedHeading")}
       </h2>
       <p>
-        {status === "pending"
-          ? "Başvurunuz alındı. Bireysel katılımınız veya takım kadronuz onaylandığında giriş QR’ınız burada açılır."
-          : "Katılımınızın veya etkinliğin durumu nedeniyle bu kart kullanılamaz."}
+        {status === "pending" ? t("cards.pendingCopy") : t("cards.closedCopy")}
       </p>
-      <p>Bu durumda giriş QR’ı ve Wallet hakkı kullanılamaz.</p>
+      <p>{t("cards.qrAndWalletUnavailableCopy")}</p>
     </section>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 import { useRef, type ReactNode } from "react";
+import { useTranslator } from "../../i18n/client.tsx";
 import { Button } from "./button";
 export function Dialog({
   title,
@@ -12,6 +13,7 @@ export function Dialog({
   children: ReactNode;
   onOpen?: () => void;
 }) {
+  const t = useTranslator();
   const ref = useRef<HTMLDialogElement>(null);
   return (
     <>
@@ -20,7 +22,7 @@ export function Dialog({
         <h2>{title}</h2>
         {children}
         <form method="dialog">
-          <Button>Kapat</Button>
+          <Button>{t("common.closeDialog")}</Button>
         </form>
       </dialog>
     </>

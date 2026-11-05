@@ -7,6 +7,8 @@ import { getPublicForm } from "../../../../modules/forms/application/public-form
 import { UlujamForm } from "../../../../modules/applications/ui/ulujam-form";
 import { getUlujamTeams } from "../../../../modules/applications/application/ulujam-teams";
 import { PublicForm } from "../../../../modules/forms/ui/public-form";
+import { getLocale } from "../../../../i18n/server.ts";
+import { getTranslator } from "../../../../i18n/translate.ts";
 import { buildMetadata } from "../../../../seo/build-metadata.ts";
 export const dynamic = "force-dynamic";
 export const metadata = buildMetadata({ routeId: "application" });
@@ -15,7 +17,8 @@ export default async function Page({
 }: {
   params: Promise<{ formSlug: string }>;
 }) {
-  const { formSlug } = await params;
+  const [{ formSlug }, locale] = await Promise.all([params, getLocale()]);
+  const t = getTranslator(locale);
   const f = await getPublicForm(formSlug);
   const botConfig = {
     ...botConfiguration(),
@@ -28,7 +31,9 @@ export default async function Page({
     <PublicShell>
       <section className="section application-page">
         <p className="eyebrow">
-          {f.eventKind === "ulujam" ? "UluJam · Başvuru" : "Uludott · Başvuru"}
+          {f.eventKind === "ulujam"
+            ? t("forms.ulujamEyebrow")
+            : t("forms.generalEyebrow")}
         </p>
         <h1>{selected ? presentation.application.title : f.title}</h1>
         {selected && (

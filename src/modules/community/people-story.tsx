@@ -1,21 +1,26 @@
 import { PhotoGallery } from "../../components/layout/photo-gallery";
 import { SceneVideo } from "../../components/layout/scene-video";
+import { DEFAULT_LOCALE, type Locale } from "../../i18n/config.ts";
+import { getTranslator } from "../../i18n/translate.ts";
 import { peopleChapters, type Chapter } from "./people-reference-data";
 export function PeopleStory({
   chapters = peopleChapters,
+  locale = DEFAULT_LOCALE,
 }: {
   chapters?: Chapter[];
+  locale?: Locale;
 }) {
+  const t = getTranslator(locale);
   return (
     <section
       id="yonetim-kurulu"
       className="people-story"
-      aria-label="Yönetim kurulu"
+      aria-label={t("about.boardAria")}
     >
       <div className="people-intro">
-        <p className="eyebrow">Topluluğun insanları</p>
-        <h2>Yönetim kurulu.</h2>
-        <p className="lede">Birlikte üreten topluluğun arkasındaki ekip.</p>
+        <p className="eyebrow">{t("about.boardEyebrow")}</p>
+        <h2>{t("about.boardHeading")}</h2>
+        <p className="lede">{t("about.boardLede")}</p>
       </div>
       {chapters.map((chapter, index) => (
         <section
@@ -31,13 +36,15 @@ export function PeopleStory({
                 <SceneVideo
                   src={chapter.video}
                   poster={chapter.poster}
-                  label={`${chapter.title} açılış videosu`}
+                  label={t("about.openingVideoAria", {
+                    title: chapter.title,
+                  })}
                   reference={chapter.videoReference}
                 />
                 <div className="people-copy">
                   <p className="eyebrow">{chapter.role}</p>
                   <h2>{chapter.title}</h2>
-                  <p>Uludott Yönetim Kurulu</p>
+                  <p>{t("about.boardSubtleCaption")}</p>
                 </div>
               </div>
             </div>

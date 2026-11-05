@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import { useLocale, useTranslator } from "../../../i18n/client.tsx";
+import { adaptUiErrorMessage } from "../../../i18n/error-adapter.ts";
 import { publicRequest } from "../../forms/ui/public-form";
 import type { getPublicationConsent } from "../application/credit-consent-service";
 export function CreditConsent({
@@ -9,6 +11,8 @@ export function CreditConsent({
   token: string;
   initial: Awaited<ReturnType<typeof getPublicationConsent>>;
 }) {
+  const locale = useLocale();
+  const t = useTranslator();
   const [name, setName] = useState(initial.publicationName),
     [checked, setChecked] = useState(initial.consented),
     [approved, setApproved] = useState(initial.consented),
@@ -29,25 +33,25 @@ export function CreditConsent({
       setChecked(r.consented);
       setMessage(
         consent
-          ? "Yayın adınız için onay kaydedildi. Oyun yöneticisi artık yayını değerlendirebilir."
-          : "Yayın onayınız geri çekildi. Oyun tam yayından kaldırıldı.",
+          ? t("consent.approvedSuccessMessage")
+          : t("consent.withdrawnSuccessMessage"),
       );
     } catch (e) {
-      setMessage(e instanceof Error ? e.message : "Onay kaydedilemedi");
+      setMessage(
+        e instanceof Error
+          ? adaptUiErrorMessage(e.message, t, "consent.saveErrorFallback", locale)
+          : t("consent.saveErrorFallback"),
+      );
     } finally {
       setBusy(false);
     }
   }
   return (
-    <section aria-label="Yapımcı yayın onayı">
-      <h1>Yayın adı tercihiniz</h1>
+    <section aria-label={t("consent.sectionAria")}>
+      <h1>{t("consent.heading")}</h1>
       <h2>{initial.title}</h2>
       <p>{initial.event}</p>
-      <p>
-        Başvuru adınız kendiliğinden yayımlanmaz. Burada seçtiğiniz ad, yalnız
-        bu oyunun genel sonuç sayfasında görünebilir. Bu özel bağlantıyı
-        saklayarak onayınızı geri çekebilirsiniz.
-      </p>
+      <p>{t("consent.privacyCopy")}</p>
       {initial.canApprove ? (
         <form
           onSubmit={(e) => {
@@ -57,7 +61,7 @@ export function CreditConsent({
         >
           <fieldset disabled={busy}>
             <label className="field">
-              Yayımlanacak yapımcı adı
+              {t("consent.creatorNameLabel")}
               <input
                 value={name}
                 maxLength={160}
@@ -70,24 +74,21 @@ export function CreditConsent({
                 checked={checked}
                 onChange={(e) => setChecked(e.target.checked)}
               />{" "}
-              Bu adın bu oyunda herkese açık yayımlanmasına izin veriyorum.
+              {t("consent.allowPublicCheckbox")}
             </label>
             <p>
               <button disabled={busy || !checked || !name.trim()}>
-                Yayın adımı onayla
+                {t("consent.approveButton")}
               </button>
             </p>
           </fieldset>
         </form>
       ) : (
-        <p>
-          Yeni yayın onayı kapalıdır. Mevcut onayınızı aşağıdan geri
-          çekebilirsiniz.
-        </p>
+        <p>{t("consent.closedNewConsentCopy")}</p>
       )}
       {approved && (
         <button disabled={busy} onClick={() => void submit(false)}>
-          Yayın onayımı geri çek
+          {t("consent.withdrawButton")}
         </button>
       )}
       <p role="status">{message}</p>

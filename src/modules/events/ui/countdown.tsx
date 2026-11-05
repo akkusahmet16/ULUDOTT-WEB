@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useTranslator } from "../../../i18n/client.tsx";
 export type CountdownState =
   | { kind: "coming_soon" }
   | { kind: "counting"; seconds: number }
@@ -22,6 +23,7 @@ export function Countdown({
   startAt: string | null;
   initialNow: string;
 }) {
+  const t = useTranslator();
   const [now, setNow] = useState(() => new Date(initialNow));
   useEffect(() => {
     if (!startAt) return;
@@ -30,14 +32,19 @@ export function Countdown({
   }, [startAt]);
   const state = countdownState(startAt ? new Date(startAt) : null, now);
   if (state.kind === "coming_soon")
-    return <p className="ulujam-soon">Yakında</p>;
-  if (state.kind === "started") return <p>Etkinlik başladı.</p>;
+    return <p className="ulujam-soon">{t("ulujam.soonStatus")}</p>;
+  if (state.kind === "started") return <p>{t("ulujam.startedStatus")}</p>;
   const days = Math.floor(state.seconds / 86400),
     hours = Math.floor((state.seconds % 86400) / 3600),
     minutes = Math.floor((state.seconds % 3600) / 60);
   return (
-    <p aria-label="Etkinliğe kalan süre">
-      {days} gün · {hours} saat · {minutes} dakika · {state.seconds % 60} saniye
+    <p aria-label={t("ulujam.remainingTimeAria")}>
+      {t("ulujam.remainingTimeFormat", {
+        days,
+        hours,
+        minutes,
+        seconds: state.seconds % 60,
+      })}
     </p>
   );
 }

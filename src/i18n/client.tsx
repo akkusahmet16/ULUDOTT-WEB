@@ -17,6 +17,7 @@ import {
   type Locale,
 } from "./config.ts";
 import type { PublicDictionary } from "./dictionaries/tr.ts";
+import { clientTrSlice } from "./dictionaries/client-tr.ts";
 import type { DictionaryKey } from "./keys.ts";
 import type { TranslateFn, TranslationParams } from "./translate.ts";
 
@@ -129,6 +130,8 @@ export function I18nProvider({
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 
+const defaultClientTranslator = createSliceTranslator(clientTrSlice);
+
 export function useLocale(): Locale {
   const context = useContext(I18nContext);
   if (!context) {
@@ -140,7 +143,7 @@ export function useLocale(): Locale {
 export function useTranslator(): TranslateFn {
   const context = useContext(I18nContext);
   if (!context) {
-    throw new Error("useTranslator must be used within an I18nProvider");
+    return defaultClientTranslator;
   }
   return context.t;
 }

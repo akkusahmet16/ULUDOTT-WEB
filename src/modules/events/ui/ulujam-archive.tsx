@@ -1,12 +1,24 @@
 import Image from "next/image";
+import { DEFAULT_LOCALE, type Locale } from "../../../i18n/config.ts";
+import { getTranslator } from "../../../i18n/translate.ts";
 import type { ArchiveFields } from "../../site-settings/domain/archives";
-export function UlujamArchive({ archive }: { archive: ArchiveFields }) {
+export function UlujamArchive({
+  archive,
+  locale = DEFAULT_LOCALE,
+}: {
+  archive: ArchiveFields;
+  locale?: Locale;
+}) {
+  const t = getTranslator(locale);
   return (
-    <section aria-label={`UluJam ${archive.year} arşivi`} className="section">
-      <h2>UluJam {archive.year} arşivi</h2>
+    <section
+      aria-label={t("ulujam.archiveAria", { year: archive.year })}
+      className="section"
+    >
+      <h2>{t("ulujam.archiveHeading", { year: archive.year })}</h2>
       {archive.description && <p className="lede">{archive.description}</p>}
-      <section aria-label="Arşiv galerisi">
-        <h3>Galeri</h3>
+      <section aria-label={t("ulujam.archiveGalleryAria")}>
+        <h3>{t("ulujam.archiveGalleryHeading")}</h3>
         {archive.gallery.length ? (
           <div className="archive-gallery-mosaic">
             {archive.gallery.map((image, index) => (
@@ -26,7 +38,8 @@ export function UlujamArchive({ archive }: { archive: ArchiveFields }) {
                 />
                 <figcaption>
                   <span className="eyebrow">
-                    UluJam {archive.year} / {String(index + 1).padStart(2, "0")}
+                    {t("ulujam.heading", { year: archive.year })} /{" "}
+                    {String(index + 1).padStart(2, "0")}
                   </span>
                   <span>{image.alt}</span>
                 </figcaption>
@@ -34,10 +47,10 @@ export function UlujamArchive({ archive }: { archive: ArchiveFields }) {
             ))}
           </div>
         ) : (
-          <p className="empty">Henüz doğrulanmış arşiv görseli yok.</p>
+          <p className="empty">{t("ulujam.archiveGalleryEmpty")}</p>
         )}
       </section>
-      <h3>İlk üç oyun</h3>
+      <h3>{t("ulujam.topThreeGamesHeading")}</h3>
       {archive.games.length ? (
         <div className="grid degree-games">
           {[...archive.games]
@@ -51,7 +64,9 @@ export function UlujamArchive({ archive }: { archive: ArchiveFields }) {
                   height={900}
                   sizes="(max-width: 699px) 100vw, (max-width: 1500px) 33vw, 470px"
                 />
-                <p className="eyebrow">{game.rank}. derece</p>
+                <p className="eyebrow">
+                  {t("ulujam.rankBadge", { rank: game.rank })}
+                </p>
                 <h3>{game.title}</h3>
                 {game.team && <p>{game.team}</p>}
                 {game.description && <p>{game.description}</p>}
@@ -60,13 +75,13 @@ export function UlujamArchive({ archive }: { archive: ArchiveFields }) {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {game.title} oyununu itch.io’da aç
+                  {t("ulujam.openGameOnItch", { title: game.title })}
                 </a>
               </article>
             ))}
         </div>
       ) : (
-        <p className="empty">Henüz yayımlanmış derece bağlantısı yok.</p>
+        <p className="empty">{t("ulujam.degreeEmpty")}</p>
       )}
     </section>
   );

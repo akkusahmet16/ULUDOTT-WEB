@@ -12,11 +12,16 @@ import {
   adminTrDictionary,
   type AdminDictionary,
 } from "../../src/i18n/dictionaries/admin-tr.ts";
+import { clientTrSlice } from "../../src/i18n/dictionaries/client-tr.ts";
 import { enDictionary } from "../../src/i18n/dictionaries/en.ts";
 import {
   trDictionary,
   type PublicDictionary,
 } from "../../src/i18n/dictionaries/tr.ts";
+import {
+  adaptFieldErrors,
+  adaptUiErrorMessage,
+} from "../../src/i18n/error-adapter.ts";
 import {
   extractLeafKeys,
   extractPlaceholders,
@@ -135,22 +140,47 @@ describe("Faz 3 / İş 3A — Sözlük eşliği (parity), dilim (slice) sınır�
     }
   });
 
-  it("getDictionarySlice yalnız izinli CLIENT_NAMESPACES dilimlerini döndürür ve createSliceTranslator ile çalışır", () => {
-    expect(CLIENT_NAMESPACES).toEqual(["brand", "nav", "common"]);
+  it("getDictionarySlice yalnız izinli CLIENT_NAMESPACES dilimlerini döndürür, clientTrSlice ile birebir eşleşir ve createSliceTranslator ile çalışır", () => {
+    expect(CLIENT_NAMESPACES).toEqual([
+      "brand",
+      "nav",
+      "common",
+      "home",
+      "about",
+      "ulujam",
+      "events",
+      "miniGames",
+      "links",
+      "forms",
+      "receipt",
+      "cards",
+      "teams",
+      "consent",
+      "errors",
+    ]);
     expect(isClientNamespace("brand")).toBe(true);
     expect(isClientNamespace("nav")).toBe(true);
     expect(isClientNamespace("common")).toBe(true);
+    expect(isClientNamespace("forms")).toBe(true);
+    expect(isClientNamespace("errors")).toBe(true);
     expect(isClientNamespace("meta")).toBe(false);
     expect(isClientNamespace("footer")).toBe(false);
+    expect(isClientNamespace("theme")).toBe(false);
+    expect(isClientNamespace("games")).toBe(false);
+    expect(isClientNamespace("contact")).toBe(false);
     expect(isClientNamespace("")).toBe(false);
 
     const trSlice = getDictionarySlice("tr", CLIENT_NAMESPACES);
     const enSlice = getDictionarySlice("en", CLIENT_NAMESPACES);
 
-    expect(Object.keys(trSlice).sort()).toEqual(["brand", "common", "nav"]);
-    expect(Object.keys(enSlice).sort()).toEqual(["brand", "common", "nav"]);
+    expect(clientTrSlice).toEqual(trSlice);
+    expect(Object.keys(trSlice).sort()).toEqual([...CLIENT_NAMESPACES].sort());
+    expect(Object.keys(enSlice).sort()).toEqual([...CLIENT_NAMESPACES].sort());
     expect("meta" in trSlice).toBe(false);
     expect("footer" in trSlice).toBe(false);
+    expect("theme" in trSlice).toBe(false);
+    expect("games" in trSlice).toBe(false);
+    expect("contact" in trSlice).toBe(false);
 
     const tTr = createSliceTranslator(trSlice);
     const tEn = createSliceTranslator(enSlice);
@@ -175,6 +205,42 @@ describe("Faz 3 / İş 3A — Sözlük eşliği (parity), dilim (slice) sınır�
     expect(() =>
       getDictionarySlice("tr", [] as unknown as readonly ClientNamespace[]),
     ).toThrow(/requires at least one ClientNamespace/);
+
+    // Error adapter hem TR hem EN sözlük eşlemesini ve bilinmeyen metin geri dönüşünü doğrular
+    expect(
+      adaptUiErrorMessage(
+        "İstek doğrulanamadı",
+        tEn,
+        "errors.operationFailed",
+        "en",
+      ),
+    ).toBe("Request could not be verified");
+    expect(
+      adaptUiErrorMessage(
+        "İstek doğrulanamadı",
+        tTr,
+        "errors.operationFailed",
+        "tr",
+      ),
+    ).toBe("İstek doğrulanamadı");
+    expect(
+      adaptUiErrorMessage(
+        "Özel CMS mesajı",
+        tEn,
+        "errors.operationFailed",
+        "en",
+      ),
+    ).toBe("Özel CMS mesajı");
+    expect(
+      adaptFieldErrors(
+        { email: "Bu alanı kontrol edin.", custom: "Özel hata" },
+        tEn,
+        "en",
+      ),
+    ).toEqual({
+      email: "Please check this field.",
+      custom: "Özel hata",
+    });
   });
 
   it("istemci bileşenlerinin (client.tsx, header.tsx) tam sözlükleri veya server.ts'i bundle'a çekmediğini doğrular", () => {

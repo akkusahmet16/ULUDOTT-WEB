@@ -97,6 +97,19 @@ test.describe("Faz 3 / İş 3A — Dil altyapısı, çerez çözümlemesi, eşza
         .locator('link[rel="canonical"]')
         .getAttribute("href");
       expect(new URL(canonicalHref ?? "").pathname).toBe("/hakkimizda");
+
+      // Faz 3B: Etkinlikler ve İletişim sayfa kromu da EN sözlükten çözülür
+      await page.goto("/etkinlikler");
+      await expect(page.locator("h1")).toHaveText("Events");
+      await expect(
+        page.locator('section[aria-label="Upcoming events"] h2'),
+      ).toHaveText("Upcoming Events");
+
+      await page.goto("/iletisim");
+      await expect(page.locator("h1")).toHaveText("Contact");
+      await expect(
+        page.locator('section[aria-label="Campus scenes"] h2'),
+      ).toHaveText("Places You Can Find Us");
     } finally {
       await context.close();
     }

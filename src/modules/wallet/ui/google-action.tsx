@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
+import { useTranslator } from "../../../i18n/client.tsx";
 export function GoogleAction({ cardToken }: { cardToken: string }) {
+  const t = useTranslator();
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [url, setUrl] = useState<string | null>(null);
@@ -29,9 +31,7 @@ export function GoogleAction({ cardToken }: { cardToken: string }) {
         throw Error();
       setUrl(data.url);
     } catch {
-      setError(
-        "Google Wallet bağlantısı oluşturulamadı. Katılım durumunu kontrol edip tekrar deneyin.",
-      );
+      setError(t("cards.googleCreateError"));
     } finally {
       setBusy(false);
     }
@@ -39,13 +39,15 @@ export function GoogleAction({ cardToken }: { cardToken: string }) {
   return (
     <div>
       <button type="button" disabled={busy} onClick={prepare}>
-        {busy ? "Bağlantı hazırlanıyor…" : "Google Wallet bağlantısı oluştur"}
+        {busy
+          ? t("cards.googlePreparingButton")
+          : t("cards.googleCreateLinkButton")}
       </button>
       {error && <p role="alert">{error}</p>}
       {url && (
         <p>
           <a href={url} rel="noopener noreferrer" target="_blank">
-            Google Wallet’ta kartı aç
+            {t("cards.googleOpenInWalletLink")}
           </a>
         </p>
       )}

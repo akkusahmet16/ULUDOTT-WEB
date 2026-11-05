@@ -1,6 +1,7 @@
 "use client";
 import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
+import { useTranslator } from "../../../i18n/client.tsx";
 export type BotConfig = { required: boolean; siteKey: string; nonce?: string };
 type Turnstile = {
   render: (node: HTMLElement, options: Record<string, unknown>) => string;
@@ -17,6 +18,7 @@ export function BotChallenge({
   onToken: (token: string) => void;
   resetKey: number;
 }) {
+  const t = useTranslator();
   const node = useRef<HTMLDivElement>(null),
     [ready, setReady] = useState(false),
     [error, setError] = useState(false);
@@ -47,12 +49,10 @@ export function BotChallenge({
   }, [config, action, onToken, ready, resetKey]);
   if (!config?.required) return null;
   return (
-    <section aria-label="Bot doğrulaması">
+    <section aria-label={t("forms.botVerificationAria")}>
       <div ref={node} />
       {!config.siteKey || error ? (
-        <p role="alert">
-          Doğrulama şu anda kullanılamıyor. Daha sonra tekrar deneyin.
-        </p>
+        <p role="alert">{t("forms.botUnavailableAlert")}</p>
       ) : (
         <>
           <Script
@@ -63,7 +63,7 @@ export function BotChallenge({
             onReady={() => setReady(true)}
             onError={() => setError(true)}
           />
-          <p>Göndermeden önce güvenlik doğrulamasını tamamlayın.</p>
+          <p>{t("forms.botCompletePrompt")}</p>
         </>
       )}
     </section>

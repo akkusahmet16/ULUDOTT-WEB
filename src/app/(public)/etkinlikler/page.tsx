@@ -2,45 +2,51 @@ import { CoffeeTalkCard } from "../../../components/layout/coffee-talk-card";
 import { PublicShell } from "../../../components/layout/public-shell";
 import { EventCard } from "../../../modules/events/ui/event-card";
 import { getLocale } from "../../../i18n/server.ts";
+import { getTranslator } from "../../../i18n/translate.ts";
 import { readHomeEvents } from "../../../modules/publication/ui/public-queries";
 import { buildMetadata } from "../../../seo/build-metadata.ts";
 export async function generateMetadata() {
   return buildMetadata({ routeId: "events", locale: await getLocale() });
 }
 export default async function Page() {
-  const { upcoming, past, showLegacyCoffeeTalk } = await readHomeEvents();
+  const [locale, { upcoming, past, showLegacyCoffeeTalk }] = await Promise.all([
+    getLocale(),
+    readHomeEvents(),
+  ]);
+  const t = getTranslator(locale);
   return (
     <PublicShell>
       <section className="section">
-        <h1>Etkinlikler</h1>
+        <h1>{t("events.heading")}</h1>
         <section
           className="event-list-section"
-          aria-label="Yaklaşan etkinlikler"
+          aria-label={t("events.upcomingAria")}
         >
-          <h2>Yaklaşan Etkinlikler</h2>
+          <h2>{t("events.upcomingHeading")}</h2>
           {upcoming.length ? (
             <div className="featured-events">
               {upcoming.map((item) => (
-                <EventCard key={item.id} event={item} />
+                <EventCard key={item.id} event={item} locale={locale} />
               ))}
             </div>
           ) : (
-            <p className="event-list-empty">Yeni etkinlikler yakında burada.</p>
+            <p className="event-list-empty">{t("events.upcomingEmpty")}</p>
           )}
         </section>
-        <section className="event-list-section" aria-label="Geçmiş etkinlikler">
-          <h2>Geçmiş Etkinlikler</h2>
+        <section
+          className="event-list-section"
+          aria-label={t("events.pastAria")}
+        >
+          <h2>{t("events.pastHeading")}</h2>
           {past.length || showLegacyCoffeeTalk ? (
             <div className="featured-events">
               {past.map((item) => (
-                <EventCard key={item.id} event={item} />
+                <EventCard key={item.id} event={item} locale={locale} />
               ))}
-              {showLegacyCoffeeTalk && <CoffeeTalkCard />}
+              {showLegacyCoffeeTalk && <CoffeeTalkCard locale={locale} />}
             </div>
           ) : (
-            <p className="event-list-empty">
-              Henüz geçmiş etkinlik bulunmuyor.
-            </p>
+            <p className="event-list-empty">{t("events.pastEmpty")}</p>
           )}
         </section>
       </section>

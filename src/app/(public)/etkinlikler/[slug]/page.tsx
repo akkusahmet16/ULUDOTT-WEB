@@ -39,13 +39,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 export default async function Page({ params }: Props) {
-  const item = await readPublicEvent((await params).slug);
+  const [{ slug }, locale] = await Promise.all([params, getLocale()]);
+  const item = await readPublicEvent(slug);
   if (!item) notFound();
   if (item.redirectSlug) permanentRedirect(`/etkinlikler/${item.redirectSlug}`);
   return (
     <PublicShell>
       <section className="section">
-        <ContentView item={item} type="event" />
+        <ContentView item={item} type="event" locale={locale} />
       </section>
     </PublicShell>
   );

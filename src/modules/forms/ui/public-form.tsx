@@ -1,5 +1,11 @@
 "use client";
 import { useState, useRef, type FormEvent } from "react";
+import { useLocale, useTranslator } from "../../../i18n/client.tsx";
+import { clientTrSlice } from "../../../i18n/dictionaries/client-tr.ts";
+import {
+  adaptFieldErrors,
+  adaptUiErrorMessage,
+} from "../../../i18n/error-adapter.ts";
 import type { ValidFormDefinition } from "../domain/form-version";
 import type { Answers } from "../domain/field-types";
 import { BotChallenge, type BotConfig } from "./bot-challenge";
@@ -13,7 +19,7 @@ class PublicRequestError extends Error {
 }
 export async function publicRequest(url: string, body: unknown) {
   const c = await fetch("/api/forms/csrf", { cache: "no-store" });
-  if (!c.ok) throw Error("İstek doğrulanamadı");
+  if (!c.ok) throw Error(clientTrSlice.errors.requestNotVerified);
   const { csrfToken } = await c.json();
   const r = await fetch(url, {
     method: "POST",
@@ -24,7 +30,7 @@ export async function publicRequest(url: string, body: unknown) {
   const data = await r.json();
   if (!r.ok)
     throw new PublicRequestError(
-      data.error ?? "İşlem tamamlanamadı",
+      data.error ?? clientTrSlice.errors.operationFailed,
       data.fieldErrors,
     );
   return data;
@@ -40,6 +46,8 @@ export function PublicForm({
   versionId: string;
   definition: ValidFormDefinition;
 }) {
+  const locale = useLocale();
+  const t = useTranslator();
   const [answers, setAnswers] = useState<Answers>({}),
     [message, setMessage] = useState(""),
     [fieldErrors, setFieldErrors] = useState<Record<string, string>>({}),
@@ -68,27 +76,45 @@ export function PublicForm({
       let data;
       if (definition.fields.some((field) => field.type === "file")) {
         const csrf = await fetch("/api/forms/csrf", { cache: "no-store" });
-        if (!csrf.ok) throw Error("İstek doğrulanamadı");
+        if (!csrf.ok) throw Error(t("errors.requestNotVerified"));
         const { csrfToken } = await csrf.json();
         const body = new FormData();
         body.set("payload", JSON.stringify(payload));
-        for (const [id, file] of Object.entries(files.current)) body.set("file:" + id, file);
+        for (const [id, file] of Object.entries(files.current))
+          body.set("file:" + id, file);
         const response = await fetch("/api/forms/" + slug + "/submit", {
-          method: "POST", headers: { "x-csrf-token": csrfToken }, body, cache: "no-store",
+          method: "POST",
+          headers: { "x-csrf-token": csrfToken },
+          body,
+          cache: "no-store",
         });
         data = await response.json();
-        if (!response.ok) throw new PublicRequestError(data.error ?? "Gönderim tamamlanamadı", data.fieldErrors);
-      } else data = await publicRequest("/api/forms/" + slug + "/submit", payload);
+        if (!response.ok)
+          throw new PublicRequestError(
+            data.error ?? t("errors.submissionFailedShort"),
+            data.fieldErrors,
+          );
+      } else
+        data = await publicRequest("/api/forms/" + slug + "/submit", payload);
       setReceipt(data);
       setAnswers({});
       files.current = {};
       setMessage("");
     } catch (e) {
-      setFieldErrors(e instanceof PublicRequestError ? e.fieldErrors : {});
+      setFieldErrors(
+        e instanceof PublicRequestError
+          ? adaptFieldErrors(e.fieldErrors, t, locale)
+          : {},
+      );
       setMessage(
         e instanceof Error
-          ? e.message
-          : "Gönderim tamamlanamadı. Aynı yanıtla tekrar deneyebilirsiniz.",
+          ? adaptUiErrorMessage(
+              e.message,
+              t,
+              "errors.submissionFailedCanRetry",
+              locale,
+            )
+          : t("errors.submissionFailedCanRetry"),
       );
     } finally {
       setBotToken("");
@@ -98,24 +124,28 @@ export function PublicForm({
   }
   if (receipt)
     return (
-      <section aria-label="Başvuru makbuzu">
-        <h2>Başvuru alındı</h2>
-        <p role="status">{receipt.message}</p>
-        <p>
-          Makbuz bağlantınızı güvenli bir yerde saklayın. Bağlantıyı bilen kişi
-          durumunuzu görebilir.
+      <section aria-label={t("forms.receiptSectionAria")}>
+        <h2>{t("forms.receiptHeading")}</h2>
+        <p role="status">
+          {adaptUiErrorMessage(
+            receipt.message,
+            t,
+            "forms.receiptHeading",
+            locale,
+          )}
         </p>
+        <p>{t("forms.receiptStorageNotice")}</p>
         <a href={"/makbuz#token=" + receipt.receiptToken}>
-          Makbuzu ve durumu görüntüle
+          {t("forms.viewReceiptAndStatusLink")}
         </a>
       </section>
     );
   return (
     <form className="content-form" onSubmit={submit}>
       <p role="alert">{message}</p>
-      <p>* işaretli alanlar zorunludur.</p>
+      <p>{t("forms.requiredFieldsNote")}</p>
       <fieldset disabled={busy}>
-        <legend>Başvuru bilgileri</legend>
+        <legend>{t("forms.applicationInfoLegend")}</legend>
         <FormFields
           definition={definition}
           answers={answers}
@@ -132,7 +162,7 @@ export function PublicForm({
         />
         <div style={{ display: "none" }} aria-hidden="true">
           <label>
-            Web sitesi
+            {t("forms.honeypotWebsiteLabel")}
             <input name="website" tabIndex={-1} autoComplete="off" />
           </label>
         </div>
@@ -146,7 +176,9 @@ export function PublicForm({
           className="button"
           disabled={busy || (!!botConfig?.required && !botToken)}
         >
-          {busy ? "Gönderiliyor…" : "Başvuruyu gönder"}
+          {busy
+            ? t("forms.submittingButton")
+            : t("forms.submitApplicationButton")}
         </button>
       </fieldset>
     </form>

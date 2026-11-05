@@ -1,15 +1,20 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { useLocale, useTranslator } from "../../../i18n/client.tsx";
+import { adaptUiErrorMessage } from "../../../i18n/error-adapter.ts";
+import { formatLocaleTimestamp } from "../../../i18n/format.ts";
 import { publicRequest } from "./public-form";
-const labels: Record<string, string> = {
-  received: "Alındı",
-  waitlisted: "Bekleme listesinde",
-  pending: "İnceleniyor",
-  approved: "Onaylandı",
-  rejected: "Reddedildi",
-  withdrawn: "Geri çekildi",
-};
 export function ReceiptView() {
+  const locale = useLocale();
+  const t = useTranslator();
+  const labels: Record<string, string> = {
+    received: t("receipt.statusReceived"),
+    waitlisted: t("receipt.statusWaitlisted"),
+    pending: t("receipt.statusPending"),
+    approved: t("receipt.statusApproved"),
+    rejected: t("receipt.statusRejected"),
+    withdrawn: t("receipt.statusWithdrawn"),
+  };
   const [receipt, setReceipt] = useState<{
       status: string;
       formTitle: string;
@@ -24,25 +29,38 @@ export function ReceiptView() {
     const token =
       new URLSearchParams(window.location.hash.slice(1)).get("token") ?? "";
     if (!token) {
-      setError("Makbuz bağlantısını kullanın.");
+      setError(t("receipt.useReceiptLinkError"));
       return;
     }
     void publicRequest("/api/submissions/receipt", { token })
       .then(setReceipt)
-      .catch((e) => setError(e.message));
-  }, []);
+      .catch((e) =>
+        setError(
+          adaptUiErrorMessage(e.message, t, "errors.operationFailed", locale),
+        ),
+      );
+  }, [locale, t]);
   return (
-    <section aria-label="Özel makbuz">
+    <section aria-label={t("receipt.privateReceiptAria")}>
       <p role="status">{error}</p>
       {receipt && (
         <>
           <h2>{receipt.formTitle}</h2>
-          <p>Durum: {labels[receipt.status] ?? receipt.status}</p>
-          <p>{receipt.message}</p>
-          <time dateTime={receipt.submittedAt}>
-            {new Date(receipt.submittedAt).toLocaleString("tr-TR", {
-              timeZone: "Europe/Istanbul",
+          <p>
+            {t("receipt.statusPrefix", {
+              status: labels[receipt.status] ?? receipt.status,
             })}
+          </p>
+          <p>
+            {adaptUiErrorMessage(
+              receipt.message,
+              t,
+              "receipt.statusReceived",
+              locale,
+            )}
+          </p>
+          <time dateTime={receipt.submittedAt}>
+            {formatLocaleTimestamp(receipt.submittedAt, locale)}
           </time>
         </>
       )}

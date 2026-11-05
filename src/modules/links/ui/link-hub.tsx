@@ -3,8 +3,10 @@ import Image from "next/image";
 import { useState } from "react";
 import { Button } from "../../../components/design-system/button";
 import { Dialog } from "../../../components/design-system/dialog";
+import { useTranslator } from "../../../i18n/client.tsx";
 import { icons, type LinkItem, type LinkGroup } from "../domain/link";
 function LinkCard({ item, baseUrl }: { item: LinkItem; baseUrl: string }) {
+  const t = useTranslator();
   const [message, setMessage] = useState(""),
     [fallback, setFallback] = useState(false),
     [qrError, setQrError] = useState(false);
@@ -13,10 +15,10 @@ function LinkCard({ item, baseUrl }: { item: LinkItem; baseUrl: string }) {
     try {
       await navigator.clipboard.writeText(address);
       setFallback(false);
-      setMessage("Kopyalandı.");
+      setMessage(t("links.copied"));
     } catch {
       setFallback(true);
-      setMessage("Kopyalama kullanılamadı. Aşağıdaki adresi seçip kopyalayın.");
+      setMessage(t("links.copyFallback"));
     }
   }
   const external = !item.url.startsWith("/");
@@ -35,28 +37,26 @@ function LinkCard({ item, baseUrl }: { item: LinkItem; baseUrl: string }) {
         </a>
       </h3>
       {item.description && <p>{item.description}</p>}
-      {external && (
-        <p className="link-note">Dış bağlantı · yeni sekmede açılır</p>
-      )}
+      {external && <p className="link-note">{t("links.externalNote")}</p>}
       <div className="actions">
-        <Button onClick={copy}>Adresi kopyala</Button>
-        <Dialog title="Bağlantı QR kodu" trigger="QR kodu">
+        <Button onClick={copy}>{t("links.copyAddress")}</Button>
+        <Dialog
+          title={t("links.qrDialogTitle")}
+          trigger={t("links.qrTrigger")}
+        >
           <p>{item.title}</p>
-          <Image unoptimized
+          <Image
+            unoptimized
             className="link-qr"
             src={`/api/links/${item.id}/qr`}
             width={256}
             height={256}
-            alt={`${item.title} için QR kodu`}
+            alt={t("links.qrImageAlt", { title: item.title })}
             onError={() => setQrError(true)}
           />
-          {qrError && (
-            <p role="status">
-              QR alınamadı; bağlantı yayından kaldırılmış olabilir.
-            </p>
-          )}
+          {qrError && <p role="status">{t("links.qrErrorStatus")}</p>}
           <label className="field">
-            Kısa adres
+            {t("links.shortAddressLabel")}
             <input
               readOnly
               value={address}
@@ -67,14 +67,14 @@ function LinkCard({ item, baseUrl }: { item: LinkItem; baseUrl: string }) {
             href={`/api/links/${item.id}/qr`}
             download={`uludott-${item.id}.png`}
           >
-            QR görselini indir
+            {t("links.downloadQr")}
           </a>
         </Dialog>
       </div>
       <p role="status">{message}</p>
       {fallback && (
         <label className="field">
-          Kopyalanacak adres
+          {t("links.fallbackAddressLabel")}
           <input
             readOnly
             value={address}
@@ -92,12 +92,13 @@ export function LinkHub({
   groups: LinkGroup[];
   baseUrl: string;
 }) {
+  const t = useTranslator();
   const featured = groups.flatMap((g) => g.links).filter((l) => l.featured);
   return (
     <>
       {featured.length > 0 && (
-        <section aria-label="Öne çıkan bağlantılar">
-          <h2>Öne çıkanlar</h2>
+        <section aria-label={t("links.featuredAria")}>
+          <h2>{t("links.featuredHeading")}</h2>
           <div className="grid">
             {featured.map((item) => (
               <LinkCard key={item.id} item={item} baseUrl={baseUrl} />
@@ -105,9 +106,7 @@ export function LinkHub({
           </div>
         </section>
       )}
-      {!groups.length && (
-        <p className="empty">Henüz yayımlanmış bağlantı yok.</p>
-      )}
+      {!groups.length && <p className="empty">{t("links.emptyLinks")}</p>}
       {groups.map((group) => (
         <section key={group.id} aria-label={group.title} className="section">
           <h2>{group.title}</h2>

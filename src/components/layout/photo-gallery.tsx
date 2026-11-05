@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { useTranslator } from "../../i18n/client.tsx";
 export function PhotoGallery({
   photos,
   name,
@@ -10,6 +11,7 @@ export function PhotoGallery({
   name: string;
   reference?: boolean;
 }) {
+  const t = useTranslator();
   const [active, setActive] = useState<number | null>(null);
   const dialog = useRef<HTMLDialogElement>(null),
     trigger = useRef<HTMLAnchorElement | null>(null);
@@ -40,7 +42,10 @@ export function PhotoGallery({
             <a
               href={photo}
               data-gallery-photo
-              aria-label={`${name}${reference ? " referans" : ""} fotoğrafı ${i + 1}, büyük görüntü`}
+              aria-label={t(
+                reference ? "about.photoZoomRefAria" : "about.photoZoomAria",
+                { name, index: i + 1 },
+              )}
               onClick={(e) => {
                 e.preventDefault();
                 trigger.current = e.currentTarget;
@@ -49,7 +54,10 @@ export function PhotoGallery({
             >
               <Image
                 src={photo}
-                alt={`${name}${reference ? " GTA VI görsel yer tutucusu" : " detay fotoğrafı"} ${i + 1}`}
+                alt={t(
+                  reference ? "about.photoThumbRefAlt" : "about.photoThumbAlt",
+                  { name, index: i + 1 },
+                )}
                 width={1600}
                 height={1100}
                 unoptimized
@@ -62,7 +70,7 @@ export function PhotoGallery({
       <dialog
         className="photo-dialog"
         ref={dialog}
-        aria-label="Fotoğraf galerisi"
+        aria-label={t("about.photoGalleryAria")}
         onCancel={(e) => {
           e.preventDefault();
           close();
@@ -86,7 +94,7 @@ export function PhotoGallery({
             {name} · {(active ?? 0) + 1} / {photos.length}
           </span>
           <button
-            aria-label="Galeriyi kapat"
+            aria-label={t("about.closeGalleryAria")}
             data-close-gallery
             onClick={close}
           >
@@ -96,17 +104,23 @@ export function PhotoGallery({
         {active !== null && (
           <Image
             src={photos[active]}
-            alt={`${name}${reference ? " referans" : ""} fotoğrafı ${active + 1}`}
+            alt={t(
+              reference ? "about.photoModalRefAlt" : "about.photoModalAlt",
+              { name, index: active + 1 },
+            )}
             width={1600}
             height={1100}
             unoptimized
           />
         )}
         <div className="photo-controls">
-          <button aria-label="Önceki fotoğraf" onClick={() => move(-1)}>
+          <button
+            aria-label={t("about.prevPhotoAria")}
+            onClick={() => move(-1)}
+          >
             ←
           </button>
-          <button aria-label="Sonraki fotoğraf" onClick={() => move(1)}>
+          <button aria-label={t("about.nextPhotoAria")} onClick={() => move(1)}>
             →
           </button>
         </div>

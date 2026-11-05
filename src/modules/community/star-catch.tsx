@@ -1,29 +1,34 @@
 "use client";
 import { useState } from "react";
 import { Button } from "../../components/design-system/button";
+import { useTranslator } from "../../i18n/client.tsx";
 import { nextStar } from "./game-logic";
 export function StarCatch() {
+  const t = useTranslator();
   const [score, setScore] = useState(0),
     [position, setPosition] = useState(0);
   return (
-    <section aria-label="Yıldız yakalama" className="game-break star-break">
-      <h3>Yıldızı yakala</h3>
-      <p>Beş dokunuş, beş yıldız. Dokun, tıkla veya Enter/Boşluk kullan.</p>
+    <section
+      aria-label={t("miniGames.starAria")}
+      className="game-break star-break"
+    >
+      <h3>{t("miniGames.starHeading")}</h3>
+      <p>{t("miniGames.starCopy")}</p>
       <Button
         onClick={() => {
           setScore(0);
           setPosition(0);
         }}
       >
-        Yeniden oyna
+        {t("miniGames.playAgain")}
       </Button>
       <p role="status">
-        {score} / 5 {score === 5 ? "Tamamlandı!" : ""}
+        {score} / 5 {score === 5 ? t("miniGames.completed") : ""}
       </p>
       <div className="star-board">
         <button
           className="button star-target"
-          aria-label="Yıldızı yakala"
+          aria-label={t("miniGames.starHeading")}
           disabled={score === 5}
           style={{
             left: `${(position % 3) * 33.333}%`,

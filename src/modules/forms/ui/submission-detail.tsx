@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { formatLocaleTimestamp } from "../../../i18n/format.ts";
 import type { ValidFormDefinition } from "../domain/form-version";
 import type { Answers } from "../domain/field-types";
 import { FormFields } from "./form-fields";
@@ -59,10 +60,7 @@ export function SubmissionDetail({ submission: s }: { submission: Detail }) {
         Form sürümü: {s.version.version} · Durum: {statusLabels[s.status]}
       </p>
       <p>
-        Saklama sonu:{" "}
-        {new Date(s.expiresAt).toLocaleString("tr-TR", {
-          timeZone: "Europe/Istanbul",
-        })}
+        Saklama sonu: {formatLocaleTimestamp(s.expiresAt, "tr")}
       </p>
       <form
         onSubmit={(e) => {
@@ -129,10 +127,7 @@ export function SubmissionDetail({ submission: s }: { submission: Detail }) {
       <ol>
         {s.history.map((r, i) => (
           <li key={i}>
-            {statusLabels[r.status]} ·{" "}
-            {new Date(r.createdAt).toLocaleString("tr-TR", {
-              timeZone: "Europe/Istanbul",
-            })}
+            {statusLabels[r.status]} · {formatLocaleTimestamp(r.createdAt, "tr")}
           </li>
         ))}
       </ol>

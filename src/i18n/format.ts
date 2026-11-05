@@ -35,10 +35,17 @@ export function formatDate(
 ): string {
   assertValidLocale(locale);
   const date = toValidDate(value);
+  const hasStyle =
+    options?.dateStyle !== undefined || options?.timeStyle !== undefined;
+  const baseOptions: Intl.DateTimeFormatOptions = hasStyle
+    ? {}
+    : {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      };
   return new Intl.DateTimeFormat(LOCALE_TAGS[locale], {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
+    ...baseOptions,
     ...options,
     timeZone: APP_TIME_ZONE,
   }).format(date);
@@ -51,16 +58,79 @@ export function formatDateTime(
 ): string {
   assertValidLocale(locale);
   const date = toValidDate(value);
+  const hasStyle =
+    options?.dateStyle !== undefined || options?.timeStyle !== undefined;
+  const baseOptions: Intl.DateTimeFormatOptions = hasStyle
+    ? {}
+    : {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      };
   return new Intl.DateTimeFormat(LOCALE_TAGS[locale], {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
+    ...baseOptions,
+    ...options,
+    timeZone: APP_TIME_ZONE,
+  }).format(date);
+}
+
+export function formatTime(
+  value: Date | string | number,
+  locale: Locale,
+  options?: Intl.DateTimeFormatOptions,
+): string {
+  assertValidLocale(locale);
+  const date = toValidDate(value);
+  return new Intl.DateTimeFormat(LOCALE_TAGS[locale], {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
     ...options,
     timeZone: APP_TIME_ZONE,
   }).format(date);
+}
+
+export function formatLocaleTimestamp(
+  value: Date | string | number,
+  locale: Locale,
+): string {
+  assertValidLocale(locale);
+  const date = toValidDate(value);
+  return date.toLocaleString(LOCALE_TAGS[locale], {
+    timeZone: APP_TIME_ZONE,
+  });
+}
+
+export function formatLocaleShortDate(
+  value: Date | string | number,
+  locale: Locale,
+): string {
+  assertValidLocale(locale);
+  const date = toValidDate(value);
+  return date.toLocaleDateString(LOCALE_TAGS[locale], {
+    timeZone: APP_TIME_ZONE,
+  });
+}
+
+export function formatIstanbulDateTimeLocalInput(
+  value: Date | string | number | null | undefined,
+): string {
+  if (value === null || value === undefined || value === "") return "";
+  const date = toValidDate(value);
+  return new Intl.DateTimeFormat("sv-SE", {
+    timeZone: APP_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  })
+    .format(date)
+    .replace(" ", "T");
 }
 
 export function formatNumber(

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { formatLocaleTimestamp } from "../../../i18n/format.ts";
 import { formRequest } from "./admin-fetch";
 export const statusLabels: Record<string, string> = {
   received: "Alındı",
@@ -213,9 +214,7 @@ export function SubmissionList({
                   {r.email ?? "Başvuru " + r.id}
                 </Link>{" "}
                 · {statusLabels[r.status]} ·{" "}
-                {new Date(r.createdAt).toLocaleString("tr-TR", {
-                  timeZone: "Europe/Istanbul",
-                })}
+                {formatLocaleTimestamp(r.createdAt, "tr")}
               </li>
             ))}
           </ul>

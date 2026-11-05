@@ -34,11 +34,12 @@ export default async function Page({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const g = await readPublicGame((await params).slug);
+  const [{ slug }, locale] = await Promise.all([params, getLocale()]);
+  const g = await readPublicGame(slug);
   if (!g) notFound();
   return (
     <PublicShell>
-      <PublicGame game={g} />
+      <PublicGame game={g} locale={locale} />
     </PublicShell>
   );
 }

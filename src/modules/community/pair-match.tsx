@@ -1,10 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Button } from "../../components/design-system/button";
+import { useTranslator } from "../../i18n/client.tsx";
 import { flipCard, matchCards } from "./game-logic";
 const deck = [1, 2, 3, 2, 1, 3],
   symbols = ["", "★", "●", "◆"];
 export function PairMatch() {
+  const t = useTranslator();
   const [open, setOpen] = useState<number[]>([]),
     [matched, setMatched] = useState<number[]>([]);
   useEffect(() => {
@@ -20,26 +22,26 @@ export function PairMatch() {
     } else setOpen(next);
   }
   return (
-    <section aria-label="Hafıza eşleştirme" className="game-break memory-break">
-      <h3>Hafıza eşleştirme</h3>
-      <p>
-        Üç çifti bul. Dokun veya Enter/Boşluk kullan. Yanlış çiftler
-        kendiliğinden kapanır.
-      </p>
+    <section
+      aria-label={t("miniGames.memoryAria")}
+      className="game-break memory-break"
+    >
+      <h3>{t("miniGames.memoryHeading")}</h3>
+      <p>{t("miniGames.memoryCopy")}</p>
       <Button
         onClick={() => {
           setOpen([]);
           setMatched([]);
         }}
       >
-        Yeniden oyna
+        {t("miniGames.playAgain")}
       </Button>
       <p role="status">
         {matched.length / 2} / 3{" "}
         {matched.length === 6
-          ? "Tamamlandı!"
+          ? t("miniGames.completed")
           : open.length === 2
-            ? "Eşleşmedi. Yeniden dene."
+            ? t("miniGames.mismatchRetry")
             : ""}
       </p>
       <div className="memory-board">
@@ -50,7 +52,12 @@ export function PairMatch() {
               className={`button memory-card ${visible ? "is-revealed" : ""} ${matched.includes(i) ? "is-matched" : ""}`}
               aria-pressed={visible}
               key={i}
-              aria-label={`Kart ${i + 1}: ${visible ? symbols[symbol] : "kapalı"}`}
+              aria-label={t("miniGames.cardAria", {
+                index: i + 1,
+                state: visible
+                  ? symbols[symbol]
+                  : t("miniGames.cardClosedState"),
+              })}
               disabled={matched.includes(i) || open.length === 2}
               onClick={() => flip(i)}
             >
@@ -60,7 +67,9 @@ export function PairMatch() {
         })}
       </div>
       {open.length === 2 && (
-        <Button onClick={() => setOpen([])}>Kartları kapat</Button>
+        <Button onClick={() => setOpen([])}>
+          {t("miniGames.closeCards")}
+        </Button>
       )}
     </section>
   );

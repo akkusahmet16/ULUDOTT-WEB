@@ -14,29 +14,32 @@ import {
   readUlujamPresentation,
 } from "../modules/publication/ui/public-queries";
 import { getLocale } from "../i18n/server.ts";
+import { getTranslator } from "../i18n/translate.ts";
 import { buildMetadata } from "../seo/build-metadata.ts";
 import styles from "../styles/home.module.css";
 export async function generateMetadata() {
   return buildMetadata({ routeId: "home", locale: await getLocale() });
 }
 export default async function HomePage() {
-  const [events, results, ulujam] = await Promise.all([
+  const [locale, events, results, ulujam] = await Promise.all([
+    getLocale(),
     readHomeEvents(),
     readHistoricalResults(2026),
     readUlujamPresentation(),
   ]);
+  const t = getTranslator(locale);
   const pastSlides = events.past.map((event) => ({
     id: event.id,
     title: event.title,
     endedAt: (event.endsAt ?? event.startsAt)?.getTime() ?? 0,
-    content: <EventCard event={event} />,
+    content: <EventCard event={event} locale={locale} />,
   }));
   if (events.showLegacyCoffeeTalk)
     pastSlides.push({
       id: "legacy-coffee-talk",
-      title: "Coffee Talk",
+      title: t("home.coffeeTalkTitle"),
       endedAt: coffeeTalkEndsAt.getTime(),
-      content: <CoffeeTalkCard />,
+      content: <CoffeeTalkCard locale={locale} />,
     });
   pastSlides.sort((a, b) => b.endedAt - a.endedAt || a.id.localeCompare(b.id));
   return (
@@ -56,71 +59,66 @@ export default async function HomePage() {
         </OpeningGlow>
         <div className={styles.openingRow}>
           <div>
-            <h1>Uludott</h1>
-            <p>Dijital oyun tasarım topluluğu</p>
+            <h1>{t("brand.name")}</h1>
+            <p>{t("brand.tagline")}</p>
           </div>
           <Link href="/hakkimizda" className={`button ${styles.softPulse}`}>
-            Topluluğu tanı
+            {t("common.discoverCommunity")}
           </Link>
           <div className={styles.openingLinks}>
             <Link href="/ulujam">
-              UluJam’i keşfet <span aria-hidden="true">↗</span>
+              {t("common.discoverUlujam")} <span aria-hidden="true">↗</span>
             </Link>
             <Link href="/iletisim">
-              İletişim <span aria-hidden="true">↗</span>
+              {t("nav.contact")} <span aria-hidden="true">↗</span>
             </Link>
           </div>
         </div>
         <a
           href="#kesfet"
           className={styles.scrollHint}
-          aria-label="Sayfayı keşfet"
+          aria-label={t("home.scrollHintAria")}
         >
           <span aria-hidden="true">⌄</span>
         </a>
       </section>
       <StoryPanels
-        degreeContent={<DegreeGames results={results} />}
+        degreeContent={<DegreeGames results={results} locale={locale} />}
         presentation={ulujam}
       />
       <section className={styles.intro} data-sky="#24223b">
-        <p className="eyebrow">Oyunlar, fikirler ve birlikte üretmek.</p>
+        <p className="eyebrow">{t("home.introEyebrow")}</p>
         <h2>
-          Fikirden oyuna.
+          {t("home.introHeadingLine1")}
           <br />
-          <span>Birlikte.</span>
+          <span>{t("home.introHeadingHighlight")}</span>
         </h2>
-        <p>
-          Tasarımı, kodu, sanatı ve hikâyeyi aynı masada buluşturuyoruz.
-          Öğrenmek, denemek ve oyun üretmek için bir aradayız.
-        </p>
+        <p>{t("home.introCopy")}</p>
       </section>
       <section
         className={styles.news}
-        aria-label="Yaklaşan etkinlikler"
+        aria-label={t("home.upcomingEventsAria")}
         data-sky="#17303c"
       >
         <div className={styles.sectionHeading}>
-          <h2>Yaklaşan etkinlikler</h2>
+          <h2>{t("home.upcomingEventsHeading")}</h2>
           <Link href="/etkinlikler">
-            Tüm etkinlikler <span aria-hidden="true">↗</span>
+            {t("home.allEventsLink")} <span aria-hidden="true">↗</span>
           </Link>
         </div>
         {events.upcoming.length ? (
           <div className={`featured-events ${styles.eventList}`}>
             {events.upcoming.map((event) => (
-              <EventCard key={event.id} event={event} />
+              <EventCard key={event.id} event={event} locale={locale} />
             ))}
           </div>
         ) : (
-          <p className={styles.emptyEvents}>
-            Yeni buluşmalarımız yakında burada.
-          </p>
+          <p className={styles.emptyEvents}>{t("home.upcomingEventsEmpty")}</p>
         )}
       </section>
       <section
         className="community-world"
-        aria-label="People ve Places"
+        aria-label={t("home.communityWorldAria")}
         data-sky="#223b45"
       >
         <Image
@@ -132,50 +130,48 @@ export default async function HomePage() {
           unoptimized
         />
         <div>
-          <p className="eyebrow">People & Places</p>
+          <p className="eyebrow">{t("home.communityWorldEyebrow")}</p>
           <h2>
-            <span>Topluluğun</span>
+            <span>{t("home.communityWorldHeadingHighlight")}</span>
             <br />
-            dünyası.
+            {t("home.communityWorldHeadingLine2")}
           </h2>
-          <p>İnsanlar, buluşmalar ve birlikte üretime alan açan yerler.</p>
+          <p>{t("home.communityWorldCopy")}</p>
           <Link className="button" href="/hakkimizda#yonetim-kurulu">
-            Yönetim kurulunu keşfet
+            {t("home.discoverBoardCta")}
           </Link>
           <Link className="button secondary" href="/hakkimizda#mekanlar">
-            Mekânları keşfet
+            {t("home.discoverPlacesCta")}
           </Link>
         </div>
       </section>
       <section
         className={styles.news}
-        aria-label="Geçmiş etkinlikler"
+        aria-label={t("home.pastEventsAria")}
         data-sky="#3e2b40"
       >
         <div className={styles.sectionHeading}>
-          <h2>Geçmiş etkinlikler</h2>
+          <h2>{t("home.pastEventsHeading")}</h2>
           <Link href="/etkinlikler">
-            Tüm etkinlikler <span aria-hidden="true">↗</span>
+            {t("home.allEventsLink")} <span aria-hidden="true">↗</span>
           </Link>
         </div>
         {pastSlides.length ? (
           <PastEventsCarousel slides={pastSlides} />
         ) : (
-          <p className={styles.emptyEvents}>
-            Geçmiş buluşmalarımız burada yer alacak.
-          </p>
+          <p className={styles.emptyEvents}>{t("home.pastEventsEmpty")}</p>
         )}
       </section>
       <section
         className={styles.sponsors}
-        aria-label="Sponsorlar"
+        aria-label={t("home.sponsorsAria")}
         data-sky="#262943"
       >
-        <p className="eyebrow">Sponsorlarımız</p>
+        <p className="eyebrow">{t("home.sponsorsEyebrow")}</p>
         <div className={styles.sponsorLogos}>
           <Image
             src="/community/01-anasayfa/sponsorlar/sponsor-dijipin-logo.webp"
-            alt="Dijipin"
+            alt={t("home.sponsorDijipinAlt")}
             width={2000}
             height={510}
             sizes="(max-width: 699px) 55vw, 280px"
@@ -184,18 +180,18 @@ export default async function HomePage() {
       </section>
       <section
         className={styles.lastLinks}
-        aria-label="İletişim"
+        aria-label={t("home.contactSectionAria")}
         data-sky="#262943"
       >
         <Link href="/iletisim">
-          <span className="eyebrow">İletişim</span>
+          <span className="eyebrow">{t("home.contactEyebrow")}</span>
           <h2>
-            Birlikte
+            {t("home.contactHeadingLine1")}
             <br />
-            konuşalım.
+            {t("home.contactHeadingLine2")}
           </h2>
           <span className={styles.cta}>
-            İletişim <span aria-hidden="true">→</span>
+            {t("nav.contact")} <span aria-hidden="true">→</span>
           </span>
         </Link>
       </section>

@@ -15,9 +15,26 @@ export const APP_TIME_ZONE = "Europe/Istanbul" as const;
 
 /**
  * İstemci bileşenlerine (`I18nProvider`) aktarılabilecek izinli sözlük dilimleri.
- * Tam sözlük veya sunucu yapılandırması istemci paketine girmez.
+ * Sunucuya özel ad alanları (`meta`, `footer`, `theme`, `games`, `contact`) ve
+ * `adminTrDictionary` istemci paketine girmez.
  */
-export const CLIENT_NAMESPACES = ["brand", "nav", "common"] as const;
+export const CLIENT_NAMESPACES = [
+  "brand",
+  "nav",
+  "common",
+  "home",
+  "about",
+  "ulujam",
+  "events",
+  "miniGames",
+  "links",
+  "forms",
+  "receipt",
+  "cards",
+  "teams",
+  "consent",
+  "errors",
+] as const;
 
 export type ClientNamespace = (typeof CLIENT_NAMESPACES)[number];
 

@@ -1,24 +1,26 @@
 "use client";
+import { useTranslator } from "../../../i18n/client.tsx";
+import { clientTrSlice } from "../../../i18n/dictionaries/client-tr.ts";
 import type { ValidFormDefinition } from "../domain/form-version";
 import { evaluateVisibility } from "../domain/condition";
 import type { Answer, Answers } from "../domain/field-types";
 export const typeLabels: Record<string, string> = {
-  short_text: "Kısa metin",
-  long_text: "Uzun metin",
-  email: "E-posta",
-  phone: "Telefon",
-  number: "Sayı",
-  date: "Tarih",
-  file: "Dosya yükleme",
-  single_choice: "Tek seçim",
-  multiple_choice: "Çoklu seçim",
-  dropdown: "Açılır liste",
-  checkbox: "Onay kutusu",
-  radio: "Radyo seçimi",
-  rating: "Derecelendirme",
-  info: "Bilgi metni",
-  section: "Bölüm başlığı",
-  consent: "Açık rıza",
+  short_text: clientTrSlice.forms.typeShortText,
+  long_text: clientTrSlice.forms.typeLongText,
+  email: clientTrSlice.forms.typeEmail,
+  phone: clientTrSlice.forms.typePhone,
+  number: clientTrSlice.forms.typeNumber,
+  date: clientTrSlice.forms.typeDate,
+  file: clientTrSlice.forms.typeFile,
+  single_choice: clientTrSlice.forms.typeSingleChoice,
+  multiple_choice: clientTrSlice.forms.typeMultipleChoice,
+  dropdown: clientTrSlice.forms.typeDropdown,
+  checkbox: clientTrSlice.forms.typeCheckbox,
+  radio: clientTrSlice.forms.typeRadio,
+  rating: clientTrSlice.forms.typeRating,
+  info: clientTrSlice.forms.typeInfo,
+  section: clientTrSlice.forms.typeSection,
+  consent: clientTrSlice.forms.typeConsent,
 };
 export function FormFields({
   definition,
@@ -39,6 +41,7 @@ export function FormFields({
   onFileChange?: (id: string, file: File | null) => void;
   fileNames?: Record<string, string>;
 }) {
+  const t = useTranslator();
   const visible = new Set(evaluateVisibility(definition, answers));
   function change(id: string, value: Answer | undefined) {
     const a = { ...answers };
@@ -59,11 +62,17 @@ export function FormFields({
             error = fieldErrors[f.id],
             constraints =
               f.type === "phone"
-                ? "Ülke koduyla boşluksuz yazın: +905551234567."
+                ? t("forms.phoneConstraint")
                 : f.type === "multiple_choice"
-                  ? `En az ${f.minSelections ?? (f.required ? 1 : 0)}, en çok ${f.maxSelections ?? f.options?.length ?? 0} seçim.`
+                  ? t("forms.multiChoiceConstraint", {
+                      min: f.minSelections ?? (f.required ? 1 : 0),
+                      max: f.maxSelections ?? f.options?.length ?? 0,
+                    })
                   : ["short_text", "long_text"].includes(f.type)
-                    ? `En çok ${f.maxLength ?? (f.type === "long_text" ? 5000 : 200)} karakter.`
+                    ? t("forms.maxLengthConstraint", {
+                        max:
+                          f.maxLength ?? (f.type === "long_text" ? 5000 : 200),
+                      })
                     : "",
             helpText = [f.helpText, constraints].filter(Boolean).join(" "),
             describedBy =
@@ -151,7 +160,7 @@ export function FormFields({
               <label htmlFor={id}>{label}</label>
               {f.type === "file" ? (
                 readOnlyConsent ? (
-                  <p>{String(v ?? "Dosya yok")}</p>
+                  <p>{String(v ?? t("forms.noFileValue"))}</p>
                 ) : (
                   <input
                     id={id}
@@ -180,7 +189,7 @@ export function FormFields({
                   value={String(v ?? "")}
                   onChange={(e) => change(f.id, e.target.value || undefined)}
                 >
-                  <option value="">Seçin</option>
+                  <option value="">{t("common.selectOption")}</option>
                   {f.options?.map((o) => (
                     <option key={o.value} value={o.value}>
                       {o.label}
@@ -221,7 +230,13 @@ export function FormFields({
                 />
               )}{" "}
               {helpText && <small id={help}>{helpText}</small>}
-              {f.type === "file" && !readOnlyConsent && <small>PDF, PNG, JPEG veya WebP · en fazla 5 MiB. {fileNames[f.id] ?? ""}</small>}
+              {f.type === "file" && !readOnlyConsent && (
+                <small>
+                  {t("forms.fileFormatHint", {
+                    fileName: fileNames[f.id] ?? "",
+                  })}
+                </small>
+              )}
               {error && <small id={errorId}>{error}</small>}
             </div>
           );

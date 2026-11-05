@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { getPinnedVideoTime } from "../../../public/theme/scene-scroll.js";
+import { useTranslator } from "../../i18n/client.tsx";
 export function SceneVideo({
   src,
   poster,
@@ -12,6 +13,7 @@ export function SceneVideo({
   label: string;
   reference?: boolean;
 }) {
+  const t = useTranslator();
   const ref = useRef<HTMLVideoElement>(null);
   useEffect(() => {
     const video = ref.current;
@@ -98,7 +100,11 @@ export function SceneVideo({
         aria-label={label}
       />
       <span className="scene-video-label">
-        Kaydırarak ilerle{reference ? " · GTA VI görsel referansı" : ""}
+        {t(
+          reference
+            ? "about.sceneVideoScrollHintRef"
+            : "about.sceneVideoScrollHint",
+        )}
       </span>
     </div>
   );

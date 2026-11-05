@@ -1,6 +1,7 @@
 "use client";
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { formatLocaleTimestamp } from "../../../i18n/format.ts";
 import type { UlujamSettings } from "../domain/ulujam";
 import { formRequest } from "../../forms/ui/admin-fetch";
 import { SiteAssetPicker } from "../../media/ui/site-asset-picker";
@@ -77,9 +78,7 @@ export function UlujamEditor({
   }
   const selected = forms.find((form) => form.id === data.formId);
   const date = (value: Date | string | null) =>
-    value
-      ? new Date(value).toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })
-      : "Belirlenmedi";
+    value ? formatLocaleTimestamp(value, "tr") : "Belirlenmedi";
   return (
     <section className={styles.workspace} aria-label="UluJam ayarları">
       <p className={styles.status} role="status">

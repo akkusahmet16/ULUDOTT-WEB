@@ -1,7 +1,11 @@
 "use client";
 import { useState } from "react";
+import { useLocale, useTranslator } from "../../../i18n/client.tsx";
+import { adaptUiErrorMessage } from "../../../i18n/error-adapter.ts";
 import { publicRequest } from "../../forms/ui/public-form";
 export function TeamLogin({ token }: { token: string }) {
+  const locale = useLocale();
+  const t = useTranslator();
   const [password, setPassword] = useState(""),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
@@ -15,13 +19,22 @@ export function TeamLogin({ token }: { token: string }) {
           setPassword("");
           location.reload();
         } catch (e) {
-          setError(e instanceof Error ? e.message : "İşlem tamamlanamadı");
+          setError(
+            e instanceof Error
+              ? adaptUiErrorMessage(
+                  e.message,
+                  t,
+                  "errors.operationFailed",
+                  locale,
+                )
+              : t("errors.operationFailed"),
+          );
         } finally {
           setBusy(false);
         }
       }}
     >
-      <label htmlFor="team-password">Takım parolası</label>
+      <label htmlFor="team-password">{t("teams.passwordLabel")}</label>
       <input
         id="team-password"
         type="password"
@@ -31,12 +44,13 @@ export function TeamLogin({ token }: { token: string }) {
         maxLength={128}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button disabled={busy}>Takıma giriş yap</button>
+      <button disabled={busy}>{t("teams.loginButton")}</button>
       <p role="alert">{error}</p>
     </form>
   );
 }
 export function TeamLogout() {
+  const t = useTranslator();
   const [error, setError] = useState("");
   return (
     <>
@@ -46,11 +60,11 @@ export function TeamLogout() {
             await publicRequest("/api/team/logout", {});
             location.reload();
           } catch {
-            setError("Çıkış tamamlanamadı.");
+            setError(t("teams.logoutError"));
           }
         }}
       >
-        Takımdan çıkış yap
+        {t("teams.logoutButton")}
       </button>
       <p role="alert">{error}</p>
     </>

@@ -1,56 +1,61 @@
 import Image from "next/image";
+import { DEFAULT_LOCALE, type Locale } from "../../../i18n/config.ts";
+import { formatLocaleTimestamp } from "../../../i18n/format.ts";
+import { getTranslator } from "../../../i18n/translate.ts";
 import type { CardView } from "../application/card-service";
 import { PendingCard } from "./pending-card";
 import styles from "./web-card.module.css";
-export function WebCard({ card }: { card: CardView }) {
+export function WebCard({
+  card,
+  locale = DEFAULT_LOCALE,
+}: {
+  card: CardView;
+  locale?: Locale;
+}) {
+  const t = getTranslator(locale);
   return (
-    <article className={styles.ticket} aria-label="Bireysel katılım kartı">
-      <p className={styles.brand}>ULUDOTT / ULUJAM</p>
+    <article className={styles.ticket} aria-label={t("cards.personalCardAria")}>
+      <p className={styles.brand}>{t("cards.brandHeader")}</p>
       <h1>{card.eventTitle}</h1>
       <p className={styles.name}>{card.name}</p>
-      <p>{card.teamName ?? "Bireysel katılım"}</p>
+      <p>{card.teamName ?? t("cards.soloParticipation")}</p>
       {card.startsAt && (
         <time dateTime={card.startsAt}>
-          {new Date(card.startsAt).toLocaleString("tr-TR", {
-            timeZone: "Europe/Istanbul",
-          })}
+          {formatLocaleTimestamp(card.startsAt, locale)}
         </time>
       )}
       <p>
-        Kart durumu:{" "}
+        {t("cards.cardStatusLabel")}{" "}
         <strong>
           {card.status === "active"
-            ? "Aktif"
+            ? t("cards.statusActive")
             : card.status === "pending"
-              ? "Onay bekliyor"
-              : "İptal"}
+              ? t("cards.statusPending")
+              : t("cards.statusRevoked")}
         </strong>
       </p>
       {card.status === "active" ? (
-        <section aria-label="Giriş kimliği">
+        <section aria-label={t("cards.entryIdentityAria")}>
           {card.qr ? (
             <>
               <Image
                 src={card.qr}
-                alt="Etkinlik giriş QR kodu"
+                alt={t("cards.entryQrAlt")}
                 width={280}
                 height={280}
                 unoptimized
               />
-              <p>
-                Bu QR yalnız etkinlik giriş kimliğinizdir. Kart bağlantınızı
-                başkalarıyla paylaşmayın.
-              </p>
+              <p>{t("cards.qrPrivacyNotice")}</p>
             </>
           ) : (
-            <p>Giriş kimliği için etkinlik yöneticisiyle iletişime geçin.</p>
+            <p>{t("cards.qrMissingContactNotice")}</p>
           )}
         </section>
       ) : (
-        <PendingCard status={card.status} />
+        <PendingCard status={card.status} locale={locale} />
       )}
       <p className={styles.foot}>
-        ULUDOTT COMMUNITY · KART SÜRÜMÜ {card.revision}
+        {t("cards.cardFooter", { revision: card.revision })}
       </p>
     </article>
   );

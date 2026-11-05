@@ -1,6 +1,7 @@
 import { getWalletStatus } from "../../../../modules/wallet";
 import { WalletActions } from "../../../../modules/wallet/ui/wallet-actions";
 import { notFound } from "next/navigation";
+import { getLocale } from "../../../../i18n/server.ts";
 import { getOwnCard } from "../../../../modules/cards/application/card-service";
 import { WebCard } from "../../../../modules/cards/ui/web-card";
 import { buildMetadata } from "../../../../seo/build-metadata.ts";
@@ -11,7 +12,7 @@ export default async function Page({
 }: {
   params: Promise<{ token: string }>;
 }) {
-  const { token } = await params;
+  const [{ token }, locale] = await Promise.all([params, getLocale()]);
   let card;
   try {
     card = await getOwnCard(token);
@@ -20,8 +21,12 @@ export default async function Page({
   }
   return (
     <main>
-      <WebCard card={card} />
-      <WalletActions status={await getWalletStatus(token)} cardToken={token} />
+      <WebCard card={card} locale={locale} />
+      <WalletActions
+        status={await getWalletStatus(token)}
+        cardToken={token}
+        locale={locale}
+      />
     </main>
   );
 }

@@ -1,5 +1,14 @@
 import Image from "next/image";
-export function SuppliedPoster({ kind }: { kind: "event" | "announcement" }) {
+import { DEFAULT_LOCALE, type Locale } from "../../i18n/config.ts";
+import { getTranslator } from "../../i18n/translate.ts";
+export function SuppliedPoster({
+  kind,
+  locale = DEFAULT_LOCALE,
+}: {
+  kind: "event" | "announcement";
+  locale?: Locale;
+}) {
+  const t = getTranslator(locale);
   const event = kind === "event";
   return (
     <figure
@@ -13,8 +22,8 @@ export function SuppliedPoster({ kind }: { kind: "event" | "announcement" }) {
         }
         alt={
           event
-            ? "Uludott tanışma etkinliği — Coffee Talk afişi"
-            : "Uludott Valorant turnuvası afişi"
+            ? t("home.coffeeTalkPosterAlt")
+            : t("home.suppliedAnnouncementPosterAlt")
         }
         width={1080}
         height={event ? 1350 : 1600}
@@ -22,8 +31,8 @@ export function SuppliedPoster({ kind }: { kind: "event" | "announcement" }) {
       />
       <figcaption>
         {event
-          ? "Uludott tanışma etkinliği · Coffee Talk"
-          : "Valorant turnuvası"}
+          ? t("home.suppliedEventCaption")
+          : t("home.suppliedAnnouncementCaption")}
       </figcaption>
     </figure>
   );

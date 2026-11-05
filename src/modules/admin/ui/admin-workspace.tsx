@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { adminTrDictionary } from "../../../i18n/dictionaries/admin-tr.ts";
 import type { Actor } from "../../../lib/logging/audit";
 import { adminModulesFor } from "../domain/modules";
 import { AdminNavigation } from "./admin-navigation";
@@ -19,10 +20,11 @@ export function AdminWorkspace({
       item.href === pathname ||
       (item.href !== "/admin" && pathname.startsWith(item.href + "/")),
   );
+  const w = adminTrDictionary.workspace;
   return (
     <div className={styles.workspace}>
       <a className={styles.skip} href="#admin-content">
-        İçeriğe geç
+        {w.skipToContent}
       </a>
       <aside className={styles.sidebar}>
         <AdminNavigation actor={actor} />
@@ -31,16 +33,16 @@ export function AdminWorkspace({
         <header className={styles.topbar}>
           <div>
             <p className={styles.breadcrumb}>
-              Yönetim <span aria-hidden="true">/</span>{" "}
-              {current?.label ?? "Çalışma alanı"}
+              {w.breadcrumbRoot} <span aria-hidden="true">/</span>{" "}
+              {current?.label ?? w.defaultModuleLabel}
             </p>
-            <p className={styles.sessionNote}>Yönetim oturumu açık.</p>
+            <p className={styles.sessionNote}>{w.sessionActive}</p>
           </div>
           <Link
             href={current?.publicHref ?? "/"}
             className={styles.outlineLink}
           >
-            {current?.publicHref ? "Sayfayı sitede gör" : "Siteyi görüntüle"}{" "}
+            {current?.publicHref ? w.viewPageOnSite : w.viewSite}{" "}
             <span aria-hidden="true">↗</span>
           </Link>
         </header>
@@ -48,7 +50,8 @@ export function AdminWorkspace({
           {children}
         </div>
         <footer className={styles.workspaceFooter}>
-          Uludott içerik yönetimi<span>Birlikte üretmek.</span>
+          {w.footerBrand}
+          <span>{w.footerMotto}</span>
         </footer>
       </div>
     </div>
