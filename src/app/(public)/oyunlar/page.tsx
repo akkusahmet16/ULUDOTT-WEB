@@ -8,8 +8,11 @@ import {
 import { ResultCard } from "../../../modules/games/ui/result-card";
 import { SiteGameCard } from "../../../modules/games/ui/site-game-card";
 import { DegreeGames } from "../../../modules/games/ui/degree-games";
+import { getLocale } from "../../../i18n/server.ts";
 import { buildMetadata } from "../../../seo/build-metadata.ts";
-export const metadata = buildMetadata({ routeId: "games" });
+export async function generateMetadata() {
+  return buildMetadata({ routeId: "games", locale: await getLocale() });
+}
 export default async function Page({
   searchParams,
 }: {

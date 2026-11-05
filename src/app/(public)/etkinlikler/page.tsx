@@ -1,9 +1,12 @@
 import { CoffeeTalkCard } from "../../../components/layout/coffee-talk-card";
 import { PublicShell } from "../../../components/layout/public-shell";
 import { EventCard } from "../../../modules/events/ui/event-card";
+import { getLocale } from "../../../i18n/server.ts";
 import { readHomeEvents } from "../../../modules/publication/ui/public-queries";
 import { buildMetadata } from "../../../seo/build-metadata.ts";
-export const metadata = buildMetadata({ routeId: "events" });
+export async function generateMetadata() {
+  return buildMetadata({ routeId: "events", locale: await getLocale() });
+}
 export default async function Page() {
   const { upcoming, past, showLegacyCoffeeTalk } = await readHomeEvents();
   return (

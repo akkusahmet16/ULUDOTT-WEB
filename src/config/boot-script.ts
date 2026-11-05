@@ -63,7 +63,7 @@ export function buildBootScript(
     "var p=typeof location==='object'&&location&&typeof location.pathname==='string'?location.pathname:'';",
     "var isAdm=p===pfx||p.indexOf(pfx+'/')===0;",
     "var t=isAdm?adm:def;",
-    "if(!isAdm){",
+    "if(isAdm){d.setAttribute('lang','tr');}else{",
     "try{",
     `var raw=localStorage.getItem(${serializedThemeKey});`,
     "if(typeof raw==='string'&&allowed.indexOf(raw)!==-1){t=raw;}",

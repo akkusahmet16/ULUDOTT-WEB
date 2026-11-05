@@ -8,12 +8,12 @@ import {
   DEFAULT_MENU_PREVIEW_IMAGE,
   getNavbarRoutes,
 } from "../../config/routes.config.ts";
-import { getTranslator } from "../../i18n/translate.ts";
+import { useTranslator } from "../../i18n/client.tsx";
 
-const t = getTranslator("tr");
 const navRoutes = getNavbarRoutes();
 
 export function Header() {
+  const t = useTranslator();
   const path = usePathname(),
     [open, setOpen] = useState(false),
     toggle = useRef<HTMLButtonElement>(null);

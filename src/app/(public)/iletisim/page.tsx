@@ -2,16 +2,25 @@ import { PublicShell } from "../../../components/layout/public-shell";
 import { ButtonLink } from "../../../components/design-system/button";
 import { readContactSettings } from "../../../modules/publication/ui/public-queries";
 import { SocialIcon } from "../../../modules/site-settings/ui/social-icon";
+import { getLocale } from "../../../i18n/server.ts";
 import { buildMetadata } from "../../../seo/build-metadata.ts";
 import styles from "./contact.module.css";
 export async function generateMetadata() {
-  const { data } = await readContactSettings();
+  const [{ data }, locale] = await Promise.all([
+    readContactSettings(),
+    getLocale(),
+  ]);
   return buildMetadata({
     routeId: "contact",
-    content: {
-      title: data.title,
-      description: data.description,
-    },
+    locale,
+    ...(locale === "tr"
+      ? {
+          content: {
+            title: data.title,
+            description: data.description,
+          },
+        }
+      : {}),
   });
 }
 export default async function Page() {

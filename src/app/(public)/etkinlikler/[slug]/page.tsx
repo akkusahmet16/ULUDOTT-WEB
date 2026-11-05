@@ -3,21 +3,24 @@ import type { Metadata } from "next";
 import { readPublicEvent } from "../../../../modules/publication/ui/public-queries";
 import { PublicShell } from "../../../../components/layout/public-shell";
 import { ContentView } from "../../../../modules/publication/ui/content-view";
+import { getLocale } from "../../../../i18n/server.ts";
 import { loadServerConfig } from "../../../../lib/config/server";
 import { buildMetadata } from "../../../../seo/build-metadata.ts";
 type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const [{ slug }, locale] = await Promise.all([params, getLocale()]);
   const item = await readPublicEvent(slug);
   if (!item) {
     return buildMetadata({
       routeId: "eventDetail",
+      locale,
       params: { slug },
       content: { notFound: true },
     });
   }
   return buildMetadata({
     routeId: "eventDetail",
+    locale,
     params: { slug: item.slug },
     content: {
       title: item.seo.title || item.title,

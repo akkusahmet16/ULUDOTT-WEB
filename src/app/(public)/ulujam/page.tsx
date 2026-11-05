@@ -7,8 +7,11 @@ import {
 } from "../../../modules/publication/ui/public-queries";
 import { UlujamComingSoon } from "../../../modules/events/ui/ulujam-coming-soon";
 import { UlujamArchive } from "../../../modules/events/ui/ulujam-archive";
+import { getLocale } from "../../../i18n/server.ts";
 import { buildMetadata } from "../../../seo/build-metadata.ts";
-export const metadata = buildMetadata({ routeId: "ulujam" });
+export async function generateMetadata() {
+  return buildMetadata({ routeId: "ulujam", locale: await getLocale() });
+}
 export default async function Page() {
   const [presentation, archives, legacyGallery] = await Promise.all([
     readUlujamPresentation(),

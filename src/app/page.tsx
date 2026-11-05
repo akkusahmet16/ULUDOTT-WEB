@@ -13,9 +13,12 @@ import {
   readHistoricalResults,
   readUlujamPresentation,
 } from "../modules/publication/ui/public-queries";
+import { getLocale } from "../i18n/server.ts";
 import { buildMetadata } from "../seo/build-metadata.ts";
 import styles from "../styles/home.module.css";
-export const metadata = buildMetadata({ routeId: "home" });
+export async function generateMetadata() {
+  return buildMetadata({ routeId: "home", locale: await getLocale() });
+}
 export default async function HomePage() {
   const [events, results, ulujam] = await Promise.all([
     readHomeEvents(),

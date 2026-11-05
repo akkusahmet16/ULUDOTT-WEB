@@ -2,9 +2,12 @@ import { PeopleStory } from "../../../modules/community/people-story";
 import Image from "next/image";
 import { PublicShell } from "../../../components/layout/public-shell";
 import { ButtonLink } from "../../../components/design-system/button";
+import { getLocale } from "../../../i18n/server.ts";
 import { readPeopleContent } from "../../../modules/publication/ui/public-queries";
 import { buildMetadata } from "../../../seo/build-metadata.ts";
-export const metadata = buildMetadata({ routeId: "about" });
+export async function generateMetadata() {
+  return buildMetadata({ routeId: "about", locale: await getLocale() });
+}
 const places = [
   {
     title: "Etkinlik kafeleri",

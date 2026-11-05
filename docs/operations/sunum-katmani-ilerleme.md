@@ -435,4 +435,44 @@ Kullanıcı kararlarından sonra: (1) Chromium 1243 kurulumu (ağ gerekir) veya 
 
 ### Sıradaki adım ve bekleyen kararlar
 
-- **Sıradaki adım:** Faz 3 / İş 3A (Dil altyapısı) için kullanıcı onayı bekleniyor. Onay gelmeden Faz 3 başlatılmaz.
+- **Sıradaki adım:** Faz 3 / İş 3A (Dil altyapısı) için kullanıcı onayı alındı ve İş 3A tamamlandı (aşağıdaki kapanış kaydına bakınız).
+
+---
+
+## 5 Kasım 2026 — Faz 3 / İş 3A kapanışı ve devir notu
+
+### Tamamlananlar (Faz 3 / İş 3A: Dil altyapısı)
+
+- **Sunucu/istemci dil sınırı ve çerez çözümlemesi (`src/i18n/`):**
+  - `src/i18n/config.ts`: İstemciye aktarılabilecek izinli sözlük dilimleri `CLIENT_NAMESPACES = ["brand", "nav", "common"] as const`, `ClientNamespace` ve `isClientNamespace` olarak tanımlandı.
+  - `src/i18n/dictionaries/admin-tr.ts`: Yönetim paneli sözlüğü (`adminTrDictionary`, `AdminDictionary`) `PublicDictionary` tipinden bağımsız, yalnız Türkçe (TR) olarak tanımlandı.
+  - `src/i18n/server.ts` (`"server-only"`): `React.cache` ile sarmalanmış `getLocale(): Promise<Locale>`, saf `resolveRequestLocaleFromContext()`, `getRequestTranslator(explicitLocale?)`, `getDictionarySlice(locale, namespace)` ve `getAdminDictionary()` oluşturuldu. `/admin` ve `/admin/*` rotalarında her zaman `"tr"` döner; genel rotalarda yalnız `COOKIE_KEYS.locale` (`uludott-lang`) beyaz liste (`tr` | `en`) doğrulamasından geçer; `Accept-Language` başlığıyla otomatik EN açılmaz ve oturum/CSRF cookie politikası değişmez.
+  - `src/i18n/client.tsx` (`"use client"`): Sıfır ekstra DOM sarmalayıcı (`<I18nContext.Provider value={value}>{children}</I18nContext.Provider>`) üreten ve hiçbir görünür dil seçici (`LanguageToggle` veya `<noscript>` formu) eklemeyen `I18nProvider`, `useLocale()`, `useTranslator()` ve `createSliceTranslator(slice)` oluşturuldu.
+  - `src/i18n/format.ts`: Sabit `Europe/Istanbul` (`APP_TIME_ZONE`) ve `LOCALE_TAGS` (`tr-TR` / `en-GB`) üzerinden açık `locale: Locale` parametreli `formatDate`, `formatDateTime`, `formatNumber`, `formatRelativeTime` ve `selectPlural` yardımcıları eklendi.
+- **Layout, Header, Footer, PublicShell ve sayfa metadata bağlantıları:**
+  - `src/proxy.ts` içine `headers.set("x-pathname", request.nextUrl.pathname)` ve `src/config/boot-script.ts` içine `/admin` dalında `d.setAttribute('lang','tr')` eklendi.
+  - `src/app/layout.tsx`: `generateMetadata` ve `RootLayout` içinde `getLocale()` ve `getDictionarySlice(locale, CLIENT_NAMESPACES)` kullanılarak `<html lang={locale}>` ve `<I18nProvider locale={locale} dictionary={dictionary}>` bağlandı.
+  - `src/app/admin/layout.tsx`: `<I18nProvider locale="tr" forcedLocale="tr" dictionary={adminSlice}>` ve `getAdminDictionary().workspace.title` bağlandı.
+  - `src/components/layout/header.tsx` istemcide `useTranslator()` kullanacak biçimde güncellenerek tam sözlüklerin istemci paketine girmesi engellendi; `src/components/layout/footer.tsx` ve `src/components/layout/public-shell.tsx` sunucuda `await getRequestTranslator()` kullanacak biçimde güncellendi.
+  - 8 genel `page.tsx` (`src/app/page.tsx`, `hakkimizda`, `ulujam`, `etkinlikler`, `etkinlikler/[slug]`, `oyunlar`, `oyunlar/[slug]`, `iletisim`) `locale: await getLocale()` ile `buildMetadata` çağıracak şekilde güncellendi.
+- **İstemci paket boyutu ve TTFB / dinamik rota etkisi:**
+  - Üretim derlemesi (`.next/static/chunks/*.js`) ölçümü: **37 JS chunk**, toplam **1.392,27 KB ham (1.425.684 bayt)** / **411,08 KB gzip (420.947 bayt)**; sunucuya özel sözlük dizgelerinin (`meta.*`, `footer.*`, `adminTrDictionary`) istemci chunk'larında sızıntı sayısı **`0`**.
+  - `RootLayout` Faz 0'dan beri `await connection()` ve `await headers()` (CSP `x-nonce` için) kullandığından 56 rotanın tamamı zaten dinamik (`ƒ`) olarak çalışmaktadır; `getLocale()` aynı istek kapsamında `React.cache` ile tek kez çalıştığı için ek dinamik rota dönüşümü veya TTFB regresyonu oluşturmamıştır.
+- **Doğrulama testleri ve çalıştırılan komutlar:**
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm exec vitest run tests/unit/theme-*.test.ts tests/unit/i18n-*.test.ts tests/unit/routes-integrity.test.ts tests/unit/seo.test.ts tests/unit/icons.test.ts` → Çıkış `0` (**10 dosya / 46 test geçti**):
+    - `tests/unit/i18n-parity.test.ts` (5/5): `PublicDictionary` TR/EN anahtar ve `{placeholder}` eşliği, boş/TODO/lorem ve çevrilmemiş Türkçe karakter denetimi, bağımsız `AdminDictionary` kontrolü, `getDictionarySlice` beyaz liste zorlaması, istemci paket sınır denetimi ve eşzamanlı `getRequestTranslator` izolasyonu.
+    - `tests/unit/i18n-format.test.ts` (5/5): UTC gece yarısı sınırında (`2026-10-20T22:30:00.000Z` → `21 Ekim 2026 01:30`) `Europe/Istanbul` determinizmi, `formatNumber`, `formatRelativeTime`, `selectPlural` ve geçersiz girdi reddi.
+  - `tests/e2e/locale.spec.ts`: Varsayılan `tr`, `Accept-Language: en-US` altında otomatik EN'ye geçmeme, geçersiz çerez (`uludott-lang=de`) fallback'i, `uludott-lang=en` ile URL değişmeden `<html lang="en">` + İngilizce başlık/menü, `/admin` rotasında `uludott-lang=en` varken dahi `<html lang="tr">` korunumu, eşzamanlı TR+EN istek izolasyonu ve JS açık/kapalı görünür dil kontrolü bulunmaması E2E senaryoları eklendi.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm exec tsc --noEmit` → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run lint` (`eslint . --max-warnings=0`) → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run build` → Çıkış `0` (56/56 rota derlendi; `next-env.d.ts` orijinal hâline geri yüklenip `tsc --noEmit` tekrar `0` ile doğrulandı).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run security:source` → Çıkış `0` (`{"files":878,"secretHits":0,"forbiddenFiles":0}`).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm exec node .local/phase-0c/check-baseline.mjs` → Çıkış `0` (`captures: 647`, `pngHashesValid: 647`, `nativeDimensionsValid: 647`, `imageIdentities: 1194`).
+
+### Açık kalanlar
+
+- **Faz 3 / İş 3B (henüz başlamadı):** Ekran metinlerinin sözlüğe taşınması, CMS içerik sınırı (`docs/operations/i18n-content-policy.md`), AST tabanlı sabit metin bekçisi (`tests/unit/no-hardcoded-text.test.ts`, `tests/unit/i18n-unused.test.ts` ve `tests/unit/i18n-guard-fixtures/*`).
+
+### Sıradaki adım ve bekleyen kararlar
+
+- **Sıradaki adım:** Faz 3 / İş 3B (Ekran dönüşümü ve doğrulama bekçileri) için kullanıcı onayı bekleniyor. Onay gelmeden İş 3B başlatılmaz.

@@ -1,11 +1,12 @@
-import { getTranslator } from "../../i18n/translate.ts";
+import { getRequestTranslator } from "../../i18n/server.ts";
 import { readContactSettings } from "../../modules/publication/ui/public-queries";
 import { SocialIcon } from "../../modules/site-settings/ui/social-icon";
 
-const t = getTranslator("tr");
-
 export async function Footer() {
-  const { data } = await readContactSettings();
+  const [{ data }, t] = await Promise.all([
+    readContactSettings(),
+    getRequestTranslator(),
+  ]);
   const socials = data.socials.filter((social) => social.footer);
   return (
     <footer className="site-footer">

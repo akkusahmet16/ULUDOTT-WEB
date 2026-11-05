@@ -8,13 +8,18 @@ import { BootScript } from "../components/boot/BootScript.tsx";
 import { ThemeProvider } from "../components/theme/ThemeProvider.tsx";
 import { rootFontClassName } from "../config/fonts.ts";
 import { DEFAULT_THEME } from "../config/theme.config.ts";
-import { getTranslator } from "../i18n/translate.ts";
+import { I18nProvider } from "../i18n/client.tsx";
+import { CLIENT_NAMESPACES } from "../i18n/config.ts";
+import {
+  getDictionarySlice,
+  getLocale,
+  getRequestTranslator,
+} from "../i18n/server.ts";
 import { loadServerConfig } from "../lib/config/server.ts";
-
-const t = getTranslator("tr");
 
 export async function generateMetadata(): Promise<Metadata> {
   await connection();
+  const t = await getRequestTranslator();
   return {
     metadataBase: new URL(loadServerConfig().appUrl),
     title: {
@@ -31,10 +36,12 @@ export default async function RootLayout({
   children: ReactNode;
 }) {
   await connection();
-  const nonce = (await headers()).get("x-nonce") ?? undefined;
+  const [headerStore, locale] = await Promise.all([headers(), getLocale()]);
+  const nonce = headerStore.get("x-nonce") ?? undefined;
+  const dictionary = getDictionarySlice(locale, CLIENT_NAMESPACES);
   return (
     <html
-      lang="tr"
+      lang={locale}
       data-theme={DEFAULT_THEME}
       className={rootFontClassName}
       suppressHydrationWarning
@@ -43,7 +50,11 @@ export default async function RootLayout({
         <BootScript nonce={nonce} />
       </head>
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <I18nProvider locale={locale} dictionary={dictionary}>
+            {children}
+          </I18nProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

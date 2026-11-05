@@ -14,7 +14,22 @@ export const LOCALE_TAGS: Readonly<Record<Locale, string>> = {
 export const APP_TIME_ZONE = "Europe/Istanbul" as const;
 
 /**
- * Dil URL politikası (Faz 2 / İş 2A):
+ * İstemci bileşenlerine (`I18nProvider`) aktarılabilecek izinli sözlük dilimleri.
+ * Tam sözlük veya sunucu yapılandırması istemci paketine girmez.
+ */
+export const CLIENT_NAMESPACES = ["brand", "nav", "common"] as const;
+
+export type ClientNamespace = (typeof CLIENT_NAMESPACES)[number];
+
+export function isClientNamespace(value: unknown): value is ClientNamespace {
+  return (
+    typeof value === "string" &&
+    (CLIENT_NAMESPACES as readonly string[]).includes(value)
+  );
+}
+
+/**
+ * Dil URL politikası (Faz 2 / İş 2A & Faz 3 / İş 3A):
  * Mevcut Türkçe URL'ler ve cookie tabanlı dil korunur;
  * /en öneki veya hreflang alternatif URL'leri uydurulmaz.
  */
