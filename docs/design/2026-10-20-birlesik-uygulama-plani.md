@@ -128,12 +128,16 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **Dosyalar:** yeni src/config/{theme.config,storage-keys,fonts,boot-script}.ts, src/components/boot/BootScript.tsx, src/components/theme/ThemeProvider.tsx; src/app/layout.tsx, src/app/admin/layout.tsx; yeni tests/unit/theme-runtime.test.ts ve tests/e2e/theme-runtime.spec.ts.
 
-- [ ] THEMES, ThemeId, DEFAULT_THEME, ADMIN_THEME, isThemeId ve THEME_REGISTRY yalnız v0.1'in gerçek public/admin envanterini tarif eder. cinematic/classic adları teknik etiket olabilir; yeni palet/varsayılan veya saklanan tercihi başka görünüme çeviren migration yoktur. Mevcut tercih yoksa sırf kayıt defteri var diye tercih davranışı eklenmez. ArtDeco dosyaları/ağırlıkları, font metrikleri ve ilk boyamadaki görünüm korunur.
-- [ ] STORAGE_KEYS ve COOKIE_KEYS mevcut adları/attribute sözleşmesini değiştirmeden taşır. Auth/CSRF cookie adları salt import adaptasyonudur; oturumları düşüren yeniden adlandırma yapılmaz.
-- [ ] BootScript mevcut proxy'nin x-nonce değeriyle üretim CSP altında hydration öncesi çalışır. Tek sabit üretim kaynağı ve typed ayar kullanılır; raw kullanıcı metni script içine gömülmez.
-- [ ] ThemeProvider kullanılırsa yalnız mevcut görünümü koruyan teknik senkronizasyon yapar. Storage erişilemese/geçersiz olsa da v0.1'deki görünüm çıkar; admin'e eski classic paleti uygulanmaz. Yeni tema davranışı veya görünür seçici eklenmez.
-- [ ] CSP, JS kapalı, storage SecurityError, eski/geçersiz değer, ilk boyama ve hydration testlerini yaz. Public iki profil iddiası üretilmez.
-- [ ] Kabul: FOUC/hydration/CSP hatası yok; mevcut özel başlıklar korunmuş; görsel referans ve tam kapı yeşil.
+- [x] THEMES, ThemeId, DEFAULT_THEME, ADMIN_THEME, isThemeId ve THEME_REGISTRY yalnız v0.1'in gerçek public/admin envanterini tarif eder. cinematic/classic adları teknik etiket olabilir; yeni palet/varsayılan veya saklanan tercihi başka görünüme çeviren migration yoktur. Mevcut tercih yoksa sırf kayıt defteri var diye tercih davranışı eklenmez. ArtDeco dosyaları/ağırlıkları, font metrikleri ve ilk boyamadaki görünüm korunur.
+- [x] STORAGE_KEYS ve COOKIE_KEYS mevcut adları/attribute sözleşmesini değiştirmeden taşır. Auth/CSRF cookie adları salt import adaptasyonudur; oturumları düşüren yeniden adlandırma yapılmaz.
+- [x] BootScript mevcut proxy'nin x-nonce değeriyle üretim CSP altında hydration öncesi çalışır. Tek sabit üretim kaynağı ve typed ayar kullanılır; raw kullanıcı metni script içine gömülmez.
+- [x] ThemeProvider kullanılırsa yalnız mevcut görünümü koruyan teknik senkronizasyon yapar. Storage erişilemese/geçersiz olsa da v0.1'deki görünüm çıkar; admin'e eski classic paleti uygulanmaz. Yeni tema davranışı veya görünür seçici eklenmez.
+- [x] CSP, JS kapalı, storage SecurityError, eski/geçersiz değer, ilk boyama ve hydration testlerini yaz. Public iki profil iddiası üretilmez.
+- [x] Kabul: FOUC/hydration/CSP hatası yok; mevcut özel başlıklar korunmuş; görsel referans ve tam kapı yeşil.
+
+**5 Kasım 1B kabul kaydı:** `src/config/theme.config.ts` (`THEMES = ["cinematic", "classic"]`, `DEFAULT_THEME = "cinematic"`, `ADMIN_THEME = "classic"`, `isThemeId`, `THEME_REGISTRY`), `src/config/storage-keys.ts` (`STORAGE_KEYS`, `COOKIE_KEYS`; `src/lib/auth/cookie-policy.ts` ve `src/modules/teams/application/team-access.ts` salt import adaptasyonu), `src/config/fonts.ts` (4 ArtDeco `.woff` dosyası, ağırlıkları ve `--font-artdeco-body` / `--font-artdeco-display` değişkenleri), `src/config/boot-script.ts` (`BOOT_SCRIPT_CONFIG`, `assertSafeBootToken`, `buildBootScript`), `src/components/boot/BootScript.tsx` ve `src/components/theme/ThemeProvider.tsx` (DOM sarmalayıcısı eklemeden React Context senkronizasyonu) oluşturuldu ve `src/app/layout.tsx` ile `src/app/admin/layout.tsx` içine bağlandı. `tests/unit/theme-runtime.test.ts` (5/5; Chromium altında gerçek CSP nonce, `javaScriptEnabled: false`, `localStorage` `SecurityError`, geçersiz/eski değer ve v0.1 ilk boyama kanıtı dahil) ve `tests/e2e/theme-runtime.spec.ts` eklendi. `check-baseline.mjs` (647/647 PNG), `theme-*` + `visual-*` + `auth-cookie-policy` (13 dosya / 102 test), `tsc --noEmit`, `eslint`, `next build` (56 rota) ve `security:source` (857 dosya / 0 sır) yeşil.
+
+**Faz 1 çıkışı:** 1A ve 1B tamam; [ilerleme kaydı](../operations/sunum-katmani-ilerleme.md) kanıtlı. Sıradaki adım Faz 2 / İş 2A'dır.
 
 ## 6. Faz 2 — Rota/SEO ve ikon kayıtları
 

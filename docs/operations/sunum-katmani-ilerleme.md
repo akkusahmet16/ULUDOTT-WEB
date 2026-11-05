@@ -300,4 +300,40 @@ Kullanıcı kararlarından sonra: (1) Chromium 1243 kurulumu (ağ gerekir) veya 
 
 ### Sıradaki adım ve bekleyen kararlar
 
-- **Sıradaki adım:** Faz 1 / İş 1B (Font, storage ve nonce uyumlu açılış) için kullanıcı onayı bekleniyor. Onay gelmeden İş 1B başlatılmaz.
+- **Sıradaki adım:** Faz 1 / İş 1B (Font, storage ve nonce uyumlu açılış) için kullanıcı onayı alındı ve İş 1B tamamlandı (aşağıdaki kapanış kaydına bakınız).
+
+---
+
+## 5 Kasım 2026 — Faz 1 / İş 1B kapanışı ve Faz 1 devir notu
+
+### Tamamlananlar (Faz 1 / İş 1B: Font, storage ve nonce uyumlu açılış)
+
+- **Merkezi tema, storage, font ve BootScript yapılandırmaları:**
+  - `src/config/theme.config.ts`: `THEMES = ["cinematic", "classic"] as const`, `ThemeId`, `DEFAULT_THEME = "cinematic"`, `ADMIN_THEME = "classic"`, `THEME_REGISTRY`, `isThemeId`, `isAdminPathname` ve `resolveRuntimeTheme` tek merkezde tanımlandı.
+  - `src/config/storage-keys.ts`: `STORAGE_KEYS` (`theme: "uludott-theme"`, `introSeen: "uludott-intro-seen"`) ve `COOKIE_KEYS` (`locale: "uludott-lang"`, `adminSessionHttps: "__Host-uludott_admin"`, `adminSessionHttp: "uludott_admin_local"`, `adminCsrfHttps: "__Host-uludott_csrf"`, `adminCsrfHttp: "uludott_csrf_local"`, `teamSession: "__Host-uludott_team"`) olarak donduruldu.
+  - **Dar kapsamlı cookie anahtarı import adaptasyonu kaydı:** `src/lib/auth/cookie-policy.ts` ve `src/modules/teams/application/team-access.ts` dosyalarındaki mevcut oturum/CSRF cookie adları yeniden adlandırılmadan (`__Host-uludott_admin`, `uludott_admin_local`, `__Host-uludott_csrf`, `uludott_csrf_local`, `__Host-uludott_team` bire bir korunarak) `src/config/storage-keys.ts` içindeki `COOKIE_KEYS`'den import edilecek biçimde bağlandı ve `tests/unit/auth-cookie-policy.test.ts` (4/4) ile `tests/unit/theme-runtime.test.ts` içinde doğrulandı.
+  - `src/config/fonts.ts`: `bodyFont` (`--font-artdeco-body`) ve `displayFont` (`--font-artdeco-display`) `next/font/local` tanımları 4 yerel ArtDeco `.woff` dosyası, ağırlıklar (400/500/700), `display: "swap"` ve `rootFontClassName` ile merkezileştirildi.
+  - `src/config/boot-script.ts` ve `src/components/boot/BootScript.tsx`: Yalnız doğrulanmış sabit anahtar ve tema kimliklerini (`assertSafeBootToken`) kullanan, `/admin` ve `/admin/*` rotalarında `classic`, genel rotalarda ise `localStorage["uludott-theme"]` doğrulamasıyla varsayılan `cinematic` temasını ilk boyamadan önce `document.documentElement.dataset.theme` üzerine yazan ve `try/catch` ile sarmalanmış nonce uyumlu `<BootScript nonce={nonce} />` bileşeni eklendi.
+- **`ThemeProvider` ve kök/admin layout entegrasyonu:**
+  - `src/components/theme/ThemeProvider.tsx`: Ek DOM sarmalayıcı (`<div>` vb.) üretmeden doğrudan `<ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>` döndürerek `src/styles/base.css` içindeki `body > main:not(#main-content)` seçicilerini bire bir koruyan `ThemeProvider` ve `useTheme` eklendi.
+  - `src/app/layout.tsx`: `const nonce = (await headers()).get("x-nonce") ?? undefined;` ile CSP nonce değerini okuyup `<html lang="tr" data-theme={DEFAULT_THEME} className={rootFontClassName} suppressHydrationWarning>` ve `<head><BootScript nonce={nonce} /></head>` üzerinden ilk boyama öncesi tema kilidini kuracak şekilde güncellendi.
+  - `src/app/admin/layout.tsx`: Admin çalışma alanı `<ThemeProvider forcedTheme={ADMIN_THEME}>` ile sarmalandı; public görünür DOM'a hiçbir yeni tema seçici kontrol eklenmedi.
+- **Doğrulama testleri ve çalıştırılan komutlar:**
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm exec vitest run tests/unit/theme-*.test.ts tests/unit/visual-*.test.ts tests/unit/auth-cookie-policy.test.ts` → Çıkış `0` (**13 dosya / 102 test geçti**, 42.68s):
+    - `tests/unit/theme-runtime.test.ts` (5/5): Sabit storage/cookie anahtarları, güvenli BootScript üretimi, gerçek Chromium'da bozuk/geçerli/engelli (`SecurityError`) `localStorage` senaryoları, `/admin` → `/` geçişinde `data-theme` restorasyonu ve sıfır ekstra DOM düğümü (`body > main` korunumu) doğrulandı.
+    - `tests/unit/theme-parity.test.ts` (4/4), `tests/unit/theme-centralization.test.ts` (5/5), `tests/unit/theme-contrast.test.ts` (4/4), `tests/unit/auth-cookie-policy.test.ts` (4/4) ve görsel yardımcı testler (`visual-*.test.ts`, 80/80) eksiksiz geçti.
+  - `tests/e2e/theme-runtime.spec.ts`: İlk boyama öncesi `data-theme="cinematic"`, CSP nonce uyumu (`script#uludott-boot[nonce]`), sıfır CSP/pageerror/console.error, bozuk `localStorage` ve engelli `localStorage` (`SecurityError`) altında çökmeden açılış ve `/admin/login` ↔ `/` tema izolasyonu E2E senaryoları eklendi.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm exec tsc --noEmit` → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run lint` (`eslint . --max-warnings=0`) → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run build` → Çıkış `0` (56/56 rota derlendi; `next-env.d.ts` orijinal hâline geri yüklenip `tsc --noEmit` tekrar `0` ile doğrulandı).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run security:source` → Çıkış `0` (`{"files":857,"secretHits":0,"forbiddenFiles":0}`).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm exec node .local/phase-0c/check-baseline.mjs` → Çıkış `0` (`captures: 647`, `pngHashesValid: 647`, `nativeDimensionsValid: 647`, `imageIdentities: 1194`).
+
+### Açık kalanlar
+
+- Faz 1 (`İş 1A` ve `İş 1B`) kapsamında açık madde kalmamıştır.
+- Faz 2 (`İş 2A`: Medya öznitelikleri ve yaşam döngüsü, `İş 2B`: HomeExperience kabuğu, `İş 2C`: Sahne dekorasyonu ve kaydırma hook'ları) henüz başlamamıştır.
+
+### Sıradaki adım ve bekleyen kararlar
+
+- **Sıradaki adım:** Faz 2 / İş 2A'ya geçmek için kullanıcı onayı bekleniyor. Onay gelmeden Faz 2 başlatılmaz.

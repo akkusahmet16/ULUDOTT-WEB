@@ -185,12 +185,17 @@ describe("Theme Parity Test Suite", () => {
     }
   });
 
-  it("verifies atomic font variable separation between layout.tsx and themes.css without circular references", () => {
+  it("verifies atomic font variable separation between layout.tsx/fonts.ts and themes.css without circular references", () => {
+    const fontsTsPath = path.resolve(process.cwd(), "src/config/fonts.ts");
     const layoutSource = fs.readFileSync(layoutTsxPath, "utf8");
-    expect(layoutSource).toContain('variable: "--font-artdeco-body"');
-    expect(layoutSource).toContain('variable: "--font-artdeco-display"');
-    expect(layoutSource).not.toContain('variable: "--font-body"');
-    expect(layoutSource).not.toContain('variable: "--font-display"');
+    const fontsSource = fs.existsSync(fontsTsPath)
+      ? fs.readFileSync(fontsTsPath, "utf8")
+      : layoutSource;
+
+    expect(fontsSource).toContain('variable: "--font-artdeco-body"');
+    expect(fontsSource).toContain('variable: "--font-artdeco-display"');
+    expect(fontsSource).not.toContain('variable: "--font-body"');
+    expect(fontsSource).not.toContain('variable: "--font-display"');
 
     const themesCss = fs.readFileSync(themesCssPath, "utf8");
     const themesTokens = parseTokensFromCss(themesCss);

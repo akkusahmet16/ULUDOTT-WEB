@@ -1,26 +1,14 @@
+import { headers } from "next/headers";
 import { connection } from "next/server";
 import "../styles/tokens.css";
 import "../styles/cinematic.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import localFont from "next/font/local";
+import { BootScript } from "../components/boot/BootScript.tsx";
+import { ThemeProvider } from "../components/theme/ThemeProvider.tsx";
+import { rootFontClassName } from "../config/fonts.ts";
+import { DEFAULT_THEME } from "../config/theme.config.ts";
 import { loadServerConfig } from "../lib/config/server.ts";
-
-const bodyFont = localFont({
-  src: [
-    { path: "../styles/fonts/ArtDeco-Regular.woff", weight: "400" },
-    { path: "../styles/fonts/ArtDeco-Medium.woff", weight: "500" },
-    { path: "../styles/fonts/ArtDeco-Bold.woff", weight: "700" },
-  ],
-  variable: "--font-artdeco-body",
-  display: "swap",
-});
-const displayFont = localFont({
-  src: "../styles/fonts/ArtDeco-CondensedBold.woff",
-  variable: "--font-artdeco-display",
-  weight: "700",
-  display: "swap",
-});
 
 export async function generateMetadata(): Promise<Metadata> {
   await connection();
@@ -40,9 +28,20 @@ export default async function RootLayout({
   children: ReactNode;
 }) {
   await connection();
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
-    <html lang="tr" className={`${bodyFont.variable} ${displayFont.variable}`}>
-      <body>{children}</body>
+    <html
+      lang="tr"
+      data-theme={DEFAULT_THEME}
+      className={rootFontClassName}
+      suppressHydrationWarning
+    >
+      <head>
+        <BootScript nonce={nonce} />
+      </head>
+      <body>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

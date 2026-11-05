@@ -23,8 +23,9 @@ import { appendAudit, type Actor } from "../../../lib/logging/audit.ts";
 import { SubmissionError } from "../../forms/domain/submission-error.ts";
 import { lockTeam } from "../infrastructure/team-repository.ts";
 import { encryptReplay } from "../../forms/infrastructure/submission-repository.ts";
+import { COOKIE_KEYS } from "../../../config/storage-keys.ts";
 import { teamRate } from "./team-rate.ts";
-export const TEAM_COOKIE = "__Host-uludott_team";
+export const TEAM_COOKIE = COOKIE_KEYS.teamSession;
 const privateToken = z.string().regex(/^[A-Za-z0-9_-]{43}$/);
 export async function loginTeam(token: string, password: string) {
   privateToken.parse(token);
