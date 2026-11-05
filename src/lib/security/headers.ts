@@ -1,12 +1,8 @@
+import { isPrivateRoutePath } from "../../config/routes.config.ts";
 export { verifyCsrf as requireCsrf } from "../auth/csrf.ts";
 export type RouteClass = "private" | "public" | "asset";
 export function routeClass(path: string): RouteClass {
-  if (
-    /^\/(admin(?:\/|$)|api\/(admin|forms|submissions|ulujam|team|cards|wallet)(?:\/|$)|l(?:\/|$)|basvuru(?:\/|$)|makbuz(?:\/|$)|kart(?:\/|$)|takim(?:\/|$)|yayin-onayi(?:\/|$))/.test(
-      path,
-    )
-  )
-    return "private";
+  if (isPrivateRoutePath(path)) return "private";
   return path.startsWith("/_next/") ||
     path.startsWith("/assets/") ||
     path.startsWith("/media/") ||

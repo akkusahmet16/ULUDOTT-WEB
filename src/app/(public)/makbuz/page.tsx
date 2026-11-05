@@ -1,5 +1,6 @@
 import { ReceiptView } from "../../../modules/forms/ui/receipt-view";
-export const metadata = { robots: { index: false, follow: false } };
+import { buildMetadata } from "../../../seo/build-metadata.ts";
+export const metadata = buildMetadata({ routeId: "receipt" });
 export default function Page() {
   return (
     <main>

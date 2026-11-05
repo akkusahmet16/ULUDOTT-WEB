@@ -373,4 +373,37 @@ Kullanıcı kararlarından sonra: (1) Chromium 1243 kurulumu (ağ gerekir) veya 
 
 ### Sıradaki adım ve bekleyen kararlar
 
-- **Sıradaki adım:** Faz 2 / İş 2B (Menü, metadata ve sitemap entegrasyonu) için kullanıcı onayı bekleniyor. Onay gelmeden İş 2B başlatılmaz.
+- **Sıradaki adım:** Faz 2 / İş 2B (Menü, metadata ve sitemap entegrasyonu) için kullanıcı onayı alındı ve İş 2B tamamlandı (aşağıdaki kapanış kaydına bakınız).
+
+---
+
+## 5 Kasım 2026 — Faz 2 / İş 2B kapanışı ve devir notu
+
+### Tamamlananlar (Faz 2 / İş 2B: Menü, metadata ve sitemap entegrasyonu)
+
+- **Merkezi `buildMetadata` üreticisi (`src/seo/build-metadata.ts`):**
+  - DB'ye erişmeyen saf `buildMetadata({ routeId, locale, params?, searchParams?, content? }): Metadata` fonksiyonu, `normalizeBrandlessTitle` ve `formatDocumentTitle` yardımcıları oluşturuldu.
+  - Mevcut `"— Uludott | ULUDOTT"` ve `"Uludott — ... | ULUDOTT"` çift marka tekrarları temizlendi; kök şablon (`%s | ULUDOTT`) üzerinden marka adı yalnızca bir kez eklenir.
+  - 404 / bulunamayan veya geçersiz/traversal dinamik `slug` durumlarında ve indeks dışı özel/operasyonel rotalarda (`application`, `receipt`, `privateCard`, `privateTeam`, `privateConsent`) `robots: { index: false, follow: false }` (+ token rotalarında `referrer: "no-referrer"`) üretilir; hiçbir token veya sorgu parametresi `canonical`, `openGraph` veya `twitter` alanlarına sızmaz.
+- **Header, Footer, PublicShell, Sitemap, Robots ve sayfa metadata entegrasyonları:**
+  - `src/components/layout/header.tsx`: Yerel sabit `links` ve alt menü dizileri kaldırılarak `getNavbarRoutes()` ve `getTranslator("tr")` üzerinden merkezileştirildi; tüm DOM yapısı, sınıflar, `aria-*` öznitelikleri ve klavye/odak davranışı bire bir korundu.
+  - `src/components/layout/footer.tsx` ve `src/components/layout/public-shell.tsx`: Sabit etiketler `getTranslator("tr")` üzerinden bağlandı; Footer'a yeni menü eklenmedi ve sosyal bağlantılar `readContactSettings()` kaynağında korundu.
+  - **Salt okunur `listIndexableGames()` adaptörü kaydı:** `src/modules/games/infrastructure/game-repository.ts` içine 20 kayıtlık sayfalama (`LIMIT 21`) sınırı olmadan, mevcut `publicQuery()` ve `publicView()` uygunluk kurallarını bire bir koruyan ve gerçek `lastModified` değerini `coalesce(audit_logs.created_at, published_at, created_at)` üzerinden alan `listIndexableGames()` eklendi; `src/modules/publication/ui/public-queries.ts` içinde `readIndexableGames()` olarak dışa açıldı ve `src/app/sitemap.ts` içine bağlandı.
+  - `src/app/robots.ts`, `src/lib/security/headers.ts` ve `next.config.ts` ortak client-safe `NON_INDEXABLE_PREFIXES`, `isPrivateRoutePath` ve `NEXT_CONFIG_PRIVATE_HEADER_SOURCES` tanımlarına bağlandı; auth kodu istemci import zincirine sokulmadı.
+  - `src/app/layout.tsx`, `src/app/page.tsx` ve `src/app/(public)` ile `src/app/(private)` altındaki tüm `page.tsx` dosyaları `buildMetadata` kullanacak şekilde güncellendi.
+- **Doğrulama testleri ve çalıştırılan komutlar:**
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm exec vitest run tests/unit/theme-*.test.ts tests/unit/i18n-core.test.ts tests/unit/routes-integrity.test.ts tests/unit/seo.test.ts` → Çıkış `0` (**7 dosya / 33 test geçti**, 7.17s).
+  - `tests/e2e/routes-seo.spec.ts`: Statik rotaların tek marka başlığı ve kanonik URL'si, `/oyunlar?cursor=...` ana liste kanoniği, 404/hatalı slug `noindex`, özel token rotalarında `noindex` + `no-referrer` ve `robots.txt` / `sitemap.xml` E2E testleri eklendi.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm exec tsc --noEmit` → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run lint` (`eslint . --max-warnings=0`) → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run build` → Çıkış `0` (56/56 rota derlendi; `next-env.d.ts` orijinal hâline geri yüklenip `tsc --noEmit` tekrar `0` ile doğrulandı).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run security:source` → Çıkış `0` (`{"files":868,"secretHits":0,"forbiddenFiles":0}`).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm exec node .local/phase-0c/check-baseline.mjs` → Çıkış `0` (`captures: 647`, `pngHashesValid: 647`, `nativeDimensionsValid: 647`, `imageIdentities: 1194`).
+
+### Açık kalanlar
+
+- **Faz 2 / İş 2C (henüz başlamadı):** Merkezi ikon kaydı (`src/components/ui/icons/{index,icon}.tsx`, `src/modules/site-settings/ui/social-icon.tsx` ve `tests/unit/icons.test.ts`).
+
+### Sıradaki adım ve bekleyen kararlar
+
+- **Sıradaki adım:** Faz 2 / İş 2C (Merkezi ikon kaydı) için kullanıcı onayı bekleniyor. Onay gelmeden İş 2C başlatılmaz.

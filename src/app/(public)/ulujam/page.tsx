@@ -7,11 +7,8 @@ import {
 } from "../../../modules/publication/ui/public-queries";
 import { UlujamComingSoon } from "../../../modules/events/ui/ulujam-coming-soon";
 import { UlujamArchive } from "../../../modules/events/ui/ulujam-archive";
-export const metadata = {
-  title: "UluJam — Uludott",
-  description: "UluJam arşivleri, oyun sonuçları ve yeni dönem duyuruları.",
-  alternates: { canonical: "/ulujam" },
-};
+import { buildMetadata } from "../../../seo/build-metadata.ts";
+export const metadata = buildMetadata({ routeId: "ulujam" });
 export default async function Page() {
   const [presentation, archives, legacyGallery] = await Promise.all([
     readUlujamPresentation(),

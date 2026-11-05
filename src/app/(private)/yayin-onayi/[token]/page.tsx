@@ -1,12 +1,9 @@
 import { notFound } from "next/navigation";
 import { getPublicationConsent } from "../../../../modules/games/application/credit-consent-service";
 import { CreditConsent } from "../../../../modules/games/ui/credit-consent";
+import { buildMetadata } from "../../../../seo/build-metadata.ts";
 export const dynamic = "force-dynamic";
-export const metadata = {
-  title: "Özel yapımcı yayın onayı",
-  robots: { index: false, follow: false },
-  referrer: "no-referrer" as const,
-};
+export const metadata = buildMetadata({ routeId: "privateConsent" });
 export default async function Page({
   params,
 }: {

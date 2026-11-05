@@ -34,7 +34,7 @@ export const enDictionary: PublicDictionary = {
   },
   meta: {
     home: {
-      title: "ULUDOTT — Digital Game Design Community",
+      title: "Digital Game Design Community",
       description:
         "UluDOTT community, events, applications, and UluJam digital participation platform.",
     },

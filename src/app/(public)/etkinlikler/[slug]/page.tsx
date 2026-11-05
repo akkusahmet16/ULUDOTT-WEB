@@ -4,44 +4,36 @@ import { readPublicEvent } from "../../../../modules/publication/ui/public-queri
 import { PublicShell } from "../../../../components/layout/public-shell";
 import { ContentView } from "../../../../modules/publication/ui/content-view";
 import { loadServerConfig } from "../../../../lib/config/server";
+import { buildMetadata } from "../../../../seo/build-metadata.ts";
 type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const item = await readPublicEvent((await params).slug);
-  if (!item) return { robots: { index: false, follow: false } };
-  const url = new URL(
-    `/etkinlikler/${item.slug}`,
-    loadServerConfig().appUrl,
-  ).toString();
-  const title = item.seo.title || item.title,
-    description = item.seo.description || item.excerpt || undefined;
-  return {
-    title,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
-      title,
-      description,
-      url,
-      images: item.image
-        ? [
-            {
-              url: new URL(`/media/${item.image.id}`, url).toString(),
-              alt: item.image.altText,
-              width: item.image.width,
-              height: item.image.height,
-            },
-          ]
-        : [],
+  const { slug } = await params;
+  const item = await readPublicEvent(slug);
+  if (!item) {
+    return buildMetadata({
+      routeId: "eventDetail",
+      params: { slug },
+      content: { notFound: true },
+    });
+  }
+  return buildMetadata({
+    routeId: "eventDetail",
+    params: { slug: item.slug },
+    content: {
+      title: item.seo.title || item.title,
+      description: item.seo.description || item.excerpt || null,
+      baseUrl: loadServerConfig().appUrl,
+      includeSocialCards: true,
+      image: item.image
+        ? {
+            id: item.image.id,
+            altText: item.image.altText,
+            width: item.image.width,
+            height: item.image.height,
+          }
+        : null,
     },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: item.image
-        ? [new URL(`/media/${item.image.id}`, url).toString()]
-        : [],
-    },
-  };
+  });
 }
 export default async function Page({ params }: Props) {
   const item = await readPublicEvent((await params).slug);

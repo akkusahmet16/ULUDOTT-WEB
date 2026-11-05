@@ -4,23 +4,22 @@ import Image from "next/image";
 import type { CSSProperties } from "react";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-const links = [
-  ["/", "Ana sayfa"],
-  ["/hakkimizda", "Hakkımızda"],
-  ["/ulujam", "UluJam"],
-  ["/etkinlikler", "Etkinlikler"],
-  ["/oyunlar", "Oyunlar"],
-  ["/iletisim", "İletişim"],
-] as const;
+import {
+  DEFAULT_MENU_PREVIEW_IMAGE,
+  getNavbarRoutes,
+} from "../../config/routes.config.ts";
+import { getTranslator } from "../../i18n/translate.ts";
+
+const t = getTranslator("tr");
+const navRoutes = getNavbarRoutes();
+
 export function Header() {
   const path = usePathname(),
     [open, setOpen] = useState(false),
     toggle = useRef<HTMLButtonElement>(null);
   const header = useRef<HTMLElement>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
-  const [preview, setPreview] = useState(
-    "/community/00-ortak/menu-topluluk.webp",
-  );
+  const [preview, setPreview] = useState<string>(DEFAULT_MENU_PREVIEW_IMAGE);
   useEffect(() => {
     if (!open) return;
     const previous = document.body.style.overflow;
@@ -29,6 +28,11 @@ export function Header() {
       document.body.style.overflow = previous;
     };
   }, [open]);
+  const activeRoute = navRoutes.find(
+    (route) =>
+      route.path !== "/" &&
+      (path === route.path || path.startsWith(route.path + "/")),
+  );
   return (
     <header
       ref={header}
@@ -61,26 +65,27 @@ export function Header() {
       }}
     >
       <div className="wrap header-inner">
-        <Link href="/" className="brand" aria-label="Uludott ana sayfa">
+        <Link href="/" className="brand" aria-label={t("nav.homeLogoAria")}>
           <Image src="/brand/uludott-white.svg" alt="" width={48} height={48} />
         </Link>
         {path !== "/" && (
           <span className="header-page-name">
-            {links.find(
-              ([href]) =>
-                href !== "/" && (path === href || path.startsWith(href + "/")),
-            )?.[1] ?? (path === "/" ? "Ana sayfa" : "Uludott")}
+            {activeRoute
+              ? t(activeRoute.labelKey)
+              : path === "/"
+                ? t("nav.home")
+                : t("brand.name")}
           </span>
         )}
         <button
           ref={toggle}
           className="menu-toggle"
-          aria-label="Menü"
+          aria-label={t("nav.menuButton")}
           aria-expanded={open}
           aria-controls="main-menu"
           onClick={() => setOpen(!open)}
         >
-          <span className="menu-label">Menü</span>
+          <span className="menu-label">{t("nav.menuButton")}</span>
           <span className="menu-lines" aria-hidden="true">
             <i />
             <i />
@@ -102,12 +107,12 @@ export function Header() {
             height={390}
             unoptimized
           />
-          <p>Bir fikir. Bir takım. Bir oyun.</p>
+          <p>{t("brand.motto")}</p>
         </div>
         <nav
           id="main-menu"
           className={`site-nav ${open ? "open" : ""}`}
-          aria-label="Ana menü"
+          aria-label={t("nav.mainMenuAria")}
           onKeyDown={(e) => {
             if (e.key === "Escape") {
               setOpen(false);
@@ -115,35 +120,21 @@ export function Header() {
             }
           }}
         >
-          <p className="menu-caption">Uludott / Keşfet</p>
-          {links.map(([href, label], index) => {
-            const children =
-              href === "/hakkimizda"
-                ? [
-                    ["/hakkimizda#yonetim-kurulu", "Yönetim kurulu"],
-                    ["/hakkimizda#mekanlar", "Mekânlar"],
-                  ]
-                : href === "/oyunlar"
-                  ? [
-                      ["/oyunlar#derece-oyunlari", "Dereceye giren oyunlar"],
-                      ["/oyunlar#yayinlanan-oyunlar", "Yayımlanan oyunlar"],
-                    ]
-                  : [];
-            const groupLabel =
-              href === "/hakkimizda"
-                ? "Topluluk alt menüsü"
-                : "Oyunlar alt menüsü";
+          <p className="menu-caption">{t("nav.discoverCaption")}</p>
+          {navRoutes.map((route, index) => {
+            const href = route.path;
+            const label = t(route.labelKey);
+            const children = route.children ?? [];
+            const groupLabel = route.submenuAriaKey
+              ? t(route.submenuAriaKey)
+              : t("nav.gamesSubmenuAria");
             return (
               <div
                 className="menu-item"
                 key={href}
                 style={{ "--menu-index": index } as CSSProperties}
                 onMouseEnter={() =>
-                  setPreview(
-                    href === "/hakkimizda"
-                      ? "/community/00-ortak/menu-people.webp"
-                      : "/community/00-ortak/menu-topluluk.webp",
-                  )
+                  setPreview(route.previewImage ?? DEFAULT_MENU_PREVIEW_IMAGE)
                 }
               >
                 <div className="menu-row">
@@ -176,9 +167,13 @@ export function Header() {
                     className="menu-submenu"
                     hidden={expanded !== href}
                   >
-                    {children.map(([url, name]) => (
-                      <Link href={url} key={url} onClick={() => setOpen(false)}>
-                        {name}
+                    {children.map((child) => (
+                      <Link
+                        href={child.href}
+                        key={child.href}
+                        onClick={() => setOpen(false)}
+                      >
+                        {t(child.labelKey)}
                       </Link>
                     ))}
                   </div>

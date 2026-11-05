@@ -8,11 +8,8 @@ import {
 import { ResultCard } from "../../../modules/games/ui/result-card";
 import { SiteGameCard } from "../../../modules/games/ui/site-game-card";
 import { DegreeGames } from "../../../modules/games/ui/degree-games";
-export const metadata = {
-  title: "Oyunlar — Uludott",
-  description: "UluJam 2026'nın doğrulanmış derece ve itch.io bağlantıları.",
-  alternates: { canonical: "/oyunlar" },
-};
+import { buildMetadata } from "../../../seo/build-metadata.ts";
+export const metadata = buildMetadata({ routeId: "games" });
 export default async function Page({
   searchParams,
 }: {

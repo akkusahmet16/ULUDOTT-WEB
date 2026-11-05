@@ -394,6 +394,16 @@ export const LEGACY_UNIMPLEMENTED_ROUTES: readonly LegacyUnimplementedRoute[] =
  * Client-safe arama motoru indeksleme dışı önekler.
  * `robots.ts`, `next.config.ts` ve `src/lib/security/headers.ts` ile bire bir uyumludur.
  */
+export const NON_INDEXABLE_PAGE_PREFIXES = [
+  "/admin",
+  "/l/",
+  "/basvuru",
+  "/makbuz",
+  "/takim",
+  "/kart",
+  "/yayin-onayi",
+] as const;
+
 export const NON_INDEXABLE_PREFIXES = [
   "/admin",
   "/api",
@@ -413,6 +423,22 @@ export const PRIVATE_API_PREFIXES = [
   "/api/team",
   "/api/cards",
   "/api/wallet",
+] as const;
+
+export const NEXT_CONFIG_PRIVATE_HEADER_SOURCES = [
+  "/admin/:path*",
+  "/api/admin/:path*",
+  "/basvuru/:path*",
+  "/makbuz",
+  "/takim/:path*",
+  "/kart/:path*",
+  "/yayin-onayi/:path*",
+  "/api/cards/:path*",
+  "/api/wallet/:path*",
+  "/api/team/:path*",
+  "/api/ulujam/:path*",
+  "/api/forms/:path*",
+  "/api/submissions/:path*",
 ] as const;
 
 /**
@@ -489,6 +515,19 @@ export function isLegacyUnimplementedPath(pathname: string): boolean {
 
 export function isNonIndexablePath(pathname: string): boolean {
   for (const prefix of NON_INDEXABLE_PREFIXES) {
+    const normalized = prefix.endsWith("/") ? prefix.slice(0, -1) : prefix;
+    if (pathname === normalized || pathname.startsWith(`${normalized}/`)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function isPrivateRoutePath(pathname: string): boolean {
+  for (const prefix of [
+    ...NON_INDEXABLE_PAGE_PREFIXES,
+    ...PRIVATE_API_PREFIXES,
+  ]) {
     const normalized = prefix.endsWith("/") ? prefix.slice(0, -1) : prefix;
     if (pathname === normalized || pathname.startsWith(`${normalized}/`)) {
       return true;

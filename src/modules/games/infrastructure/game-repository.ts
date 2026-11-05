@@ -155,6 +155,31 @@ export async function listPublicGames(
     nextCursor: rows.length > 20 ? String(rows[19].id) : null,
   };
 }
+const indexableGame = z.object({
+  slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+  lastModified: z.coerce.date(),
+});
+// Salt okunur sitemap adaptörü: 20 kayıtlık sayfalama sınırı olmadan yalnız
+// yayın ve kredi/kart uygunluğu doğrulanmış oyunları gerçek lastModified ile döner.
+export async function listIndexableGames() {
+  const rows = await getDatabase().execute(sql`
+    select q.*, coalesce(
+      (select max(a.created_at) from audit_logs a where a.object_type='game' and a.object_id=q.id),
+      q.published_at,
+      q.created_at
+    ) as "lastModified"
+    from (${publicQuery()}) q
+    order by q.slug
+  `);
+  return rows
+    .filter((row) => publicView(row) !== null)
+    .map((row) =>
+      indexableGame.parse({
+        slug: row.slug,
+        lastModified: row.lastModified,
+      }),
+    );
+}
 import { z } from "zod";
 import { isHistoricalGame, itchUrl } from "../domain/game-publication.ts";
 import { cardEligibility } from "../../cards/domain/card-eligibility.ts";

@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { NEXT_CONFIG_PRIVATE_HEADER_SOURCES } from "./src/config/routes.config.ts";
 
 const config: NextConfig = {
   distDir: process.env.ULUDOTT_E2E_BUILD_DIR || ".next",
@@ -40,21 +41,7 @@ const config: NextConfig = {
       { key: "X-Content-Type-Options", value: "nosniff" },
       { key: "X-Frame-Options", value: "DENY" },
     ];
-    return [
-      "/admin/:path*",
-      "/api/admin/:path*",
-      "/basvuru/:path*",
-      "/makbuz",
-      "/takim/:path*",
-      "/kart/:path*",
-      "/yayin-onayi/:path*",
-      "/api/cards/:path*",
-      "/api/wallet/:path*",
-      "/api/team/:path*",
-      "/api/ulujam/:path*",
-      "/api/forms/:path*",
-      "/api/submissions/:path*",
-    ].map((source) => ({
+    return NEXT_CONFIG_PRIVATE_HEADER_SOURCES.map((source) => ({
       source,
       headers,
     }));

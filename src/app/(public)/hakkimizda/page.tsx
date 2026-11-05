@@ -3,10 +3,8 @@ import Image from "next/image";
 import { PublicShell } from "../../../components/layout/public-shell";
 import { ButtonLink } from "../../../components/design-system/button";
 import { readPeopleContent } from "../../../modules/publication/ui/public-queries";
-export const metadata = {
-  title: "Hakkımızda — Uludott",
-  alternates: { canonical: "/hakkimizda" },
-};
+import { buildMetadata } from "../../../seo/build-metadata.ts";
+export const metadata = buildMetadata({ routeId: "about" });
 const places = [
   {
     title: "Etkinlik kafeleri",

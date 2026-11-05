@@ -19,6 +19,7 @@ import {
 import { getPublishedLinks } from "../../links/application/link-service.ts";
 import { listPublicHistoricalResults } from "../../games/application/historical-results.ts";
 import {
+  listIndexableGames,
   listPublicGames,
   getPublicGame,
 } from "../../games/infrastructure/game-repository.ts";
@@ -162,6 +163,9 @@ export async function readPublicGames(cursor?: string) {
 }
 export async function readPublicGame(slug: string) {
   return getPublicGame(slug);
+}
+export async function readIndexableGames() {
+  return listIndexableGames();
 }
 export const readContactSettings = cachePublicRead(
   "contact-settings",

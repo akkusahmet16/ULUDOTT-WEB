@@ -3,12 +3,10 @@ import { notFound } from "next/navigation";
 import { getTeamView } from "../../../../modules/teams/application/team-access";
 import { TeamLogin, TeamLogout } from "../../../../modules/teams/ui/team-page";
 import { SubmissionError } from "../../../../modules/forms/domain/submission-error";
+import { buildMetadata } from "../../../../seo/build-metadata.ts";
 import styles from "../../../../modules/teams/ui/team-page.module.css";
 export const dynamic = "force-dynamic";
-export const metadata = {
-  robots: { index: false, follow: false },
-  referrer: "no-referrer" as const,
-};
+export const metadata = buildMetadata({ routeId: "privateTeam" });
 export default async function Page({
   params,
 }: {

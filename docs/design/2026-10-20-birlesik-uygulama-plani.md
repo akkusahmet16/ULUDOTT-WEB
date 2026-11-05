@@ -163,12 +163,14 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 **Dosyalar:** src/components/layout/{header,footer,public-shell}.tsx, src/app/{sitemap,robots}.ts, genel page.tsx metadata'ları; yeni src/seo/build-metadata.ts ve tests/e2e/routes-seo.spec.ts.
 **Arayüz:** buildMetadata({ routeId, locale, params?, content? }): Metadata; ham CMS başlık/açıklama input olarak alınır. Fonksiyon DB'ye erişmez ve token/noindex sınıfını korur.
 
-- [ ] Header'ın route dizisini merkezileştir; görünümü/DOM sınıflarını koru. Footer'a yeni menü ekleme; mevcut sosyal veri akışını koru.
-- [ ] Sitemap: altı statik rota + yalnız yayımlanmış/uygun etkinlik ve oyun detayları. Dinamik içerik mevcut servislerden alınır; liste pagination'ının yalnız ilk 20 kaydıyla sınırlı sitemap üretme.
-- [ ] Gerekirse oyunlar için salt okunur, sayfalama tamamını kapsayan listIndexableGames() adaptörü ekle; lastModified gerçek veriden gelir. Taslak/iptal/uygunsuz oyun/özel form/token girmez.
-- [ ] Title şablonu tek kez marka ekler; mevcut “— Uludott | ULUDOTT” tekrarını kaldırır. Hatalı slug/404 noindex olur; query/token metadata'ya sızmaz.
-- [ ] robots ve response/meta noindex ayrı test edilir; robots engeli erişim kontrolü sayılmaz. NON_INDEXABLE_PREFIXES ortak, client-safe politikadır; next.config.ts ve src/lib/security/headers.ts aynı sınıfları tüketir veya geçiş sırasında birebir parity testiyle korunur. Auth kodunu client import zincirine sokma.
-- [ ] Kabul: merkezi kaynaklar kullanılıyor; detay canonical/sitemap testleri ve mevcut indexability E2E yeşil; tam kapı yeşil.
+- [x] Header'ın route dizisini merkezileştir; görünümü/DOM sınıflarını koru. Footer'a yeni menü ekleme; mevcut sosyal veri akışını koru.
+- [x] Sitemap: altı statik rota + yalnız yayımlanmış/uygun etkinlik ve oyun detayları. Dinamik içerik mevcut servislerden alınır; liste pagination'ının yalnız ilk 20 kaydıyla sınırlı sitemap üretme.
+- [x] Gerekirse oyunlar için salt okunur, sayfalama tamamını kapsayan listIndexableGames() adaptörü ekle; lastModified gerçek veriden gelir. Taslak/iptal/uygunsuz oyun/özel form/token girmez.
+- [x] Title şablonu tek kez marka ekler; mevcut “— Uludott | ULUDOTT” tekrarını kaldırır. Hatalı slug/404 noindex olur; query/token metadata'ya sızmaz.
+- [x] robots ve response/meta noindex ayrı test edilir; robots engeli erişim kontrolü sayılmaz. NON_INDEXABLE_PREFIXES ortak, client-safe politikadır; next.config.ts ve src/lib/security/headers.ts aynı sınıfları tüketir veya geçiş sırasında birebir parity testiyle korunur. Auth kodunu client import zincirine sokma.
+- [x] Kabul: merkezi kaynaklar kullanılıyor; detay canonical/sitemap testleri ve mevcut indexability E2E yeşil; tam kapı yeşil.
+
+**5 Kasım 2B kabul kaydı:** `src/seo/build-metadata.ts` (`buildMetadata`, `normalizeBrandlessTitle`, `formatDocumentTitle`) oluşturuldu; DB'ye erişmeden ham CMS başlık/açıklamasını işleyip `"— Uludott | ULUDOTT"` çift marka tekrarını kaldıran, 404/hatalı slug ve özel/operasyonel rotalarda `robots: { index: false, follow: false }` (+ token rotalarında `referrer: "no-referrer"`) üreten ve query/token sızıntısını engelleyen yapı kuruldu. `src/components/layout/{header,footer,public-shell}.tsx` merkezi `getNavbarRoutes()` ve `getTranslator("tr")` kaynaklarına bağlandı (görünüm ve DOM sınıfları bire bir korundu, footer sosyal veri akışı `readContactSettings` kaynağında kaldı). `src/modules/games/infrastructure/game-repository.ts` içine 20 kayıtlık sayfalama sınırı olmadan tüm uygun oyunları gerçek `lastModified` (`audit_logs` / `published_at` / `created_at`) ile dönen salt okunur `listIndexableGames()` (`readIndexableGames`) adaptörü eklendi ve `src/app/sitemap.ts` içine bağlandı. `src/app/robots.ts`, `src/lib/security/headers.ts` ve `next.config.ts` ortak client-safe `NON_INDEXABLE_PREFIXES` / `isPrivateRoutePath` / `NEXT_CONFIG_PRIVATE_HEADER_SOURCES` politikasına bağlandı; tüm genel ve özel `page.tsx` dosyaları `buildMetadata` kullanacak biçimde güncellendi. `tests/unit/seo.test.ts` (6/6) ve `tests/e2e/routes-seo.spec.ts` eklendi. `tsc --noEmit`, `eslint`, `next build` (56 rota), `security:source` (868 dosya / 0 sır) ve `check-baseline.mjs` (647/647 PNG) yeşil.
 
 ### İş 2C — Merkezi ikon kaydı
 
@@ -283,4 +285,4 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **Geri dönüş:** Her fazdan önce ilgili dosya diff'i ve son çalışan commit kaydedilir. Başarısız değişiklik yalnız kendi commit/dosya kümesiyle geri alınır; kullanıcı değişikliklerine reset/clean uygulanmaz. DB şeması bu işte değişmediği için şema rollback gerekmez; zorunlu ek migration ayrı tasarım ve geri yükleme planına bağlıdır.
 
-**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** Faz 0 (0A, 0B ve 0C), Faz 1 (1A ve 1B) ve Faz 2 / İş 2A kabul edildi; sıradaki iş Faz 2 / İş 2B'dir.
+**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** Faz 0 (0A, 0B ve 0C), Faz 1 (1A ve 1B), Faz 2 / İş 2A ve Faz 2 / İş 2B kabul edildi; sıradaki iş Faz 2 / İş 2C'dir.

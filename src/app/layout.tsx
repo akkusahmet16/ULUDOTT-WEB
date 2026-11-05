@@ -8,17 +8,20 @@ import { BootScript } from "../components/boot/BootScript.tsx";
 import { ThemeProvider } from "../components/theme/ThemeProvider.tsx";
 import { rootFontClassName } from "../config/fonts.ts";
 import { DEFAULT_THEME } from "../config/theme.config.ts";
+import { getTranslator } from "../i18n/translate.ts";
 import { loadServerConfig } from "../lib/config/server.ts";
+
+const t = getTranslator("tr");
 
 export async function generateMetadata(): Promise<Metadata> {
   await connection();
   return {
     metadataBase: new URL(loadServerConfig().appUrl),
     title: {
-      default: "Uludott — Dijital Oyun Tasarım Topluluğu | ULUDOTT",
-      template: "%s | ULUDOTT",
+      default: `${t("meta.home.title")} | ${t("brand.upperName")}`,
+      template: `%s | ${t("brand.upperName")}`,
     },
-    description: "Uludott topluluğu için etkinlik ve oyun üretim platformu.",
+    description: t("meta.home.description"),
   };
 }
 

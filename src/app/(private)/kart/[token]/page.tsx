@@ -3,12 +3,9 @@ import { WalletActions } from "../../../../modules/wallet/ui/wallet-actions";
 import { notFound } from "next/navigation";
 import { getOwnCard } from "../../../../modules/cards/application/card-service";
 import { WebCard } from "../../../../modules/cards/ui/web-card";
+import { buildMetadata } from "../../../../seo/build-metadata.ts";
 export const dynamic = "force-dynamic";
-export const metadata = {
-  robots: { index: false, follow: false },
-  referrer: "no-referrer" as const,
-  title: "Özel katılım kartı",
-};
+export const metadata = buildMetadata({ routeId: "privateCard" });
 export default async function Page({
   params,
 }: {

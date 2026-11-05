@@ -13,8 +13,9 @@ import {
   readHistoricalResults,
   readUlujamPresentation,
 } from "../modules/publication/ui/public-queries";
+import { buildMetadata } from "../seo/build-metadata.ts";
 import styles from "../styles/home.module.css";
-export const metadata = { alternates: { canonical: "/" } };
+export const metadata = buildMetadata({ routeId: "home" });
 export default async function HomePage() {
   const [events, results, ulujam] = await Promise.all([
     readHomeEvents(),

@@ -2,10 +2,8 @@ import { CoffeeTalkCard } from "../../../components/layout/coffee-talk-card";
 import { PublicShell } from "../../../components/layout/public-shell";
 import { EventCard } from "../../../modules/events/ui/event-card";
 import { readHomeEvents } from "../../../modules/publication/ui/public-queries";
-export const metadata = {
-  title: "Etkinlikler — Uludott",
-  alternates: { canonical: "/etkinlikler" },
-};
+import { buildMetadata } from "../../../seo/build-metadata.ts";
+export const metadata = buildMetadata({ routeId: "events" });
 export default async function Page() {
   const { upcoming, past, showLegacyCoffeeTalk } = await readHomeEvents();
   return (

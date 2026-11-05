@@ -40,7 +40,7 @@ export const trDictionary = {
   },
   meta: {
     home: {
-      title: "ULUDOTT — Dijital Oyun Tasarım Topluluğu",
+      title: "Dijital Oyun Tasarım Topluluğu",
       description:
         "UluDOTT topluluk, etkinlik, başvuru ve UluJam dijital katılım platformu.",
     },
