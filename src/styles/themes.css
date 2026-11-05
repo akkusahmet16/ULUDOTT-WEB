@@ -1,12 +1,19 @@
 /*
  * ULUDOTT — Merkezi Tema Token Tanımları (Faz 1 — İş 1A)
  * Otomatik üretilmiştir. Mevcut tokens.css ve admin değişkenlerini kayıpsız içerir.
- * NOT: Bu dosya şimdilik HİÇBİR yerden import edilmez.
  * Kaynak: tests/fixtures/golden-declarations.json (Commit 1715682f396d1698871c6615766623cacb0d8405)
  */
 
-:root {
-  /* --- Mevcut Temel Tokenlar (tokens.css) --- */
+:root,
+[data-theme="cinematic"],
+[data-theme="classic"] {
+  color-scheme: dark;
+
+  /* --- next/font/local Tasarım Takma Adları (Döngüsüz) --- */
+  --font-body: var(--font-artdeco-body);
+  --font-display: var(--font-artdeco-display);
+
+  /* --- Mevcut Temel ve Admin Tokenlar (tokens.css + admin-workspace.module.css) --- */
   --ink: #0c0d1b;
   --panel: #18182c;
   --cream: #fff9cb;
@@ -26,6 +33,21 @@
   --admin-panel: #171c2b;
   --admin-border: #ffffff1c;
   --admin-muted: #aab3c8;
+
+  /* --- Sahne Gökyüzü (data-sky / scroll-motion) Paleti (13 adet) --- */
+  --sky-0c0d1b: #0c0d1b;
+  --sky-171923: #171923;
+  --sky-17303c: #17303c;
+  --sky-192437: #192437;
+  --sky-213949: #213949;
+  --sky-223b45: #223b45;
+  --sky-24223b: #24223b;
+  --sky-262943: #262943;
+  --sky-282338: #282338;
+  --sky-293646: #293646;
+  --sky-313929: #313929;
+  --sky-382e40: #382e40;
+  --sky-3e2b40: #3e2b40;
 
   /* --- Adlandırılmış Renkler --- */
   --color-white: white;
@@ -392,7 +414,7 @@
   --radius-9px: 9px;
   --radius-inherit: inherit;
 
-  /* --- Süre ve Easing Tokenları (20 adet) --- */
+  /* --- Süre ve Easing Tokenları (21 adet) --- */
   --motion-35ms: 35ms;
   --motion-140ms: 140ms;
   --motion-180ms: 180ms;
@@ -409,6 +431,7 @@
   --motion-1000ms: 1000ms;
   --motion-1100ms: 1100ms;
   --motion-1200ms: 1200ms;
+  --motion-1s: 1s;
   --motion-6s: 6s;
   --ease-standard: ease;
   --ease-linear: linear;

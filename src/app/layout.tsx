@@ -12,12 +12,12 @@ const bodyFont = localFont({
     { path: "../styles/fonts/ArtDeco-Medium.woff", weight: "500" },
     { path: "../styles/fonts/ArtDeco-Bold.woff", weight: "700" },
   ],
-  variable: "--font-body",
+  variable: "--font-artdeco-body",
   display: "swap",
 });
 const displayFont = localFont({
   src: "../styles/fonts/ArtDeco-CondensedBold.woff",
-  variable: "--font-display",
+  variable: "--font-artdeco-display",
   weight: "700",
   display: "swap",
 });

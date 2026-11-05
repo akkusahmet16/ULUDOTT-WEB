@@ -1,6 +1,6 @@
 .intro {
   max-width: 760px;
-  color: #d7ccdf;
+  color: var(--color-d7ccdf);
   line-height: 1.65;
 }
 .toolbar {
@@ -12,15 +12,15 @@
 }
 .status {
   min-height: 24px;
-  color: #fff1bc;
+  color: var(--color-fff1bc);
   overflow-wrap: anywhere;
 }
 .card {
   padding: clamp(18px, 3vw, 30px);
   margin: 20px 0;
-  border: 1px solid #ffffff2b;
-  border-radius: 20px;
-  background: linear-gradient(145deg, #30263d, #211c32);
+  border: 1px solid var(--color-ffffff2b);
+  border-radius: var(--radius-20px);
+  background: var(--gradient-19);
   min-width: 0;
 }
 .card summary {
@@ -31,7 +31,7 @@
 .card summary small {
   display: inline-block;
   margin-left: 12px;
-  color: #d0bed8;
+  color: var(--color-d0bed8);
   font-weight: 400;
 }
 .form {
@@ -63,8 +63,8 @@
   gap: 12px;
 }
 .danger {
-  border: 1px solid #f7a9b8 !important;
-  color: #ffd0da !important;
+  border: 1px solid var(--color-f7a9b8) !important;
+  color: var(--color-ffd0da) !important;
   background: transparent !important;
 }
 .workspace button {
@@ -76,14 +76,14 @@
   opacity: 0.6;
 }
 .workspace :is(button, summary, input, select, textarea):focus-visible {
-  outline: 3px solid #ffd1e1;
+  outline: 3px solid var(--color-ffd1e1);
   outline-offset: 4px;
 }
 .picker {
   padding: 18px;
-  border: 1px solid #ffffff30;
-  border-radius: 14px;
-  background: #171526;
+  border: 1px solid var(--color-ffffff30);
+  border-radius: var(--radius-14px);
+  background: var(--color-171526);
   min-width: 0;
 }
 .pickerLabel {
@@ -101,19 +101,19 @@
   width: 100px;
   height: 80px;
   object-fit: contain;
-  border-radius: 8px;
+  border-radius: var(--radius-8px);
   flex: none;
-  background: #0f0e18;
+  background: var(--color-0f0e18);
 }
 .path {
   overflow-wrap: anywhere;
-  color: #cbbbd4;
+  color: var(--color-cbbbd4);
   font-size: 0.8rem;
 }
 .picker details > summary {
   cursor: pointer;
   padding: 12px 0;
-  color: #ffe0ed;
+  color: var(--color-ffe0ed);
 }
 .pickerControls {
   display: grid;
@@ -139,28 +139,28 @@
   width: 100%;
   margin: 0;
   padding: 10px;
-  border: 1px solid #ffffff24;
-  border-radius: 12px;
-  background: #282138;
-  color: #fff;
+  border: 1px solid var(--color-ffffff24);
+  border-radius: var(--radius-12px);
+  background: var(--color-282138);
+  color: var(--color-fff);
   text-align: left;
   min-width: 0;
 }
 .workspace .picker .asset[aria-pressed="true"] {
-  border: 2px solid #ffd1e1;
-  background: #433047;
+  border: 2px solid var(--color-ffd1e1);
+  background: var(--color-433047);
 }
 .workspace .picker .asset:hover {
-  background: #433047;
-  color: #fff;
+  background: var(--color-433047);
+  color: var(--color-fff);
   transform: none;
 }
 .asset :is(img, video) {
   width: 100%;
   height: 90px;
   object-fit: contain;
-  background: #12111c;
-  border-radius: 6px;
+  background: var(--color-12111c);
+  border-radius: var(--radius-6px);
 }
 .asset span {
   font-size: 0.8rem;
@@ -174,7 +174,7 @@
   min-height: 350px;
 }
 .empty {
-  color: #cbbbd4;
+  color: var(--color-cbbbd4);
   padding: 18px 0;
 }
 @media (max-width: 620px) {

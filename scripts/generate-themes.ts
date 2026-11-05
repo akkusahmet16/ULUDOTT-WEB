@@ -1,23 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import { createRequire } from "node:module";
-
-const require = createRequire(import.meta.url);
-const postcssSafe = require("next/dist/compiled/postcss-safe-parser");
-
-const CSS_FILES = [
-  "src/styles/tokens.css",
-  "src/styles/cinematic.css",
-  "src/styles/home.module.css",
-  "src/app/(public)/iletisim/contact.module.css",
-  "src/modules/cards/ui/web-card.module.css",
-  "src/modules/admin/ui/content-workspace.module.css",
-  "src/modules/admin/ui/dashboard.module.css",
-  "src/modules/admin/ui/admin-workspace.module.css",
-  "src/modules/teams/ui/team-page.module.css",
-  "src/modules/events/ui/event-editor.module.css",
-  "src/modules/events/ui/past-events-carousel.module.css",
-];
 
 const HEX_COLOR_RE = /#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{4}|[0-9a-fA-F]{3})\b/g;
 const RGB_COLOR_RE = /\b(?:rgb|rgba)\([^)]+\)/g;
@@ -30,10 +12,20 @@ interface TokenEntry {
   comment?: string;
 }
 
-interface PostcssDeclNode {
+interface GoldenDeclaration {
+  sourceOrder: number;
+  file: string;
+  line: number;
+  selectorChain: string;
   prop: string;
-  value: string;
-  important?: boolean;
+  rawValue: string;
+  resolvedValue: string;
+}
+
+interface GoldenDeclarationsPayload {
+  version: number;
+  sourceCommit: string;
+  declarations: GoldenDeclaration[];
 }
 
 export function generateThemesCss(): string {
@@ -54,6 +46,11 @@ export function generateThemesCss(): string {
     return { name, value: normalizedVal, category, comment };
   }
 
+  const fontAliasTokens: TokenEntry[] = [
+    registerToken("--font-body", "var(--font-artdeco-body)", "font-alias", "next/font/local body alias"),
+    registerToken("--font-display", "var(--font-artdeco-display)", "font-alias", "next/font/local display alias"),
+  ];
+
   const baselineTokens: TokenEntry[] = [
     // tokens.css root tokens
     registerToken("--ink", "#0c0d1b", "baseline", "tokens.css"),
@@ -71,11 +68,27 @@ export function generateThemesCss(): string {
     registerToken("--mono", "var(--font-body), sans-serif", "baseline", "tokens.css"),
     registerToken("--ease", "cubic-bezier(0.22, 1, 0.36, 1)", "baseline", "tokens.css"),
     registerToken("--motion", "600ms", "baseline", "tokens.css"),
-    // admin-workspace.module.css scoped tokens
+    // admin-workspace.module.css scoped tokens (classic / admin)
     registerToken("--admin-bg", "#0d101b", "admin", "admin-workspace.module.css"),
     registerToken("--admin-panel", "#171c2b", "admin", "admin-workspace.module.css"),
     registerToken("--admin-border", "#ffffff1c", "admin", "admin-workspace.module.css"),
     registerToken("--admin-muted", "#aab3c8", "admin", "admin-workspace.module.css"),
+  ];
+
+  const skyTokens: TokenEntry[] = [
+    registerToken("--sky-0c0d1b", "#0c0d1b", "sky"),
+    registerToken("--sky-171923", "#171923", "sky"),
+    registerToken("--sky-17303c", "#17303c", "sky"),
+    registerToken("--sky-192437", "#192437", "sky"),
+    registerToken("--sky-213949", "#213949", "sky"),
+    registerToken("--sky-223b45", "#223b45", "sky"),
+    registerToken("--sky-24223b", "#24223b", "sky"),
+    registerToken("--sky-262943", "#262943", "sky"),
+    registerToken("--sky-282338", "#282338", "sky"),
+    registerToken("--sky-293646", "#293646", "sky"),
+    registerToken("--sky-313929", "#313929", "sky"),
+    registerToken("--sky-382e40", "#382e40", "sky"),
+    registerToken("--sky-3e2b40", "#3e2b40", "sky"),
   ];
 
   const rawHexes = new Set<string>();
@@ -85,54 +98,51 @@ export function generateThemesCss(): string {
   const rawRadius = new Set<string>();
   const rawZIndexes = new Set<string>();
 
-  for (const relPath of CSS_FILES) {
-    const fullPath = path.resolve(process.cwd(), relPath);
-    const css = fs.readFileSync(fullPath, "utf8");
-    const root = postcssSafe(css);
+  const fixturePath = path.resolve(process.cwd(), "tests/fixtures/golden-declarations.json");
+  const payload: GoldenDeclarationsPayload = JSON.parse(fs.readFileSync(fixturePath, "utf8"));
 
-    root.walkDecls((decl: PostcssDeclNode) => {
-      const val = decl.value + (decl.important ? " !important" : "");
-      const prop = decl.prop.toLowerCase();
+  for (const decl of payload.declarations) {
+    const val = decl.rawValue;
+    const prop = decl.prop.toLowerCase();
 
-      // Hex matches
-      const hexMatches = val.match(HEX_COLOR_RE);
-      if (hexMatches) {
-        for (const h of hexMatches) {
-          rawHexes.add(h.toLowerCase());
-        }
+    // Hex matches
+    const hexMatches = val.match(HEX_COLOR_RE);
+    if (hexMatches) {
+      for (const h of hexMatches) {
+        rawHexes.add(h.toLowerCase());
       }
+    }
 
-      // RGB matches
-      const rgbMatches = val.match(RGB_COLOR_RE);
-      if (rgbMatches) {
-        for (const r of rgbMatches) {
-          rawRgbs.add(r.trim());
-        }
+    // RGB matches
+    const rgbMatches = val.match(RGB_COLOR_RE);
+    if (rgbMatches) {
+      for (const r of rgbMatches) {
+        rawRgbs.add(r.trim());
       }
+    }
 
-      // Gradients
-      const gradMatches = val.match(GRADIENT_RE);
-      if (gradMatches) {
-        for (const g of gradMatches) {
-          rawGradients.add(g.replace(/\s+/g, " ").trim());
-        }
+    // Gradients
+    const gradMatches = val.match(GRADIENT_RE);
+    if (gradMatches) {
+      for (const g of gradMatches) {
+        rawGradients.add(g.replace(/\s+/g, " ").trim());
       }
+    }
 
-      // Shadows
-      if ((prop.includes("shadow") || val.includes("drop-shadow")) && val !== "none") {
-        rawShadows.add(val.replace(/\s+/g, " ").trim());
-      }
+    // Shadows
+    if ((prop.includes("shadow") || val.includes("drop-shadow")) && val !== "none") {
+      rawShadows.add(val.replace(/\s+/g, " ").trim());
+    }
 
-      // Radius
-      if (prop.includes("radius") && !prop.startsWith("--") && !val.includes("var(")) {
-        rawRadius.add(val.replace(/\s+/g, " ").trim());
-      }
+    // Radius
+    if (prop.includes("radius") && !prop.startsWith("--") && !val.includes("var(")) {
+      rawRadius.add(val.replace(/\s+/g, " ").trim());
+    }
 
-      // z-index
-      if (prop === "z-index") {
-        rawZIndexes.add(val.trim());
-      }
-    });
+    // z-index
+    if (prop === "z-index") {
+      rawZIndexes.add(val.trim());
+    }
   }
 
   // 1. Color tokens (Hex)
@@ -146,7 +156,6 @@ export function generateThemesCss(): string {
   // 2. Color tokens (RGB)
   const rgbTokens: TokenEntry[] = [];
   for (const r of Array.from(rawRgbs).sort()) {
-    // e.g. rgb(255 195 219 / 50%) -> --color-rgb-255-195-219-50
     const slug = r
       .replace(/rgb\(/i, "")
       .replace(/\)/g, "")
@@ -211,6 +220,7 @@ export function generateThemesCss(): string {
     registerToken("--motion-1000ms", "1000ms", "duration"),
     registerToken("--motion-1100ms", "1100ms", "duration"),
     registerToken("--motion-1200ms", "1200ms", "duration"),
+    registerToken("--motion-1s", "1s", "duration"),
     registerToken("--motion-6s", "6s", "duration"),
     registerToken("--ease-standard", "ease", "easing"),
     registerToken("--ease-linear", "linear", "easing"),
@@ -231,15 +241,28 @@ export function generateThemesCss(): string {
     `/*`,
     ` * ULUDOTT — Merkezi Tema Token Tanımları (Faz 1 — İş 1A)`,
     ` * Otomatik üretilmiştir. Mevcut tokens.css ve admin değişkenlerini kayıpsız içerir.`,
-    ` * NOT: Bu dosya şimdilik HİÇBİR yerden import edilmez.`,
     ` * Kaynak: tests/fixtures/golden-declarations.json (Commit 1715682f396d1698871c6615766623cacb0d8405)`,
     ` */`,
     ``,
-    `:root {`,
-    `  /* --- Mevcut Temel Tokenlar (tokens.css) --- */`,
+    `:root,`,
+    `[data-theme="cinematic"],`,
+    `[data-theme="classic"] {`,
+    `  color-scheme: dark;`,
+    ``,
+    `  /* --- next/font/local Tasarım Takma Adları (Döngüsüz) --- */`,
   ];
 
+  for (const t of fontAliasTokens) {
+    lines.push(`  ${t.name}: ${t.value};`);
+  }
+
+  lines.push(``, `  /* --- Mevcut Temel ve Admin Tokenlar (tokens.css + admin-workspace.module.css) --- */`);
   for (const t of baselineTokens) {
+    lines.push(`  ${t.name}: ${t.value};`);
+  }
+
+  lines.push(``, `  /* --- Sahne Gökyüzü (data-sky / scroll-motion) Paleti (${skyTokens.length} adet) --- */`);
+  for (const t of skyTokens) {
     lines.push(`  ${t.name}: ${t.value};`);
   }
 

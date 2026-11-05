@@ -10,7 +10,7 @@
   margin: 25px 0 0;
 }
 .toolbar p {
-  color: #aab3c8;
+  color: var(--color-aab3c8);
   font-size: 12px;
 }
 .toolbar > div {
@@ -18,12 +18,12 @@
   gap: 10px;
 }
 .workspace .secondary {
-  color: #dae0ee;
+  color: var(--color-dae0ee);
   background: transparent;
 }
 .message {
   min-height: 25px;
-  color: #f1c5d6;
+  color: var(--color-f1c5d6);
   font-size: 13px;
   overflow-wrap: anywhere;
 }
@@ -34,9 +34,9 @@
   align-items: start;
 }
 .list {
-  background: #141a27;
-  border: 1px solid #ffffff1c;
-  border-radius: 14px;
+  background: var(--color-141a27);
+  border: 1px solid var(--color-ffffff1c);
+  border-radius: var(--radius-14px);
   padding: 20px;
   min-width: 0;
 }
@@ -54,13 +54,13 @@
 }
 .record {
   padding: 17px;
-  background: #ffffff03;
-  border: 1px solid #ffffff1a;
-  border-radius: 10px;
+  background: var(--color-ffffff03);
+  border: 1px solid var(--color-ffffff1a);
+  border-radius: var(--radius-10px);
 }
 .record[data-selected="true"] {
-  border-color: #eab2c6;
-  background: #ebafc00c;
+  border-color: var(--color-eab2c6);
+  background: var(--color-ebafc00c);
 }
 .record h3 {
   margin: 15px 0 10px;
@@ -68,27 +68,27 @@
   overflow-wrap: anywhere;
 }
 .record p {
-  color: #aab3c8;
+  color: var(--color-aab3c8);
   font-size: 11px;
   margin: 0 0 15px;
 }
 .record button {
   width: 100%;
-  background: #ffffff08;
-  color: #efc8d8;
+  background: var(--color-ffffff08);
+  color: var(--color-efc8d8);
 }
 .badge {
   display: inline-flex;
   padding: 5px 9px;
-  border-radius: 20px;
-  border: 1px solid #ffffff24;
-  color: #c1cadd;
+  border-radius: var(--radius-20px);
+  border: 1px solid var(--color-ffffff24);
+  color: var(--color-c1cadd);
   font-size: 10px;
   max-width: 100%;
 }
 .badge[data-status="published"] {
-  color: #b5e4cd;
-  background: #8bdbb60a;
+  color: var(--color-b5e4cd);
+  background: var(--color-8bdbb60a);
 }
 .editArea {
   min-width: 0;
@@ -109,7 +109,7 @@
   flex: none;
 }
 .kicker {
-  color: #deb0c3;
+  color: var(--color-deb0c3);
   font-size: 10px;
   letter-spacing: 0.13em;
   margin: 0 0 18px;
@@ -121,9 +121,9 @@
 }
 .card {
   padding: clamp(18px, 2.5vw, 28px);
-  border-radius: 14px;
-  background: #171c2b;
-  border: 1px solid #ffffff1c;
+  border-radius: var(--radius-14px);
+  background: var(--color-171c2b);
+  border: 1px solid var(--color-ffffff1c);
   min-width: 0;
   margin-bottom: 20px;
 }
@@ -152,7 +152,7 @@
 }
 .hint {
   font-size: 11px;
-  color: #aeb9cf;
+  color: var(--color-aeb9cf);
   margin-top: -5px;
 }
 .posterLayout {
@@ -165,9 +165,9 @@
 .poster {
   display: grid;
   place-items: center;
-  background: #101522;
-  border: 1px dashed #ffffff32;
-  border-radius: 12px;
+  background: var(--color-101522);
+  border: 1px dashed var(--color-ffffff32);
+  border-radius: var(--radius-12px);
   overflow: hidden;
   aspect-ratio: 4 / 5;
 }
@@ -181,7 +181,7 @@
   text-align: center;
   font-size: 24px;
   font-weight: 600;
-  color: #aeb9cf;
+  color: var(--color-aeb9cf);
 }
 .poster small {
   font-size: 11px;
@@ -206,7 +206,7 @@
 }
 .card summary {
   cursor: pointer;
-  color: #d4dded;
+  color: var(--color-d4dded);
   font-size: 13px;
   padding: 4px 0;
 }
@@ -225,14 +225,14 @@
   justify-content: space-between;
   flex-wrap: wrap;
   padding: 18px;
-  border: 1px solid #ffffff1c;
-  background: #101522;
-  border-radius: 12px;
+  border: 1px solid var(--color-ffffff1c);
+  background: var(--color-101522);
+  border-radius: var(--radius-12px);
   margin-bottom: 22px;
 }
 .saveBar span {
   font-size: 11px;
-  color: #aeb9cf;
+  color: var(--color-aeb9cf);
 }
 .actions {
   display: flex;
@@ -253,7 +253,7 @@
 }
 .sectionTitle a {
   font-size: 12px;
-  color: #efbdd0;
+  color: var(--color-efbdd0);
 }
 .otherActions {
   margin-top: 24px;
@@ -265,8 +265,8 @@
   max-width: 390px;
   margin: 30px auto;
   padding: 20px;
-  border: 1px solid #ffffff26;
-  border-radius: 18px;
+  border: 1px solid var(--color-ffffff26);
+  border-radius: var(--radius-18px);
   overflow-wrap: anywhere;
 }
 .previewDesktop {
@@ -279,10 +279,10 @@
   max-width: 350px;
 }
 .unsaved {
-  border: 1px solid #eeb9cf60;
-  background: #eeb9cf08;
+  border: 1px solid var(--color-eeb9cf60);
+  background: var(--color-eeb9cf08);
   padding: 16px;
-  border-radius: 10px;
+  border-radius: var(--radius-10px);
   margin-bottom: 20px;
 }
 .unsaved p {

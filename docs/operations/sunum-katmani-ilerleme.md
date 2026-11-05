@@ -268,3 +268,36 @@ Kullanıcı kararlarından sonra: (1) Chromium 1243 kurulumu (ağ gerekir) veya 
 ### Sıradaki adım ve bekleyen kararlar
 
 - Kullanıcıya sunulan **İş 1A uygulama planı** için onay bekleniyor. Onay gelmeden uygulama/stil dosyalarına dokunulmaz.
+
+## 5 Kasım 2026 — Faz 1 / İş 1A kapanış ve devir notu
+
+**Çalışma klasörü:** `/Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102` (dal `feat/unified-clean-v0.2`).
+**Durum:** Kullanıcı onayıyla **Faz 1 / İş 1A (Token çıkarımı; aynı görünüm)** uçtan uca tamamlandı. Sıradaki iş **Faz 1 / İş 1B**'dir.
+
+### Yapılan ve kanıtı
+
+- **Atomik font üretici ve tasarım takma adı ayrımı:**
+  - `src/app/layout.tsx` içindeki `next/font/local` üretici değişken adları `--font-artdeco-body` ve `--font-artdeco-display` olarak ayrıldı.
+  - `src/styles/themes.css` içinde `--font-body: var(--font-artdeco-body);` ve `--font-display: var(--font-artdeco-display);` tasarım takma adları tanımlanarak döngüsel `var()` riski tamamen önlendi ve mevcut `--font`, `--heading`, `--mono` zinciri korundu.
+- **`themes.css`, `base.css` ve 11 CSS dosyasının merkezileştirilmesi:**
+  - `scripts/generate-themes.ts` doğrudan dondurulmuş `tests/fixtures/golden-declarations.json` anlık görüntüsünden üretim yapacak biçimde güncellendi; `src/styles/themes.css` (`:root, [data-theme="cinematic"], [data-theme="classic"]`, 455 satır) 2 font takma adı, 19 temel/admin token'ı, 13 `--sky-*` sahne rengi, 1 adlandırılmış renk (`--color-white`), 269 hex (`--color-*`), 6 RGB (`--color-rgb-*`), 42 gradient (`--gradient-*`), 8 gölge (`--shadow-*`), 27 radius (`--radius-*`), 21 süre/easing (`--motion-*`, `--ease-*`) ve 13 katman (`--z-*`) token'ının tek tanım kaynağı oldu.
+  - `src/styles/tokens.css` içindeki 460 temel stil bildirimi `src/styles/base.css` (839 satır) dosyasına çıkarıldı; `src/styles/tokens.css` `@import "./themes.css"; @import "./base.css";` olarak güncellendi.
+  - `src/modules/admin/ui/admin-workspace.module.css` içindeki yerel `--admin-*` tanımları `themes.css`'e taşındı; 11 CSS dosyasındaki tüm renk, gradient, gölge, radius, süre/easing ve z-index sabitleri `var(--...)` referanslarına dönüştürüldü. Çalışma anı `--menu-index`, `--glow-x`, `--glow-y`, `--page-scroll`, `--scene-bg` değişkenleri ve `@media` sorguları yerel/dokunulmaz tutuldu.
+- **Doğrulama testleri ve çalıştırılan komutlar:**
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm exec vitest run tests/unit/theme-*.test.ts tests/unit/visual-*.test.ts` → Çıkış `0` (**11 dosya / 95 test geçti**, 33.19s):
+    - `tests/unit/theme-parity.test.ts` (4/4): 2.889 altın bildirimin tamamı `themes.css` üzerinden %100 eşlikle doğrulandı (`tests/fixtures/golden-declarations.json` değiştirilmedi).
+    - `tests/unit/theme-centralization.test.ts` (5/5): `themes.css` dışındaki 12 CSS dosyasında sıfır renk sabiti ve sıfır yerel token tanımı; `src/` altındaki tüm `.ts`/`.tsx` dosyalarında dar denetimli istisna manifesti; `href="#..."`, `#id`, UUID ve SHA özetlerinde sıfır yanlış pozitif ve gerçek ihlal yakalama kanıtı.
+    - `tests/unit/theme-contrast.test.ts` (4/4): `cinematic` (public), `classic` (admin) ve 13 `--sky-*` sahne renginde tüm metin/etkileşim çiftleri WCAG 2.2 AA (≥4.5:1; ölçülen en düşük metin kontrastı 8.07:1) sağladı.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm exec tsc --noEmit` → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run lint` (`eslint . --max-warnings=0`) → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run build` → Çıkış `0` (56 rota başarıyla derlendi; derleme sonrası `next-env.d.ts` orijinal hâline geri yüklenip `tsc --noEmit` tekrar 0 ile doğrulandı).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run security:source` → Çıkış `0` (`{"files":849,"secretHits":0,"forbiddenFiles":0}`).
+
+### Açık kalanlar ve kayıtlı görsel kilit uyuşmazlıkları
+
+- **Görsel kilit altında açık a11y uyuşmazlık kaydı (Plan 1A madde 123 / Kural 4):** v0.1 paletindeki iki ince dekoratif ayırıcı kenarlık (`--line: #51495f` / `--ink: #0c0d1b` = **2.27:1** ve `--admin-border: #ffffff1c` / `--admin-bg: #0d101b` = **1.33:1**), WCAG 2.2 SC 1.4.11 (3.0:1 metin dışı kontrast) eşiğinin altındadır. Kesin görsel kilit gereği v0.1 renkleri değiştirilmemiş ve `tests/unit/theme-contrast.test.ts` içinde `DOCUMENTED_VISUAL_LOCK_SUBTLE_BORDERS` olarak kayıt altına alınmıştır.
+- **Faz 1 / İş 1B (henüz başlamadı):** `src/config/{theme.config,storage-keys,fonts,boot-script}.ts`, `src/components/boot/BootScript.tsx`, `src/components/theme/ThemeProvider.tsx`, `src/app/layout.tsx`, `src/app/admin/layout.tsx`, `tests/unit/theme-runtime.test.ts` ve `tests/e2e/theme-runtime.spec.ts`.
+
+### Sıradaki adım ve bekleyen kararlar
+
+- **Sıradaki adım:** Faz 1 / İş 1B (Font, storage ve nonce uyumlu açılış) için kullanıcı onayı bekleniyor. Onay gelmeden İş 1B başlatılmaz.
