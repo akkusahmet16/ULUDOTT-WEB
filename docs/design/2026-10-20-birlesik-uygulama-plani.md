@@ -176,9 +176,13 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **Dosyalar:** yeni src/components/ui/icons/{index,icon}.tsx; src/modules/site-settings/ui/social-icon.tsx ve UI ikon tüketicileri; tests/unit/icons.test.ts.
 
-- [ ] IconId ve Icon({ id, label?, decorative?, size? }) oluştur. Mevcut SVG path/viewBox, fill/stroke, çok renkli yapı, çizgi kalınlığı ve boyutları aynen korunur. currentColor yalnız kaynak ikon zaten öyleyse kullanılır; merkezileştirme ikonu yeniden çizme/değiştirme izni değildir.
-- [ ] Dekoratif ikon aria-hidden, anlamlı ikon erişilebilir ad alır. Kullanıcı içeriği QR/SVG çıktısını ikon testiyle engelleme.
-- [ ] Kabul: yeni emoji ikon yok; a11y adları/snapshot ve tam kapı yeşil.
+- [x] IconId ve Icon({ id, label?, decorative?, size? }) oluştur. Mevcut SVG path/viewBox, fill/stroke, çok renkli yapı, çizgi kalınlığı ve boyutları aynen korunur. currentColor yalnız kaynak ikon zaten öyleyse kullanılır; merkezileştirme ikonu yeniden çizme/değiştirme izni değildir.
+- [x] Dekoratif ikon aria-hidden, anlamlı ikon erişilebilir ad alır. Kullanıcı içeriği QR/SVG çıktısını ikon testiyle engelleme.
+- [x] Kabul: yeni emoji ikon yok; a11y adları/snapshot ve tam kapı yeşil.
+
+**5 Kasım 2C kabul kaydı:** `src/components/ui/icons/icon.tsx` (`ICON_IDS`, `IconId`, `ICON_REGISTRY`, `isIconId`, `getIconEntry`, `Icon`) ve `src/components/ui/icons/index.tsx` oluşturuldu; `src/modules/site-settings/ui/social-icon.tsx` merkezi `Icon` kaydına bağlandı. `"link"` satır içi SVG ikonunun `viewBox="0 0 24 24"`, `fill="none"`, `stroke="currentColor"`, `strokeWidth="2"` ve path yapısı ile `"instagram"`, `"whatsapp"`, `"x"`, `"youtube"` marka SVG varlıkları (`colorMode: "intrinsic-svg"`, `/brand/social/${id}.svg`) ve boyutları (`28px` / `24px`) bire bir korundu. Dekoratif ikonlarda `aria-hidden="true"` / `alt=""`, anlamlı ikonlarda `role="img"` + `aria-label` / `alt` zorunluluğu ve `tests/unit/icons.test.ts` (3/3; izinsiz `<svg>` ve yeni emoji ikon yasağı + QR/kullanıcı içeriği korunumu) eklendi. `tsc --noEmit`, `eslint`, `next build` (56 rota), `security:source` (871 dosya / 0 sır) ve `check-baseline.mjs` (647/647 PNG) yeşil.
+
+**Faz 2 çıkışı:** 2A, 2B ve 2C tamam; [ilerleme kaydı](../operations/sunum-katmani-ilerleme.md) kanıtlı. Sıradaki adım Faz 3 / İş 3A'dır.
 
 ## 7. Faz 3 — Arayüz TR/EN ve sunucu/istemci sınırı
 
@@ -285,4 +289,4 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **Geri dönüş:** Her fazdan önce ilgili dosya diff'i ve son çalışan commit kaydedilir. Başarısız değişiklik yalnız kendi commit/dosya kümesiyle geri alınır; kullanıcı değişikliklerine reset/clean uygulanmaz. DB şeması bu işte değişmediği için şema rollback gerekmez; zorunlu ek migration ayrı tasarım ve geri yükleme planına bağlıdır.
 
-**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** Faz 0 (0A, 0B ve 0C), Faz 1 (1A ve 1B), Faz 2 / İş 2A ve Faz 2 / İş 2B kabul edildi; sıradaki iş Faz 2 / İş 2C'dir.
+**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** Faz 0 (0A, 0B ve 0C), Faz 1 (1A ve 1B) ve Faz 2 (2A, 2B ve 2C) kabul edildi; sıradaki iş Faz 3 / İş 3A'dır.

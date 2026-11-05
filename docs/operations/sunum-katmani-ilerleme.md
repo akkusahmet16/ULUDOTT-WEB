@@ -406,4 +406,33 @@ Kullanıcı kararlarından sonra: (1) Chromium 1243 kurulumu (ağ gerekir) veya 
 
 ### Sıradaki adım ve bekleyen kararlar
 
-- **Sıradaki adım:** Faz 2 / İş 2C (Merkezi ikon kaydı) için kullanıcı onayı bekleniyor. Onay gelmeden İş 2C başlatılmaz.
+- **Sıradaki adım:** Faz 2 / İş 2C (Merkezi ikon kaydı) için kullanıcı onayı alındı ve İş 2C tamamlandı (aşağıdaki kapanış kaydına bakınız).
+
+---
+
+## 5 Kasım 2026 — Faz 2 / İş 2C kapanışı ve Faz 2 devir notu
+
+### Tamamlananlar (Faz 2 / İş 2C: Merkezi ikon kaydı)
+
+- **Merkezi ikon kaydı ve erişilebilirlik sözleşmesi (`src/components/ui/icons/`):**
+  - `src/components/ui/icons/icon.tsx` ve `src/components/ui/icons/index.tsx`: `ICON_IDS = ["instagram", "whatsapp", "x", "youtube", "link"] as const`, `IconId`, `ICON_REGISTRY`, `isIconId`, `getIconEntry` ve `Icon({ id, label?, decorative?, size?, className? })` bileşeni oluşturuldu.
+  - Mevcut `"link"` satır içi SVG ikonunun `viewBox="0 0 24 24"`, `fill="none"`, `stroke="currentColor"`, `strokeWidth="2"` ve path koordinatları ile `"instagram"`, `"whatsapp"`, `"x"`, `"youtube"` marka SVG varlıkları (`/brand/social/${id}.svg`, `colorMode: "intrinsic-svg"`, `className="social-logo"`) ve varsayılan boyutları (`28px` / `24px`) **bire bir korundu**.
+  - Dekoratif ikonlar (`decorative !== false && !label`) `aria-hidden="true"` (marka SVG'lerinde `alt=""`) alır; anlamlı ikonlar (`decorative: false` veya `label` verildiğinde) `role="img"` + `aria-label={label}` (marka SVG'lerinde `alt={label}`) alır; `decorative={false}` olup boş etiket verilen çağrılar çalışma anında reddedilir.
+  - `src/modules/site-settings/ui/social-icon.tsx` merkezi `<Icon id={icon} size={size} decorative />` bileşenine bağlandı; kullanıcı içeriği ve QR görüntü akışları (`WebCard`, `/api/links/[id]/qr`) korundu.
+- **Doğrulama testleri ve çalıştırılan komutlar:**
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm exec vitest run tests/unit/theme-*.test.ts tests/unit/i18n-core.test.ts tests/unit/routes-integrity.test.ts tests/unit/seo.test.ts tests/unit/icons.test.ts` → Çıkış `0` (**8 dosya / 36 test geçti**, 12.71s):
+    - `tests/unit/icons.test.ts` (3/3): `ICON_IDS` ve SVG geometri/path korunumu, dekoratif/anlamlı a11y render kontrolü, `SocialIcon` bire bir HTML eşliği, merkezi kayıt dışında izinsiz `<svg>` ve yeni emoji ikon bulunmadığının denetimi.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm exec tsc --noEmit` → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run lint` (`eslint . --max-warnings=0`) → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run build` → Çıkış `0` (56/56 rota derlendi; `next-env.d.ts` orijinal hâline geri yüklenip `tsc --noEmit` tekrar `0` ile doğrulandı).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run security:source` → Çıkış `0` (`{"files":871,"secretHits":0,"forbiddenFiles":0}`).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm exec node .local/phase-0c/check-baseline.mjs` → Çıkış `0` (`captures: 647`, `pngHashesValid: 647`, `nativeDimensionsValid: 647`, `imageIdentities: 1194`).
+
+### Açık kalanlar
+
+- Faz 2 (`İş 2A`, `İş 2B` ve `İş 2C`) kapsamında açık madde kalmamıştır.
+- Faz 3 (`İş 3A`: Dil altyapısı, `İş 3B`: Ekran metinlerinin sözlüğe taşınması) henüz başlamamıştır.
+
+### Sıradaki adım ve bekleyen kararlar
+
+- **Sıradaki adım:** Faz 3 / İş 3A (Dil altyapısı) için kullanıcı onayı bekleniyor. Onay gelmeden Faz 3 başlatılmaz.
