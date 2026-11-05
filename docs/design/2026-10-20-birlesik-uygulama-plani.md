@@ -150,11 +150,13 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 - RouteId; RouteDefinition: id, path/pattern, labelKey, visibility, indexable, canonical, metadataKey ve opsiyonel children. Menü görünürlüğü, URL varlığı ve indekslenebilirlik ayrı alanlardır.
 - buildRoute(routeId, params) path parametrelerini doğrular/encode eder. Gizli token URL'leri statik config'e gerçek değerle yazılmaz.
 
-- [ ] Sayfa dosya sistemini route-group ve dinamik segmentleri çözerek tara; altı genel sayfa, iki dinamik detay, özel/admin/API sınıfları ayrı kaydedilir. API'leri menü kaydı olmaya zorlama.
-- [ ] /duyurular, /linkler, /destek için LEGACY_UNIMPLEMENTED_ROUTES kaydı kullan; varmış gibi sitemap/nav üretme. Yeni yönlendirme ancak aynı içerik hedefi ve kalıcı URL kararı ayrı görevde belirlendiğinde eklenir.
-- [ ] Alt menü fragment'lerinin gerçek DOM id karşılığını test et. ROUTES menü/metadata/SEO politikasının kaynağıdır; footer sosyal URL'leri mevcut panel ayarları kaynağında kalır.
-- [ ] Dil URL politikası: mevcut Türkçe URL'ler ve cookie tabanlı dil korunur; /en veya hreflang alternatifi uydurulmaz. canonical aynı içerik URL'sidir, query cursor için ana liste canonical'ı seçilir.
-- [ ] Kabul: sözlük çekirdeği TR/EN olarak kullanılabilir; route taraması sahte rota ve eksik anchor'ı kırmızıya düşürür.
+- [x] Sayfa dosya sistemini route-group ve dinamik segmentleri çözerek tara; altı genel sayfa, iki dinamik detay, özel/admin/API sınıfları ayrı kaydedilir. API'leri menü kaydı olmaya zorlama.
+- [x] /duyurular, /linkler, /destek için LEGACY_UNIMPLEMENTED_ROUTES kaydı kullan; varmış gibi sitemap/nav üretme. Yeni yönlendirme ancak aynı içerik hedefi ve kalıcı URL kararı ayrı görevde belirlendiğinde eklenir.
+- [x] Alt menü fragment'lerinin gerçek DOM id karşılığını test et. ROUTES menü/metadata/SEO politikasının kaynağıdır; footer sosyal URL'leri mevcut panel ayarları kaynağında kalır.
+- [x] Dil URL politikası: mevcut Türkçe URL'ler ve cookie tabanlı dil korunur; /en veya hreflang alternatifi uydurulmaz. canonical aynı içerik URL'sidir, query cursor için ana liste canonical'ı seçilir.
+- [x] Kabul: sözlük çekirdeği TR/EN olarak kullanılabilir; route taraması sahte rota ve eksik anchor'ı kırmızıya düşürür.
+
+**5 Kasım 2A kabul kaydı:** `src/i18n/config.ts` (`LOCALES = ["tr", "en"]`, `DEFAULT_LOCALE = "tr"`, `ADMIN_LOCALE = "tr"`, `LOCALE_URL_POLICY`), `src/i18n/dictionaries/{tr,en}.ts` (`WidenDictionary`, `PublicDictionary`, TR/EN 100% yaprak ve yer tutucu eşliği), `src/i18n/keys.ts` (`DictionaryKey`, `PUBLIC_DICTIONARY_KEYS`, `isDictionaryKey`, `extractPlaceholders`), `src/i18n/translate.ts` (`getTranslator(locale)`, `TranslateFn`) ve `src/config/routes.config.ts` (`ROUTES`, `RouteId`, `RouteDefinition`, `buildRoute`, `resolveCanonicalPath`, `LEGACY_UNIMPLEMENTED_ROUTES`, `NON_INDEXABLE_PREFIXES`, `ADMIN_PAGE_PATTERNS`, `NON_PAGE_HANDLER_PATTERNS`) oluşturuldu. `tests/unit/i18n-core.test.ts` (4/4), `tests/unit/routes-integrity.test.ts` (5/5; dosya sistemi taraması, alt menü `#yonetim-kurulu`, `#mekanlar`, `#derece-oyunlari`, `#yayinlanan-oyunlar` ve `#kesfet` gerçek DOM id doğrulaması, sahte rota ve eksik anchor negatif testleri dahil) ve `tests/unit/seo.test.ts` (4/4; `visibility`/`indexable` ayrımı, query cursor ana liste canonical politikası, `robots.ts` ve `security/headers.ts` ile `NON_INDEXABLE_PREFIXES` eşliği) yeşil. `tsc --noEmit`, `eslint`, `next build` (56 rota), `security:source` (866 dosya / 0 sır) ve `check-baseline.mjs` (647/647 PNG) yeşil.
 
 ### İş 2B — Menü, metadata ve sitemap entegrasyonu
 
@@ -281,4 +283,4 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **Geri dönüş:** Her fazdan önce ilgili dosya diff'i ve son çalışan commit kaydedilir. Başarısız değişiklik yalnız kendi commit/dosya kümesiyle geri alınır; kullanıcı değişikliklerine reset/clean uygulanmaz. DB şeması bu işte değişmediği için şema rollback gerekmez; zorunlu ek migration ayrı tasarım ve geri yükleme planına bağlıdır.
 
-**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** Faz 0 (0A, 0B ve 0C) kabul edildi; sıradaki iş Faz 1 / İş 1A'dır.
+**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** Faz 0 (0A, 0B ve 0C), Faz 1 (1A ve 1B) ve Faz 2 / İş 2A kabul edildi; sıradaki iş Faz 2 / İş 2B'dir.

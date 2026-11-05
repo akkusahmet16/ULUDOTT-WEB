@@ -332,8 +332,45 @@ Kullanıcı kararlarından sonra: (1) Chromium 1243 kurulumu (ağ gerekir) veya 
 ### Açık kalanlar
 
 - Faz 1 (`İş 1A` ve `İş 1B`) kapsamında açık madde kalmamıştır.
-- Faz 2 (`İş 2A`: Medya öznitelikleri ve yaşam döngüsü, `İş 2B`: HomeExperience kabuğu, `İş 2C`: Sahne dekorasyonu ve kaydırma hook'ları) henüz başlamamıştır.
+- Faz 2 (`İş 2A`: Erken i18n çekirdeği ve typed route sözleşmesi, `İş 2B`: Menü, metadata ve sitemap entegrasyonu, `İş 2C`: Merkezi ikon kaydı) aşağıda İş 2A ile devam etmektedir.
 
 ### Sıradaki adım ve bekleyen kararlar
 
-- **Sıradaki adım:** Faz 2 / İş 2A'ya geçmek için kullanıcı onayı bekleniyor. Onay gelmeden Faz 2 başlatılmaz.
+- **Sıradaki adım:** Faz 2 / İş 2A için kullanıcı onayı alındı ve İş 2A tamamlandı (aşağıdaki kapanış kaydına bakınız).
+
+---
+
+## 5 Kasım 2026 — Faz 2 / İş 2A kapanışı ve devir notu
+
+### Tamamlananlar (Faz 2 / İş 2A: Erken i18n çekirdeği ve typed route sözleşmesi)
+
+- **Erken i18n çekirdeği (`src/i18n/`):**
+  - `src/i18n/config.ts`: `LOCALES = ["tr", "en"] as const`, `Locale`, `DEFAULT_LOCALE = "tr"`, `ADMIN_LOCALE = "tr"`, `LOCALE_TAGS`, `APP_TIME_ZONE = "Europe/Istanbul"`, `LOCALE_URL_POLICY` (`strategy: "cookie-only"`, `prefixLocaleInPath: false`, `generateHreflangAlternates: false`), `isLocale` ve `resolveLocale` tanımlandı.
+  - `src/i18n/dictionaries/tr.ts` ve `src/i18n/dictionaries/en.ts`: `WidenDictionary<T>` ve `PublicDictionary` tipiyle TR kaynak değerleri literal string tipine kilitlenmeden yapısal tip güvenliği korundu; `brand`, `nav`, `footer`, `meta`, `theme` ve `common` ad alanlarında TR ve EN sözlükleri %100 anahtar ve `{placeholder}` eşliğiyle oluşturuldu.
+  - `src/i18n/keys.ts`: Yalnız public sözlük yapraklarını temsil eden `DictionaryKey` tipi, `PUBLIC_DICTIONARY_KEYS`, `isDictionaryKey` ve `extractPlaceholders` tanımlandı.
+  - `src/i18n/translate.ts`: İstek dışı saf `getTranslator(locale)` ve `TranslateFn(key, params?)` oluşturuldu; ara ad alanları, var olmayan anahtarlar, geçersiz diller ve eksik enterpolasyon parametreleri hem derleme zamanında hem çalışma anında açık hata ile reddedilir.
+- **Typed route sözleşmesi (`src/config/routes.config.ts`):**
+  - `RouteId`, `RouteDefinition`, `ROUTES`, `ROUTES_BY_ID`, `getRoute`, `getNavbarRoutes`, `getStaticIndexableRoutes`, `getDynamicIndexableRoutes`, `buildRoute` ve `resolveCanonicalPath` oluşturuldu.
+  - Menü görünürlüğü (`visibility: "navbar" | "public-unlisted" | "private-token"`), URL varlığı (`ROUTES`) ve indekslenebilirlik (`indexable: boolean`) ayrı alanlar olarak modellendi.
+  - 6 statik genel rota (`/`, `/hakkimizda`, `/ulujam`, `/etkinlikler`, `/oyunlar`, `/iletisim`), 2 dinamik detay (`/etkinlikler/[slug]`, `/oyunlar/[slug]`), 5 özel/operasyonel sayfa (`/basvuru/[formSlug]`, `/makbuz`, `/kart/[token]`, `/takim/[token]`, `/yayin-onayi/[token]`), 20 admin sayfası (`ADMIN_PAGE_PATTERNS`) ve API/işleyici sınıfları (`NON_PAGE_HANDLER_PATTERNS`) ayrıştırıldı.
+  - `/duyurular`, `/linkler` ve `/destek` için `LEGACY_UNIMPLEMENTED_ROUTES` tanımlandı (`includeInNav: false`, `includeInSitemap: false`, `redirectTarget: null`).
+  - Client-safe `NON_INDEXABLE_PREFIXES` ve `PRIVATE_API_PREFIXES` tanımlandı; `/oyunlar?cursor=...` gibi sorgularda ana liste kanoniği (`/oyunlar`) döndüren `resolveCanonicalPath` eklendi.
+- **Doğrulama testleri ve çalıştırılan komutlar:**
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm exec vitest run tests/unit/theme-*.test.ts tests/unit/i18n-core.test.ts tests/unit/routes-integrity.test.ts tests/unit/seo.test.ts` → Çıkış `0` (**7 dosya / 31 test geçti**, 6.52s):
+    - `tests/unit/i18n-core.test.ts` (4/4): TR/EN yaprak ve yer tutucu eşliği, ara ad alanı reddi, `getTranslator` enterpolasyonu ve eksik parametre koruması.
+    - `tests/unit/routes-integrity.test.ts` (5/5): `src/app` dosya sistemi taraması, alt menü fragment'lerinin (`#yonetim-kurulu`, `#mekanlar`, `#derece-oyunlari`, `#yayinlanan-oyunlar`) ve `#kesfet` bağlantısının gerçek DOM `id` karşılıkları, sahte rota ve eksik anchor negatif testleri, `buildRoute` parametre doğrulama/encoding ve footer sosyal veri kaynağı kontrolü.
+    - `tests/unit/seo.test.ts` (4/4): `visibility`/`indexable` ayrımı, `LEGACY_UNIMPLEMENTED_ROUTES`, query cursor kanonik politikası ve `NON_INDEXABLE_PREFIXES` ile `robots.ts` / `security/headers.ts` uyumu.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm exec tsc --noEmit` → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run lint` (`eslint . --max-warnings=0`) → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run build` → Çıkış `0` (56/56 rota derlendi; `next-env.d.ts` orijinal hâline geri yüklenip `tsc --noEmit` tekrar `0` ile doğrulandı).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run security:source` → Çıkış `0` (`{"files":866,"secretHits":0,"forbiddenFiles":0}`).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm exec node .local/phase-0c/check-baseline.mjs` → Çıkış `0` (`captures: 647`, `pngHashesValid: 647`, `nativeDimensionsValid: 647`, `imageIdentities: 1194`).
+
+### Açık kalanlar
+
+- **Faz 2 / İş 2B (henüz başlamadı):** Menü, metadata ve sitemap entegrasyonu (`src/seo/build-metadata.ts`, `src/components/layout/{header,footer,public-shell}.tsx`, `src/app/{sitemap,robots}.ts`, genel `page.tsx` metadata'ları ve `tests/e2e/routes-seo.spec.ts`).
+- **Faz 2 / İş 2C (henüz başlamadı):** Merkezi ikon kaydı (`src/components/ui/icons/{index,icon}.tsx`, `src/modules/site-settings/ui/social-icon.tsx` ve `tests/unit/icons.test.ts`).
+
+### Sıradaki adım ve bekleyen kararlar
+
+- **Sıradaki adım:** Faz 2 / İş 2B (Menü, metadata ve sitemap entegrasyonu) için kullanıcı onayı bekleniyor. Onay gelmeden İş 2B başlatılmaz.
