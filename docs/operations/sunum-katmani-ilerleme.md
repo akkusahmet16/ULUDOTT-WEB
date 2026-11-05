@@ -510,4 +510,35 @@ Kullanıcı kararlarından sonra: (1) Chromium 1243 kurulumu (ağ gerekir) veya 
 
 ### Sıradaki adım ve bekleyen kararlar
 
-- **Sıradaki adım:** Faz 4 / İş 4A (Mevcut kompozisyon ve etkileşimleri koru) için kullanıcı onayı bekleniyor. Onay gelmeden İş 4A başlatılmaz.
+- **Sıradaki adım:** Faz 4 / İş 4A (Mevcut kompozisyon ve etkileşimleri koru) için kullanıcı onayı alındı ve İş 4A tamamlandı (aşağıdaki kapanış kaydına bakınız).
+
+---
+
+## 5 Kasım 2026 — Faz 4 / İş 4A kapanışı ve Faz 4 devir notu
+
+### Tamamlananlar (Faz 4 / İş 4A: Mevcut kompozisyon ve etkileşimleri koru)
+
+- **v0.1 kompozisyonu ve etkileşimlerinin merkezi katman altında korunması:**
+  - GitHub Issue #1 Faz 4'teki yeni “arcade ana sayfa” tasarımı görsel/etkileşim kilidi gereği uygulanmadı; mevcut v0.1 açılışı (`OpeningGlow`), hikâye panelleri (`StoryPanels`), geçmiş etkinlikler karuseli (`PastEventsCarousel`), yönetim kurulu ve mekânlar akışı (`PeopleStory`, `PhotoGallery`, `SceneVideo`), UluJam geri sayım/yakında sahnesi (`UlujamComingSoon`, `Countdown`) ve mini oyunlar (`PairMatch`, `StarCatch`) TR ve EN sözlük/tema/rota katmanıyla eksiksiz korundu.
+  - `src/components/layout/header.tsx` içinde `usePathname() ?? "/"` ile router dışı render güvenliği sağlandı; `src/modules/community/pair-match.tsx` ve `src/modules/community/star-catch.tsx` içinde görünümü değiştirmeden `<p role="status" aria-live="polite">` ve `<button type="button">` semantik güvenceleri eklendi.
+- **Odak, klavye, `Escape`, `prefers-reduced-motion`, kısa ekran, hazır olmayan video ve enforced CSP doğrulamaları (`tests/unit/presentation-interactions.test.ts`):**
+  - `StoryPanels`, `PhotoGallery` ve `Dialog` bileşenlerinde modal açılış (`showModal()`), `Escape` (`cancel`) ile kapanış, arka plan kaydırma kilidi (`overflow: hidden` → eski değere dönüş) ve tetikleyici elemana odak iadesi (`trigger.current?.focus()`) doğrulandı.
+  - `PastEventsCarousel` içinde inaktif slaytların `aria-hidden="true"` ve `inert` aldığı, ok tuşlarıyla (`ArrowLeft`/`ArrowRight`) ve önceki/sonraki düğmeleriyle gezildiği, odak yakalandığında otomatik geçişin durakladığı ve `prefers-reduced-motion: reduce` altında otomatik geçişin kapalı ve kaydırmanın `"instant"` olduğu doğrulandı.
+  - `SceneVideo` ve `getPinnedVideoTime` içinde video metadata henüz yüklenmemişken (`duration: NaN | 0`, `heroHeight <= 0`) `0` döndüğü, kısa ekran yüksekliğinde (`390px`) negatif merkez üretmediği ve `prefers-reduced-motion: reduce` altında seek/autoplay yapmadığı doğrulandı.
+  - Gerçek Chromium'da enforced CSP (`script-src 'self' 'nonce-...' 'strict-dynamic'`, `frame-src https://challenges.cloudflare.com https://www.youtube-nocookie.com`) altında `BootScript`, skip link (`#main-content`), diyalog odak döngüsü ve klavyeyle mini oyun etkileşimi sıfır CSP/sayfa hatasıyla kanıtlandı.
+- **Doğrulama testleri ve çalıştırılan komutlar:**
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" ./node_modules/.bin/vitest run tests/unit/presentation-interactions.test.ts tests/unit/mini-games.test.ts tests/unit/countdown.test.ts tests/unit/theme-*.test.ts tests/unit/i18n-*.test.ts tests/unit/no-hardcoded-text.test.ts tests/unit/routes-integrity.test.ts tests/unit/seo.test.ts tests/unit/icons.test.ts tests/unit/public-event-presentation.test.ts tests/security/xss.test.ts` → Çıkış `0` (**17 dosya / 68 test geçti**, 8.80s).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" ./node_modules/.bin/tsc --noEmit` → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run lint` (`eslint . --max-warnings=0`) → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run build` → Çıkış `0` (56/56 rota derlendi; `next-env.d.ts` orijinal hâline geri yüklenip `tsc --noEmit` tekrar `0` ile doğrulandı).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run security:source` → Çıkış `0` (`{"files":886,"secretHits":0,"forbiddenFiles":0}`).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" node .local/phase-0c/check-baseline.mjs` → Çıkış `0` (`captures: 647`, `pngHashesValid: 647`, `nativeDimensionsValid: 647`, `imageIdentities: 1194`).
+
+### Açık kalanlar
+
+- Faz 4 (`İş 4A`) kapsamında açık madde kalmamıştır; Issue #1 Faz 4'teki yeni arcade ana sayfa beklentisi görsel kilit nedeniyle kapsam dışı açık fark olarak kaydedilmiştir.
+- Faz 5 (`İş 5A`: Mevcut galeri ve hata durumlarının korunması) henüz başlamamıştır.
+
+### Sıradaki adım ve bekleyen kararlar
+
+- **Sıradaki adım:** Faz 5 / İş 5A (Mevcut galeri ve hata durumlarının korunması) için kullanıcı onayı bekleniyor. Onay gelmeden İş 5A başlatılmaz.

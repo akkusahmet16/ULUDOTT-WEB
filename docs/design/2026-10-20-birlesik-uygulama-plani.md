@@ -222,11 +222,15 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **Dosyalar:** src/app/page.tsx, src/components/layout/story-panels.tsx, src/modules/community/people-story.tsx, src/modules/events/ui/{past-events-carousel,ulujam-coming-soon}.tsx ve mevcut tasarım sistemi; ilgili mevcut E2E'ler.
 
-- [ ] Issue Faz 4 arcade ana sayfa yerine mevcut intro/panel/karusel/People etkileşimlerinin aynı davranışını test et. Panel/kişiler/veri yönetiminin yeni merkezi katmanla çalıştığını kanıtla.
-- [ ] Mevcut menü/diyalog odak, Escape, odak iadesi, skip bağlantısı ve reduced-motion davranışını doğrula. Semantik/ARIA düzeltmesi görünümü ve mevcut etkileşimi değiştirmiyorsa yapılabilir; yeni kontrol, farklı odak stili veya hareket tasarımı eklenmez. Görsel kilitle çözülemeyen erişilebilirlik bulgusu açık kaydedilir.
-- [ ] Mouse/touch/klavye, kısa ekran ve scroll-scrub video hazır olmaması durumlarını test et. Dış embed ve boot betiği enforced CSP altında çalışmalı.
-- [ ] Mini oyun mantığı değişmez; gerçek button, anlamlı ad, aria-pressed/aria-live, klavye alternatifi ve hareket azaltma doğrulanır.
-- [ ] Kabul: görsel referans + eski işlev testleri + erişilebilirlik + tam kapı yeşil.
+- [x] Issue Faz 4 arcade ana sayfa yerine mevcut intro/panel/karusel/People etkileşimlerinin aynı davranışını test et. Panel/kişiler/veri yönetiminin yeni merkezi katmanla çalıştığını kanıtla.
+- [x] Mevcut menü/diyalog odak, Escape, odak iadesi, skip bağlantısı ve reduced-motion davranışını doğrula. Semantik/ARIA düzeltmesi görünümü ve mevcut etkileşimi değiştirmiyorsa yapılabilir; yeni kontrol, farklı odak stili veya hareket tasarımı eklenmez. Görsel kilitle çözülemeyen erişilebilirlik bulgusu açık kaydedilir.
+- [x] Mouse/touch/klavye, kısa ekran ve scroll-scrub video hazır olmaması durumlarını test et. Dış embed ve boot betiği enforced CSP altında çalışmalı.
+- [x] Mini oyun mantığı değişmez; gerçek button, anlamlı ad, aria-pressed/aria-live, klavye alternatifi ve hareket azaltma doğrulanır.
+- [x] Kabul: görsel referans + eski işlev testleri + erişilebilirlik + tam kapı yeşil.
+
+**5 Kasım 4A kabul kaydı:** GitHub Issue #1 Faz 4'teki yeni arcade ana sayfa yerine v0.1'in mevcut `StoryPanels`, `PastEventsCarousel`, `PeopleStory`, `PhotoGallery`, `SceneVideo`, `UlujamComingSoon`, `Header`, `PublicShell`, `Dialog`, `OpeningGlow`, `PairMatch` ve `StarCatch` kompozisyonu ve etkileşimleri yeni merkezi tema/rota/i18n katmanı altında korundu. `src/components/layout/header.tsx` içinde router dışı bağlam güvenliği (`usePathname() ?? "/"`) sağlandı; `src/modules/community/{pair-match,star-catch}.tsx` içinde görünümü değiştirmeden `<p role="status" aria-live="polite">` ve `<button type="button">` semantik güvenceleri eklendi. `tests/unit/presentation-interactions.test.ts` (4/4; TR/EN SSR DOM yapısı, `getPinnedVideoTime` NaN/0 süre + kısa ekran + `prefers-reduced-motion` korumaları, mini oyun `aria-pressed`/`aria-live` sözleşmesi ve gerçek Chromium'da enforced CSP altında `BootScript`, skip link, diyalog `Escape` + odak iadesi ve klavyeyle mini oyun etkileşimi) eklendi. `vitest` (17 dosya / 68 test), `tsc --noEmit`, `eslint`, `next build` (56 rota), `security:source` (886 dosya / 0 sır) ve `check-baseline.mjs` (647/647 PNG) yeşil.
+
+**Faz 4 çıkışı:** 4A tamam; [ilerleme kaydı](../operations/sunum-katmani-ilerleme.md) kanıtlı.
 
 ## 9. Faz 5 — Detay sayfaları, galeri ve hata yüzeyleri
 
@@ -295,4 +299,4 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **Geri dönüş:** Her fazdan önce ilgili dosya diff'i ve son çalışan commit kaydedilir. Başarısız değişiklik yalnız kendi commit/dosya kümesiyle geri alınır; kullanıcı değişikliklerine reset/clean uygulanmaz. DB şeması bu işte değişmediği için şema rollback gerekmez; zorunlu ek migration ayrı tasarım ve geri yükleme planına bağlıdır.
 
-**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** Faz 0 (0A, 0B ve 0C), Faz 1 (1A ve 1B), Faz 2 (2A, 2B ve 2C) ve Faz 3 (3A ve 3B) kabul edildi; sıradaki iş Faz 4 / İş 4A'dır.
+**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** Faz 0 (0A, 0B ve 0C), Faz 1 (1A ve 1B), Faz 2 (2A, 2B ve 2C), Faz 3 (3A ve 3B) ve Faz 4 (4A) kabul edildi; sıradaki iş Faz 5 / İş 5A'dır.

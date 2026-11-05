@@ -36,7 +36,7 @@ export function PairMatch() {
       >
         {t("miniGames.playAgain")}
       </Button>
-      <p role="status">
+      <p role="status" aria-live="polite">
         {matched.length / 2} / 3{" "}
         {matched.length === 6
           ? t("miniGames.completed")
@@ -49,6 +49,7 @@ export function PairMatch() {
           const visible = open.includes(i) || matched.includes(i);
           return (
             <button
+              type="button"
               className={`button memory-card ${visible ? "is-revealed" : ""} ${matched.includes(i) ? "is-matched" : ""}`}
               aria-pressed={visible}
               key={i}

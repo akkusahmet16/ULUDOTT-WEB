@@ -14,7 +14,7 @@ const navRoutes = getNavbarRoutes();
 
 export function Header() {
   const t = useTranslator();
-  const path = usePathname(),
+  const path = usePathname() ?? "/",
     [open, setOpen] = useState(false),
     toggle = useRef<HTMLButtonElement>(null);
   const header = useRef<HTMLElement>(null);

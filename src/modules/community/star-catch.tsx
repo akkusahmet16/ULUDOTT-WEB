@@ -22,11 +22,12 @@ export function StarCatch() {
       >
         {t("miniGames.playAgain")}
       </Button>
-      <p role="status">
+      <p role="status" aria-live="polite">
         {score} / 5 {score === 5 ? t("miniGames.completed") : ""}
       </p>
       <div className="star-board">
         <button
+          type="button"
           className="button star-target"
           aria-label={t("miniGames.starHeading")}
           disabled={score === 5}
