@@ -5,6 +5,7 @@ import type { FormSettings as Settings } from "../domain/form-settings";
 export const emptySettings: Settings = {
   title: "",
   slug: "",
+  description: "",
   opensAt: null,
   closesAt: null,
   capacity: null,
@@ -43,6 +44,17 @@ export function FormSettings({
           required
           maxLength={160}
         />
+      </label>
+      <label className="field">
+        Form açıklaması
+        <textarea
+          value={s.description ?? ""}
+          onChange={(e) => patch("description", e.target.value)}
+          maxLength={5000}
+          rows={3}
+          placeholder="Form hakkında katılımcılara gösterilecek açıklama..."
+        />
+        <small>Form başlığının altında açıklama olarak gösterilir.</small>
       </label>
       <label className="field">
         Form adresi

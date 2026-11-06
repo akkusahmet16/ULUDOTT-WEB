@@ -149,6 +149,7 @@ export function buildUlujamFormDefinition(
         id: ulujamFields.levels[skill],
         type: "rating",
         label: skillLabels[skill] + " seviyesi",
+        helpText: "Seviyenizi belirtin (1-5)",
         required: true,
         min: 1,
         max: 5,

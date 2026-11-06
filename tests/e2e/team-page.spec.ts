@@ -9,7 +9,7 @@ test("UluJam kayıt, yeni takım makbuzu, güvenli giriş/çıkış ve kişisel 
   await page.getByLabel("E-posta *").fill("team-e2e@test.invalid");
   await page.getByLabel("Telefon *").fill("+905551234567");
   await page.getByLabel("Yazılım", { exact: true }).check();
-  await page.getByLabel("Yazılım seviyesi *").fill("3");
+  await page.getByLabel("Yazılım seviyesi *").selectOption("3");
   await page.getByLabel("Yeni takım kuruyorum", { exact: true }).check();
   await page.getByLabel("Takım adı *").fill("DEMO E2E takım");
   await page.getByLabel("Beklenen toplam kişi sayısı *").fill("2");

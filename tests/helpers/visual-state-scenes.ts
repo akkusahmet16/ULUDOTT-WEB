@@ -33,7 +33,7 @@ async function fillUlujamForm(page: Page) {
     .fill("visual-ulujam@test.invalid");
   await page.getByLabel("Telefon *", { exact: true }).fill("+905551234567");
   await page.getByLabel("Yazılım", { exact: true }).check();
-  await page.getByLabel("Yazılım seviyesi *", { exact: true }).fill("3");
+  await page.getByLabel("Yazılım seviyesi *", { exact: true }).selectOption("3");
 }
 
 /**

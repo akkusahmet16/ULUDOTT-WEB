@@ -8,7 +8,7 @@ test("Wallet gate denies direct pending API and shows explicit provider readines
   await page.getByLabel("E-posta *").fill("wallet-e2e@test.invalid");
   await page.getByLabel("Telefon *").fill("+905551234567");
   await page.getByLabel("Yazılım", { exact: true }).check();
-  await page.getByLabel("Yazılım seviyesi *").fill("3");
+  await page.getByLabel("Yazılım seviyesi *").selectOption("3");
   await page.getByLabel("Tek başına katılıyorum", { exact: true }).check();
   await page
     .getByRole("button", { name: "Başvuruyu gönder", exact: true })

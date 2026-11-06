@@ -6,6 +6,7 @@ export const settingsSchema = z
       .string()
       .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
       .max(100),
+    description: z.string().trim().max(5000).optional().default(""),
     opensAt: z.iso.datetime({ offset: true }).nullable(),
     closesAt: z.iso.datetime({ offset: true }).nullable(),
     capacity: z.int().positive().max(100000).nullable(),

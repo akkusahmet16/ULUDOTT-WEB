@@ -36,9 +36,11 @@ export default async function Page({
             : t("forms.generalEyebrow")}
         </p>
         <h1>{selected ? presentation.application.title : f.title}</h1>
-        {selected && (
-          <p className="lede">{presentation.application.description}</p>
-        )}
+        {(selected ? presentation.application.description : f.description) ? (
+          <p className="lede">
+            {selected ? presentation.application.description : f.description}
+          </p>
+        ) : null}
         {f.state === "open" && f.version ? (
           f.eventKind === "ulujam" && f.eventId ? (
             <UlujamForm

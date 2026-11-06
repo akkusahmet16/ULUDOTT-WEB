@@ -5,18 +5,18 @@ import type { ValidFormDefinition } from "../domain/form-version";
 import { evaluateVisibility } from "../domain/condition";
 import type { Answer, Answers } from "../domain/field-types";
 export const typeLabels: Record<string, string> = {
-  short_text: clientTrSlice.forms.typeShortText,
+  short_text: "Kısa cevap yazma sorusu",
   long_text: clientTrSlice.forms.typeLongText,
   email: clientTrSlice.forms.typeEmail,
   phone: clientTrSlice.forms.typePhone,
   number: clientTrSlice.forms.typeNumber,
   date: clientTrSlice.forms.typeDate,
   file: clientTrSlice.forms.typeFile,
-  single_choice: clientTrSlice.forms.typeSingleChoice,
-  multiple_choice: clientTrSlice.forms.typeMultipleChoice,
+  single_choice: "Çoktan seçmeli soru",
+  multiple_choice: "Çoklu seçim sorusu",
   dropdown: clientTrSlice.forms.typeDropdown,
   checkbox: clientTrSlice.forms.typeCheckbox,
-  radio: clientTrSlice.forms.typeRadio,
+  radio: "Çoktan seçmeli soru (Radyo)",
   rating: clientTrSlice.forms.typeRating,
   info: clientTrSlice.forms.typeInfo,
   section: clientTrSlice.forms.typeSection,
@@ -196,6 +196,36 @@ export function FormFields({
                     </option>
                   ))}
                 </select>
+              ) : f.type === "rating" ? (
+                <select
+                  {...props}
+                  value={typeof v === "number" ? String(v) : (v ? String(v) : "")}
+                  onChange={(e) =>
+                    change(
+                      f.id,
+                      e.target.value === "" ? undefined : Number(e.target.value),
+                    )
+                  }
+                >
+                  <option value="">Seviyenizi belirtin</option>
+                  {Array.from(
+                    { length: (f.max ?? 5) - (f.min ?? 1) + 1 },
+                    (_, i) => (f.min ?? 1) + i,
+                  ).map((lvl) => {
+                    const ratingLabels: Record<number, string> = {
+                      1: "1 - Başlangıç",
+                      2: "2 - Temel",
+                      3: "3 - Orta",
+                      4: "4 - İleri",
+                      5: "5 - Uzman",
+                    };
+                    return (
+                      <option key={lvl} value={lvl}>
+                        {ratingLabels[lvl] ?? `Seviye ${lvl}`}
+                      </option>
+                    );
+                  })}
+                </select>
               ) : (
                 <input
                   {...props}
@@ -206,14 +236,14 @@ export function FormFields({
                         ? "tel"
                         : f.type === "date"
                           ? "date"
-                          : ["number", "rating"].includes(f.type)
+                          : f.type === "number"
                             ? "number"
                             : "text"
                   }
                   value={typeof v === "number" ? v : String(v ?? "")}
-                  min={f.min ?? (f.type === "rating" ? 1 : undefined)}
-                  max={f.max ?? (f.type === "rating" ? 5 : undefined)}
-                  step={f.type === "rating" ? 1 : "any"}
+                  min={f.min}
+                  max={f.max}
+                  step={f.type === "number" ? "any" : undefined}
                   maxLength={
                     f.type === "short_text" ? (f.maxLength ?? 200) : undefined
                   }
@@ -222,7 +252,7 @@ export function FormFields({
                       f.id,
                       e.target.value === ""
                         ? undefined
-                        : ["number", "rating"].includes(f.type)
+                        : f.type === "number"
                           ? Number(e.target.value)
                           : e.target.value,
                     )

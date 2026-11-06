@@ -155,7 +155,7 @@ test("başvuru ana sayfa ve UluJam'de birlikte açılır; kapatma açık formdan
     await page.getByLabel("E-posta *").fill("closed-panel@test.invalid");
     await page.getByLabel("Telefon *").fill("+905551234567");
     await page.getByLabel("Yazılım", { exact: true }).check();
-    await page.getByLabel("Yazılım seviyesi *").fill("3");
+    await page.getByLabel("Yazılım seviyesi *").selectOption("3");
     const admin = await context.newPage();
     await admin.goto("/admin/ulujam");
     await admin

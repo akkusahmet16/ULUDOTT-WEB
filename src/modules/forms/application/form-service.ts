@@ -264,8 +264,11 @@ export async function listForms(actor: Actor) {
     .select({
       id: forms.id,
       title: forms.title,
+      slug: forms.slug,
       status: forms.status,
       eventId: forms.eventId,
+      settings: forms.settings,
+      createdAt: forms.createdAt,
     })
     .from(forms)
     .where(inArray(forms.eventId, actor.eventScopes))

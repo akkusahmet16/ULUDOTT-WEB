@@ -5,6 +5,7 @@ import { forms } from "../../../db/schema/forms.ts";
 import { withTransaction } from "../../../lib/database/transaction.ts";
 import { readFormVersion } from "../infrastructure/form-repository.ts";
 import { applicationEnabled } from "../../site-settings/application/application-gate.ts";
+import { settingsSchema } from "../domain/form-settings.ts";
 export async function getPublicForm(slug: string) {
   if (!/^[a-z0-9-]{1,100}$/.test(slug)) return null;
   return withTransaction(async (tx) => {
@@ -21,6 +22,8 @@ export async function getPublicForm(slug: string) {
       : [];
     const [{ now }] = await tx.execute(sql`select clock_timestamp() as now`);
     const date = new Date(now as string);
+    const parsedSettings = settingsSchema.safeParse(f.settings);
+    const description = parsedSettings.success ? parsedSettings.data.description : "";
     if (
       f.status !== "published" ||
       !(await applicationEnabled(tx, f.id)) ||
@@ -34,6 +37,7 @@ export async function getPublicForm(slug: string) {
     )
       return {
         title: f.title,
+        description,
         formId: f.id,
         eventId: f.eventId,
         eventKind: event?.kind ?? "general",
@@ -46,6 +50,7 @@ export async function getPublicForm(slug: string) {
     const v = await readFormVersion(tx, f.currentVersionId);
     return {
       title: f.title,
+      description,
       formId: f.id,
       eventId: f.eventId,
       eventKind: event?.kind ?? "general",

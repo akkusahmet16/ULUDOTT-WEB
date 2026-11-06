@@ -80,12 +80,29 @@ export async function handleForms(req: Request, id?: string) {
       );
     if (!id) {
       const d = z
-        .strictObject({ eventId: z.uuid(), settings: z.unknown() })
+        .strictObject({
+          eventId: z.uuid(),
+          settings: z.unknown(),
+          definition: z.unknown().optional(),
+          publish: z.boolean().optional(),
+        })
         .parse(await readJson(req, 128 * 1024));
       const created = await createDraftForm(actor, d.eventId, d.settings);
+      let revision = created.revision;
+      if (d.definition) {
+        const saved = await saveDraftForm(actor, created.id, d.definition, revision);
+        revision = saved.revision;
+      }
+      if (d.publish) {
+        const pub = await publishForm(actor, created.id, revision);
+        revision = pub.revision;
+      }
       revalidateTag(CACHE_TAGS.events, { expire: 0 });
       revalidateTag(CACHE_TAGS.ulujam, { expire: 0 });
-      return Response.json(created, { status: 201, headers: privateHeaders });
+      return Response.json(
+        { id: created.id, revision },
+        { status: 201, headers: privateHeaders },
+      );
     }
     const d = z
       .strictObject({

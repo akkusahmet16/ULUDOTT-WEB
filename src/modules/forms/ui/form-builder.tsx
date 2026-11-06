@@ -13,6 +13,7 @@ import { FormSettings, emptySettings } from "./form-settings";
 import { FormPreview } from "./form-preview";
 import { typeLabels } from "./form-fields";
 import { formRequest } from "./admin-fetch";
+import { FormLinkPill } from "./form-link-actions";
 type Field = ValidFormDefinition["fields"][number];
 type DraftQuestion = {
   id: string;
@@ -130,21 +131,35 @@ export function FormCreator({
                     )
                   }
                 >
-                  {fieldTypes
-                    .filter(
-                      (type) =>
-                        !["info", "section", "consent"].includes(type) &&
-                        !(
-                          type === "file" &&
-                          events.find((event) => event.id === eventId)?.kind ===
-                            "ulujam"
-                        ),
-                    )
-                    .map((type) => (
-                      <option key={type} value={type}>
-                        {typeLabels[type]}
-                      </option>
-                    ))}
+                  <optgroup label="Temel Soru Çeşitleri">
+                    <option value="short_text">Kısa cevap yazma sorusu</option>
+                    <option value="single_choice">Çoktan seçmeli soru</option>
+                    <option value="multiple_choice">Çoklu seçim sorusu</option>
+                  </optgroup>
+                  <optgroup label="Diğer Soru Türleri">
+                    {fieldTypes
+                      .filter(
+                        (type) =>
+                          ![
+                            "info",
+                            "section",
+                            "consent",
+                            "short_text",
+                            "single_choice",
+                            "multiple_choice",
+                          ].includes(type) &&
+                          !(
+                            type === "file" &&
+                            events.find((event) => event.id === eventId)
+                              ?.kind === "ulujam"
+                          ),
+                      )
+                      .map((type) => (
+                        <option key={type} value={type}>
+                          {typeLabels[type]}
+                        </option>
+                      ))}
+                  </optgroup>
                 </select>
               </label>
               {choiceTypes.includes(question.type) && (
@@ -424,6 +439,36 @@ export function FormBuilder({
       <p>
         Durum: {form.status} · Sürüm kontrolü: {form.revision}
       </p>
+      {form.settings.slug && (
+        <div
+          style={{
+            padding: "16px 20px",
+            margin: "16px 0 24px",
+            background: "var(--color-211a2f, #211a2f)",
+            border: "1px solid var(--color-ffffff24, rgba(255,255,255,0.15))",
+            borderRadius: "14px",
+          }}
+        >
+          <span
+            style={{
+              display: "block",
+              fontSize: "12px",
+              letterSpacing: "0.08em",
+              fontWeight: 700,
+              color: "var(--color-ffd1e1, #ffd1e1)",
+              marginBottom: "6px",
+            }}
+          >
+            FORM PAYLAŞIM BAĞLANTISI (LİNK)
+          </span>
+          <FormLinkPill slug={form.settings.slug} status={form.status} />
+          <small style={{ display: "block", marginTop: "6px", opacity: 0.8 }}>
+            {form.status === "published"
+              ? "Form şu anda yayında! Katılımcılar bu link üzerinden formu doldurabilir."
+              : "Form henüz yayında değil. Bağlantının ziyaretçilere açılması için aşağıdaki 'Yayımla / devam ettir' butonuna tıklayın."}
+          </small>
+        </div>
+      )}
       {form.hasPublished && (
         <p>
           Alan değişiklikleri yeni form sürümü olarak yayımlanır. Önceki

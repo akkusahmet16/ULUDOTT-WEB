@@ -400,7 +400,7 @@ export async function capturePrivateVisualScenes(
           await page.getByLabel("Yazılım", { exact: true }).check();
           await page
             .getByLabel("Yazılım seviyesi *", { exact: true })
-            .fill("3");
+            .selectOption("3");
           await page
             .getByLabel("Yeni takım kuruyorum", { exact: true })
             .check();

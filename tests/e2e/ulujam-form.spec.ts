@@ -18,7 +18,7 @@ test("UluJam dört mod ve beceriler; yalnız önizleme, parola temizlenir", asyn
   await page.getByLabel("Telefon *").fill("+905551234567");
   await page.getByLabel("Tek başına katılıyorum", { exact: true }).check();
   await page.getByLabel("Yazılım", { exact: true }).check();
-  await page.getByLabel("Yazılım seviyesi *").fill("3");
+  await page.getByLabel("Yazılım seviyesi *").selectOption("3");
   await expect(page.getByLabel("Becerilerinizin açıklaması *")).toHaveCount(0);
   const check = page.getByRole("button", {
     name: "Alanları kontrol et",
@@ -29,7 +29,7 @@ test("UluJam dört mod ve beceriler; yalnız önizleme, parola temizlenir", asyn
     "Önizleme doğrulandı; başvuru kaydedilmedi.",
   );
   await page.getByLabel("Görsel sanat", { exact: true }).check();
-  await page.getByLabel("Görsel sanat seviyesi *").fill("5");
+  await page.getByLabel("Görsel sanat seviyesi *").selectOption("5");
   await expect(page.getByLabel("Becerilerinizin açıklaması *")).toBeVisible();
   await check.click();
   await expect(page.getByRole("status")).not.toHaveText(
