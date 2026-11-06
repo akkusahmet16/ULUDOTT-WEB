@@ -93,3 +93,47 @@ it("oyun kartı taslak/yayın/sıra/düzenleme ve silme akışı mevcut kartlar�
     await fixture.cleanup();
   }
 });
+
+it("cihazdan yuklenen oyun kapagi /uploads/games altinda kaydedilir ve yayinlanir", async () => {
+  const fixture = await ulujamFixture();
+  try {
+    const actor = { ...fixture.actor, roles: ["content_editor"] };
+    const sharp = (await import("sharp")).default;
+    const { uploadSiteAsset } = await import(
+      "../../src/modules/media/application/site-assets"
+    );
+    const pngBuf = await sharp({
+      create: {
+        width: 16,
+        height: 16,
+        channels: 4,
+        background: { r: 10, g: 200, b: 50, alpha: 1 },
+      },
+    })
+      .png()
+      .toBuffer();
+    const file = new File([pngBuf], "Oyun Kapagi.png", { type: "image/png" });
+    const uploaded = await uploadSiteAsset("games", file);
+
+    const input = {
+      title: "Cihazdan Yuklenen Oyun",
+      label: "Oyun",
+      credit: "Oyun Ekibi",
+      description: "Yuklenen gorselli oyun.",
+      image: uploaded.path,
+      alt: "Kapak",
+      href: "https://uludott-test.itch.io/uploaded-game",
+      position: 1,
+      published: true,
+    };
+    const saved = await saveSiteGame(actor, input);
+    expect(saved.image).toMatch(/^\/uploads\/games\/\d+-oyun-kapagi\.webp$/);
+
+    const published = await listPublishedSiteGames();
+    expect(published.some((g) => g.title === "Cihazdan Yuklenen Oyun")).toBe(true);
+
+    await removeSiteGame(actor, saved.id, saved.revision);
+  } finally {
+    await fixture.cleanup();
+  }
+});

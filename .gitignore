@@ -23,3 +23,6 @@ Wallet secrets/
 
 # Independent Sites preview has its own source repository.
 /sites-preview/
+
+# Admin üzerinden sonradan yüklenen site görselleri
+/public/uploads/

@@ -2,9 +2,11 @@ import { it, expect } from "vitest";
 import { mkdtemp, mkdir, writeFile, symlink, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import sharp from "sharp";
 import {
   listSiteAssets,
   assertSiteAsset,
+  uploadSiteAsset,
 } from "../../src/modules/media/application/site-assets";
 
 // Losing root checks would expose another folder; rejecting Unicode would hide supplied assets.
@@ -47,6 +49,61 @@ it("klasör envanteri Türkçe/boşluk içeren medyayı bulur, başka kök ve sy
       ),
     ).rejects.toThrow();
     expect(await listSiteAssets("games", root)).toEqual([]);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+it("cihazdan yüklenen görsel uploads/ altında klasörlenir, assertSiteAsset ve listSiteAssets ile doğrulanır", async () => {
+  const root = await mkdtemp(join(tmpdir(), "uludott-upload-assets-"));
+  try {
+    const pngBuffer = await sharp({
+      create: {
+        width: 10,
+        height: 10,
+        channels: 4,
+        background: { r: 200, g: 100, b: 50, alpha: 1 },
+      },
+    })
+      .png()
+      .toBuffer();
+
+    const file = new File([pngBuffer], "Yeni Ekip Üyesi.png", {
+      type: "image/png",
+    });
+
+    const uploaded = await uploadSiteAsset("people", file, root);
+
+    expect(uploaded.path).toMatch(/^\/uploads\/people\/\d+-yeni-ekip-uyesi\.webp$/);
+    expect(uploaded.folder).toBe("/uploads/people");
+    expect(uploaded.kind).toBe("image");
+
+    await expect(
+      assertSiteAsset(uploaded.path, "people", "image", root),
+    ).resolves.toBeUndefined();
+
+    // Wrong scope must be rejected
+    await expect(
+      assertSiteAsset(uploaded.path, "games", "image", root),
+    ).rejects.toThrow();
+
+    // listSiteAssets finds the uploaded asset in uploads/people
+    const assets = await listSiteAssets("people", root);
+    expect(assets.some((a) => a.path === uploaded.path)).toBe(true);
+
+    // Non-image file must be rejected
+    const textFile = new File(["not an image"], "test.txt", {
+      type: "text/plain",
+    });
+    await expect(
+      uploadSiteAsset("people", textFile, root),
+    ).rejects.toThrow();
+
+    // Invalid scope must be rejected
+    await expect(
+      // @ts-expect-error invalid scope testing
+      uploadSiteAsset("invalid_scope", file, root),
+    ).rejects.toThrow();
   } finally {
     await rm(root, { recursive: true, force: true });
   }

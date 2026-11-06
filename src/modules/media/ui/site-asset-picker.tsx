@@ -1,5 +1,5 @@
 "use client";
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import Image from "next/image";
 import type {
   SiteAsset,
@@ -7,6 +7,7 @@ import type {
   SiteAssetScope,
 } from "../domain/site-asset";
 import styles from "../../admin/ui/content-workspace.module.css";
+import uploadStyles from "./site-asset-picker.module.css";
 
 export function SiteAssetPicker({
   scope,
@@ -26,12 +27,17 @@ export function SiteAssetPicker({
   disabled?: boolean;
 }) {
   const id = useId();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [items, setItems] = useState<SiteAsset[]>([]),
     [loaded, setLoaded] = useState(false),
     [loading, setLoading] = useState(false),
     [error, setError] = useState(""),
     [query, setQuery] = useState(""),
-    [folder, setFolder] = useState("");
+    [folder, setFolder] = useState(""),
+    [uploading, setUploading] = useState(false),
+    [uploadError, setUploadError] = useState(""),
+    [uploadSuccess, setUploadSuccess] = useState("");
+
   async function load() {
     setLoading(true);
     setError("");
@@ -49,12 +55,55 @@ export function SiteAssetPicker({
       setLoading(false);
     }
   }
+
+  async function handleUpload(file: File) {
+    setUploading(true);
+    setUploadError("");
+    setUploadSuccess("");
+    try {
+      const csrfResponse = await fetch("/api/admin/csrf", { cache: "no-store" });
+      if (!csrfResponse.ok) throw new Error("İstek doğrulanamadı");
+      const { csrfToken } = await csrfResponse.json();
+
+      const formData = new FormData();
+      formData.append("scope", scope);
+      formData.append("file", file);
+
+      const response = await fetch("/api/admin/site-assets", {
+        method: "POST",
+        headers: {
+          "x-csrf-token": csrfToken,
+        },
+        body: formData,
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error ?? "Görsel yüklenemedi");
+      }
+
+      onChange(result.item.path);
+      setUploadSuccess("Görsel cihazdan yüklendi ve seçildi.");
+      setItems((prev) => [
+        result.item,
+        ...prev.filter((i) => i.path !== result.item.path),
+      ]);
+      setLoaded(true);
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Görsel yüklenemedi");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
+
   const available = items.filter((item) => item.kind === kind);
   const matches = available.filter(
     (item) =>
       (!folder || item.folder === folder) &&
       item.path.toLocaleLowerCase("tr").includes(query.toLocaleLowerCase("tr")),
   );
+
   return (
     <div className={styles.picker} role="group" aria-labelledby={id}>
       <p id={id} className={styles.pickerLabel}>
@@ -84,6 +133,35 @@ export function SiteAssetPicker({
       ) : (
         <p className={styles.path}>Henüz dosya seçilmedi.</p>
       )}
+
+      {kind === "image" && (
+        <div className={uploadStyles.uploadBlock}>
+          <label className={uploadStyles.uploadButton}>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/avif"
+              disabled={disabled || uploading}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) void handleUpload(f);
+              }}
+            />
+            <span>{uploading ? "Görsel yükleniyor…" : "Cihazdan görsel yükle"}</span>
+          </label>
+          {uploadError && (
+            <p role="alert" className={uploadStyles.pickerError}>
+              {uploadError}
+            </p>
+          )}
+          {uploadSuccess && (
+            <p role="status" className={uploadStyles.pickerSuccess}>
+              {uploadSuccess}
+            </p>
+          )}
+        </div>
+      )}
+
       <details
         onToggle={(event) => {
           if (event.currentTarget.open && !loaded && !loading) void load();
@@ -111,7 +189,9 @@ export function SiteAssetPicker({
               {[...new Set(available.map((item) => item.folder))].map(
                 (path) => (
                   <option key={path} value={path}>
-                    {path.split("/").slice(3).join(" / ") || path}
+                    {path.startsWith("/uploads")
+                      ? `Sonradan yüklenenler (${path.slice(1)})`
+                      : path.split("/").slice(3).join(" / ") || path}
                   </option>
                 ),
               )}

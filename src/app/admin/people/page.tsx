@@ -29,8 +29,8 @@ export default async function Page() {
         Kaydettiğiniz değişiklikler Hakkımızda sayfasında görünür.
       </p>
       <p>
-        Fotoğraf ve videoları önceden yüklenmiş dosyalar arasından seçin. Kişiyi
-        silmek görsel dosyasını silmez.
+        Fotoğrafları cihazınızdan yükleyebilir veya mevcut dosyalar arasından
+        seçebilirsiniz. Kişiyi silmek görsel dosyasını silmez.
       </p>
       <PeopleEditor />
     </main>

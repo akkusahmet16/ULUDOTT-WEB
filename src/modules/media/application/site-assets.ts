@@ -1,16 +1,117 @@
 import "server-only";
-import { lstat, readdir } from "node:fs/promises";
+import { lstat, mkdir, readdir } from "node:fs/promises";
 import { join, extname, basename, dirname } from "node:path";
+import sharp from "sharp";
 import type {
   SiteAsset,
   SiteAssetKind,
   SiteAssetScope,
 } from "../domain/site-asset.ts";
+
 const roots: Record<SiteAssetScope, string[]> = {
-  people: ["/community/03-hakkimizda/people/", "/theme/reference/people/"],
-  games: ["/community/06-oyunlar/"],
-  ulujam: ["/community/02-ulujam/"],
+  people: [
+    "/community/03-hakkimizda/people/",
+    "/theme/reference/people/",
+    "/uploads/people/",
+  ],
+  games: [
+    "/community/06-oyunlar/",
+    "/uploads/games/",
+  ],
+  ulujam: [
+    "/community/02-ulujam/",
+    "/uploads/ulujam/",
+  ],
 };
+
+const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10 MiB
+
+function slugifyFilename(name: string): string {
+  const map: Record<string, string> = {
+    ç: "c",
+    Ç: "c",
+    ğ: "g",
+    Ğ: "g",
+    ı: "i",
+    İ: "i",
+    ö: "o",
+    Ö: "o",
+    ş: "s",
+    Ş: "s",
+    ü: "u",
+    Ü: "u",
+  };
+  const transliterated = name.replace(
+    /[çÇğĞıİöÖşŞüÜ]/g,
+    (c) => map[c] ?? c,
+  );
+  return transliterated
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]/g, "-")
+    .replace(/-+/g, "-")
+    .slice(0, 40)
+    .replace(/^-|-$/g, "");
+}
+
+export async function uploadSiteAsset(
+  scope: SiteAssetScope,
+  file: File,
+  publicRoot = join(process.cwd(), "public"),
+): Promise<SiteAsset> {
+  if (!roots[scope]) {
+    throw Error("Geçersiz medya kapsamı");
+  }
+  if (!file || typeof file.size !== "number" || file.size <= 0) {
+    throw Error("Görsel dosyası zorunludur");
+  }
+  if (file.size > MAX_UPLOAD_BYTES) {
+    throw Error("Görsel boyutu en fazla 10 MiB olabilir");
+  }
+
+  const buffer = Buffer.from(await file.arrayBuffer());
+  let metadata;
+  try {
+    metadata = await sharp(buffer).metadata();
+  } catch {
+    throw Error("Geçersiz veya bozuk görsel dosyası");
+  }
+
+  if (
+    !metadata.format ||
+    !["jpeg", "png", "webp", "avif"].includes(metadata.format)
+  ) {
+    throw Error("Yalnızca JPEG, PNG, WebP ve AVIF formatları kabul edilir");
+  }
+
+  if (
+    (metadata.width && metadata.width > 6000) ||
+    (metadata.height && metadata.height > 6000) ||
+    (metadata.width && metadata.height && metadata.width * metadata.height > 25_000_000)
+  ) {
+    throw Error("Görsel çözünürlüğü çok yüksek (en fazla 25 megapiksel)");
+  }
+
+  const rawBase = slugifyFilename(basename(file.name, extname(file.name)));
+  const safeBase = rawBase || "gorsel";
+  const filename = `${Date.now()}-${safeBase}.webp`;
+
+  const targetDir = join(publicRoot, "uploads", scope);
+  await mkdir(targetDir, { recursive: true, mode: 0o755 });
+  const targetPath = join(targetDir, filename);
+
+  await sharp(buffer)
+    .rotate()
+    .webp({ quality: 85 })
+    .toFile(targetPath);
+
+  const webPath = `/uploads/${scope}/${filename}`;
+  return {
+    path: webPath,
+    name: filename,
+    folder: `/uploads/${scope}`,
+    kind: "image",
+  };
+}
 function kindOf(path: string): SiteAssetKind | null {
   const ext = extname(path).toLowerCase();
   if ([".webp", ".png", ".jpg", ".jpeg", ".avif"].includes(ext)) return "image";

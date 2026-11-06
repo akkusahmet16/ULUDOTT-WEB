@@ -21,9 +21,13 @@ async function owned(
     await migrateEmptyDatabase();
     await work(local);
   } finally {
-    await closeDatabase();
-    await local.cleanup();
-    process.env.DATABASE_URL = previous;
+    try {
+      await closeDatabase();
+      await local.cleanup();
+    } finally {
+      if (previous === undefined) delete process.env.DATABASE_URL;
+      else process.env.DATABASE_URL = previous;
+    }
   }
 }
 
