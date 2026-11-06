@@ -148,7 +148,7 @@ export default async function HomePage() {
         </div>
       </section>
       <section
-        className={styles.news}
+        className={`${styles.news} ${posterStyles.homePastEventsSection}`}
         aria-label={t("home.pastEventsAria")}
         data-sky="#3e2b40"
       >

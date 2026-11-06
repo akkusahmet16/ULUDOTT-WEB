@@ -73,6 +73,9 @@
 }
 
 @media (max-width: 699px) {
+  .homePastEventsSection {
+    display: none;
+  }
   .posterCard {
     max-width: 100%;
     border-radius: var(--radius-20px);
