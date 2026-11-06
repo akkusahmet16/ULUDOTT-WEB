@@ -44,14 +44,14 @@ export default async function Page() {
       {/* 01 / SABİT GAME JAM BAŞVURU FORMU */}
       <section
         style={{
-          background: "var(--color-241c33, #241c33)",
-          border: "1px solid var(--color-ffd1e133, rgba(255, 209, 225, 0.2))",
+          background: "var(--panel)",
+          border: "1px solid var(--admin-border)",
           borderRadius: "18px",
           padding: "24px",
           marginBottom: "36px",
         }}
       >
-        <p className="eyebrow" style={{ color: "var(--color-ffd1e1, #ffd1e1)" }}>
+        <p className="eyebrow" style={{ color: "var(--purple)" }}>
           01 / SABİT GAME JAM BAŞVURU FORMU
         </p>
         <h2 style={{ marginTop: "4px" }}>Game Jam (UluJam) Başvuruları</h2>
@@ -66,10 +66,10 @@ export default async function Page() {
               <div
                 key={f.id}
                 style={{
-                  background: "var(--color-1c1729, #1c1729)",
+                  background: "var(--ink)",
                   padding: "18px 20px",
                   borderRadius: "14px",
-                  border: "1px solid var(--color-ffffff24, rgba(255, 255, 255, 0.15))",
+                  border: "1px solid var(--admin-border)",
                 }}
               >
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
@@ -82,8 +82,8 @@ export default async function Page() {
                       borderRadius: "999px",
                       fontSize: "12px",
                       fontWeight: 700,
-                      background: f.status === "published" ? "#14532d" : "#713f12",
-                      color: f.status === "published" ? "#bbf7d0" : "#fef08a",
+                      background: f.status === "published" ? "var(--lime)" : "var(--line)",
+                      color: "var(--ink)",
                     }}
                   >
                     {f.status === "published" ? "Yayında" : f.status}
@@ -95,7 +95,7 @@ export default async function Page() {
                   </p>
                 ) : null}
                 <div style={{ marginTop: "10px" }}>
-                  <span style={{ fontSize: "12px", color: "var(--color-fff9cb, #fff9cb)", display: "block", marginBottom: "4px" }}>
+                  <span style={{ fontSize: "12px", color: "var(--cream)", display: "block", marginBottom: "4px" }}>
                     Sabit Form Bağlantısı (Link):
                   </span>
                   <FormLinkPill slug={f.slug} status={f.status} />
@@ -117,7 +117,7 @@ export default async function Page() {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "6px",
-                color: "var(--color-fff9cb, #fff9cb)",
+                color: "var(--cream)",
                 fontWeight: 600,
                 textDecoration: "underline",
                 textUnderlineOffset: "4px",
@@ -132,8 +132,8 @@ export default async function Page() {
       {/* 02 / MEVCUT FORMLAR VE LİNKLERİ */}
       <section
         style={{
-          background: "var(--color-241c33, #241c33)",
-          border: "1px solid var(--color-ffffff24, rgba(255, 255, 255, 0.15))",
+          background: "var(--panel)",
+          border: "1px solid var(--admin-border)",
           borderRadius: "18px",
           padding: "24px",
           marginBottom: "36px",
@@ -153,10 +153,10 @@ export default async function Page() {
               <div
                 key={f.id}
                 style={{
-                  background: "var(--color-1c1729, #1c1729)",
+                  background: "var(--ink)",
                   padding: "18px 20px",
                   borderRadius: "14px",
-                  border: "1px solid var(--color-ffffff24, rgba(255, 255, 255, 0.15))",
+                  border: "1px solid var(--admin-border)",
                 }}
               >
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
@@ -172,16 +172,11 @@ export default async function Page() {
                         fontWeight: 700,
                         background:
                           f.status === "published"
-                            ? "#14532d"
+                            ? "var(--lime)"
                             : f.status === "draft"
-                              ? "#713f12"
-                              : "#374151",
-                        color:
-                          f.status === "published"
-                            ? "#bbf7d0"
-                            : f.status === "draft"
-                              ? "#fef08a"
-                              : "#d1d5db",
+                              ? "var(--coral)"
+                              : "var(--line)",
+                        color: "var(--ink)",
                       }}
                     >
                       {f.status === "published" ? "Yayında" : f.status === "draft" ? "Taslak" : f.status}
@@ -190,7 +185,7 @@ export default async function Page() {
                       href={"/admin/formlar/" + f.id}
                       style={{
                         fontSize: "13px",
-                        color: "var(--color-ffd1e1, #ffd1e1)",
+                        color: "var(--purple)",
                         textDecoration: "underline",
                       }}
                     >
@@ -206,7 +201,7 @@ export default async function Page() {
                 ) : null}
 
                 <div style={{ marginTop: "10px" }}>
-                  <span style={{ fontSize: "12px", color: "var(--color-fff9cb, #fff9cb)", display: "block", marginBottom: "4px" }}>
+                  <span style={{ fontSize: "12px", color: "var(--cream)", display: "block", marginBottom: "4px" }}>
                     Form Bağlantısı (Link):
                   </span>
                   <FormLinkPill slug={f.slug} status={f.status} />

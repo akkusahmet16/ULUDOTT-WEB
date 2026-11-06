@@ -514,6 +514,8 @@ export const ADMIN_PAGE_PATTERNS = [
 export const NON_PAGE_HANDLER_PATTERNS = [
   "/l/[id]",
   "/media/[variantId]",
+  "/uploads/[...path]",
+  "/vendor/[...path]",
 ] as const;
 
 export function isRouteId(value: unknown): value is RouteId {

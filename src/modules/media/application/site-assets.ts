@@ -1,4 +1,5 @@
 import "server-only";
+import { existsSync } from "node:fs";
 import { lstat, mkdir, readdir, unlink, writeFile } from "node:fs/promises";
 import { join, extname, basename, dirname } from "node:path";
 import sharp from "sharp";
@@ -95,10 +96,23 @@ function kindOf(path: string): SiteAssetKind | null {
   return null;
 }
 
+function resolveUploadRoot(defaultPublicRoot?: string): string {
+  if (defaultPublicRoot) return defaultPublicRoot;
+  const cwd = process.cwd();
+  const candidates = [
+    join(cwd, "public"),
+    join(cwd, "..", "public"),
+  ];
+  for (const c of candidates) {
+    if (existsSync(c)) return c;
+  }
+  return join(cwd, "public");
+}
+
 export async function uploadSiteAsset(
   scope: SiteAssetScope,
   file: File,
-  publicRoot = join(process.cwd(), "public"),
+  publicRoot?: string,
 ): Promise<SiteAsset> {
   if (!roots[scope]) {
     throw Error("Geçersiz medya kapsamı");
@@ -107,13 +121,14 @@ export async function uploadSiteAsset(
     throw Error("Dosya zorunludur");
   }
 
+  const root = resolveUploadRoot(publicRoot);
   const uploadFolder = scope === "all" ? "general" : scope;
   const rawBase = slugifyFilename(basename(file.name, extname(file.name)));
   const safeBase = rawBase || "dosya";
   const ext = extname(file.name).toLowerCase();
   const buffer = Buffer.from(await file.arrayBuffer());
 
-  const targetDir = join(publicRoot, "uploads", uploadFolder);
+  const targetDir = join(root, "uploads", uploadFolder);
   await mkdir(targetDir, { recursive: true, mode: 0o755 });
 
   // 1. PDF / Belge yüklemesi
@@ -124,6 +139,21 @@ export async function uploadSiteAsset(
     const filename = `${Date.now()}-${safeBase}.pdf`;
     const targetPath = join(targetDir, filename);
     await writeFile(targetPath, buffer);
+
+    // Standalone ve root public senkronizasyonu
+    const altRoot = root.includes(".next/standalone")
+      ? join(root, "../../../public")
+      : join(root, "../.next/standalone/public");
+    if (existsSync(altRoot)) {
+      try {
+        const altDir = join(altRoot, "uploads", uploadFolder);
+        await mkdir(altDir, { recursive: true, mode: 0o755 });
+        await writeFile(join(altDir, filename), buffer);
+      } catch {
+        // ignore
+      }
+    }
+
     const webPath = `/uploads/${uploadFolder}/${filename}`;
     return {
       path: webPath,

@@ -11,6 +11,73 @@ interface FlipbookReaderProps {
   readonly emptyDesc?: string;
 }
 
+async function loadPdfPages(pdfUrl: string): Promise<string[]> {
+  if (typeof window === "undefined") return [];
+
+  // 1. pdf.min.js yükle (yoksa)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (!(window as any).pdfjsLib) {
+    await new Promise<void>((resolve, reject) => {
+      const existing = document.querySelector('script[src*="pdf.min.js"]');
+      if (existing) {
+        existing.addEventListener("load", () => resolve());
+        existing.addEventListener("error", () => reject(new Error("PDF.js yüklenemedi")));
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = "/vendor/pdfjs/pdf.min.js";
+      script.async = true;
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error("PDF.js kütüphanesi yüklenemedi"));
+      document.head.appendChild(script);
+    });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const pdfjs = (window as any).pdfjsLib;
+  if (!pdfjs) throw new Error("PDF.js hazır değil");
+
+  if (pdfjs.GlobalWorkerOptions) {
+    pdfjs.GlobalWorkerOptions.workerSrc = "/vendor/pdfjs/pdf.worker.min.js";
+  }
+
+  const doc = await pdfjs.getDocument({
+    url: pdfUrl,
+    disableRange: false,
+    disableStream: false,
+  }).promise;
+
+  const count = doc.numPages;
+  const rendered: string[] = [];
+
+  for (let i = 1; i <= count; i++) {
+    const page = await doc.getPage(i);
+    const viewport = page.getViewport({ scale: 1.5 });
+    const canvas = document.createElement("canvas");
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) continue;
+
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    rendered.push(canvas.toDataURL("image/webp", 0.92));
+  }
+
+  if (rendered.length === 1) {
+    const blank = document.createElement("canvas");
+    blank.width = 580;
+    blank.height = 750;
+    const bCtx = blank.getContext("2d");
+    if (bCtx) {
+      bCtx.fillStyle = "black";
+      bCtx.fillRect(0, 0, 580, 750);
+    }
+    rendered.push(blank.toDataURL("image/webp", 0.8));
+  }
+
+  return rendered;
+}
+
 export function FlipbookReader({
   issue,
   initialPage = 1,
@@ -23,7 +90,10 @@ export function FlipbookReader({
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const hasPages = Boolean(issue?.pages && issue.pages.length >= 2);
+  const hasPages = Boolean(
+    (issue?.pages && issue.pages.length >= 2) ||
+    (issue?.pdfUrl && issue.pdfUrl !== "#" && issue.pdfUrl.trim() !== "")
+  );
 
   // Web Audio API ile gerçekçi kağıt çevirme sesi
   const playPageTurnAudio = useCallback(() => {
@@ -85,9 +155,23 @@ export function FlipbookReader({
         const { PageFlip } = await import("page-flip");
         if (!isMounted) return;
 
-        const pageImages = (issue?.pages ?? [])
+        let pageImages = (issue?.pages ?? [])
           .map((p) => p.imageUrl)
           .filter((url): url is string => Boolean(url));
+
+        // Eğer sayfa görselleri 2'den azsa ve PDF URL mevcutsa, PDF'ten dinamik render et
+        if (pageImages.length < 2 && issue?.pdfUrl && issue.pdfUrl !== "#" && issue.pdfUrl.trim() !== "") {
+          try {
+            const renderedFromPdf = await loadPdfPages(issue.pdfUrl);
+            if (renderedFromPdf.length > 0) {
+              pageImages = renderedFromPdf;
+            }
+          } catch (pdfErr) {
+            console.error("PDF sayfaları ayrıştırılırken hata:", pdfErr);
+          }
+        }
+
+        if (!isMounted) return;
 
         if (pageImages.length === 0) {
           setIsLoading(false);
@@ -156,7 +240,7 @@ export function FlipbookReader({
       }
       mountEl.remove();
     };
-  }, [hasPages, issue?.pages, playPageTurnAudio]);
+  }, [hasPages, issue?.pages, issue?.pdfUrl, playPageTurnAudio]);
 
   // Klavye sol/sağ ok tuşları ile sayfa çevirme
   useEffect(() => {

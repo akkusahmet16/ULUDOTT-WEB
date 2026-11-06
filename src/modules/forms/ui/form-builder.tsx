@@ -444,8 +444,8 @@ export function FormBuilder({
           style={{
             padding: "16px 20px",
             margin: "16px 0 24px",
-            background: "var(--color-211a2f, #211a2f)",
-            border: "1px solid var(--color-ffffff24, rgba(255,255,255,0.15))",
+            background: "var(--panel)",
+            border: "1px solid var(--admin-border)",
             borderRadius: "14px",
           }}
         >
@@ -455,7 +455,7 @@ export function FormBuilder({
               fontSize: "12px",
               letterSpacing: "0.08em",
               fontWeight: 700,
-              color: "var(--color-ffd1e1, #ffd1e1)",
+              color: "var(--purple)",
               marginBottom: "6px",
             }}
           >

@@ -34,9 +34,9 @@ export function CopyLinkButton({
         fontSize: "14px",
         cursor: "pointer",
         borderRadius: "8px",
-        border: "1px solid var(--color-ffffff40, rgba(255,255,255,0.25))",
-        background: copied ? "var(--color-22c55e, #15803d)" : "var(--color-352b47, #352b47)",
-        color: "#fff",
+        border: "1px solid var(--admin-border)",
+        background: copied ? "var(--lime)" : "var(--panel)",
+        color: "var(--cream)",
         fontWeight: 600,
         transition: "background 0.2s",
       }}
@@ -68,11 +68,11 @@ export function FormLinkPill({
         style={{
           fontFamily: "monospace",
           fontSize: "14px",
-          background: "var(--color-181424, #181424)",
+          background: "var(--ink)",
           padding: "6px 10px",
           borderRadius: "6px",
-          color: "var(--color-fff9cb, #fff9cb)",
-          border: "1px solid var(--color-ffffff24, rgba(255,255,255,0.15))",
+          color: "var(--cream)",
+          border: "1px solid var(--admin-border)",
           wordBreak: "break-all",
         }}
       >
@@ -90,9 +90,9 @@ export function FormLinkPill({
           display: "inline-flex",
           alignItems: "center",
           borderRadius: "8px",
-          border: "1px solid var(--color-ffd1e1, #ffd1e1)",
+          border: "1px solid var(--purple)",
           background: "transparent",
-          color: "var(--color-ffd1e1, #ffd1e1)",
+          color: "var(--purple)",
           textDecoration: "none",
           fontWeight: 600,
         }}
