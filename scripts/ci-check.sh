@@ -9,3 +9,4 @@ ULUDOTT_E2E_PRODUCTION=1 pnpm test:e2e
 pnpm audit --prod --audit-level=low
 pnpm security:source
 pnpm security:wallet
+pnpm perf:lighthouse --allow-unverified

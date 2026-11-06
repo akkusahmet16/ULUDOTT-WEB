@@ -2,7 +2,7 @@ name: Acceptance
 on:
   pull_request:
   push:
-    branches: [main, development/bootstrap, 'codex/**']
+    branches: [main, development/bootstrap, 'codex/**', 'feat/**']
   workflow_dispatch:
 permissions:
   contents: read
@@ -31,6 +31,22 @@ jobs:
           k6-version: 2.3.0
       - run: pnpm ci:check
       - run: pnpm test:load
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: .local/lighthouse/
+          if-no-files-found: ignore
+      - name: Upload Playwright traces and results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
       - name: Remove ephemeral services
         if: always()
         run: docker compose --env-file .env.local down -v

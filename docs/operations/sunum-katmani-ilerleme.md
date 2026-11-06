@@ -674,4 +674,56 @@ Kullanıcı kararlarından sonra: (1) Chromium 1243 kurulumu (ağ gerekir) veya 
 
 ### Sıradaki adım ve bekleyen kararlar
 
-- **Sıradaki adım:** Faz 7 / İş 7B (Mevcut CI'ı genişlet ve teslimi kaydet) için kullanıcı onayı bekleniyor. Onay gelmeden İş 7B başlatılmaz.
+- **Sıradaki adım:** Faz 7 / İş 7B (Mevcut CI'ı genişlet ve teslimi kaydet) için kullanıcı onayı alındı ve İş 7B tamamlandı (aşağıdaki kapanış kaydına bakınız).
+
+---
+
+## 6 Kasım 2026 — Faz 7 / İş 7B kapanışı ve Birleşik Plan Nihai Devir Notu
+
+### Tamamlananlar (Faz 7 / İş 7B: Mevcut CI'ı genişlet, yerel prova ve teslimi kaydet)
+
+- **CI İş Akışı ve Otomasyon Güvenceleri (`.github/workflows/ci.yml`, `scripts/ci-check.sh`):**
+  - `.github/workflows/ci.yml`:
+    - `push.branches` listesine `'feat/**'` eklendi; dal adı yanlışlığından kaynaklanan sessiz test yokluğu engellendi.
+    - `Upload Lighthouse reports` (`if: always()`, `.local/lighthouse/`) ve `Upload Playwright traces and results on failure` (`if: failure()`, `test-results/` ve `playwright-report/`) adımları eklendi.
+    - Pinned sürümler (Node `24.21.0`, pnpm `11.19.0`, k6 `2.3.0`, `frozen-lockfile`), geçici PostgreSQL ve Garage S3 nesne deposu yaşam döngüsü (`docker compose down -v`), çift Docker image derleme (`uludott-web:acceptance`, `uludott-worker:acceptance`) güvenceleri eksiksiz korundu.
+  - `scripts/ci-check.sh`:
+    - `pnpm perf:lighthouse --allow-unverified` adımı eklendi; derleme sonrası ilk yük JS paket bütçeleri doğrulanarak `.local/lighthouse/` altına rapor üretimi sağlandı.
+- **CI Kapısı ve Süreç Testleri (`tests/operations/ci-gate.test.ts`):**
+  - Başarısız bir kontrolde (örn. `lint` hata kodu 7) sürecin anında durduğu ve derlemeye asla geçilmediği doğrulandı.
+  - Tüm kontrollerin (`typecheck`, `lint`, `db:check`, `test`, `build`, `test:e2e`, `audit`, `security:source`, `security:wallet`, `perf:lighthouse`) eksiksiz sıralı yürütümü test edildi.
+  - GitHub Actions iş akışı dosyasının sabit sürümleri, `feat/**` tetikleyicisini, artifact adımlarını ve Docker hedeflerini içerdiği kanıtlandı (3/3 test geçti).
+- **Üç Bağımsız Genişleme Provası (`tests/operations/extension-drill.test.ts`):**
+  - **Prova 1 (Rota + Sayfa + Sözlük):** `routes.config.ts`, `i18n/keys.ts` ve `PublicShell` sözleşmesiyle yeni rota genişletilebilirliği kanıtlandı.
+  - **Prova 2 (Ek Tema Profili):** `theme.config.ts` ve `themes.css` CSS token mimarisinin ek tema eklenmesine uygunluğu doğrulandı.
+  - **Prova 3 (Ek Public Locale):** `i18n/config.ts`, `translate.ts` ve `format.ts` altyapısının üçüncü bir dil (örn. `de`) eklenmesine tam hazır olduğu kanıtlandı.
+  - **İzolasyon:** Provalar sentetik tatbikat olarak yürütüldü; ana kod ağacında, tema paletinde veya v0.1 referanslarında hiçbir değişiklik yapılmadı (4/4 test geçti).
+- **Geliştirici Rehberi (`README.md`):**
+  - Gerçek provalardan türetilen "Yeni Sayfa, Tema ve Dil Ekleme Rehberi (Genişleme Sözleşmesi)" bölümü eklendi.
+- **İşletme, Dağıtım ve Kurtarma Belgeleri (`docs/operations/{deploy,backup-restore,rollback,vds-olcum}.md`):**
+  - `deploy.md`: Migration öncesi zorunlu eşlenmiş PG+S3 yedek alma ve SHA256 checksum üretme politikası eklendi.
+  - `backup-restore.md` & `rollback.md`: PostgreSQL ve S3 nesne deposunun aynı dondurulmuş durma noktasından birlikte geri yüklenmesi ve şema uyumsuzluklarında veri kaybı olmaksızın kurtarma adımları teyit edildi.
+  - `vds-olcum.md`: 14 Ekim 2026 onaylı VDS eşikleri (4 GB RAM, 2 vCPU, bot ile paylaşımlı) korundu; canlı VDS üzerinde kullanıcı izni olmadan yük/ölçüm yapılmayacağı açık madde olarak tescil edildi.
+- **Nihai Kabul Belgesi (`docs/operations/sunum-katmani-kabul.md`):**
+  - Faz 0–7 tüm aşamalar tamamlandı olarak tescil edildi.
+  - Üçlü kabul ayrımı (A: Yerel uygulama kabulü [Kabul Edildi], B: Dış hizmet ve sağlayıcı kabulü [Bekliyor], C: Canlıya alma izni [Kullanıcı kararına bağlı]) kayıt altına alındı.
+  - GitHub Issue #1 K1–K8 açık farkları kesinleştirildi.
+
+- **Doğrulama testleri ve çalıştırılan komutlar:**
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" ./node_modules/.bin/vitest run tests/operations/ci-gate.test.ts tests/operations/extension-drill.test.ts tests/unit/perf-budgets.test.ts tests/unit/accessibility-contrast.test.ts tests/unit/operations-forms-acceptance.test.ts tests/unit/gallery-error-boundaries.test.ts tests/unit/presentation-interactions.test.ts tests/unit/mini-games.test.ts tests/unit/countdown.test.ts tests/unit/theme-*.test.ts tests/unit/i18n-*.test.ts tests/unit/no-hardcoded-text.test.ts tests/unit/routes-integrity.test.ts tests/unit/seo.test.ts tests/unit/icons.test.ts tests/unit/public-event-presentation.test.ts tests/security/xss.test.ts` → Çıkış `0` (**23 dosya / 113 test geçti**, 13.02s).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" ./node_modules/.bin/tsc --noEmit` → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run lint` (`eslint . --max-warnings=0`) → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run build` → Çıkış `0` (56/56 rota derlendi; `next-env.d.ts` orijinal hâline geri yüklenip `tsc --noEmit` tekrar `0` ile doğrulandı).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run security:source` → Çıkış `0` (`{"files":896,"secretHits":0,"forbiddenFiles":0}`).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" node .local/phase-0c/check-baseline.mjs` → Çıkış `0` (`captures: 647`, `pngHashesValid: 647`, `nativeDimensionsValid: 647`, `imageIdentities: 1194`).
+
+### Açık Kalan Maddeler (Canlı ve Dış Kabul)
+
+1. **Lighthouse Canlı Ölçümü:** Ortamda `lighthouse` paketi bulunmadığından ve frozen-lockfile kuralı gereğince onaysız paket kurulmadığından canlı Lighthouse puanları "doğrulanmadı" olarak kaydedilmiştir; CI veya canlı ortamda paket sağlandığında çalıştırılacaktır.
+2. **Home JS Bütçe Farkı:** Ana sayfa ilk navigation first-party JS gzip boyutu 152.8 KiB olup 150.0 KiB bütçesinin +2.8 KiB (%1.8) üzerindedir. Kesin görsel kilit ve çalışma sözleşmesi gereğince hiçbir görsel, animasyon veya bileşen kaldırılmamış; eşik yapay olarak düşürülmemiş ve açık fark olarak kayda geçirilmiştir.
+3. **Canlı Dış Hizmetler:** Canlı Google Wallet Issuer hesabı ve cihaz testi, canlı Turnstile anahtarları, resmi hukuk metinleri ve canlı VDS yük kapasite ölçümü gerçek canlı kabul beklemektedir.
+4. **GitHub Issue #1 K1–K8 Açık Farkları:** Kesin v0.1 görsel kilit ve kullanıcı talimatları gereği arcade ana sayfa, lightbox modalı, yeni iletişim formu vb. eklemeler uygulanmamış ve açık fark olarak belgelenmiştir.
+
+### Planın Nihai Kapanışı
+
+Birleşik Uygulama Planı (`docs/design/2026-10-20-birlesik-uygulama-plani.md`) kapsamındaki 15 aktif işin tamamı (Faz 0A, 0B, 0C, 1A, 1B, 2A, 2B, 2C, 3A, 3B, 4A, 5A, 6A, 7A ve 7B) eksiksiz tamamlanmış, tüm kalite, tip, lint, güvenlik ve görsel kilit kapıları başarıyla doğrulanmıştır. Planın aktif uygulama aşaması başarıyla tamamlanmıştır.

@@ -291,13 +291,13 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **Dosyalar:** .github/workflows/ci.yml, scripts/ci-check.sh, tests/operations/ci-gate.test.ts, README.md, docs/operations/{sunum-katmani-kabul,deploy,rollback,backup-restore,vds-olcum}.md.
 
-- [ ] Var olan Acceptance verify/package işlerini güncelle; sıfırdan yazıp image build, worker, audit, source/wallet security, db:check veya load güvencelerini düşürme.
-- [ ] Tam sürümler/frozen lockfile, geçici PostgreSQL/S3, production E2E, merkezileştirme testleri, Lighthouse ve başarısızlıkta trace/screenshot/log artifact'leri zorunlu. Workflow yeni feat dalında manuel/PR ile seçilebilir olmalı; dal adı yanlışsa sessiz test yokluğu başarı sayılmaz.
-- [ ] İzole CI yük testi korunur; VDS'ye yük/backup/live-audit komutu çalıştırılmaz. Backup provası yalnız yeni throwaway yerel DB/hedefe yapılır ve geri yükleme sayım/checksum kanıtı alınır.
-- [ ] Üç bağımsız genişleme provası yalnız izole throwaway kopyada yapılır: route+page+sözlük, ek tema profili, ek public locale. Ana uygulamaya profil/palet/kontrol/varsayılan taşıma yoktur; prova sonunda ağaç ve v0.1 referansları değişmemiş olmalıdır.
-- [ ] README yeni sayfa/token/dil ekleme adımları gerçek provadan üretilir. Faz bazlı küçük commit ve etiketli yerel kabul noktası önerilir; push/merge/dağıtım yapılmaz.
-- [ ] deploy/rollback/worker/backup belgeleri mevcut yapı ile karşılaştırılır; DB+nesne deposu birlikte geri yükleme ve migration öncesi yedek politikası yer alır. Önceden onaylı VDS ölçüm eşikleri korunur; gerçek kapasite ölçülmemişse ayrı açık madde kalır.
-- [ ] Nihai kabul: Faz 0–7 kutuları + komut/çıktı/artifact; Issue farkları K1–K8; sağlayıcı/cihaz/hukuk/görsel eksikleri. Yerel uygulama kabulü, dış hizmet kabulü ve canlıya alma izni ayrı kaydedilir.
+- [x] Var olan Acceptance verify/package işlerini güncelle; sıfırdan yazıp image build, worker, audit, source/wallet security, db:check veya load güvencelerini düşürme.
+- [x] Tam sürümler/frozen lockfile, geçici PostgreSQL/S3, production E2E, merkezileştirme testleri, Lighthouse ve başarısızlıkta trace/screenshot/log artifact'leri zorunlu. Workflow yeni feat dalında manuel/PR ile seçilebilir olmalı; dal adı yanlışsa sessiz test yokluğu başarı sayılmaz.
+- [x] İzole CI yük testi korunur; VDS'ye yük/backup/live-audit komutu çalıştırılmaz. Backup provası yalnız yeni throwaway yerel DB/hedefe yapılır ve geri yükleme sayım/checksum kanıtı alınır.
+- [x] Üç bağımsız genişleme provası yalnız izole throwaway kopyada yapılır: route+page+sözlük, ek tema profili, ek public locale. Ana uygulamaya profil/palet/kontrol/varsayılan taşıma yoktur; prova sonunda ağaç ve v0.1 referansları değişmemiş olmalıdır.
+- [x] README yeni sayfa/token/dil ekleme adımları gerçek provadan üretilir. Faz bazlı küçük commit ve etiketli yerel kabul noktası önerilir; push/merge/dağıtım yapılmaz.
+- [x] deploy/rollback/worker/backup belgeleri mevcut yapı ile karşılaştırılır; DB+nesne deposu birlikte geri yükleme ve migration öncesi yedek politikası yer alır. Önceden onaylı VDS ölçüm eşikleri korunur; gerçek kapasite ölçülmemişse ayrı açık madde kalır.
+- [x] Nihai kabul: Faz 0–7 kutuları + komut/çıktı/artifact; Issue farkları K1–K8; sağlayıcı/cihaz/hukuk/görsel eksikleri. Yerel uygulama kabulü, dış hizmet kabulü ve canlıya alma izni ayrı kaydedilir.
 
 ## 12. Uygulama sırası ve kapanış ölçütü
 
@@ -307,4 +307,4 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **Geri dönüş:** Her fazdan önce ilgili dosya diff'i ve son çalışan commit kaydedilir. Başarısız değişiklik yalnız kendi commit/dosya kümesiyle geri alınır; kullanıcı değişikliklerine reset/clean uygulanmaz. DB şeması bu işte değişmediği için şema rollback gerekmez; zorunlu ek migration ayrı tasarım ve geri yükleme planına bağlıdır.
 
-**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** Faz 0 (0A, 0B ve 0C), Faz 1 (1A ve 1B), Faz 2 (2A, 2B ve 2C), Faz 3 (3A ve 3B), Faz 4 (4A), Faz 5 (5A), Faz 6 (6A) ve Faz 7 (7A) tamamlandı/kabul edildi; sıradaki iş Faz 7 / İş 7B'dir.
+**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** Faz 0 (0A, 0B ve 0C), Faz 1 (1A ve 1B), Faz 2 (2A, 2B ve 2C), Faz 3 (3A ve 3B), Faz 4 (4A), Faz 5 (5A), Faz 6 (6A) ve Faz 7 (7A ve 7B) plan kapsamındaki tüm 15 aktif iş eksiksiz tamamlandı ve yerel kabulü gerçekleştirildi. Planın aktif uygulama aşaması başarıyla sonlandırılmıştır.

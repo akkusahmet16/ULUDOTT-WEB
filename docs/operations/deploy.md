@@ -10,6 +10,13 @@ Geliştirme `.env.local` + loopback Compose; testler UUID DB ve sentetik S3 keys
 
 ## Sıra
 
+### Migration Öncesi Zorunlu Eşlenmiş Yedek Politikası
+Herhangi bir veritabanı şema değişikliği (`pnpm db:migrate`) veya yeni sürüm dağıtımı öncesinde:
+1. Web ve worker servisleri bakım modunda durdurularak yazma mutasyonları kesilir.
+2. PostgreSQL veritabanı (`pg_dump`) ve S3 nesne deposu (`aws s3 sync`) aynı anda dondurulmuş tek bir noktadan eşlenmiş olarak [yedeklenir](backup-restore.md).
+3. Hem `database.dump` hem de `objects/` için SHA256 checksum'ları üretilir.
+4. Yedek dosyaları güvenli offhost ortama aktarılmadan ve doğrulama yapılmadan `pnpm db:migrate` çalıştırılamaz.
+
 1. Commit/SHA ve release manifest kaydet; CI doğrulamaları geçmeden release üretme. `.github/workflows/ci.yml` package işi verify'e bağımlı; otomatik canlı yayın yok.
 2. Eşlenmiş [yedek](backup-restore.md) al; migration uyumluluğunu incele. Yeni boş DB için Node24.21/pnpm11.19 ve frozen install. Runtime güvenli env yüklenmişken `pnpm config:check`, `pnpm db:migrate` **tek süreçte**; ikinci çalışma idempotent. Canlı DB reset/truncate yapılmaz.
 3. Yalnız editoryal seed: `pnpm db:seed:2026`; gerekiyorsa tarihsiz2027 için `pnpm db:seed:ulujam`. Kişi/takım/kart yaratılmaz. Geliştirme fixture'ı çalıştırılmaz. Yönetim paneli için sunucuda ayrı [özel şifre kurulumu](admin-bootstrap.md) yapılır; yerel şifre taşınmaz.

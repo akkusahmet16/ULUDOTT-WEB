@@ -16,7 +16,7 @@ Bu belge, [2026-10-20-birlesik-uygulama-plani.md](../design/2026-10-20-birlesik-
 | **Faz 5** | Detay sayfaları, galeri mozaik düzeni ve hata yüzeyleri | **Kabul Edildi** | [Faz 5 İlerleme Kaydı](./sunum-katmani-ilerleme.md#5-kasım-2026--faz-5--is-5a-kapanisi-ve-faz-5-devir-notu) (`gallery-error-boundaries.test.ts` (12/12), `error-pages.spec.ts`: 404 status, noindex robots/header, sıfır sır/yığın izi sızıntısı; Issue #1 lightbox açık farkı). |
 | **Faz 6** | Ürün akışlarının regresyon kabulü (Formlar, başvurular ve operasyon) | **Kabul Edildi** | [`tests/unit/operations-forms-acceptance.test.ts`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/tests/unit/operations-forms-acceptance.test.ts) (13/13), [`tests/integration/form-submit.test.ts`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/tests/integration/form-submit.test.ts), [`tests/integration/coffee-talk.test.ts`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/tests/integration/coffee-talk.test.ts); İş 6B kapsam dışı açık fark. |
 | **Faz 7A** | Ölçülebilir kalite, performans/erişilebilirlik kapıları (Lighthouse, bütçeler, a11y) | **Tamamlandı** | [`tests/perf/budgets.ts`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/tests/perf/budgets.ts), [`scripts/perf-lighthouse.ts`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/scripts/perf-lighthouse.ts), [`tests/accessibility/shell.spec.ts`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/tests/accessibility/shell.spec.ts), [`tests/unit/perf-budgets.test.ts`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/tests/unit/perf-budgets.test.ts), [`tests/unit/accessibility-contrast.test.ts`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/tests/unit/accessibility-contrast.test.ts); home bundle 152.8 KiB ve lighthouse "doğrulanmadı" açık farkları kayıtlıdır. |
-| **Faz 7B** | Mevcut CI'ı genişlet, yerel prova ve teslimi kaydet | **Planlandı** | Sıradaki iş (`.github/workflows/ci.yml`, `scripts/ci-check.sh`, `tests/operations/ci-gate.test.ts`, `README.md`, dağıtım ve yedek belgeleri). |
+| **Faz 7B** | Mevcut CI'ı genişlet, yerel prova ve teslimi kaydet | **Kabul Edildi** | [`ci.yml`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/.github/workflows/ci.yml) (`feat/**`, artifact upload), [`ci-check.sh`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/scripts/ci-check.sh), [`ci-gate.test.ts`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/tests/operations/ci-gate.test.ts) (3/3), [`extension-drill.test.ts`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/tests/operations/extension-drill.test.ts) (4/4), [`README.md`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/README.md) geliştirici genişleme rehberi, deploy/backup/rollback belgeleri. |
 
 ---
 
@@ -61,3 +61,25 @@ Kullanıcının kesin talimatı olan **"v0.1 teması ve görsel dili vs. asla de
 - **K6 — Apple Wallet ve iOS Kamera Entegrasyonu (Faz 6):** v0.1'deki ertelenmiş durum korunmuş; Apple Developer sertifikası ve yerel iOS kamera okuyucusu gerektiren özellikler ayrı geliştirme olarak bırakılmıştır.
 - **K7 — Canlı Google Wallet Sağlayıcı Doğrulaması (Faz 6):** Sistem yerel ve CI ortamında mock/disabled adaptörle çalışacak şekilde tam işlevseldir; canlı ortam provası için gerçek sağlayıcı kimliği beklenmektedir.
 - **K8 — Canlı Turnstile ve Hukuk Metinleri (Faz 6):** Sahte hukuk metni veya canlı Turnstile zorunluluğu uydurulmamış, adaptör yapısıyla güvenlik sağlanmış ve canlı kabul bekleyen maddeler olarak tescil edilmiştir.
+
+---
+
+## 4. Üçlü Kabul Ayrımı ve Canlıya Alma İzni
+
+[2026-10-20-birlesik-uygulama-plani.md](../design/2026-10-20-birlesik-uygulama-plani.md) Madde 11 (Faz 7B) ve [calisma-sozlesmesi.md](./calisma-sozlesmesi.md) ilkeleri uyarınca projenin kabul durumu üç bağımsız seviyede ayrıştırılmıştır:
+
+### A. Yerel Uygulama Kabulü (Kabul Edildi)
+- **Kapsam:** Faz 0'dan Faz 7'ye (Faz 0A, 0B, 0C, 1A, 1B, 2A, 2B, 2C, 3A, 3B, 4A, 5A, 6A, 7A ve 7B) tüm uygulama, merkezileştirme, i18n, test ve operasyonel hazırlık adımları `/Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102` çalışma dizininde ve `feat/unified-clean-v0.2` dalında tamamlanmıştır.
+- **Doğrulama:** Vitest 22 test dosyası / 113 birim ve operasyonel testin tamamı geçmiş; `tsc --noEmit` sıfır tip hatası; `eslint` sıfır uyarı ve hata; `pnpm run build` ile 56 rota başarıyla derlenmiş; `security:source` sıfır sır sızıntısı ve `check-baseline.mjs` ile 647/647 görsel ekran görüntüsü ve 1194 resim kimliği %100 eşleşmeyle kanıtlanmıştır.
+- **Sonuç:** Yerel sunum ve operasyon katmanı eksiksiz olarak teslim edilmiştir.
+
+### B. Dış Hizmet ve Sağlayıcı Kabulü (Gerçek Dış Kabul Bekliyor)
+Aşağıdaki maddeler yerel kod mimarisi açısından hazır olmakla birlikte, üçüncü taraf sağlayıcı abonelikleri, canlı API anahtarları veya harici uzman onayı gerektirdiği için "gerçek dış kabul bekliyor" statüsündedir:
+1. **Canlı Google Wallet Entegrasyonu:** Google Cloud Service Account, Issuer ID ve gerçek Android cihazı üzerinde Pass ekleme testi.
+2. **Canlı Cloudflare Turnstile Koruması:** Canlı domain'e ait Sitekey ve Secret anahtarlarıyla form gönderim testi.
+3. **Resmi Hukuk ve KVKK Metinleri:** Hukuk danışmanlığı tarafından onaylanmış resmi metinlerin panelden girilmesi.
+4. **Canlı VDS Kapasite Ölçümü:** Canlı VDS üzerinde kullanıcı nezaretinde gerçek yük altında kaynak tüketimi ölçümü.
+
+### C. Canlıya Alma ve Dağıtım İzni (Kullanıcı Kararına Bağlı)
+- Çalışma sözleşmesi Madde 5 gereğince: Kullanıcının açık ve yazılı talimatı olmadan uzak sunucuya bağlanılmaz, VDS'ye yük testi çalıştırılmaz, DNS yönlendirmesi yapılmaz ve `git push` / `git merge` / canlı dağıtım adımları tetiklenmez.
+- Canlı dağıtım kararı kullanıcıya aittir. Dağıtım yapılacak ortam için [deploy.md](./deploy.md), [backup-restore.md](./backup-restore.md) ve [rollback.md](./rollback.md) belgelerindeki adımlar izlenmelidir.
