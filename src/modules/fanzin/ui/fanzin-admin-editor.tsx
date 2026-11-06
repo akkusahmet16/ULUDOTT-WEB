@@ -14,7 +14,11 @@ export function FanzinAdminEditor({ issueId }: { issueId?: string }) {
   const isNew = !issueId || issueId === "yeni";
 
   const [form, setForm] = useState<FanzinIssueInput>({
-    id: isNew ? "fanzin-" + Date.now() : issueId,
+    id: isNew
+      ? typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+        ? crypto.randomUUID()
+        : "fanzin-" + Date.now()
+      : issueId,
     issueNumber: 1,
     title: "",
     slug: "",
@@ -22,10 +26,10 @@ export function FanzinAdminEditor({ issueId }: { issueId?: string }) {
     season: "Bahar",
     year: 2026,
     description: "",
-    pageCount: 32,
-    pdfUrl: "/uploads/fanzin/uludott-fanzin-sayi-01.pdf",
-    pdfFileSize: "18.4 MB",
-    coverImageUrl: "/community/02-ulujam/ulujam-vlog-kapak.webp",
+    pageCount: 0,
+    pdfUrl: "",
+    pdfFileSize: "",
+    coverImageUrl: "",
     status: "draft",
   });
 

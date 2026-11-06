@@ -5,19 +5,25 @@ import type { PageFlip } from "page-flip";
 import type { FanzinIssue } from "../domain/fanzin-types.ts";
 
 interface FlipbookReaderProps {
-  readonly issue: FanzinIssue;
+  readonly issue?: FanzinIssue | null;
   readonly initialPage?: number;
+  readonly emptyTitle?: string;
+  readonly emptyDesc?: string;
 }
 
 export function FlipbookReader({
   issue,
   initialPage = 1,
+  emptyTitle,
+  emptyDesc,
 }: FlipbookReaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const pageFlipRef = useRef<PageFlip | null>(null);
   const currentPageRef = useRef<number>(initialPage > 0 ? initialPage - 1 : 0);
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const hasPages = Boolean(issue?.pages && issue.pages.length > 0);
 
   // Web Audio API ile gerçekçi kağıt çevirme sesi
   const playPageTurnAudio = useCallback(() => {
@@ -63,7 +69,7 @@ export function FlipbookReader({
 
   // PageFlip başlatma ve yaşam döngüsü
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!hasPages || !containerRef.current) return;
 
     let isMounted = true;
     let pageFlipInstance: PageFlip | null = null;
@@ -79,7 +85,7 @@ export function FlipbookReader({
         const { PageFlip } = await import("page-flip");
         if (!isMounted) return;
 
-        const pageImages = issue.pages
+        const pageImages = (issue?.pages ?? [])
           .map((p) => p.imageUrl)
           .filter((url): url is string => Boolean(url));
 
@@ -150,10 +156,11 @@ export function FlipbookReader({
       }
       mountEl.remove();
     };
-  }, [issue.pages, playPageTurnAudio]);
+  }, [hasPages, issue?.pages, playPageTurnAudio]);
 
   // Klavye sol/sağ ok tuşları ile sayfa çevirme
   useEffect(() => {
+    if (!hasPages) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") {
         pageFlipRef.current?.flipNext();
@@ -163,7 +170,28 @@ export function FlipbookReader({
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [hasPages]);
+
+  if (!hasPages) {
+    return (
+      <div className="fanzin-reader-container">
+        <div className="fanzin-book-stage fanzin-stage-empty">
+          <div className="fanzin-empty-card">
+            <span className="fanzin-empty-icon" aria-hidden="true">
+              📖
+            </span>
+            <h3 className="fanzin-empty-title">
+              {emptyTitle || "Henüz Yayımlanmış Sayı Yok"}
+            </h3>
+            <p className="fanzin-empty-desc">
+              {emptyDesc ||
+                "Çok yakında ilk sayımız burada çevrimiçi olarak okunabilecek. Yeni sayılar çıktığında doğrudan bu ekrandan sayfaları çevirerek okuyabilirsiniz."}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fanzin-reader-container">

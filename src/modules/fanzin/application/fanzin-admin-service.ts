@@ -1,4 +1,5 @@
 import "server-only";
+import { createHash } from "node:crypto";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { eq, desc, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -67,6 +68,14 @@ export async function getFanzinIssue(id: string) {
   return { issue, pages, articles };
 }
 
+function toAuditUuid(rawId: string): string {
+  if (z.uuid().safeParse(rawId).success) {
+    return rawId;
+  }
+  const hex = createHash("sha256").update(`fanzin-issue:${rawId}`).digest("hex");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(13, 16)}-8${hex.slice(17, 20)}-${hex.slice(20, 32)}`;
+}
+
 export async function upsertFanzinIssue(actor: Actor, input: unknown) {
   const data = fanzinIssueInputSchema.parse(input);
 
@@ -92,12 +101,24 @@ export async function upsertFanzinIssue(actor: Actor, input: unknown) {
       });
     }
 
+    const auditStatus =
+      data.status === "upcoming"
+        ? "scheduled"
+        : data.status === "published"
+          ? "published"
+          : data.status === "archived"
+            ? "archived"
+            : "draft";
+
     await appendAudit(
       tx,
       actor,
       "fanzin.issue_saved",
-      { type: "fanzin_issue", id: data.id },
-      { status: data.status, issueNumber: data.issueNumber },
+      { type: "fanzin_issue", id: toAuditUuid(data.id) },
+      {
+        status: auditStatus,
+        changedFields: ["title", "status", "media"],
+      },
     );
 
     revalidateTag("public:fanzin", { expire: 0 });
@@ -114,7 +135,7 @@ export async function deleteFanzinIssue(actor: Actor, issueId: string) {
       tx,
       actor,
       "fanzin.issue_deleted",
-      { type: "fanzin_issue", id: issueId },
+      { type: "fanzin_issue", id: toAuditUuid(issueId) },
       {},
     );
 

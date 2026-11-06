@@ -18,17 +18,21 @@ export default async function FanzinPage() {
   const locale = await getLocale();
   const t = getTranslator(locale);
 
+  const activeIssue = FANZIN_ISSUE_01;
+  const issues = ALL_FANZIN_ISSUES;
+
   return (
     <PublicShell>
       {/* GTA VI Neon Hero Section */}
       <FanzinHero
-        issue={FANZIN_ISSUE_01}
+        issue={activeIssue}
         labels={{
           eyebrow: t("fanzin.eyebrow"),
           heading: t("fanzin.heading"),
           readButton: t("fanzin.readButton"),
           downloadButton: t("fanzin.downloadButton"),
           archiveButton: t("fanzin.archiveButton"),
+          defaultSubtitle: t("fanzin.defaultSubtitle"),
         }}
       />
 
@@ -42,12 +46,16 @@ export default async function FanzinPage() {
           <p className="eyebrow">{t("fanzin.readerEyebrow")}</p>
           <h2>{t("fanzin.readerHeading")}</h2>
         </div>
-        <FlipbookReader issue={FANZIN_ISSUE_01} />
+        <FlipbookReader
+          issue={activeIssue}
+          emptyTitle={t("fanzin.readerEmptyTitle")}
+          emptyDesc={t("fanzin.readerEmptyDesc")}
+        />
       </section>
 
       {/* Sayılar ve Yayınlar Arşivi */}
       <FanzinArchive
-        issues={ALL_FANZIN_ISSUES}
+        issues={issues}
         labels={{
           archiveHeading: t("fanzin.archiveHeading"),
           archiveEyebrow: t("fanzin.archiveEyebrow"),
@@ -55,6 +63,7 @@ export default async function FanzinPage() {
           readButton: t("fanzin.readButton"),
           downloadButton: t("fanzin.downloadButton"),
           archiveUpcomingBadge: t("fanzin.archiveUpcomingBadge"),
+          archiveEmptyDesc: t("fanzin.archiveEmptyDesc"),
         }}
       />
     </PublicShell>

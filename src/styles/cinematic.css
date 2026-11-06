@@ -1770,6 +1770,54 @@ body {
   pointer-events: none;
 }
 
+.fanzin-stage-empty {
+  min-height: clamp(320px, 42vh, 460px);
+}
+
+.fanzin-empty-card {
+  max-width: 600px;
+  width: 100%;
+  padding: clamp(32px, 5vw, 48px);
+  text-align: center;
+  border-radius: var(--radius-1-5rem);
+  background: var(--color-0c0d1b66);
+  border: 1px solid var(--color-eed5df66);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-03);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin: 0 auto;
+}
+
+.fanzin-empty-icon {
+  font-size: 48px;
+  line-height: 1;
+  filter: drop-shadow(0 0 16px var(--color-edb2e466));
+}
+
+.fanzin-empty-title {
+  font-family: inherit;
+  font-size: clamp(20px, 2.5vw, 26px);
+  color: var(--cream);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.fanzin-empty-desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 480px;
+  margin: 0;
+}
+
+.fanzin-empty-archive {
+  width: 100%;
+  margin-top: 24px;
+}
+
 @media (max-width: 760px) {
   .fanzin-book-stage {
     min-height: clamp(480px, 70vh, 720px);
