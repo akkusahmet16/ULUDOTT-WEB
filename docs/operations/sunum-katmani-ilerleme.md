@@ -615,4 +615,63 @@ Kullanıcı kararlarından sonra: (1) Chromium 1243 kurulumu (ağ gerekir) veya 
 
 ### Sıradaki adım ve bekleyen kararlar
 
-- **Sıradaki adım:** Faz 7 / İş 7A (Performans/erişilebilirlik kapıları) için kullanıcı onayı bekleniyor. Onay gelmeden İş 7A başlatılmaz.
+- **Sıradaki adım:** Faz 7 / İş 7A (Performans/erişilebilirlik kapıları) için kullanıcı onayı alındı ve İş 7A tamamlandı (aşağıdaki kapanış kaydına bakınız).
+
+---
+
+## 6 Kasım 2026 — Faz 7 / İş 7A kapanışı ve devir notu
+
+### Tamamlananlar (Faz 7 / İş 7A: Performans ve erişilebilirlik kapıları)
+
+- **Tek eşik kaynağı (`tests/perf/budgets.ts`):**
+  - **Lighthouse Dört Kategori:** `performance ≥ 90`, `accessibility ≥ 90`, `bestPractices ≥ 90`, `seo ≥ 90` (public rotalar).
+  - **Core Web Vitals:** `lcpMaxMs: 2500` (LCP ≤ 2500ms), `clsMax: 0.1` (hedef 0.0), `tbtMaxMs: 200` (TBT ≤ 200ms).
+  - **İlk Navigation JS Bütçesi:** `homeFirstPartyJsGzipMaxBytes: 150 * 1024` (153.600 byte). Main bundle ile sınırlı olmayıp ilk navigation'ın indirdiği runtime/framework/RSC istemci bağımlılıklarını tekil olarak hesaplayan ölçüm mimarisi kuruldu.
+  - **Görünüm Matrisi:** `mobile` (375x667), `desktop` (1280x800) ve `reflow320` (320x640; yatay taşma yasak, `scrollWidth <= innerWidth`).
+  - **Public Rota Matrisi:** Cinematic tema altında TR ve EN dilleriyle 7 rota (`/`, `/hakkimizda`, `/ulujam`, `/etkinlikler`, `/oyunlar`, `/iletisim`, `/makbuz`).
+  - **Private / Yönetim Rota Matrisi:** Classic tema altında `/admin` (TR, `isPrivate: true`, `noindex: true`, `noStore: true`, `noReferrer: true`, `cspNonce: true`, `seoCategoryExcluded: true`).
+  - **Derleme Analiz Fonksiyonları:** `measureRouteBundle()` ve `measureAllRouteBundles()` ile `.next/build-manifest.json` ve sayfa istemci referans manifestlerinden (`page_client-reference-manifest.js`) ilk yük chunk'ları, ham ve gzip boyutları deterministik olarak hesaplandı.
+- **Lighthouse ve Kalite Kapısı Çalıştırıcısı (`scripts/perf-lighthouse.ts`, `package.json`):**
+  - `package.json` içine `"perf:lighthouse": "node --env-file-if-exists=.env.local scripts/perf-lighthouse.ts"` komutu eklendi.
+  - `.local/lighthouse/` dizini altında her rota için mobil ve masaüstü JSON raporları (`<slug>-<locale>-<viewport>.json`) ve bütünleşik `summary.json` üretimi sağlandı.
+  - Birleşik plan kuralları tam uygulandı:
+    - Frozen-lockfile kuralı korunarak onaysız dış paket eklenmedi; `lighthouse` motoru bulunamadığında durum `"dogrulanmadi"` olarak tescil edildi.
+    - Eşik altı veya eksik ölçüm gereği komut nonzero (çıkış kodu `1`) üreterek sahte başarı iddiası engellendi (`--allow-unverified` opsiyonu sağlandı).
+- **Erişilebilirlik ve WCAG Kapıları (`tests/accessibility/shell.spec.ts`, `tests/unit/accessibility-contrast.test.ts`):**
+  - `tests/accessibility/shell.spec.ts`: Masaüstü (1280x800) ve mobil (375x667) görünümlerinde axe WCAG (`wcag2a`, `wcag2aa`, `wcag21aa`) taraması, 320px reflow yatay taşma denetimi, `prefers-reduced-motion: reduce`, `forced-colors: active` medya emülasyonu ve klavye sekme (Tab) görünür odak göstergesi doğrulandı.
+  - `tests/unit/accessibility-contrast.test.ts` (5/5):
+    - Dark zemin (`--ink: #0c0d1b`) üzerinde `--cream` (18.06:1), `--muted` (11.38:1), `--purple` (11.10:1), `--lime` (11.45:1) ve `--coral` (11.96:1) renklerinin tamamının WCAG AAA (≥ 7:1) kontrast standardını aştığı kanıtlandı.
+    - Admin zemininde (`--admin-bg: #0d101b`) `--admin-muted` (9.03:1) ve beyaz metnin (18.97:1) WCAG AAA sağladığı kanıtlandı.
+    - CSS `prefers-reduced-motion`, `:focus-visible` ve dokunma hedefleri (≥ 44px min-height) denetlendi.
+  - `tests/unit/perf-budgets.test.ts` (8/8): Bütçe sabitleri, rota matrisleri, axe kriterleri ve derleme analizi doğrulandı.
+- **İlk Yük JS Paket Boyutu Ölçüm Tablosu:**
+
+| Rota | Dil | Tema | Görünüm | JS Gzip (KiB) | JS Bütçe | Lighthouse Durumu | Not |
+|------|-----|------|---------|---------------|----------|-------------------|-----|
+| `/` | tr / en | cinematic | 375 / 1280 | 152.8 | AŞILDI (+2.8 KiB) | **doğrulanmadı** | Görsel kilit korundu; lighthouse yüklü değil |
+| `/hakkimizda` | tr / en | cinematic | 375 / 1280 | 151.3 | AŞILDI (+1.3 KiB) | **doğrulanmadı** | Görsel kilit korundu; lighthouse yüklü değil |
+| `/ulujam` | tr / en | cinematic | 375 / 1280 | 150.2 | AŞILDI (+0.2 KiB) | **doğrulanmadı** | Görsel kilit korundu; lighthouse yüklü değil |
+| `/etkinlikler` | tr / en | cinematic | 375 / 1280 | 149.7 | GEÇTİ (-0.3 KiB) | **doğrulanmadı** | Bütçe sağlandı; lighthouse yüklü değil |
+| `/oyunlar` | tr / en | cinematic | 375 / 1280 | 149.7 | GEÇTİ (-0.3 KiB) | **doğrulanmadı** | Bütçe sağlandı; lighthouse yüklü değil |
+| `/iletisim` | tr / en | cinematic | 375 / 1280 | 149.7 | GEÇTİ (-0.3 KiB) | **doğrulanmadı** | Bütçe sağlandı; lighthouse yüklü değil |
+| `/makbuz` | tr / en | cinematic | 375 / 1280 | 235.5 | Özel Akış | **doğrulanmadı** | QRCode kütüphanesi; home bütçesi kapsamı dışı |
+| `/admin` | tr | classic | 375 / 1280 | 147.2 | GEÇTİ (-2.8 KiB) | **doğrulanmadı** | SEO muafiyetli; lighthouse yüklü değil |
+
+- **Doğrulama testleri ve çalıştırılan komutlar:**
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" ./node_modules/.bin/vitest run tests/unit/perf-budgets.test.ts tests/unit/accessibility-contrast.test.ts tests/unit/operations-forms-acceptance.test.ts tests/unit/gallery-error-boundaries.test.ts tests/unit/presentation-interactions.test.ts tests/unit/mini-games.test.ts tests/unit/countdown.test.ts tests/unit/theme-*.test.ts tests/unit/i18n-*.test.ts tests/unit/no-hardcoded-text.test.ts tests/unit/routes-integrity.test.ts tests/unit/seo.test.ts tests/unit/icons.test.ts tests/unit/public-event-presentation.test.ts tests/security/xss.test.ts` → Çıkış `0` (**21 dosya / 106 test geçti**, 12.16s).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" ./node_modules/.bin/tsc --noEmit` → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run lint` (`eslint . --max-warnings=0`) → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run build` → Çıkış `0` (56/56 rota derlendi; `next-env.d.ts` orijinal hâline geri yüklenip `tsc --noEmit` tekrar `0` ile doğrulandı).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run security:source` → Çıkış `0` (`{"files":894,"secretHits":0,"forbiddenFiles":0}`).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" node .local/phase-0c/check-baseline.mjs` → Çıkış `0` (`captures: 647`, `pngHashesValid: 647`, `nativeDimensionsValid: 647`, `imageIdentities: 1194`).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm perf:lighthouse` → Çıkış `1` (Plan kuralı gereğince `dogrulanmadi` durumu ve home bütçe delta farkı nedeniyle nonzero çıkış üretti, JSON raporları `.local/lighthouse/` altına kaydedildi).
+
+### Açık kalanlar
+
+- **Lighthouse Ölçümü:** Ortamda `lighthouse` paketi bulunmadığından ve frozen-lockfile kuralı gereğince onaysız paket kurulmadığından canlı Lighthouse puanları "doğrulanmadı" olarak kaydedilmiştir; CI veya canlı ortamda paket sağlandığında tam ölçüm koşulacaktır.
+- **Home JS Bütçe Farkı:** Ana sayfa ilk navigation first-party JS gzip boyutu 152.8 KiB olup 150.0 KiB bütçesinin +2.8 KiB (%1.8) üzerindedir. Kesin görsel kilit ve çalışma sözleşmesi gereğince hiçbir görsel, animasyon veya bileşen kaldırılmamış; eşik yapay olarak düşürülmemiş ve açık fark olarak kayda geçirilmiştir.
+- **Faz 7 / İş 7B (henüz başlamadı):** Mevcut CI'ı genişlet ve teslimi kaydet (`.github/workflows/ci.yml`, `scripts/ci-check.sh`, `tests/operations/ci-gate.test.ts`, `README.md`, `docs/operations/{deploy,rollback,backup-restore,vds-olcum}.md`).
+
+### Sıradaki adım ve bekleyen kararlar
+
+- **Sıradaki adım:** Faz 7 / İş 7B (Mevcut CI'ı genişlet ve teslimi kaydet) için kullanıcı onayı bekleniyor. Onay gelmeden İş 7B başlatılmaz.

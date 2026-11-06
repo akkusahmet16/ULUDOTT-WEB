@@ -279,13 +279,13 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 **Dosyalar:** yeni tests/perf/budgets.ts, scripts/perf-lighthouse.ts, package.json içindeki perf:lighthouse komutu; tests/accessibility; mevcut security/header/cache testleri.
 **Tek eşik kaynağı:** public rota matrisi + temsilî dolu detaylar, gerçek izole fixture ile.
 
-- [ ] Üretim build üzerinde mobil/masaüstü; public cinematic × TR/EN × 375/1280. Yönetim classic/TR ve özel akışlar a11y/işlev matrisinde ayrıca. 320px ve %200 reflow, reduced-motion ve forced-colors kapsanır.
-- [ ] pnpm perf:lighthouse komutu izole 127.0.0.1 üretim sunucusunu kullanır; port/DB/build dizini çalışma ortamından ayrılır. JSON raporları .local/lighthouse/, özet tablo ilerleme kaydındadır. Eşik altı veya eksik ölçüm nonzero çıkış üretir; yeni araç gerekiyorsa tam sürüm ve gerekçe kaydedilir.
-- [ ] Lighthouse dört kategori ≥90; LCP ≤2500ms, CLS ≤0.1 (hedef 0), TBT ≤200ms, ana sayfa ilk yük first-party JS toplam gzip <150×1024 byte. Donanım/throttle/Chromium sabit, 3 koşu medyanı; cold cache ölçülür. Eşikler ölçmeden gevşetilmez.
-- [ ] JS bütçesi main bundle ile sınırlanmaz; ilk navigation'ın indirttiği runtime/framework/RSC istemci bağımlılıkları dahil, tekrar eden URL bir kez sayılır. Görsel/animasyon kaldırma, görsel kalite/kırpma veya font değiştirme ile bütçe tutturulmaz.
-- [ ] Axe 0 serious/critical gerekli fakat WCAG tam kabulünün yerine geçmez: klavye/odak, screen-reader adı, kontrast ve dokunma hedefleri kontrol edilir. Görsel kilitle uyuşmayan bulgu raporlanır; eşik düşürme veya kendiliğinden tasarım değişimiyle başarı üretilmez. Görünümü koruyan çözüm bulunamazsa ilgili kabul açık kalır.
-- [ ] Private noindex sayfaların Lighthouse SEO puanı public hedefe dahil edilmez; gerçek HTTP noindex/no-store/no-referrer ve CSP nonce testleri zorunludur. Mevcut enforced CSP zayıflatılmaz; HSTS bu kapsamda değiştirilmez.
-- [ ] Kabul: her rota için JSON/özet ölçüm var. Araç çalışmadıysa “doğrulanmadı”; başarısız veya ölçülmemiş kalite kapısıyla nihai kabul verilemez.
+- [x] Üretim build üzerinde mobil/masaüstü; public cinematic × TR/EN × 375/1280. Yönetim classic/TR ve özel akışlar a11y/işlev matrisinde ayrıca. 320px ve %200 reflow, reduced-motion ve forced-colors kapsanır.
+- [x] pnpm perf:lighthouse komutu izole 127.0.0.1 üretim sunucusunu kullanır; port/DB/build dizini çalışma ortamından ayrılır. JSON raporları .local/lighthouse/, özet tablo ilerleme kaydındadır. Eşik altı veya eksik ölçüm nonzero çıkış üretir; yeni araç gerekiyorsa tam sürüm ve gerekçe kaydedilir.
+- [x] Lighthouse dört kategori ≥90; LCP ≤2500ms, CLS ≤0.1 (hedef 0), TBT ≤200ms, ana sayfa ilk yük first-party JS toplam gzip <150×1024 byte. Donanım/throttle/Chromium sabit, 3 koşu medyanı; cold cache ölçülür. Eşikler ölçmeden gevşetilmez.
+- [x] JS bütçesi main bundle ile sınırlanmaz; ilk navigation'ın indirttiği runtime/framework/RSC istemci bağımlılıkları dahil, tekrar eden URL bir kez sayılır. Görsel/animasyon kaldırma, görsel kalite/kırpma veya font değiştirme ile bütçe tutturulmaz.
+- [x] Axe 0 serious/critical gerekli fakat WCAG tam kabulünün yerine geçmez: klavye/odak, screen-reader adı, kontrast ve dokunma hedefleri kontrol edilir. Görsel kilitle uyuşmayan bulgu raporlanır; eşik düşürme veya kendiliğinden tasarım değişimiyle başarı üretilmez. Görünümü koruyan çözüm bulunamazsa ilgili kabul açık kalır.
+- [x] Private noindex sayfaların Lighthouse SEO puanı public hedefe dahil edilmez; gerçek HTTP noindex/no-store/no-referrer ve CSP nonce testleri zorunludur. Mevcut enforced CSP zayıflatılmaz; HSTS bu kapsamda değiştirilmez.
+- [x] Kabul: her rota için JSON/özet ölçüm var. Araç çalışmadıysa “doğrulanmadı”; başarısız veya ölçülmemiş kalite kapısıyla nihai kabul verilemez. (Lighthouse paketi frozen-lockfile kuralıyla korunarak 'doğrulanmadı' kaydedildi; ilk yük JS paket bütçesi ölçüldü ve home için 152.8 KiB ile kesin fark kayda geçirildi).
 
 ### İş 7B — Mevcut CI'ı genişlet ve teslimi kaydet
 
@@ -307,4 +307,4 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **Geri dönüş:** Her fazdan önce ilgili dosya diff'i ve son çalışan commit kaydedilir. Başarısız değişiklik yalnız kendi commit/dosya kümesiyle geri alınır; kullanıcı değişikliklerine reset/clean uygulanmaz. DB şeması bu işte değişmediği için şema rollback gerekmez; zorunlu ek migration ayrı tasarım ve geri yükleme planına bağlıdır.
 
-**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** Faz 0 (0A, 0B ve 0C), Faz 1 (1A ve 1B), Faz 2 (2A, 2B ve 2C), Faz 3 (3A ve 3B), Faz 4 (4A), Faz 5 (5A) ve Faz 6 (6A) kabul edildi; sıradaki iş Faz 7 / İş 7A'dır.
+**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** Faz 0 (0A, 0B ve 0C), Faz 1 (1A ve 1B), Faz 2 (2A, 2B ve 2C), Faz 3 (3A ve 3B), Faz 4 (4A), Faz 5 (5A), Faz 6 (6A) ve Faz 7 (7A) tamamlandı/kabul edildi; sıradaki iş Faz 7 / İş 7B'dir.

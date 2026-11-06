@@ -38,6 +38,7 @@
     "security:wallet": "node --env-file-if-exists=.env.local --conditions=react-server scripts/check-wallet-package.ts",
     "security:source": "node --env-file-if-exists=.env.local scripts/check-secrets.ts",
     "ci:check": "bash scripts/ci-check.sh",
+    "perf:lighthouse": "node --env-file-if-exists=.env.local scripts/perf-lighthouse.ts",
     "test:load": "bash scripts/run-load.sh"
   },
   "dependencies": {
