@@ -1,14 +1,10 @@
-import { CoffeeTalkCard } from "../components/layout/coffee-talk-card";
 import { StoryPanels } from "../components/layout/story-panels";
 import { DegreeGames } from "../modules/games/ui/degree-games";
 import Image from "next/image";
 import Link from "next/link";
 import { PublicShell } from "../components/layout/public-shell";
 import { OpeningGlow } from "../components/layout/opening-glow";
-import { coffeeTalkEndsAt } from "../modules/events/domain/legacy-coffee-talk";
 import { EventCard } from "../modules/events/ui/event-card";
-import { PastEventPosterCard } from "../modules/events/ui/past-event-poster-card";
-import posterStyles from "../modules/events/ui/past-event-poster-card.module.css";
 import {
   readHomeEvents,
   readHistoricalResults,
@@ -29,21 +25,6 @@ export default async function HomePage() {
     readUlujamPresentation(),
   ]);
   const t = getTranslator(locale);
-  const pastEvents = events.past.map((event) => ({
-    id: event.id,
-    endedAt: (event.endsAt ?? event.startsAt)?.getTime() ?? 0,
-    node: <PastEventPosterCard key={event.id} event={event} locale={locale} />,
-  }));
-  if (events.showLegacyCoffeeTalk)
-    pastEvents.push({
-      id: "legacy-coffee-talk",
-      endedAt: coffeeTalkEndsAt.getTime(),
-      node: (
-        <CoffeeTalkCard key="legacy-coffee-talk" posterOnly locale={locale} />
-      ),
-    });
-  pastEvents.sort((a, b) => b.endedAt - a.endedAt || a.id.localeCompare(b.id));
-  const recentPastEvents = pastEvents.slice(0, 4);
   return (
     <PublicShell>
       <section className={`clone-opening ${styles.opening}`}>
@@ -146,25 +127,6 @@ export default async function HomePage() {
             {t("home.discoverPlacesCta")}
           </Link>
         </div>
-      </section>
-      <section
-        className={`${styles.news} ${posterStyles.homePastEventsSection}`}
-        aria-label={t("home.pastEventsAria")}
-        data-sky="#3e2b40"
-      >
-        <div className={styles.sectionHeading}>
-          <h2>{t("home.pastEventsHeading")}</h2>
-          <Link href="/etkinlikler">
-            {t("home.allEventsLink")} <span aria-hidden="true">↗</span>
-          </Link>
-        </div>
-        {recentPastEvents.length ? (
-          <div className={posterStyles.homePastEventsGrid}>
-            {recentPastEvents.map((item) => item.node)}
-          </div>
-        ) : (
-          <p className={styles.emptyEvents}>{t("home.pastEventsEmpty")}</p>
-        )}
       </section>
       <section
         className={styles.sponsors}
