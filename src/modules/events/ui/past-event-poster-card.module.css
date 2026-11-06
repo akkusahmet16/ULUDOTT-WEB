@@ -5,8 +5,8 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 396px;
-  padding: clamp(13px, 2vw, 20px);
+  max-width: 475px;
+  padding: clamp(15px, 2.2vw, 24px);
   border-radius: var(--radius-24px);
   background: var(--gradient-12);
   border: 1px solid var(--color-ffffff20);
@@ -25,7 +25,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 4 / 5;
-  border-radius: 18px;
+  border-radius: 20px;
   overflow: hidden;
   background: var(--gradient-24);
   display: flex;
@@ -43,7 +43,7 @@
 .posterFallback {
   color: var(--color-fff9cb);
   text-align: center;
-  font-size: clamp(2.2rem, 4.4vw, 3.85rem);
+  font-size: clamp(2.6rem, 5vw, 4.5rem);
   font-weight: 800;
   line-height: 0.9;
   user-select: none;
@@ -51,9 +51,9 @@
 
 .pastEventsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(264px, 330px));
-  gap: clamp(20px, 3vw, 32px);
-  margin-top: 32px;
+  grid-template-columns: repeat(auto-fill, minmax(316px, 396px));
+  gap: clamp(24px, 3.5vw, 38px);
+  margin-top: 36px;
 }
 
 .homePastEventsGrid {
@@ -61,14 +61,14 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: stretch;
-  gap: clamp(18px, 2.8vw, 32px);
-  margin-top: 36px;
+  gap: clamp(20px, 3vw, 36px);
+  margin-top: 40px;
   width: 100%;
 }
 
 .homePastEventsGrid > * {
-  flex: 0 1 286px;
-  max-width: 308px;
+  flex: 0 1 344px;
+  max-width: 370px;
   width: 100%;
 }
 
@@ -78,12 +78,12 @@
     border-radius: var(--radius-20px);
   }
   .pastEventsGrid {
-    grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 18px;
   }
   .homePastEventsGrid {
-    gap: 14px;
-    margin-top: 24px;
+    gap: 16px;
+    margin-top: 28px;
   }
   .homePastEventsGrid > * {
     flex: 0 1 calc(50% - 10px);
@@ -94,6 +94,6 @@
 @media (max-width: 430px) {
   .homePastEventsGrid > * {
     flex: 0 1 100%;
-    max-width: 352px;
+    max-width: 390px;
   }
 }
