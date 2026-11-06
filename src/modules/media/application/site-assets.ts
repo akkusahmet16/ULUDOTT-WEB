@@ -101,7 +101,9 @@ function resolveUploadRoot(defaultPublicRoot?: string): string {
   const cwd = process.cwd();
   const candidates = [
     join(cwd, "public"),
+    join(cwd, "..", "..", "public"),
     join(cwd, "..", "public"),
+    join(cwd),
   ];
   for (const c of candidates) {
     if (existsSync(c)) return c;
@@ -140,17 +142,24 @@ export async function uploadSiteAsset(
     const targetPath = join(targetDir, filename);
     await writeFile(targetPath, buffer);
 
-    // Standalone ve root public senkronizasyonu
-    const altRoot = root.includes(".next/standalone")
-      ? join(root, "../../../public")
-      : join(root, "../.next/standalone/public");
-    if (existsSync(altRoot)) {
-      try {
-        const altDir = join(altRoot, "uploads", uploadFolder);
-        await mkdir(altDir, { recursive: true, mode: 0o755 });
-        await writeFile(join(altDir, filename), buffer);
-      } catch {
-        // ignore
+    // Tüm olası standalone ve kök uploads dizinlerine senkronize et
+    const cwd = process.cwd();
+    const candidateUploadDirs = [
+      join(cwd, "public", "uploads", uploadFolder),
+      join(cwd, "uploads", uploadFolder),
+      join(cwd, "..", "public", "uploads", uploadFolder),
+      join(cwd, "..", "..", "public", "uploads", uploadFolder),
+      join(cwd, ".next", "standalone", "public", "uploads", uploadFolder),
+      join(cwd, ".next", "standalone", "uploads", uploadFolder),
+    ];
+    for (const dir of candidateUploadDirs) {
+      if (dir !== targetDir) {
+        try {
+          await mkdir(dir, { recursive: true, mode: 0o755 });
+          await writeFile(join(dir, filename), buffer);
+        } catch {
+          // ignore
+        }
       }
     }
 

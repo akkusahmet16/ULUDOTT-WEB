@@ -25,4 +25,6 @@ Wallet secrets/
 /sites-preview/
 
 # Admin üzerinden sonradan yüklenen site görselleri
-/public/uploads/
+/public/uploads/*
+!/public/uploads/fanzin/
+!/public/uploads/fanzin/**

@@ -18,6 +18,11 @@ async function loadPdfPages(pdfUrl: string): Promise<string[]> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!(window as any).pdfjsLib) {
     await new Promise<void>((resolve, reject) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((window as any).pdfjsLib) {
+        resolve();
+        return;
+      }
       const existing = document.querySelector('script[src*="pdf.min.js"]');
       if (existing) {
         existing.addEventListener("load", () => resolve());
@@ -43,8 +48,8 @@ async function loadPdfPages(pdfUrl: string): Promise<string[]> {
 
   const doc = await pdfjs.getDocument({
     url: pdfUrl,
-    disableRange: false,
-    disableStream: false,
+    disableRange: true,
+    disableStream: true,
   }).promise;
 
   const count = doc.numPages;
@@ -89,6 +94,7 @@ export function FlipbookReader({
   const currentPageRef = useRef<number>(initialPage > 0 ? initialPage - 1 : 0);
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [loadError, setLoadError] = useState<boolean>(false);
 
   const hasPages = Boolean(
     (issue?.pages && issue.pages.length >= 2) ||
@@ -143,6 +149,8 @@ export function FlipbookReader({
 
     let isMounted = true;
     let pageFlipInstance: PageFlip | null = null;
+    setIsLoading(true);
+    setLoadError(false);
 
     // React DOM senkronizasyonunu korumak için izole mount öğesi
     const mountEl = document.createElement("div");
@@ -158,6 +166,21 @@ export function FlipbookReader({
         let pageImages = (issue?.pages ?? [])
           .map((p) => p.imageUrl)
           .filter((url): url is string => Boolean(url));
+
+        // Eğer hazır sayfalar varsa önce ilk görselin erişilebilir olduğunu kontrol et (404 koruması)
+        if (pageImages.length > 0 && !pageImages[0].startsWith("data:")) {
+          const testOk = await new Promise<boolean>((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(true);
+            img.onerror = () => resolve(false);
+            img.src = pageImages[0];
+          });
+
+          if (!testOk) {
+            // Statik sayfa görselleri bulunamadıysa (404), PDF'e yönel
+            pageImages = [];
+          }
+        }
 
         // Eğer sayfa görselleri 2'den azsa ve PDF URL mevcutsa, PDF'ten dinamik render et
         if (pageImages.length < 2 && issue?.pdfUrl && issue.pdfUrl !== "#" && issue.pdfUrl.trim() !== "") {
@@ -175,6 +198,7 @@ export function FlipbookReader({
 
         if (pageImages.length === 0) {
           setIsLoading(false);
+          setLoadError(true);
           return;
         }
 
@@ -222,7 +246,10 @@ export function FlipbookReader({
         pageFlip.loadFromImages(pageImages);
       } catch (err) {
         console.error("PageFlip yüklenirken hata oluştu:", err);
-        if (isMounted) setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+          setLoadError(true);
+        }
       }
     };
 
@@ -277,7 +304,7 @@ export function FlipbookReader({
     );
   }
 
-  if (!hasPages) {
+  if (!hasPages || loadError) {
     return (
       <div className="fanzin-reader-container">
         <div className="fanzin-book-stage fanzin-stage-empty">
@@ -289,10 +316,9 @@ export function FlipbookReader({
               Sayı #{String(issue.issueNumber).padStart(2, "0")}: {issue.title}
             </h3>
             <p className="fanzin-empty-desc">
-              Bu sayı yayımlandı! İnteraktif çevrimiçi sayfalar çok yakında bu ekranda okunabilecek.
               {issue.pdfUrl && issue.pdfUrl !== "#"
-                ? " Dilerseniz yukarıdaki butondan PDF baskısını hemen cihazınıza indirebilirsiniz."
-                : ""}
+                ? "Bu sayının dijital baskısı hazırlandı. Dilerseniz yukarıdaki butondan PDF baskısını hemen cihazınıza indirebilirsiniz."
+                : "Bu sayı yayımlandı! İnteraktif çevrimiçi sayfalar çok yakında bu ekranda okunabilecek."}
             </p>
           </div>
         </div>

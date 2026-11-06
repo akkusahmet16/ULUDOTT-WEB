@@ -28,7 +28,7 @@ export function FanzinHero({ issue, labels }: FanzinHeroProps) {
           </a>
           {hasPdf && issue && (
             <a
-              href={issue.pdfUrl}
+              href={issue.pdfUrl.includes("?") ? `${issue.pdfUrl}&download=1` : `${issue.pdfUrl}?download=1`}
               download={`uludott-fanzin-sayi-${String(issue.issueNumber).padStart(2, "0")}.pdf`}
               className="button secondary"
             >

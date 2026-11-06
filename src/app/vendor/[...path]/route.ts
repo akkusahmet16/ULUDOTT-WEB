@@ -24,12 +24,17 @@ function resolveVendorFile(segments: string[]): ResolvedFile | null {
     }
   }
 
-  const relativePath = segments.join("/");
+  const relativePath = segments.map((s) => decodeURIComponent(s)).join("/");
+  const cwd = process.cwd();
   const candidatePaths = [
-    join(process.cwd(), "public", "vendor", relativePath),
-    join(process.cwd(), "vendor", relativePath),
-    join(process.cwd(), "..", "public", "vendor", relativePath),
-    join(process.cwd(), "..", "vendor", relativePath),
+    join(cwd, "public", "vendor", relativePath),
+    join(cwd, "vendor", relativePath),
+    join(cwd, "..", "public", "vendor", relativePath),
+    join(cwd, "..", "vendor", relativePath),
+    join(cwd, "..", "..", "public", "vendor", relativePath),
+    join(cwd, "..", "..", "vendor", relativePath),
+    join(cwd, ".next", "standalone", "public", "vendor", relativePath),
+    join(cwd, ".next", "standalone", "vendor", relativePath),
   ];
 
   for (const cand of candidatePaths) {

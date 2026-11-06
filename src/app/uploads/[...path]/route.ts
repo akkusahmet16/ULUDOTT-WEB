@@ -1,5 +1,5 @@
 import { createReadStream, statSync, existsSync } from "node:fs";
-import { join, extname } from "node:path";
+import { join, extname, basename } from "node:path";
 import { Readable } from "node:stream";
 
 export const runtime = "nodejs";
@@ -32,12 +32,17 @@ function resolveUploadFile(segments: string[]): ResolvedFile | null {
     }
   }
 
-  const relativePath = segments.join("/");
+  const relativePath = segments.map((s) => decodeURIComponent(s)).join("/");
+  const cwd = process.cwd();
   const candidatePaths = [
-    join(process.cwd(), "public", "uploads", relativePath),
-    join(process.cwd(), "uploads", relativePath),
-    join(process.cwd(), "..", "public", "uploads", relativePath),
-    join(process.cwd(), "..", "uploads", relativePath),
+    join(cwd, "public", "uploads", relativePath),
+    join(cwd, "uploads", relativePath),
+    join(cwd, "..", "public", "uploads", relativePath),
+    join(cwd, "..", "uploads", relativePath),
+    join(cwd, "..", "..", "public", "uploads", relativePath),
+    join(cwd, "..", "..", "uploads", relativePath),
+    join(cwd, ".next", "standalone", "public", "uploads", relativePath),
+    join(cwd, ".next", "standalone", "uploads", relativePath),
   ];
 
   for (const cand of candidatePaths) {
@@ -57,7 +62,7 @@ function resolveUploadFile(segments: string[]): ResolvedFile | null {
 }
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ path: string[] }> },
 ) {
   try {
@@ -73,6 +78,40 @@ export async function GET(
 
     const ext = extname(resolved.filePath).toLowerCase();
     const contentType = MIME_TYPES[ext] || "application/octet-stream";
+    const totalSize = resolved.size;
+
+    const url = new URL(request.url);
+    const isDownload = url.searchParams.has("download");
+    const fileBase = basename(resolved.filePath);
+    const contentDisposition = isDownload
+      ? `attachment; filename="${encodeURIComponent(fileBase)}"`
+      : "inline";
+
+    const rangeHeader = request.headers.get("range");
+    if (rangeHeader && rangeHeader.startsWith("bytes=")) {
+      const parts = rangeHeader.replace("bytes=", "").split("-");
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : totalSize - 1;
+
+      if (!isNaN(start) && start < totalSize && end < totalSize && start <= end) {
+        const chunkSize = end - start + 1;
+        const nodeStream = createReadStream(resolved.filePath, { start, end });
+        const webStream = Readable.toWeb(nodeStream) as ReadableStream<Uint8Array>;
+
+        return new Response(webStream, {
+          status: 206,
+          headers: {
+            "Content-Type": contentType,
+            "Content-Range": `bytes ${start}-${end}/${totalSize}`,
+            "Content-Length": String(chunkSize),
+            "Accept-Ranges": "bytes",
+            "Cache-Control": "public, max-age=86400, must-revalidate",
+            "Content-Disposition": contentDisposition,
+            "X-Content-Type-Options": "nosniff",
+          },
+        });
+      }
+    }
 
     const nodeStream = createReadStream(resolved.filePath);
     const webStream = Readable.toWeb(nodeStream) as ReadableStream<Uint8Array>;
@@ -81,10 +120,10 @@ export async function GET(
       status: 200,
       headers: {
         "Content-Type": contentType,
-        "Content-Length": String(resolved.size),
+        "Content-Length": String(totalSize),
         "Cache-Control": "public, max-age=86400, must-revalidate",
         "Accept-Ranges": "bytes",
-        "Content-Disposition": "inline",
+        "Content-Disposition": contentDisposition,
         "X-Content-Type-Options": "nosniff",
       },
     });
@@ -94,7 +133,7 @@ export async function GET(
 }
 
 export async function HEAD(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ path: string[] }> },
 ) {
   try {
@@ -111,6 +150,13 @@ export async function HEAD(
     const ext = extname(resolved.filePath).toLowerCase();
     const contentType = MIME_TYPES[ext] || "application/octet-stream";
 
+    const url = new URL(request.url);
+    const isDownload = url.searchParams.has("download");
+    const fileBase = basename(resolved.filePath);
+    const contentDisposition = isDownload
+      ? `attachment; filename="${encodeURIComponent(fileBase)}"`
+      : "inline";
+
     return new Response(null, {
       status: 200,
       headers: {
@@ -118,7 +164,7 @@ export async function HEAD(
         "Content-Length": String(resolved.size),
         "Cache-Control": "public, max-age=86400, must-revalidate",
         "Accept-Ranges": "bytes",
-        "Content-Disposition": "inline",
+        "Content-Disposition": contentDisposition,
         "X-Content-Type-Options": "nosniff",
       },
     });

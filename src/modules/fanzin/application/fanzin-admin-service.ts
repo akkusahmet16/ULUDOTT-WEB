@@ -63,15 +63,7 @@ export async function getPublicFanzinData(): Promise<{
           };
         });
 
-        // Sayı 1 için veritabanında sayfa kaydı henüz yoksa veya eksikse diskteki sayfaları bağla
-        let finalPages = fanzinPagesList;
-        if (finalPages.length < 2 && row.issueNumber === 1) {
-          finalPages = [
-            { pageNumber: 1, imageUrl: "/uploads/fanzin/pages/page-1.webp", title: "Kapak", type: "cover" },
-            { pageNumber: 2, imageUrl: "/uploads/fanzin/pages/page-2.webp", title: "İçerik", type: "page" },
-            { pageNumber: 3, imageUrl: "/uploads/fanzin/pages/page-3.webp", title: "Arka Kapak", type: "backcover" },
-          ];
-        }
+        const finalPages = fanzinPagesList;
 
         return {
           id: row.id,
