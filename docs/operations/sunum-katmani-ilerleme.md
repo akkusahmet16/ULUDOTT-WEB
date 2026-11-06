@@ -572,8 +572,47 @@ Kullanıcı kararlarından sonra: (1) Chromium 1243 kurulumu (ağ gerekir) veya 
 ### Açık kalanlar
 
 - Faz 5 (`İş 5A`) kapsamında açık madde kalmamıştır; Issue #1 Faz 5'teki yeni lightbox talebi görsel kilit gereği açık fark olarak kaydedilmiştir.
-- Faz 6 (`İş 6A`: Form, başvuru ve mevcut operasyon modülleri) henüz başlamamıştır.
 
 ### Sıradaki adım ve bekleyen kararlar
 
-- **Sıradaki adım:** Faz 6 / İş 6A (Form, başvuru ve mevcut operasyon modülleri) için kullanıcı onayı bekleniyor. Onay gelmeden İş 6A başlatılmaz.
+- **Sıradaki adım:** Faz 6 / İş 6A (Form, başvuru ve mevcut operasyon modülleri) için kullanıcı onayı alındı ve İş 6A tamamlandı (aşağıdaki kapanış kaydına bakınız).
+
+---
+
+## 5 Kasım 2026 — Faz 6 / İş 6A kapanışı ve Faz 6 devir notu
+
+### Tamamlananlar (Faz 6 / İş 6A: Form, başvuru ve mevcut operasyon modülleri)
+
+- **Nihai Kabul Belgesi ve Operasyonel Modüller Matrisi (`docs/operations/sunum-katmani-kabul.md`):**
+  - Faz 0–6 tamamlanan aşamalar ve Faz 7 teslimat kapsamı kabul durum tablosu oluşturuldu.
+  - Sözleşme kuralı gereğince tüm ürün ve operasyon modülleri (form oluşturma/sürümleme, açık başvuru, makbuz, arama/export, Coffee Talk, takım yönetimi, kartlar, yayın onayı, outbox/worker retry, Google Wallet, check-in, iletişim, bot koruması ve KVKK rıza metinleri) 4 standart durumla (`kaynak var`, `otomatik test geçti`, `gerçek dış kabul bekliyor`, `ayrı geliştirme`) net olarak ayrıştırıldı; "eksiksiz mevcut" toplu ifadesi kesinlikle kullanılmadı.
+  - Issue #1 K1–K8 açık farkları (K1: arcade ana sayfa, K2: arşiv lightbox, K3: yeni iletişim formu, K4: özel 404 yeniden tasarımı, K5: görünür dil seçici, K6: Apple Wallet, K7: canlı Google Wallet sağlayıcısı, K8: canlı Turnstile ve resmi hukuk metinleri) tescil edildi.
+- **CSV Formül Enjeksiyonu Koruması ve Dışa Aktarma Güvenliği (`safeCell`, `serializeExport`):**
+  - [`src/modules/forms/application/export-submissions.ts`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/src/modules/forms/application/export-submissions.ts): `=1+1`, `@SUM`, `+cmd`, `-cmd`, `\t` veya `\n` ile başlayan zararlı formül girdilerinin güvenli `'` ön ekiyle kaçıldığı, UTF-8 BOM (`\uFEFF`) varlığı, çift tırnak kaçışı ve 5.000 satır / 20 MB boyut sınırı güvencesi doğrulandı.
+- **Koşullu Alanlar, Doğrulama Motoru ve Gizli Alan Enjeksiyonu Koruması:**
+  - [`src/modules/forms/domain/condition.ts`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/src/modules/forms/domain/condition.ts) ve [`src/modules/forms/application/form-validator.ts`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/src/modules/forms/application/form-validator.ts): Çoklu operatörler (`eq`, `neq`, `in`, `nin`, `is_empty`, `gt`, `gte`, `lt`, `lte`, `regex`, `and`, `or`, `not`) ve koşullu görünürlük değerlendirildi.
+  - Bireysel başvuru seçildiğinde yanıt gövdesine enjekte edilen gizli takım adı alanının "Gizli alan yanıtı reddedildi" istisnasıyla reddedildiği doğrulandı.
+- **Katılımcı Kartları, Takım ve Rıza Arayüzleri:**
+  - [`src/modules/cards/ui/web-card.tsx`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/src/modules/cards/ui/web-card.tsx) ve [`src/modules/cards/ui/pending-card.tsx`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/src/modules/cards/ui/pending-card.tsx): Aktif kartta QR görseli (`Etkinlik giriş QR kodu`), gizlilik uyarısı, saat dilimli tarih ve takım adı; beklemede (`Onay bekleniyor`) ve iptal (`Katılım hakkı kapalı`) biletlerde QR'ın gizlenmesi TR ve EN dillerinde kanıtlandı.
+  - [`src/modules/teams/ui/team-page.tsx`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/src/modules/teams/ui/team-page.tsx): `TeamLogin` ve `TeamLogout` erişilebilir form alanları, `role="alert"` ve buton metinleri kanıtlandı.
+  - [`src/modules/forms/ui/receipt-view.tsx`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/src/modules/forms/ui/receipt-view.tsx): `aria-label="Özel makbuz"` ve `role="status"` kanıtlandı.
+  - [`src/modules/games/ui/credit-consent.tsx`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/src/modules/games/ui/credit-consent.tsx): Yapımcı adı alanı, onay checkbox'ı, onaylama ve geri çekme akışları kanıtlandı.
+  - [`src/i18n/error-adapter.ts`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/src/i18n/error-adapter.ts): `KNOWN_UI_ERROR_KEYS` haritası, boş/tanımsız mesajlarda güvenli fallback ve `adaptFieldErrors` alan yollarını koruma sözleşmesi kanıtlandı.
+- **Eklenen Testler:**
+  - [`tests/unit/operations-forms-acceptance.test.ts`](file:///Users/taklalie60/Desktop/ULUDOTT/yedek-v0.2-20261102/tests/unit/operations-forms-acceptance.test.ts) (13/13 test geçti).
+- **Doğrulama testleri ve çalıştırılan komutlar:**
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" ./node_modules/.bin/vitest run tests/unit/operations-forms-acceptance.test.ts tests/unit/gallery-error-boundaries.test.ts tests/unit/presentation-interactions.test.ts tests/unit/mini-games.test.ts tests/unit/countdown.test.ts tests/unit/theme-*.test.ts tests/unit/i18n-*.test.ts tests/unit/no-hardcoded-text.test.ts tests/unit/routes-integrity.test.ts tests/unit/seo.test.ts tests/unit/icons.test.ts tests/unit/public-event-presentation.test.ts tests/security/xss.test.ts` → Çıkış `0` (**19 dosya / 93 test geçti**).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" ./node_modules/.bin/tsc --noEmit` → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run lint` (`eslint . --max-warnings=0`) → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run build` → Çıkış `0` (56/56 rota derlendi; `next-env.d.ts` orijinal hâline geri yüklenip `tsc --noEmit` tekrar `0` ile doğrulandı).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run security:source` → Çıkış `0` (`{"files":889,"secretHits":0,"forbiddenFiles":0}`).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" node .local/phase-0c/check-baseline.mjs` → Çıkış `0` (`captures: 647`, `pngHashesValid: 647`, `nativeDimensionsValid: 647`, `imageIdentities: 1194`).
+
+### Açık kalanlar
+
+- Faz 6 (`İş 6A`) kapsamında açık madde kalmamıştır; Issue #1 Faz 6'daki yeni iletişim formu (İş 6B) görsel kilit gereği açık fark olarak kaydedilmiştir.
+- Faz 7 (`İş 7A`: Performans/erişilebilirlik kapıları; `İş 7B`: Mevcut CI'ı genişlet ve teslimi kaydet) henüz başlamamıştır.
+
+### Sıradaki adım ve bekleyen kararlar
+
+- **Sıradaki adım:** Faz 7 / İş 7A (Performans/erişilebilirlik kapıları) için kullanıcı onayı bekleniyor. Onay gelmeden İş 7A başlatılmaz.

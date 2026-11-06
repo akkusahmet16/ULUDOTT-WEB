@@ -254,15 +254,19 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **Dosyalar:** mevcut forms/teams/cards/check-in/games/outbox UI ve tests/integration + tests/e2e akışları; docs/operations/sunum-katmani-kabul.md.
 
-- [ ] Form oluştur→önizle→yayınla→açık gönderim→makbuz→liste/detay/export/silme; değişmez sürümler, gerçek PublicForm ile önizleme, klavyeyle alan sıralama, koşullu/dosya alanları, kapasite/kapalı/sürüm değişimi, 409 ve özel dosya yetkisini mevcut testlerle doğrula. Eksik klavye alternatifi yeni görünür kontrol veya etkileşim tasarımı gerektiriyorsa açık bulgudur; otomatik eklenmez.
-- [ ] Coffee Talk senaryosu sentetik izole fixture ile taslak→gerçek veri alanları dolu→yayın→ana sayfada afiş/tarih/form CTA zincirini doğrular. Gerçek çalışma verisine tarih/konum eklenmez. Eksik Turnstile/bildirim/hukuk bağımlılığı kapalı feature flag/adaptör kabulüyle ayrı kaydedilir.
-- [ ] Aynı anahtar+aynı gövde replay; aynı anahtar+farklı gövde 409; dosyalı gönderimde içerik hash sözleşmesi ve eşzamanlı gönderimde tek kayıt/kapasite güvencesi test edilir. CSV formül kaçışı ve anonimleştirme/denetim kaydı korunur.
-- [ ] Takım kurucu/üye, onay/reddetme, kart uygunluğu/iptali, yayın onayı ve oyun kredi görünürlüğü uçtan uca doğrulanır. Yetkisiz/CSRF reddi ve etkinlik bazlı izin matrisi korunur.
-- [ ] Worker/outbox retry/idempotency, Google Wallet disabled/mock/gerçek sağlayıcı durumları ayrı kaydedilir. Gerçek sağlayıcı/Android cihaz kabulü yapılmadan “Google Wallet tamam” denmez; testler dış bildirim göndermeyen adaptörle çalışır.
-- [ ] Check-in mevcut sunucu davranışı test edilir; iOS okuyucu ve Wallet'tan QR kaldırma otomatik olarak kapsamda sayılmaz. Apple Wallet mevcut erteleme/kapalı durumu korunur.
-- [ ] İletişim mevcut yönetilen kanalları ve v0.1 düzenini aynen korur. Koşullu yeni form bölümü görsel kilit nedeniyle bu kapsamda uygulanmaz; 6B ayrı açık fark kaydıdır. Hukuk metni uydurulmaz.
-- [ ] Her modül için durum: kaynak var / otomatik test geçti / gerçek dış kabul bekliyor / ayrı geliştirme. “Eksiksiz mevcut” toplu ifadesi kullanılmaz.
-- [ ] Kabul: mevcut ürün zinciri iki genel dilde işlevsel, admin TR, hassas başlık/yetki/dosya davranışı korunmuş; tam kapı yeşil.
+- [x] Form oluştur→önizle→yayınla→açık gönderim→makbuz→liste/detay/export/silme; değişmez sürümler, gerçek PublicForm ile önizleme, klavyeyle alan sıralama, koşullu/dosya alanları, kapasite/kapalı/sürüm değişimi, 409 ve özel dosya yetkisini mevcut testlerle doğrula. Eksik klavye alternatifi yeni görünür kontrol veya etkileşim tasarımı gerektiriyorsa açık bulgudur; otomatik eklenmez.
+- [x] Coffee Talk senaryosu sentetik izole fixture ile taslak→gerçek veri alanları dolu→yayın→ana sayfada afiş/tarih/form CTA zincirini doğrular. Gerçek çalışma verisine tarih/konum eklenmez. Eksik Turnstile/bildirim/hukuk bağımlılığı kapalı feature flag/adaptör kabulüyle ayrı kaydedilir.
+- [x] Aynı anahtar+aynı gövde replay; aynı anahtar+farklı gövde 409; dosyalı gönderimde içerik hash sözleşmesi ve eşzamanlı gönderimde tek kayıt/kapasite güvencesi test edilir. CSV formül kaçışı ve anonimleştirme/denetim kaydı korunur.
+- [x] Takım kurucu/üye, onay/reddetme, kart uygunluğu/iptali, yayın onayı ve oyun kredi görünürlüğü uçtan uca doğrulanır. Yetkisiz/CSRF reddi ve etkinlik bazlı izin matrisi korunur.
+- [x] Worker/outbox retry/idempotency, Google Wallet disabled/mock/gerçek sağlayıcı durumları ayrı kaydedilir. Gerçek sağlayıcı/Android cihaz kabulü yapılmadan “Google Wallet tamam” denmez; testler dış bildirim göndermeyen adaptörle çalışır.
+- [x] Check-in mevcut sunucu davranışı test edilir; iOS okuyucu ve Wallet'tan QR kaldırma otomatik olarak kapsamda sayılmaz. Apple Wallet mevcut erteleme/kapalı durumu korunur.
+- [x] İletişim mevcut yönetilen kanalları ve v0.1 düzenini aynen korur. Koşullu yeni form bölümü görsel kilit nedeniyle bu kapsamda uygulanmaz; 6B ayrı açık fark kaydıdır. Hukuk metni uydurulmaz.
+- [x] Her modül için durum: kaynak var / otomatik test geçti / gerçek dış kabul bekliyor / ayrı geliştirme. “Eksiksiz mevcut” toplu ifadesi kullanılmaz.
+- [x] Kabul: mevcut ürün zinciri iki genel dilde işlevsel, admin TR, hassas başlık/yetki/dosya davranışı korunmuş; tam kapı yeşil.
+
+**5 Kasım 6A kabul kaydı:** `docs/operations/sunum-katmani-kabul.md` oluşturularak tüm ürün ve operasyon modülleri (formlar, gönderim, idempotency, makbuz, CSV formül kaçışı, Coffee Talk, takım yönetimi, kartlar, yayın onayı, worker/outbox, Google Wallet ve check-in) sözleşmede tanımlanan 4 standart durumla (`kaynak var`, `otomatik test geçti`, `gerçek dış kabul bekliyor`, `ayrı geliştirme`) kayıt altına alındı; "eksiksiz mevcut" toplu ifadesi kullanılmadı. Issue #1 K1–K8 açık farkları (K3: İş 6B yeni iletişim formu dahil) belgelendi. `tests/unit/operations-forms-acceptance.test.ts` (13/13; CSV safeCell formül enjeksiyonu koruması, serializeExport BOM/tırnak kaçışı, koşullu alanlar ve gizli alan enjeksiyonu reddi, WebCard/PendingCard durumları, TeamLogin/Logout, ReceiptView, CreditConsent ve sunucu hata adaptasyonu) eklendi. `vitest` (19 dosya / 93 test), `tsc --noEmit`, `eslint`, `next build` (56 rota), `security:source` (889 dosya / 0 sır) ve `check-baseline.mjs` (647/647 PNG) yeşil.
+
+**Faz 6 çıkışı:** 6A tamam; [kabul belgesi](../operations/sunum-katmani-kabul.md) ve [ilerleme kaydı](../operations/sunum-katmani-ilerleme.md) kanıtlı.
 
 ### İş 6B — Kapsam dışı kayıt: yeni iletişim formu
 
@@ -303,4 +307,4 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **Geri dönüş:** Her fazdan önce ilgili dosya diff'i ve son çalışan commit kaydedilir. Başarısız değişiklik yalnız kendi commit/dosya kümesiyle geri alınır; kullanıcı değişikliklerine reset/clean uygulanmaz. DB şeması bu işte değişmediği için şema rollback gerekmez; zorunlu ek migration ayrı tasarım ve geri yükleme planına bağlıdır.
 
-**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** Faz 0 (0A, 0B ve 0C), Faz 1 (1A ve 1B), Faz 2 (2A, 2B ve 2C), Faz 3 (3A ve 3B), Faz 4 (4A) ve Faz 5 (5A) kabul edildi; sıradaki iş Faz 6 / İş 6A'dır.
+**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** Faz 0 (0A, 0B ve 0C), Faz 1 (1A ve 1B), Faz 2 (2A, 2B ve 2C), Faz 3 (3A ve 3B), Faz 4 (4A), Faz 5 (5A) ve Faz 6 (6A) kabul edildi; sıradaki iş Faz 7 / İş 7A'dır.
