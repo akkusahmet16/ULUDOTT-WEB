@@ -5,6 +5,7 @@ import { SiteGameCard } from "./site-game-card";
 import { SiteAssetPicker } from "../../media/ui/site-asset-picker";
 import { formRequest } from "../../forms/ui/admin-fetch";
 import { Dialog } from "../../../components/design-system/dialog";
+import { sanitizeMediaSrc } from "../../media/domain/sanitize-src";
 import styles from "../../admin/ui/content-workspace.module.css";
 
 const empty: SiteGameFields = {
@@ -54,13 +55,9 @@ export function SiteGameEditor({ initial }: { initial: SiteGame[] }) {
     if (!response.ok) throw Error(result.error ?? "Oyunlar alınamadı");
     setItems(result.items);
   }
-  async function save(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function handleSave(intent: "save" | "draft" | "publish") {
     setBusy(true);
     setMessage("");
-    const intent = (event.nativeEvent as SubmitEvent).submitter?.getAttribute(
-      "value",
-    );
     const published =
       intent === "publish"
         ? true
@@ -68,9 +65,14 @@ export function SiteGameEditor({ initial }: { initial: SiteGame[] }) {
           ? false
           : draft.published;
     try {
+      const sanitizedDraft: SiteGameFields = {
+        ...draft,
+        published,
+        image: sanitizeMediaSrc(draft.image),
+      };
       const result: SiteGame = await formRequest("/api/admin/game-catalog", {
         action: "save",
-        input: { ...draft, published },
+        input: sanitizedDraft,
         ...(selected
           ? { id: selected.id, expectedRevision: selected.revision }
           : {}),
@@ -157,8 +159,12 @@ export function SiteGameEditor({ initial }: { initial: SiteGame[] }) {
       <div className={styles.card}>
         <h3>{selected ? "Oyun bilgilerini düzenle" : "Yeni oyun"}</h3>
         <form
+          noValidate
           className={styles.form}
-          onSubmit={(event) => void save(event)}
+          onSubmit={(event) => {
+            event.preventDefault();
+            void handleSave(selected?.published ? "save" : "draft");
+          }}
           aria-label="Oyun bilgileri"
         >
           <div className={styles.row}>
@@ -243,7 +249,11 @@ export function SiteGameEditor({ initial }: { initial: SiteGame[] }) {
             />
           </label>
           <div className={styles.actions}>
-            <button type="submit" disabled={busy} value="save">
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void handleSave(selected?.published ? "save" : "draft")}
+            >
               {busy
                 ? "Kaydediliyor…"
                 : selected?.published
@@ -251,9 +261,9 @@ export function SiteGameEditor({ initial }: { initial: SiteGame[] }) {
                   : "Taslağı kaydet"}
             </button>
             <button
-              type="submit"
+              type="button"
               disabled={busy}
-              value={selected?.published ? "draft" : "publish"}
+              onClick={() => void handleSave(selected?.published ? "draft" : "publish")}
             >
               {selected?.published ? "Yayından kaldır" : "Yayımla"}
             </button>

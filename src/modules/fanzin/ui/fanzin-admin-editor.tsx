@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { formRequest } from "../../forms/ui/admin-fetch";
+import { SiteAssetPicker } from "../../media/ui/site-asset-picker";
 import type { FanzinIssueInput } from "../application/fanzin-admin-service";
 import styles from "./fanzin-admin.module.css";
 import editorStyles from "../../site-settings/ui/admin-editors.module.css";
@@ -68,16 +69,49 @@ export function FanzinAdminEditor({ issueId }: { issueId?: string }) {
     }
   }, [isNew, issueId]);
 
-  async function handleSave(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSave(
+    e?: React.FormEvent,
+    overrideStatus?: "draft" | "published" | "upcoming",
+  ) {
+    if (e) e.preventDefault();
     setSaving(true);
     setMessage("");
 
+    const targetStatus = overrideStatus ?? form.status;
+    const cleanTitle = form.title.trim();
+
+    if (!cleanTitle) {
+      setMessage("Hata: Lütfen fanzin sayısı için bir başlık girin.");
+      setSaving(false);
+      return;
+    }
+
+    const cleanSlug =
+      form.slug.trim() ||
+      cleanTitle
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)+/g, "");
+
+    const payload: FanzinIssueInput = {
+      ...form,
+      title: cleanTitle,
+      slug: cleanSlug,
+      status: targetStatus,
+    };
+
     try {
-      await formRequest("/api/admin/fanzin", form);
-      setMessage("Fanzin sayısı başarıyla kaydedildi.");
+      await formRequest("/api/admin/fanzin", payload);
+      setForm(payload);
+      setMessage(
+        targetStatus === "published"
+          ? "Fanzin sayısı başarıyla yayımlandı ve okuyuculara açıldı."
+          : targetStatus === "upcoming"
+            ? "Fanzin sayısı 'Yakında' durumu ile kaydedildi."
+            : "Fanzin taslağı başarıyla kaydedildi. Sitede gizli kalacaktır.",
+      );
       if (isNew) {
-        router.push("/admin/fanzin");
+        setTimeout(() => router.push("/admin/fanzin"), 1200);
       }
     } catch (err: unknown) {
       setMessage("Hata: " + ((err instanceof Error ? err.message : "Hata") || "Kaydedilemedi."));
@@ -136,7 +170,11 @@ export function FanzinAdminEditor({ issueId }: { issueId?: string }) {
         </div>
       )}
 
-      <form onSubmit={handleSave} className={editorStyles.formGrid}>
+      <form
+        noValidate
+        onSubmit={(e) => void handleSave(e)}
+        className={editorStyles.formGrid}
+      >
         {activeTab === "basic" && (
           <div className={editorStyles.panelBox}>
             <div className={editorStyles.panelHeader}>
@@ -268,19 +306,18 @@ export function FanzinAdminEditor({ issueId }: { issueId?: string }) {
               <h3>PDF DİJİTAL BASKI & KAPAK GÖRSELİ</h3>
             </div>
 
+            <div style={{ margin: "12px 0" }}>
+              <SiteAssetPicker
+                scope="fanzin"
+                kind="document"
+                label="Fanzin PDF Dosyası (Cihazdan Yükle veya Kütüphaneden Seç)"
+                value={form.pdfUrl}
+                onChange={(path) => setForm({ ...form, pdfUrl: path })}
+              />
+            </div>
+
             <div className={editorStyles.fieldRow}>
-              <div className={editorStyles.fieldGroup}>
-                <label className={editorStyles.label}>PDF Dosya Yolu veya URL</label>
-                <input
-                  type="text"
-                  className={editorStyles.input}
-                  value={form.pdfUrl}
-                  onChange={(e) => setForm({ ...form, pdfUrl: e.target.value })}
-                  placeholder="/uploads/fanzin/uludott-fanzin-sayi-01.pdf"
-                  required
-                />
-              </div>
-              <div className={editorStyles.fieldGroup} style={{ maxWidth: "160px" }}>
+              <div className={editorStyles.fieldGroup} style={{ maxWidth: "180px" }}>
                 <label className={editorStyles.label}>Tahmini Dosya Boyutu</label>
                 <input
                   type="text"
@@ -302,14 +339,13 @@ export function FanzinAdminEditor({ issueId }: { issueId?: string }) {
               </div>
             </div>
 
-            <div className={editorStyles.fieldGroup}>
-              <label className={editorStyles.label}>Kapak Görseli Yolu (WebP / PNG)</label>
-              <input
-                type="text"
-                className={editorStyles.input}
+            <div style={{ margin: "12px 0" }}>
+              <SiteAssetPicker
+                scope="fanzin"
+                kind="image"
+                label="Kapak Görseli (Cihazdan Yükle veya Kütüphaneden Seç)"
                 value={form.coverImageUrl || ""}
-                onChange={(e) => setForm({ ...form, coverImageUrl: e.target.value })}
-                placeholder="/community/02-ulujam/ulujam-vlog-kapak.webp"
+                onChange={(path) => setForm({ ...form, coverImageUrl: path })}
               />
             </div>
 
@@ -338,9 +374,36 @@ export function FanzinAdminEditor({ issueId }: { issueId?: string }) {
           </div>
         )}
 
-        <div className={editorStyles.formFooter}>
-          <button type="submit" disabled={saving} className={editorStyles.primaryBtn}>
-            {saving ? "KAYDEDİLİYOR..." : "FANZİN SAYISINI KAYDET"}
+        <div
+          className={editorStyles.formFooter}
+          style={{
+            display: "flex",
+            gap: "14px",
+            justifyContent: "flex-end",
+            alignItems: "center",
+          }}
+        >
+          <button
+            type="button"
+            disabled={saving}
+            className={editorStyles.secondaryBtn}
+            onClick={() => void handleSave(undefined, "draft")}
+            style={{ minWidth: "160px" }}
+          >
+            {saving && form.status === "draft"
+              ? "KAYDEDİLİYOR..."
+              : "TASLAĞI KAYDET"}
+          </button>
+          <button
+            type="button"
+            disabled={saving}
+            className={editorStyles.primaryBtn}
+            onClick={() => void handleSave(undefined, "published")}
+            style={{ minWidth: "180px" }}
+          >
+            {saving && form.status === "published"
+              ? "YAYIMLANIYOR..."
+              : "YAYIMLA & SİTEDE AÇ"}
           </button>
         </div>
       </form>

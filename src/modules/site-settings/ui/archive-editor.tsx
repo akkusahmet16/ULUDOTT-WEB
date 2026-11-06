@@ -4,6 +4,7 @@ import type { Archive, ArchiveFields, ArchiveGame } from "../domain/archives";
 import type { SiteGame } from "../../games/domain/site-games";
 import { UlujamArchive } from "../../events/ui/ulujam-archive";
 import { SiteAssetPicker } from "../../media/ui/site-asset-picker";
+import { sanitizeMediaSrc } from "../../media/domain/sanitize-src";
 import { formRequest } from "../../forms/ui/admin-fetch";
 import styles from "../../admin/ui/content-workspace.module.css";
 const blank = (year: number): ArchiveFields => ({
@@ -33,13 +34,18 @@ export function ArchiveEditor({
     key: K,
     value: ArchiveFields[K],
   ) => setData((current) => ({ ...current, [key]: value }));
-  const game = (index: number, update: Partial<ArchiveGame>) =>
+  const game = (index: number, update: Partial<ArchiveGame>) => {
+    const safeUpdate = { ...update };
+    if (typeof safeUpdate.image === "string") {
+      safeUpdate.image = sanitizeMediaSrc(safeUpdate.image);
+    }
     change(
       "games",
       data.games.map((item, i) =>
-        i === index ? { ...item, ...update } : item,
+        i === index ? { ...item, ...safeUpdate } : item,
       ),
     );
+  };
   function select(archive: Archive | null) {
     setSelected(archive?.year ?? null);
     setRevision(archive?.revision ?? 0);
@@ -51,8 +57,14 @@ export function ArchiveEditor({
             description: archive.description,
             position: archive.position,
             published: archive.published,
-            gallery: archive.gallery,
-            games: archive.games,
+            gallery: (archive.gallery || []).map((img) => ({
+              ...img,
+              src: sanitizeMediaSrc(img.src),
+            })),
+            games: (archive.games || []).map((g) => ({
+              ...g,
+              image: sanitizeMediaSrc(g.image),
+            })),
           }
         : blank(Math.max(2026, ...items.map((item) => item.year)) + 1),
     );
@@ -65,18 +77,35 @@ export function ArchiveEditor({
     if (!response.ok) throw Error(result.error);
     setItems(result.items);
   }
-  async function save(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function handleSave(intent: "save" | "draft" | "publish") {
     setBusy(true);
     setMessage("");
-    const intent = (event.nativeEvent as SubmitEvent).submitter?.getAttribute(
-      "value",
-    );
     const published =
       intent === "publish" ? true : intent === "draft" ? false : data.published;
     try {
+      const sanitizedData: ArchiveFields = {
+        ...data,
+        published,
+        gallery: data.gallery
+          .filter((img) => img.src && img.src.trim() !== "")
+          .map((img) => ({
+            ...img,
+            src: sanitizeMediaSrc(img.src),
+          })),
+        games: data.games
+          .filter(
+            (g) =>
+              g.title.trim() !== "" ||
+              g.image.trim() !== "" ||
+              g.itchUrl.trim() !== "",
+          )
+          .map((g) => ({
+            ...g,
+            image: sanitizeMediaSrc(g.image),
+          })),
+      };
       const result: Archive = await formRequest("/api/admin/ulujam-archives", {
-        input: { ...data, published },
+        input: sanitizedData,
         expectedRevision: revision,
       });
       select(result);
@@ -140,8 +169,12 @@ export function ArchiveEditor({
         ))}
       </div>
       <form
+        noValidate
         className={styles.form}
-        onSubmit={(event) => void save(event)}
+        onSubmit={(event) => {
+          event.preventDefault();
+          void handleSave(data.published && selected ? "save" : "draft");
+        }}
         aria-label="Arşiv bilgileri"
       >
         <section className={styles.card}>
@@ -405,7 +438,11 @@ export function ArchiveEditor({
           </button>
         </section>
         <div className={styles.actions}>
-          <button type="submit" disabled={busy} value="save">
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void handleSave(data.published && selected ? "save" : "draft")}
+          >
             {busy
               ? "Kaydediliyor…"
               : data.published && selected
@@ -413,9 +450,9 @@ export function ArchiveEditor({
                 : "Taslağı kaydet"}
           </button>
           <button
-            type="submit"
+            type="button"
             disabled={busy}
-            value={data.published && selected ? "draft" : "publish"}
+            onClick={() => void handleSave(data.published && selected ? "draft" : "publish")}
           >
             {data.published && selected ? "Yayından kaldır" : "Yayımla"}
           </button>
@@ -423,7 +460,17 @@ export function ArchiveEditor({
       </form>
       <details className={styles.card}>
         <summary>Arşiv önizlemesi</summary>
-        <UlujamArchive archive={{ ...data, gallery: data.gallery.filter((image) => image.src), games: data.games.filter((game) => game.image && game.title && game.itchUrl) }} />
+        <UlujamArchive
+          archive={{
+            ...data,
+            gallery: data.gallery
+              .filter((image) => image.src)
+              .map((img) => ({ ...img, src: sanitizeMediaSrc(img.src) })),
+            games: data.games
+              .filter((game) => game.image && game.title && game.itchUrl)
+              .map((g) => ({ ...g, image: sanitizeMediaSrc(g.image) })),
+          }}
+        />
       </details>
     </section>
   );

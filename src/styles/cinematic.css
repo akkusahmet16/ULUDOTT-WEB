@@ -1469,9 +1469,48 @@ body {
   border-radius: var(--radius-100px);
   font-size: 14px;
   text-decoration: none;
+  color: #ffffff;
+  transition: background var(--motion-200ms), border-color var(--motion-200ms), transform var(--motion-200ms);
 }
 .footer-socials a:hover {
   background: var(--color-d7c8df15);
+  border-color: var(--color-ffd1df);
+}
+.footer-socials a.footer-social-icon-link {
+  width: 48px;
+  height: 48px;
+  padding: 12px;
+  border-radius: var(--radius-100px);
+}
+.footer-socials a.footer-social-text-link {
+  width: auto;
+  min-height: 48px;
+  padding: 0 18px;
+  gap: 8px;
+  border-radius: var(--radius-100px);
+  border: 1px solid rgba(237, 178, 228, 0.45);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--color-fff2b7, #fff9cb);
+  font-family: var(--font-primary, inherit);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.footer-socials a.footer-social-text-link:hover {
+  background: rgba(237, 178, 228, 0.18);
+  border-color: #edb2e4;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+.footer-social-arrow {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--color-ffd1df, #edb2e4);
+  transition: transform 0.2s ease;
+}
+.footer-socials a.footer-social-text-link:hover .footer-social-arrow {
+  transform: translate(2px, -2px);
 }
 .footer-inner > div {
   min-width: 0;

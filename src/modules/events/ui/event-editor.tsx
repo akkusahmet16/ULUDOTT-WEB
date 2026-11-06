@@ -423,6 +423,7 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
                 </span>
               </div>
               <form
+                noValidate
                 id="etkinlik-duzenleyici"
                 aria-label="Etkinlik düzenleyici"
                 key={`${selected?.id ?? "new"}:${epoch}`}

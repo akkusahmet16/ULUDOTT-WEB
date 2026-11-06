@@ -3,6 +3,7 @@ import { useState, type FormEvent } from "react";
 import type { ContactSettings, SocialAccount } from "../domain/contact";
 import { socialIcons } from "../domain/contact";
 import { formRequest } from "../../forms/ui/admin-fetch";
+import { SocialIcon } from "./social-icon";
 import styles from "../../admin/ui/content-workspace.module.css";
 export function ContactEditor({
   initial,
@@ -155,7 +156,43 @@ export function ContactEditor({
           </p>
           {data.socials.map((item, index) => (
             <fieldset className={styles.card} key={item.id}>
-              <legend>{index + 1}. bağlantı</legend>
+              <legend style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", paddingRight: "8px" }}>
+                <span>{index + 1}. {item.title || "Bağlantı"}</span>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                  {item.icon === "text" ? (
+                    <span
+                      style={{
+                        padding: "3px 10px",
+                        borderRadius: "100px",
+                        border: "1px solid rgba(237, 178, 228, 0.5)",
+                        background: "rgba(237, 178, 228, 0.12)",
+                        color: "var(--color-fff2b7, #fff9cb)",
+                        fontSize: "11px",
+                        fontWeight: 700,
+                        letterSpacing: "0.06em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {item.title || "YAZI BAĞLANTISI"} ↗
+                    </span>
+                  ) : (
+                    <span
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "28px",
+                        height: "28px",
+                        borderRadius: "50%",
+                        border: "1px solid rgba(255, 255, 255, 0.2)",
+                        background: "rgba(255, 255, 255, 0.06)",
+                      }}
+                    >
+                      <SocialIcon icon={item.icon} size={16} />
+                    </span>
+                  )}
+                </span>
+              </legend>
               <label className="field">
                 Bağlantı adı
                 <input
@@ -180,7 +217,7 @@ export function ContactEditor({
                 />
               </label>
               <label className="field">
-                Simge
+                Bağlantı Türü / İkon
                 <select
                   aria-label="Simge"
                   value={item.icon}
@@ -194,15 +231,15 @@ export function ContactEditor({
                     <option key={icon} value={icon}>
                       {
                         {
-                          instagram: "Instagram",
-                          whatsapp: "WhatsApp",
-                          x: "X (Twitter)",
-                          youtube: "YouTube",
-                          discord: "Discord",
-                          linkedin: "LinkedIn",
-                          kick: "Kick",
-                          link: "Diğer bağlantı (İkon)",
-                          text: "Özel Yazı Bağlantısı",
+                          instagram: "Instagram (Beyaz Logo)",
+                          whatsapp: "WhatsApp (Beyaz Logo)",
+                          x: "X / Twitter (Beyaz Logo)",
+                          youtube: "YouTube (Beyaz Logo)",
+                          discord: "Discord (Beyaz Logo)",
+                          linkedin: "LinkedIn (Beyaz Logo)",
+                          kick: "Kick (Beyaz Logo)",
+                          link: "Diğer Bağlantı (Zincir İkon)",
+                          text: "Özel Yazı Bağlantısı (Metin Buton)",
                         }[icon]
                       }
                     </option>

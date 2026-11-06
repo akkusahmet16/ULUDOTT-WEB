@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { formRequest } from "../../forms/ui/admin-fetch";
+import { SiteAssetPicker } from "../../media/ui/site-asset-picker";
 import type { SponsorsSettings, SponsorItem } from "../domain/sponsors";
 import styles from "./admin-editors.module.css";
 
@@ -202,17 +203,17 @@ export function SponsorsEditor() {
                   </div>
                 </div>
 
+                <div style={{ marginTop: "10px" }}>
+                  <SiteAssetPicker
+                    scope="sponsors"
+                    kind="image"
+                    label="Sponsor Logosu (Cihazdan Yükle veya Kütüphaneden Seç)"
+                    value={sponsor.logoUrl}
+                    onChange={(path) => updateSponsor(index, { logoUrl: path })}
+                  />
+                </div>
+
                 <div className={styles.fieldRow}>
-                  <div className={styles.fieldGroup}>
-                    <label className={styles.label}>Logo Görsel Yolu</label>
-                    <input
-                      type="text"
-                      className={styles.input}
-                      value={sponsor.logoUrl}
-                      onChange={(e) => updateSponsor(index, { logoUrl: e.target.value })}
-                      required
-                    />
-                  </div>
                   <div className={styles.fieldGroup} style={{ maxWidth: "160px" }}>
                     <label className={styles.label}>Görünürlük</label>
                     <label className={styles.radioOption} style={{ marginTop: "10px" }}>

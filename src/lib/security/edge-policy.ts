@@ -21,8 +21,11 @@ export function edgeDecision(
     path.startsWith("/api/")
   ) {
     const length = req.headers.get("content-length");
-    const limit =
-      path === "/api/admin/media" ? 8 * 1024 * 1024 + 64 * 1024 : 128 * 1024;
+    const isUploadPath =
+      path === "/api/admin/media" || path === "/api/admin/site-assets";
+    const limit = isUploadPath
+      ? 100 * 1024 * 1024 + 64 * 1024
+      : 128 * 1024;
     if (
       length !== null &&
       (!/^\d{1,12}$/.test(length) || Number(length) > limit)

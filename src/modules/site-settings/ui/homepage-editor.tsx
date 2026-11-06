@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { formRequest } from "../../forms/ui/admin-fetch";
+import { SiteAssetPicker } from "../../media/ui/site-asset-picker";
 import type { HomepageSettings } from "../domain/homepage";
 import styles from "./admin-editors.module.css";
 
@@ -107,19 +108,18 @@ export function HomepageEditor() {
                 <h3>SOL KOLON — ULUJAM PANELİ</h3>
               </div>
               
-              <div className={styles.fieldGroup}>
-                <label className={styles.label}>Kapak Görseli Yolu (9:16)</label>
-                <input
-                  type="text"
-                  className={styles.input}
+              <div style={{ margin: "10px 0" }}>
+                <SiteAssetPicker
+                  scope="homepage"
+                  kind="image"
+                  label="Sol Kolon Kapak Görseli (9:16)"
                   value={data.storyPanels.leftImage}
-                  onChange={(e) =>
+                  onChange={(path) =>
                     setData({
                       ...data,
-                      storyPanels: { ...data.storyPanels, leftImage: e.target.value },
+                      storyPanels: { ...data.storyPanels, leftImage: path },
                     })
                   }
-                  required
                 />
               </div>
 
@@ -197,19 +197,18 @@ export function HomepageEditor() {
                 <h3>SAĞ KOLON — OYUNLAR PANELİ</h3>
               </div>
 
-              <div className={styles.fieldGroup}>
-                <label className={styles.label}>Kapak Görseli Yolu (9:16)</label>
-                <input
-                  type="text"
-                  className={styles.input}
+              <div style={{ margin: "10px 0" }}>
+                <SiteAssetPicker
+                  scope="homepage"
+                  kind="image"
+                  label="Sağ Kolon Kapak Görseli (9:16)"
                   value={data.storyPanels.rightImage}
-                  onChange={(e) =>
+                  onChange={(path) =>
                     setData({
                       ...data,
-                      storyPanels: { ...data.storyPanels, rightImage: e.target.value },
+                      storyPanels: { ...data.storyPanels, rightImage: path },
                     })
                   }
-                  required
                 />
               </div>
 
@@ -379,20 +378,22 @@ export function HomepageEditor() {
                           });
                         }}
                       />
-                      <input
-                        type="text"
-                        className={styles.input}
-                        placeholder="Görsel Yolu (/community/...)"
-                        value={game.image}
-                        onChange={(e) => {
-                          const updated = [...data.storyPanels.customGames];
-                          updated[idx].image = e.target.value;
-                          setData({
-                            ...data,
-                            storyPanels: { ...data.storyPanels, customGames: updated },
-                          });
-                        }}
-                      />
+                      <div style={{ margin: "6px 0" }}>
+                        <SiteAssetPicker
+                          scope="games"
+                          kind="image"
+                          label={`${game.title || "Oyun"} Görseli`}
+                          value={game.image}
+                          onChange={(path) => {
+                            const updated = [...data.storyPanels.customGames];
+                            updated[idx].image = path;
+                            setData({
+                              ...data,
+                              storyPanels: { ...data.storyPanels, customGames: updated },
+                            });
+                          }}
+                        />
+                      </div>
                       <input
                         type="text"
                         className={styles.input}
@@ -422,19 +423,18 @@ export function HomepageEditor() {
               <h3>TOPLULUĞUN DÜNYASI (PEOPLE & PLACES VİTRİNİ)</h3>
             </div>
 
-            <div className={styles.fieldGroup}>
-              <label className={styles.label}>Arka Plan Görseli</label>
-              <input
-                type="text"
-                className={styles.input}
+            <div style={{ margin: "10px 0" }}>
+              <SiteAssetPicker
+                scope="homepage"
+                kind="image"
+                label="Arka Plan Görseli"
                 value={data.communityWorld.image}
-                onChange={(e) =>
+                onChange={(path) =>
                   setData({
                     ...data,
-                    communityWorld: { ...data.communityWorld, image: e.target.value },
+                    communityWorld: { ...data.communityWorld, image: path },
                   })
                 }
-                required
               />
             </div>
 
@@ -455,22 +455,7 @@ export function HomepageEditor() {
 
             <div className={styles.fieldRow}>
               <div className={styles.fieldGroup}>
-                <label className={styles.label}>Ana Başlık Satır 1</label>
-                <input
-                  type="text"
-                  className={styles.input}
-                  value={data.communityWorld.headingLine1}
-                  onChange={(e) =>
-                    setData({
-                      ...data,
-                      communityWorld: { ...data.communityWorld, headingLine1: e.target.value },
-                    })
-                  }
-                  required
-                />
-              </div>
-              <div className={styles.fieldGroup}>
-                <label className={styles.label}>Vurgulu Başlık Satır 2 (Highlight)</label>
+                <label className={styles.label}>Vurgulu Başlık (Satır 1)</label>
                 <input
                   type="text"
                   className={styles.input}
@@ -479,6 +464,21 @@ export function HomepageEditor() {
                     setData({
                       ...data,
                       communityWorld: { ...data.communityWorld, headingHighlight: e.target.value },
+                    })
+                  }
+                  required
+                />
+              </div>
+              <div className={styles.fieldGroup}>
+                <label className={styles.label}>İkinci Başlık (Satır 2)</label>
+                <input
+                  type="text"
+                  className={styles.input}
+                  value={data.communityWorld.headingLine1}
+                  onChange={(e) =>
+                    setData({
+                      ...data,
+                      communityWorld: { ...data.communityWorld, headingLine1: e.target.value },
                     })
                   }
                   required

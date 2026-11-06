@@ -48,6 +48,12 @@ export async function POST(request: Request) {
       headers: privateHeaders,
     });
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return Response.json(
+        { error: error.issues[0]?.message ?? "Alanları kontrol edin." },
+        { status: 400, headers: privateHeaders },
+      );
+    }
     const message = error instanceof Error ? error.message : "";
     if (
       [

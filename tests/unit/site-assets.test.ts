@@ -7,6 +7,7 @@ import {
   listSiteAssets,
   assertSiteAsset,
   uploadSiteAsset,
+  deleteSiteAsset,
 } from "../../src/modules/media/application/site-assets";
 
 // Losing root checks would expose another folder; rejecting Unicode would hide supplied assets.
@@ -104,6 +105,44 @@ it("cihazdan yüklenen görsel uploads/ altında klasörlenir, assertSiteAsset v
       // @ts-expect-error invalid scope testing
       uploadSiteAsset("invalid_scope", file, root),
     ).rejects.toThrow();
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+it("deleteSiteAsset uploads altındaki dosyayı VDS diskinden kalıcı olarak siler, yetkisiz yolları reddeder", async () => {
+  const root = await mkdtemp(join(tmpdir(), "uludott-delete-assets-"));
+  try {
+    const pngBuffer = await sharp({
+      create: {
+        width: 10,
+        height: 10,
+        channels: 4,
+        background: { r: 100, g: 150, b: 200, alpha: 1 },
+      },
+    })
+      .png()
+      .toBuffer();
+
+    const file = new File([pngBuffer], "Silinecek Dosya.png", {
+      type: "image/png",
+    });
+
+    const uploaded = await uploadSiteAsset("sponsors", file, root);
+    expect(uploaded.path).toContain("/uploads/sponsors/");
+
+    // Dosyayı sil
+    const deleteRes = await deleteSiteAsset(uploaded.path, root);
+    expect(deleteRes.success).toBe(true);
+    expect(deleteRes.path).toBe(uploaded.path);
+
+    // Silindikten sonra bulunamamalı
+    await expect(deleteSiteAsset(uploaded.path, root)).rejects.toThrow("Dosya bulunamadı");
+
+    // İzin verilmeyen yollar ve path traversal engellenmeli
+    await expect(deleteSiteAsset("/outside.webp", root)).rejects.toThrow();
+    await expect(deleteSiteAsset("/uploads/../../etc/passwd", root)).rejects.toThrow();
+    await expect(deleteSiteAsset("../uploads/test.webp", root)).rejects.toThrow();
   } finally {
     await rm(root, { recursive: true, force: true });
   }

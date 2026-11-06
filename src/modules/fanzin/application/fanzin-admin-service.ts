@@ -7,21 +7,33 @@ import { getDatabase } from "../../../lib/database/client.ts";
 import { withTransaction } from "../../../lib/database/transaction.ts";
 import { appendAudit, type Actor } from "../../../lib/logging/audit.ts";
 
-export const fanzinIssueInputSchema = z.strictObject({
-  id: z.string().min(1).max(64),
-  issueNumber: z.number().int().min(1).max(1000),
-  title: z.string().trim().min(1).max(255),
-  slug: z.string().trim().min(1).max(255),
-  subtitle: z.string().trim().max(500).optional().nullable(),
-  season: z.string().trim().min(1).max(32),
-  year: z.number().int().min(2020).max(2100),
-  description: z.string().trim().max(3000),
-  pageCount: z.number().int().min(0).max(500).default(0),
-  pdfUrl: z.string().trim().min(1),
-  pdfFileSize: z.string().trim().max(32).optional().nullable(),
-  coverImageUrl: z.string().trim().max(500).optional().nullable(),
-  status: z.enum(["draft", "published", "upcoming", "archived"]).default("draft"),
-});
+export const fanzinIssueInputSchema = z
+  .strictObject({
+    id: z.string().min(1).max(64),
+    issueNumber: z.number().int().min(1).max(1000),
+    title: z.string().trim().min(1, "Lütfen fanzin başlığını girin").max(255),
+    slug: z.string().trim().min(1).max(255),
+    subtitle: z.string().trim().max(500).optional().nullable(),
+    season: z.string().trim().max(32).default("Bahar"),
+    year: z.number().int().min(2020).max(2100).default(2026),
+    description: z.string().trim().max(3000).default(""),
+    pageCount: z.number().int().min(0).max(500).default(0),
+    pdfUrl: z.string().trim().default(""),
+    pdfFileSize: z.string().trim().max(32).optional().nullable(),
+    coverImageUrl: z.string().trim().max(500).optional().nullable(),
+    status: z.enum(["draft", "published", "upcoming", "archived"]).default("draft"),
+  })
+  .superRefine((data, ctx) => {
+    if (data.status === "published") {
+      if (!data.pdfUrl || data.pdfUrl === "#" || data.pdfUrl.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Fanzini yayına almak için geçerli bir PDF dosyası yüklenmelidir",
+          path: ["pdfUrl"],
+        });
+      }
+    }
+  });
 
 export type FanzinIssueInput = z.infer<typeof fanzinIssueInputSchema>;
 
@@ -88,7 +100,7 @@ export async function upsertFanzinIssue(actor: Actor, input: unknown) {
       { status: data.status, issueNumber: data.issueNumber },
     );
 
-    revalidateTag("fanzin", "max");
+    revalidateTag("public:fanzin", { expire: 0 });
     revalidatePath("/fanzin");
     return data;
   });
@@ -106,7 +118,7 @@ export async function deleteFanzinIssue(actor: Actor, issueId: string) {
       {},
     );
 
-    revalidateTag("fanzin", "max");
+    revalidateTag("public:fanzin", { expire: 0 });
     revalidatePath("/fanzin");
   });
 }

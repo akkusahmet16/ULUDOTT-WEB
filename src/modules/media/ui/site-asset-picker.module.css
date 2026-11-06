@@ -1,32 +1,47 @@
 .uploadBlock {
-  margin: 12px 0 16px;
+  margin: 10px 0 14px;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
+
+.actionRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
 .uploadButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 18px;
-  border: 1px solid var(--color-ffffff30);
-  border-radius: var(--radius-12px);
-  background: var(--color-282138);
-  color: var(--color-ffe0ed);
-  font-weight: 600;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid rgba(237, 178, 228, 0.4);
+  border-radius: 4px;
+  background: rgba(237, 178, 228, 0.1);
+  color: var(--color-fff2b7, #fff9cb);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition: all 0.2s ease;
   width: fit-content;
 }
+
 .uploadButton:hover {
-  background: var(--color-433047);
-  border-color: var(--color-ffd1e1);
-  color: var(--color-fff);
+  background: rgba(237, 178, 228, 0.22);
+  border-color: #edb2e4;
+  color: #ffffff;
+  transform: translateY(-1px);
 }
+
 .uploadButton:focus-within {
-  outline: 3px solid var(--color-ffd1e1);
-  outline-offset: 4px;
+  outline: 2px solid #edb2e4;
+  outline-offset: 2px;
 }
+
 .uploadButton input[type="file"] {
   position: absolute;
   width: 1px;
@@ -38,13 +53,188 @@
   white-space: nowrap;
   border: 0;
 }
-.pickerError {
-  color: var(--color-ffd0da);
-  font-size: 0.85rem;
-  margin: 4px 0;
+
+.toggleLibraryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #d0bed8;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
-.pickerSuccess {
-  color: var(--color-fff1bc);
+
+.toggleLibraryBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+}
+
+.pickerError {
+  color: #ff99aa;
   font-size: 0.85rem;
   margin: 4px 0;
+  font-weight: 500;
+}
+
+.pickerSuccess {
+  color: #fff1bc;
+  font-size: 0.85rem;
+  margin: 4px 0;
+  font-weight: 500;
+}
+
+.scopePills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.scopePill {
+  padding: 4px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #a89cb5;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.scopePill:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.scopePillActive {
+  background: rgba(237, 178, 228, 0.2);
+  border-color: #edb2e4;
+  color: #fff9cb;
+}
+
+.assetCard {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  background: #141724;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.assetCard:hover {
+  border-color: rgba(237, 178, 228, 0.4);
+  transform: translateY(-2px);
+}
+
+.assetCardSelected {
+  border-color: #edb2e4 !important;
+  box-shadow: 0 0 10px rgba(237, 178, 228, 0.25);
+}
+
+.assetCardTop {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #090a14;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.deleteBtn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 80, 80, 0.4);
+  background: rgba(20, 10, 15, 0.85);
+  color: #ff6677;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  z-index: 2;
+}
+
+.deleteBtn:hover {
+  background: #cc2233;
+  color: #ffffff;
+  border-color: #ff3344;
+}
+
+.assetInfo {
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #111320;
+}
+
+.assetName {
+  font-size: 11px;
+  font-weight: 600;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.assetMeta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #887d96;
+}
+
+.selectAssetBtn {
+  width: 100%;
+  padding: 6px;
+  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff9cb;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.selectAssetBtn:hover {
+  background: #edb2e4;
+  color: #0c0d1b;
+}
+
+.manualInputGroup {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.manualInput {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  background: #0d0f1a;
+  color: #ffffff;
+  font-size: 12px;
+  font-family: monospace;
 }

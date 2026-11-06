@@ -70,17 +70,33 @@ export default async function Page() {
             className={styles.socials}
             aria-label={t("contact.socialsAria")}
           >
-            {socials.map((social) => (
-              <a
-                key={social.id}
-                href={social.url}
-                aria-label={social.title}
-                target="_blank"
-                rel="noopener noreferrer external"
-              >
-                <SocialIcon icon={social.icon} />
-              </a>
-            ))}
+            {socials.map((social) =>
+              social.icon === "text" ? (
+                <a
+                  key={social.id}
+                  href={social.url}
+                  className={styles.textLink}
+                  target="_blank"
+                  rel="noopener noreferrer external"
+                >
+                  <span>{social.title}</span>
+                  <span aria-hidden="true" className={styles.textArrow}>
+                    ↗
+                  </span>
+                </a>
+              ) : (
+                <a
+                  key={social.id}
+                  href={social.url}
+                  aria-label={social.title}
+                  className={styles.iconLink}
+                  target="_blank"
+                  rel="noopener noreferrer external"
+                >
+                  <SocialIcon icon={social.icon} />
+                </a>
+              ),
+            )}
           </nav>
         )}
       </section>

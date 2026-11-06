@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { formRequest } from "../../forms/ui/admin-fetch";
+import { SiteAssetPicker } from "../../media/ui/site-asset-picker";
 import type { PlacesSettings, PlaceScene } from "../domain/places";
 import styles from "./admin-editors.module.css";
 
@@ -147,14 +148,13 @@ export function PlacesEditor() {
                   />
                 </div>
 
-                <div className={styles.fieldGroup}>
-                  <label className={styles.label}>Görsel Yolu</label>
-                  <input
-                    type="text"
-                    className={styles.input}
+                <div style={{ marginTop: "10px" }}>
+                  <SiteAssetPicker
+                    scope="places"
+                    kind="image"
+                    label="Mekan Görseli (Cihazdan Yükle veya Kütüphaneden Seç)"
                     value={scene.image}
-                    onChange={(e) => updateScene(sIdx, { image: e.target.value })}
-                    required
+                    onChange={(path) => updateScene(sIdx, { image: path })}
                   />
                 </div>
 

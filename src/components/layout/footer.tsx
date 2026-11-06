@@ -20,17 +20,33 @@ export async function Footer() {
             <nav className="footer-socials" aria-label={t("footer.socialsAria")}>
               <p className="eyebrow">{t("footer.socialsEyebrow")}</p>
               <div>
-                {socials.map((item) => (
-                  <a
-                    key={item.id}
-                    href={item.url}
-                    aria-label={item.title}
-                    target="_blank"
-                    rel="noopener noreferrer external"
-                  >
-                    <SocialIcon icon={item.icon} size={24} />
-                  </a>
-                ))}
+                {socials.map((item) =>
+                  item.icon === "text" ? (
+                    <a
+                      key={item.id}
+                      href={item.url}
+                      className="footer-social-text-link"
+                      target="_blank"
+                      rel="noopener noreferrer external"
+                    >
+                      <span>{item.title}</span>
+                      <span aria-hidden="true" className="footer-social-arrow">
+                        ↗
+                      </span>
+                    </a>
+                  ) : (
+                    <a
+                      key={item.id}
+                      href={item.url}
+                      aria-label={item.title}
+                      className="footer-social-icon-link"
+                      target="_blank"
+                      rel="noopener noreferrer external"
+                    >
+                      <SocialIcon icon={item.icon} size={24} />
+                    </a>
+                  ),
+                )}
               </div>
             </nav>
           )}

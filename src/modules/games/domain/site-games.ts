@@ -1,16 +1,54 @@
 import { z } from "zod";
 import { itchUrl } from "./game-publication.ts";
-export const siteGameInput = z.strictObject({
-  title: z.string().trim().min(1).max(200),
-  label: z.string().trim().min(1).max(120),
-  credit: z.string().trim().min(1).max(300),
-  description: z.string().trim().max(10000),
-  image: z.string().min(1).max(500),
-  alt: z.string().trim().min(1).max(250),
-  href: itchUrl,
-  position: z.int().min(0).max(10000),
-  published: z.boolean(),
-});
+export const siteGameInput = z
+  .strictObject({
+    title: z.string().trim().min(1, "Oyun başlığı zorunludur").max(200),
+    label: z.string().trim().max(120).default("Yayımlanmış oyun"),
+    credit: z.string().trim().max(300).default(""),
+    description: z.string().trim().max(10000).default(""),
+    image: z.string().max(500).default(""),
+    alt: z.string().trim().max(250).default(""),
+    href: z.string().max(500).default(""),
+    position: z.int().min(0).max(10000).default(100),
+    published: z.boolean().default(false),
+  })
+  .superRefine((data, ctx) => {
+    if (data.published) {
+      if (!data.credit.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Oyunu yayımlamak için ekip/yapımcı bilgisi zorunludur",
+          path: ["credit"],
+        });
+      }
+      if (!data.image.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Oyunu yayımlamak için oyun kapağı görseli zorunludur",
+          path: ["image"],
+        });
+      }
+      const itchRes = itchUrl.safeParse(data.href);
+      if (!itchRes.success) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Oyunu yayımlamak için geçerli bir HTTPS itch.io adresi zorunludur",
+          path: ["href"],
+        });
+      }
+    } else {
+      if (data.href && data.href.trim() !== "") {
+        const itchRes = itchUrl.safeParse(data.href);
+        if (!itchRes.success) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Geçerli HTTPS itch.io oyun adresi gerekli",
+            path: ["href"],
+          });
+        }
+      }
+    }
+  });
 export type SiteGameFields = z.infer<typeof siteGameInput>;
 export type SiteGame = SiteGameFields & { id: string; revision: number };
 export const defaultSiteGames: SiteGame[] = [

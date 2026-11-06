@@ -1,5 +1,5 @@
 import "server-only";
-import { lstat, mkdir, readdir } from "node:fs/promises";
+import { lstat, mkdir, readdir, unlink, writeFile } from "node:fs/promises";
 import { join, extname, basename, dirname } from "node:path";
 import sharp from "sharp";
 import type {
@@ -9,6 +9,14 @@ import type {
 } from "../domain/site-asset.ts";
 
 const roots: Record<SiteAssetScope, string[]> = {
+  all: [
+    "/uploads/",
+    "/community/",
+    "/theme/reference/",
+  ],
+  uploads: [
+    "/uploads/",
+  ],
   people: [
     "/community/03-hakkimizda/people/",
     "/theme/reference/people/",
@@ -22,9 +30,34 @@ const roots: Record<SiteAssetScope, string[]> = {
     "/community/02-ulujam/",
     "/uploads/ulujam/",
   ],
+  sponsors: [
+    "/community/01-anasayfa/sponsorlar/",
+    "/uploads/sponsors/",
+  ],
+  places: [
+    "/community/03-hakkimizda/places/",
+    "/uploads/places/",
+  ],
+  events: [
+    "/community/05-etkinlikler/",
+    "/uploads/events/",
+  ],
+  fanzin: [
+    "/uploads/fanzin/",
+  ],
+  homepage: [
+    "/community/01-anasayfa/",
+    "/uploads/homepage/",
+  ],
+  general: [
+    "/uploads/general/",
+    "/uploads/",
+  ],
 };
 
-const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10 MiB
+const MAX_IMAGE_BYTES = 15 * 1024 * 1024; // 15 MiB
+const MAX_VIDEO_BYTES = 100 * 1024 * 1024; // 100 MiB
+const MAX_DOC_BYTES = 50 * 1024 * 1024; // 50 MiB
 
 function slugifyFilename(name: string): string {
   const map: Record<string, string> = {
@@ -53,6 +86,15 @@ function slugifyFilename(name: string): string {
     .replace(/^-|-$/g, "");
 }
 
+function kindOf(path: string): SiteAssetKind | null {
+  const ext = extname(path).toLowerCase();
+  if ([".webp", ".png", ".jpg", ".jpeg", ".avif", ".svg", ".gif"].includes(ext))
+    return "image";
+  if ([".mp4", ".webm", ".mov"].includes(ext)) return "video";
+  if ([".pdf"].includes(ext)) return "document";
+  return null;
+}
+
 export async function uploadSiteAsset(
   scope: SiteAssetScope,
   file: File,
@@ -62,13 +104,84 @@ export async function uploadSiteAsset(
     throw Error("Geçersiz medya kapsamı");
   }
   if (!file || typeof file.size !== "number" || file.size <= 0) {
-    throw Error("Görsel dosyası zorunludur");
-  }
-  if (file.size > MAX_UPLOAD_BYTES) {
-    throw Error("Görsel boyutu en fazla 10 MiB olabilir");
+    throw Error("Dosya zorunludur");
   }
 
+  const uploadFolder = scope === "all" ? "general" : scope;
+  const rawBase = slugifyFilename(basename(file.name, extname(file.name)));
+  const safeBase = rawBase || "dosya";
+  const ext = extname(file.name).toLowerCase();
   const buffer = Buffer.from(await file.arrayBuffer());
+
+  const targetDir = join(publicRoot, "uploads", uploadFolder);
+  await mkdir(targetDir, { recursive: true, mode: 0o755 });
+
+  // 1. PDF / Belge yüklemesi
+  if (ext === ".pdf" || file.type === "application/pdf") {
+    if (file.size > MAX_DOC_BYTES) {
+      throw Error("PDF boyutu en fazla 50 MiB olabilir");
+    }
+    const filename = `${Date.now()}-${safeBase}.pdf`;
+    const targetPath = join(targetDir, filename);
+    await writeFile(targetPath, buffer);
+    const webPath = `/uploads/${uploadFolder}/${filename}`;
+    return {
+      path: webPath,
+      name: filename,
+      folder: `/uploads/${uploadFolder}`,
+      kind: "document",
+      size: file.size,
+      updatedAt: new Date().toISOString(),
+    };
+  }
+
+  // 2. Video yüklemesi
+  if (
+    [".mp4", ".webm", ".mov"].includes(ext) ||
+    file.type.startsWith("video/")
+  ) {
+    if (file.size > MAX_VIDEO_BYTES) {
+      throw Error("Video boyutu en fazla 100 MiB olabilir");
+    }
+    const safeExt = ext || ".mp4";
+    const filename = `${Date.now()}-${safeBase}${safeExt}`;
+    const targetPath = join(targetDir, filename);
+    await writeFile(targetPath, buffer);
+    const webPath = `/uploads/${uploadFolder}/${filename}`;
+    return {
+      path: webPath,
+      name: filename,
+      folder: `/uploads/${uploadFolder}`,
+      kind: "video",
+      size: file.size,
+      updatedAt: new Date().toISOString(),
+    };
+  }
+
+  // 3. SVG vektör yüklemesi
+  if (ext === ".svg" || file.type === "image/svg+xml") {
+    if (file.size > 5 * 1024 * 1024) {
+      throw Error("SVG boyutu en fazla 5 MiB olabilir");
+    }
+    const filename = `${Date.now()}-${safeBase}.svg`;
+    const targetPath = join(targetDir, filename);
+    await writeFile(targetPath, buffer);
+    const webPath = `/uploads/${uploadFolder}/${filename}`;
+    return {
+      path: webPath,
+      name: filename,
+      folder: `/uploads/${uploadFolder}`,
+      kind: "image",
+      size: file.size,
+      updatedAt: new Date().toISOString(),
+    };
+  }
+
+  // 4. Standart Görsel yüklemesi (Sharp ile WebP'ye optimize edilir)
+  if (file.size > MAX_IMAGE_BYTES) {
+    throw Error("Görsel boyutu en fazla 15 MiB olabilir");
+  }
+
   let metadata;
   try {
     metadata = await sharp(buffer).metadata();
@@ -78,25 +191,22 @@ export async function uploadSiteAsset(
 
   if (
     !metadata.format ||
-    !["jpeg", "png", "webp", "avif"].includes(metadata.format)
+    !["jpeg", "png", "webp", "avif", "gif"].includes(metadata.format)
   ) {
-    throw Error("Yalnızca JPEG, PNG, WebP ve AVIF formatları kabul edilir");
+    throw Error("Yalnızca JPEG, PNG, WebP, AVIF ve GIF formatları kabul edilir");
   }
 
   if (
     (metadata.width && metadata.width > 6000) ||
     (metadata.height && metadata.height > 6000) ||
-    (metadata.width && metadata.height && metadata.width * metadata.height > 25_000_000)
+    (metadata.width &&
+      metadata.height &&
+      metadata.width * metadata.height > 25_000_000)
   ) {
     throw Error("Görsel çözünürlüğü çok yüksek (en fazla 25 megapiksel)");
   }
 
-  const rawBase = slugifyFilename(basename(file.name, extname(file.name)));
-  const safeBase = rawBase || "gorsel";
   const filename = `${Date.now()}-${safeBase}.webp`;
-
-  const targetDir = join(publicRoot, "uploads", scope);
-  await mkdir(targetDir, { recursive: true, mode: 0o755 });
   const targetPath = join(targetDir, filename);
 
   await sharp(buffer)
@@ -104,22 +214,74 @@ export async function uploadSiteAsset(
     .webp({ quality: 85 })
     .toFile(targetPath);
 
-  const webPath = `/uploads/${scope}/${filename}`;
+  const webPath = `/uploads/${uploadFolder}/${filename}`;
   return {
     path: webPath,
     name: filename,
-    folder: `/uploads/${scope}`,
+    folder: `/uploads/${uploadFolder}`,
     kind: "image",
+    size: buffer.length,
+    updatedAt: new Date().toISOString(),
   };
 }
-function kindOf(path: string): SiteAssetKind | null {
-  const ext = extname(path).toLowerCase();
-  if ([".webp", ".png", ".jpg", ".jpeg", ".avif"].includes(ext)) return "image";
-  if ([".mp4", ".webm"].includes(ext)) return "video";
-  return null;
+
+export async function deleteSiteAsset(
+  path: string,
+  publicRoot = join(process.cwd(), "public"),
+): Promise<{ success: boolean; path: string }> {
+  if (!path || typeof path !== "string" || !path.startsWith("/")) {
+    throw Error("Geçersiz dosya yolu");
+  }
+
+  const allowedPrefixes = ["/uploads/", "/community/", "/theme/reference/"];
+  const isAllowed = allowedPrefixes.some((prefix) => path.startsWith(prefix));
+  if (!isAllowed) {
+    throw Error("Sadece uploads ve community klasörlerindeki medya dosyaları silinebilir");
+  }
+
+  const segments = path.slice(1).split("/");
+  for (const segment of segments) {
+    if (
+      !segment ||
+      segment === "." ||
+      segment === ".." ||
+      /[%\\?#\u0000-\u001f\u007f]/u.test(segment)
+    ) {
+      throw Error("İzin verilmeyen dosya yolu");
+    }
+  }
+
+  const fullPath = join(publicRoot, path);
+
+  let stat;
+  try {
+    stat = await lstat(fullPath);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+      throw Error("Dosya bulunamadı");
+    }
+    throw error;
+  }
+
+  if (stat.isSymbolicLink()) {
+    throw Error("Sembolik bağlantılar silinemez");
+  }
+
+  if (stat.isDirectory()) {
+    throw Error("Klasörler doğrudan silinemez, yalnızca dosyalar silinebilir");
+  }
+
+  const kind = kindOf(path);
+  if (!kind) {
+    throw Error("Yalnızca medya ve belge dosyaları silinebilir");
+  }
+
+  await unlink(fullPath);
+
+  return { success: true, path };
 }
+
 async function checkedFile(path: string, publicRoot: string) {
-  // Check directory symlinks too: lexical prefix checks alone cannot confine a file.
   const segments = path.slice(1).split("/");
   let current = publicRoot;
   for (const segment of segments) {
@@ -136,6 +298,7 @@ async function checkedFile(path: string, publicRoot: string) {
   }
   return lstat(current);
 }
+
 export async function assertSiteAsset(
   path: string,
   scope: SiteAssetScope,
@@ -154,36 +317,58 @@ export async function assertSiteAsset(
     throw Error("Medya dosyası bulunamadı veya izin verilmiyor");
   }
 }
+
 export async function listSiteAssets(
-  scope: SiteAssetScope,
+  scope: SiteAssetScope = "all",
   publicRoot = join(process.cwd(), "public"),
 ): Promise<SiteAsset[]> {
   const result: SiteAsset[] = [];
+  const seenPaths = new Set<string>();
+
   async function walk(path: string) {
-    for (const name of await readdir(join(publicRoot, path))) {
-      const child = `${path}/${name}`,
-        stat = await lstat(join(publicRoot, child));
-      if (stat.isSymbolicLink()) continue;
-      if (stat.isDirectory()) await walk(child);
-      else if (stat.isFile()) {
-        const kind = kindOf(child);
-        if (kind)
-          result.push({
-            path: child,
-            name: basename(child),
-            folder: dirname(child),
-            kind,
-          });
+    let entries: string[] = [];
+    try {
+      entries = await readdir(join(publicRoot, path));
+    } catch {
+      return;
+    }
+    for (const name of entries) {
+      const child = `${path}/${name}`;
+      try {
+        const stat = await lstat(join(publicRoot, child));
+        if (stat.isSymbolicLink()) continue;
+        if (stat.isDirectory()) {
+          await walk(child);
+        } else if (stat.isFile()) {
+          const kind = kindOf(child);
+          if (kind && !seenPaths.has(child)) {
+            seenPaths.add(child);
+            result.push({
+              path: child,
+              name: basename(child),
+              folder: dirname(child),
+              kind,
+              size: stat.size,
+              updatedAt: stat.mtime.toISOString(),
+            });
+          }
+        }
+      } catch {
+        // Skip unreadable files
       }
     }
   }
-  for (const root of roots[scope] ?? []) {
+
+  for (const root of roots[scope] ?? roots.all) {
     const path = root.slice(0, -1);
     try {
-      if ((await checkedFile(path, publicRoot)).isDirectory()) await walk(path);
+      if ((await checkedFile(path, publicRoot)).isDirectory()) {
+        await walk(path);
+      }
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
     }
   }
+
   return result.sort((a, b) => a.path.localeCompare(b.path, "tr"));
 }

@@ -49,7 +49,9 @@ export async function saveSiteGame(
     z.uuid().parse(id);
     z.int().nonnegative().parse(expectedRevision);
   }
-  await assertSiteAsset(fields.image, "games", "image");
+  if (fields.published || fields.image) {
+    await assertSiteAsset(fields.image, "games", "image");
+  }
   const gameId = id ?? randomUUID();
   return withTransaction(async (tx) => {
     await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${gameId}))`);

@@ -30,16 +30,16 @@ export const homepageSettingsSchema = z.strictObject({
 
   // People & Places — Topluluğun Dünyası
   communityWorld: z.strictObject({
-    image: z.string().min(1).max(500).default("/theme/reference/venue-2.avif"),
-    eyebrow: z.string().trim().max(100).default("TOPLULUĞUN DÜNYASI"),
-    headingLine1: z.string().trim().max(160).default("Oyunlar, mekanlar ve"),
-    headingHighlight: z.string().trim().max(160).default("birlikte üretim."),
+    image: z.string().min(1).max(500).default("/community/03-hakkimizda/places/places-kafeler.webp"),
+    eyebrow: z.string().trim().max(100).default("People & Places"),
+    headingHighlight: z.string().trim().max(160).default("Topluluğun"),
+    headingLine1: z.string().trim().max(160).default("dünyası."),
     copy: z.string().trim().max(2000).default(
-      "Görükle’nin kafelerinden amfilere, atölyelerden oyun gecelerine uzanan yaşayan bir ekosistem.",
+      "İnsanlar, buluşmalar ve birlikte üretime alan açan yerler.",
     ),
-    boardButtonText: z.string().trim().max(80).default("Yönetim Kurulunu Keşfet"),
+    boardButtonText: z.string().trim().max(80).default("Yönetim kurulunu keşfet"),
     boardButtonUrl: z.string().trim().max(500).default("/hakkimizda#yonetim-kurulu"),
-    placesButtonText: z.string().trim().max(80).default("Mekanları Keşfet"),
+    placesButtonText: z.string().trim().max(80).default("Mekânları keşfet"),
     placesButtonUrl: z.string().trim().max(500).default("/hakkimizda#mekanlar"),
   }),
 });
@@ -63,14 +63,14 @@ export const defaultHomepageSettings: HomepageSettings = {
     customGames: [],
   },
   communityWorld: {
-    image: "/theme/reference/venue-2.avif",
-    eyebrow: "TOPLULUĞUN DÜNYASI",
-    headingLine1: "Oyunlar, mekanlar ve",
-    headingHighlight: "birlikte üretim.",
-    copy: "Görükle’nin kafelerinden amfilere, atölyelerden oyun gecelerine uzanan yaşayan bir ekosistem.",
-    boardButtonText: "Yönetim Kurulunu Keşfet",
+    image: "/community/03-hakkimizda/places/places-kafeler.webp",
+    eyebrow: "People & Places",
+    headingHighlight: "Topluluğun",
+    headingLine1: "dünyası.",
+    copy: "İnsanlar, buluşmalar ve birlikte üretime alan açan yerler.",
+    boardButtonText: "Yönetim kurulunu keşfet",
     boardButtonUrl: "/hakkimizda#yonetim-kurulu",
-    placesButtonText: "Mekanları Keşfet",
+    placesButtonText: "Mekânları keşfet",
     placesButtonUrl: "/hakkimizda#mekanlar",
   },
 };

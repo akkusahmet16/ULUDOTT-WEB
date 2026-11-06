@@ -31,6 +31,16 @@ export async function POST(request: Request) {
         { status: 400, headers: privateHeaders },
       );
     }
-    return formError(error);
+    const message = error instanceof Error ? error.message : "";
+    if (message === "Yetki yok") {
+      return Response.json({ error: message }, { status: 403, headers: privateHeaders });
+    }
+    if (message === "Oturum geçersiz") {
+      return Response.json({ error: message }, { status: 401, headers: privateHeaders });
+    }
+    return Response.json(
+      { error: message || "İşlem tamamlanamadı" },
+      { status: 400, headers: privateHeaders },
+    );
   }
 }
