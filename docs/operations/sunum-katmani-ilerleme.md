@@ -537,8 +537,43 @@ Kullanıcı kararlarından sonra: (1) Chromium 1243 kurulumu (ağ gerekir) veya 
 ### Açık kalanlar
 
 - Faz 4 (`İş 4A`) kapsamında açık madde kalmamıştır; Issue #1 Faz 4'teki yeni arcade ana sayfa beklentisi görsel kilit nedeniyle kapsam dışı açık fark olarak kaydedilmiştir.
-- Faz 5 (`İş 5A`: Mevcut galeri ve hata durumlarının korunması) henüz başlamamıştır.
 
 ### Sıradaki adım ve bekleyen kararlar
 
-- **Sıradaki adım:** Faz 5 / İş 5A (Mevcut galeri ve hata durumlarının korunması) için kullanıcı onayı bekleniyor. Onay gelmeden İş 5A başlatılmaz.
+- **Sıradaki adım:** Faz 5 / İş 5A (Mevcut galeri ve hata durumlarının korunması) için kullanıcı onayı alındı ve İş 5A tamamlandı (aşağıdaki kapanış kaydına bakınız).
+
+---
+
+## 5 Kasım 2026 — Faz 5 / İş 5A kapanışı ve Faz 5 devir notu
+
+### Tamamlananlar (Faz 5 / İş 5A: Mevcut galeri ve hata durumlarının korunması)
+
+- **UluJam arşiv galeri mozaik düzeni ve Issue #1 yeni lightbox açık farkı:**
+  - `src/modules/events/ui/ulujam-archive.tsx`: v0.1'in mevcut `.archive-gallery-mosaic`, 1. eleman `.archive-gallery-featured` (masaüstünde 2 satıra yayılan `grid-row: 1 / span 2`, `sizes: 67vw`), 2. ve sonraki elemanlar `.archive-gallery-side` (`sizes: 33vw`), `<figure>`, `<figcaption>`, `.eyebrow` (yıl ve dolgulu sıra no, örn. `UluJam 2026 / 01`) ve alt metin hiyerarşisi eksiksiz korundu.
+  - GitHub Issue #1 Faz 5'te talep edilen yeni lightbox/büyütme modalı kesin v0.1 görsel/etkileşim kilidi gereği uygulanmadı; galeri görsellerine hiçbir modal tetikleyici buton, `role="dialog"`, `aria-modal="true"`, popover veya `.lightbox` katmanı eklenmedi ve açık fark olarak tescil edildi.
+  - Boş galeri (`gallery: []`) ve boş derece (`games: []`) sınır durumlarında erişilebilir `<p class="empty">` fall-back metinleri (`ulujam.archiveGalleryEmpty` ve `ulujam.degreeEmpty`) TR ve EN dillerinde doğrulandı. Dereceye giren oyunların `rank` değerine göre artan sırada (1, 2, 3) deterministik dizildiği ve harici itch.io bağlantılarının `target="_blank"` / `rel="noopener noreferrer"` sözleşmesi kanıtlandı.
+- **Detay sayfaları, boş ve sınır durumları (`ContentView`, `PublicGame`, `ResultCard`, `Countdown`):**
+  - `src/modules/publication/ui/content-view.tsx`: Görselsiz içerikte `<picture>` / `<img>` üretmeme, tarihsiz etkinlikte `events.dateTbd` (`Tarih henüz belirlenmedi (İstanbul)` / `Date to be announced (Istanbul)`), konumsuz etkinlikte `events.locationTbd` (`Konum henüz belirlenmedi` / `Location to be announced`), organizatör/kapasite/başvuru adresi eksikliğinde temiz DOM ve dolu alanlarda doğru önekler kanıtlandı.
+  - `src/modules/games/ui/public-game.tsx`: Derecesiz/finalist olmayan oyunlarda temiz `eyebrow`, dereceli ve finalist oyunlarda rozet kombinasyonu, görselsiz ve görsel varyantlı oyunlar, `whiteSpace: "pre-wrap"` açıklama, `" · "` ile birleştirilmiş künye ve harici sekme linki doğrulandı.
+  - `src/modules/games/ui/result-card.tsx`: Yayınlanmış tam oyun (`slug` içeren) ile kısmi editoryal arşiv kaydı (`slug` içermeyen, `games.partialEditorialBadge`, `games.partialEditorialCopy` ve harici sekme son eki) ayrımı doğrulandı.
+  - `src/modules/events/ui/countdown.tsx`: `countdownState` fonksiyonunun `startAt: null` veya geçersiz tarihte `{ kind: "coming_soon" }`, gelecek tarihte `{ kind: "counting", seconds }`, başlangıç ve geçmiş tarihte `{ kind: "started" }` determinizmi doğrulandı.
+- **Admin hata yüzeyleri ve HTTP 404 / sır sızdırmama güvenceleri:**
+  - `src/app/admin/error.tsx`: `<p role="alert">`, yeniden deneme düğmesi (`retry()`), sıfır hata yığını/veritabanı bilgisi sızıntısı kanıtlandı.
+  - `src/app/admin/loading.tsx`: `<p role="status" aria-live="polite">` ile erişilebilir Türkçe yükleme durumu kanıtlandı.
+  - `tests/e2e/error-pages.spec.ts`: Statik olmayan rotalar, dinamik etkinlik/oyun/başvuru 404 rotaları ve özel geçersiz token rotalarında HTTP 404 status, `noindex` robots politikası, sıfır sunucu sırrı/yığın izi (`DATABASE_URL`, `postgres://`, `SESSION_SECRET`, `node_modules`, kaynak dosya yolları) ve UluJam arşivinde sıfır lightbox modalı E2E düzeyinde kilitlendi.
+- **Doğrulama testleri ve çalıştırılan komutlar:**
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" ./node_modules/.bin/vitest run tests/unit/gallery-error-boundaries.test.ts tests/unit/presentation-interactions.test.ts tests/unit/mini-games.test.ts tests/unit/countdown.test.ts tests/unit/theme-*.test.ts tests/unit/i18n-*.test.ts tests/unit/no-hardcoded-text.test.ts tests/unit/routes-integrity.test.ts tests/unit/seo.test.ts tests/unit/icons.test.ts tests/unit/public-event-presentation.test.ts tests/security/xss.test.ts` → Çıkış `0` (**18 dosya / 80 test geçti**, 8.68s).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" ./node_modules/.bin/tsc --noEmit` → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run lint` (`eslint . --max-warnings=0`) → Çıkış `0`.
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run build` → Çıkış `0` (56/56 rota derlendi; `next-env.d.ts` orijinal hâline geri yüklenip `tsc --noEmit` tekrar `0` ile doğrulandı).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" pnpm run security:source` → Çıkış `0` (`{"files":888,"secretHits":0,"forbiddenFiles":0}`).
+  - `PATH="$PWD/.local/phase-0b/bin:$PATH" node .local/phase-0c/check-baseline.mjs` → Çıkış `0` (`captures: 647`, `pngHashesValid: 647`, `nativeDimensionsValid: 647`, `imageIdentities: 1194`).
+
+### Açık kalanlar
+
+- Faz 5 (`İş 5A`) kapsamında açık madde kalmamıştır; Issue #1 Faz 5'teki yeni lightbox talebi görsel kilit gereği açık fark olarak kaydedilmiştir.
+- Faz 6 (`İş 6A`: Form, başvuru ve mevcut operasyon modülleri) henüz başlamamıştır.
+
+### Sıradaki adım ve bekleyen kararlar
+
+- **Sıradaki adım:** Faz 6 / İş 6A (Form, başvuru ve mevcut operasyon modülleri) için kullanıcı onayı bekleniyor. Onay gelmeden İş 6A başlatılmaz.

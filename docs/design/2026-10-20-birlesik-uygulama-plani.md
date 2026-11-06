@@ -238,11 +238,15 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **Dosyalar:** src/modules/events/ui/ulujam-archive.tsx ve mevcut hata yüzeyleri; tests/e2e/error-pages.spec.ts ve görsel referans testleri. Yeni lightbox/trigger veya farklı görünümlü hata sayfası oluşturulmaz.
 
-- [ ] Galeri mozaik düzenini, görsel kırpmasını, başlık/alt metin konumunu ve mevcut etkileşimini v0.1 ile aynı tut.
-- [ ] Issue'ın yeni lightbox gereği görsel/etkileşim kilidi nedeniyle bu kapsamda uygulanmaz; tamamlandı sayılmaz ve açık fark olarak raporlanır.
-- [ ] Mevcut 404/hata yanıtlarının durum/noindex ve sır sızdırmama sözleşmesini doğrula. Mevcut görünümü değiştiren özel hata ekranı ekleme; böyle bir gereksinim açık uyuşmazlık olarak kaydedilir.
-- [ ] Etkinlik/oyun detayları, UluJam tarihsiz/tarihli/başladı durumları ve bilinmeyen tarihî alanlar için boş/sınır durumlarını doğrula.
-- [ ] Kabul: galeri/hata durumları v0.1 referansıyla aynı; mevcut klavye ve güvenlik sözleşmesi testli. Yeni lightbox/özel hata tasarımı nihai açık fark listesinde; varmış gibi test/kabul üretilmez.
+- [x] Galeri mozaik düzenini, görsel kırpmasını, başlık/alt metin konumunu ve mevcut etkileşimini v0.1 ile aynı tut.
+- [x] Issue'ın yeni lightbox gereği görsel/etkileşim kilidi nedeniyle bu kapsamda uygulanmaz; tamamlandı sayılmaz ve açık fark olarak raporlanır.
+- [x] Mevcut 404/hata yanıtlarının durum/noindex ve sır sızdırmama sözleşmesini doğrula. Mevcut görünümü değiştiren özel hata ekranı ekleme; böyle bir gereksinim açık uyuşmazlık olarak kaydedilir.
+- [x] Etkinlik/oyun detayları, UluJam tarihsiz/tarihli/başladı durumları ve bilinmeyen tarihî alanlar için boş/sınır durumlarını doğrula.
+- [x] Kabul: galeri/hata durumları v0.1 referansıyla aynı; mevcut klavye ve güvenlik sözleşmesi testli. Yeni lightbox/özel hata tasarımı nihai açık fark listesinde; varmış gibi test/kabul üretilmez.
+
+**5 Kasım 5A kabul kaydı:** `src/modules/events/ui/ulujam-archive.tsx` içinde v0.1'in mevcut galeri mozaik düzeni (`archive-gallery-mosaic`, `archive-gallery-featured`, `archive-gallery-side`, `figure`, `figcaption`, `eyebrow` ve alt metin) korundu; GitHub Issue #1'in talep ettiği yeni lightbox bileşeni görsel/etkileşim kilidi gereği uygulanmayarak açık fark olarak kaydedildi ve DOM'da sıfır lightbox/modal bulunduğu doğrulandı. `src/modules/publication/ui/content-view.tsx`, `src/modules/games/ui/{public-game,result-card}.tsx` ve `src/modules/events/ui/{countdown,ulujam-coming-soon}.tsx` bileşenlerinin boş/eksik veri (görselsiz, tarihsiz, konumsuz, organizatörsüz, derecesiz, finalist olmayan ve kısmi editoryal arşiv kayıtları) sınır durumları TR ve EN dillerinde doğrulandı. `src/app/admin/error.tsx` (`role="alert"`, retry çağrısı) ve `src/app/admin/loading.tsx` (`role="status"`, `aria-live="polite"`) erişilebilirlik ve sır sızdırmama sözleşmesi kanıtlandı. `tests/unit/gallery-error-boundaries.test.ts` (12/12) ve `tests/e2e/error-pages.spec.ts` (404 status, noindex meta/header, sıfır yığın/sır sızıntısı ve lightbox yokluğu) eklendi. `vitest` (18 dosya / 80 test), `tsc --noEmit`, `eslint`, `next build` (56 rota), `security:source` (888 dosya / 0 sır) ve `check-baseline.mjs` (647/647 PNG) yeşil.
+
+**Faz 5 çıkışı:** 5A tamam; [ilerleme kaydı](../operations/sunum-katmani-ilerleme.md) kanıtlı.
 
 ## 10. Faz 6 — Ürün akışlarının regresyon kabulü
 
@@ -299,4 +303,4 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **Geri dönüş:** Her fazdan önce ilgili dosya diff'i ve son çalışan commit kaydedilir. Başarısız değişiklik yalnız kendi commit/dosya kümesiyle geri alınır; kullanıcı değişikliklerine reset/clean uygulanmaz. DB şeması bu işte değişmediği için şema rollback gerekmez; zorunlu ek migration ayrı tasarım ve geri yükleme planına bağlıdır.
 
-**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** Faz 0 (0A, 0B ve 0C), Faz 1 (1A ve 1B), Faz 2 (2A, 2B ve 2C), Faz 3 (3A ve 3B) ve Faz 4 (4A) kabul edildi; sıradaki iş Faz 5 / İş 5A'dır.
+**Plan hazırlığı bittiğinde uygulama bitmiş sayılmaz.** Faz 0 (0A, 0B ve 0C), Faz 1 (1A ve 1B), Faz 2 (2A, 2B ve 2C), Faz 3 (3A ve 3B), Faz 4 (4A) ve Faz 5 (5A) kabul edildi; sıradaki iş Faz 6 / İş 6A'dır.
