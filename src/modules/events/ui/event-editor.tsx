@@ -748,7 +748,7 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
                     {["published", "scheduled", "ended", "cancelled"].includes(
                       selected.status,
                     ) && (
-                      <Link href={`/etkinlikler/${selected.slug}`}>
+                      <Link href="/etkinlikler">
                         Sitede gör ↗
                       </Link>
                     )}

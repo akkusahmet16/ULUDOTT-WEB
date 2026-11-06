@@ -8,6 +8,7 @@ import { OpeningGlow } from "../components/layout/opening-glow";
 import { coffeeTalkEndsAt } from "../modules/events/domain/legacy-coffee-talk";
 import { PastEventsCarousel } from "../modules/events/ui/past-events-carousel";
 import { EventCard } from "../modules/events/ui/event-card";
+import { PastEventPosterCard } from "../modules/events/ui/past-event-poster-card";
 import {
   readHomeEvents,
   readHistoricalResults,
@@ -32,14 +33,14 @@ export default async function HomePage() {
     id: event.id,
     title: event.title,
     endedAt: (event.endsAt ?? event.startsAt)?.getTime() ?? 0,
-    content: <EventCard event={event} locale={locale} />,
+    content: <PastEventPosterCard event={event} locale={locale} />,
   }));
   if (events.showLegacyCoffeeTalk)
     pastSlides.push({
       id: "legacy-coffee-talk",
       title: t("home.coffeeTalkTitle"),
       endedAt: coffeeTalkEndsAt.getTime(),
-      content: <CoffeeTalkCard locale={locale} />,
+      content: <CoffeeTalkCard posterOnly locale={locale} />,
     });
   pastSlides.sort((a, b) => b.endedAt - a.endedAt || a.id.localeCompare(b.id));
   return (

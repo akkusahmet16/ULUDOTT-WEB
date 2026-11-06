@@ -50,7 +50,9 @@ export function UlujamArchive({
           <p className="empty">{t("ulujam.archiveGalleryEmpty")}</p>
         )}
       </section>
-      <h3>{t("ulujam.topThreeGamesHeading")}</h3>
+      <h3 style={{ marginTop: "clamp(48px, 6vw, 84px)", marginBottom: "24px" }}>
+        {t("ulujam.topThreeGamesHeading")}
+      </h3>
       {archive.games.length ? (
         <div className="grid degree-games">
           {[...archive.games]

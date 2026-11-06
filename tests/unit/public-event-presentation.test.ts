@@ -29,7 +29,19 @@ it.each([
   }));
   expect(html).toContain(label);
   expect(html).not.toContain(event.applicationUrl);
-  expect(html).toContain("/etkinlikler/topluluk-etkinligi");
+  expect(html).not.toContain("/etkinlikler/topluluk-etkinligi");
+});
+
+it("displays custom category name when present or fallback eyebrow", () => {
+  const withCategory = renderToStaticMarkup(createElement(EventCard, {
+    event: { ...event, categoryName: "GameJam" },
+  }));
+  expect(withCategory).toContain("GameJam");
+
+  const defaultCategory = renderToStaticMarkup(createElement(EventCard, {
+    event: { ...event, categoryName: null },
+  }));
+  expect(defaultCategory).toContain("Topluluk buluşması");
 });
 
 it("preserves applications on a published event", () => {

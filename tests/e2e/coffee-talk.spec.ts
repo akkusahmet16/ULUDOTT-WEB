@@ -161,7 +161,7 @@ test("Coffee Talk DEMO editör yayını, site içi başvuru ve kapanış", async
   });
   await page.goto("/");
   await openEventWithoutApplication(page, "İkinci DEMO etkinliği");
-  await expect(page).toHaveURL(/etkinlikler\/coffee-other-demo$/);
+  expect((await page.request.get("/etkinlikler/coffee-other-demo")).status()).toBe(404);
   await post("/api/admin/events", {
     action: "archive",
     id: other.id,

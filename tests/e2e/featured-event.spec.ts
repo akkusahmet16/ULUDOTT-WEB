@@ -146,7 +146,7 @@ test("Coffee Talk taslak kalır; doğrulanmış afiş ve tarih sonrası ana sayf
   ).toBeVisible();
   await openEventWithoutApplication(page, "Coffee Talk test taslağı");
   await expect(page.getByText(/2 Ocak 2030.*15:00/)).toBeVisible();
-  await expect(page).toHaveTitle(/Coffee Talk test taslağı/);
+  expect((await page.request.get("/etkinlikler/coffee-talk-test")).status()).toBe(404);
   expect(
     (
       await new AxeBuilder({ page })

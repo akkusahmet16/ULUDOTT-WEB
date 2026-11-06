@@ -1,12 +1,27 @@
 import Image from "next/image";
 import { DEFAULT_LOCALE, type Locale } from "../../i18n/config.ts";
 import { getTranslator } from "../../i18n/translate.ts";
+import { PastEventPosterCard } from "../../modules/events/ui/past-event-poster-card.tsx";
 export function CoffeeTalkCard({
   locale = DEFAULT_LOCALE,
+  posterOnly = false,
 }: {
   locale?: Locale;
+  posterOnly?: boolean;
 } = {}) {
   const t = getTranslator(locale);
+  if (posterOnly) {
+    return (
+      <PastEventPosterCard
+        posterSrc="/community/04-etkinlikler/etkinlik-coffe-talk/etkinlik-coffe-talk-afis.webp"
+        alt={t("home.coffeeTalkPosterAlt")}
+        title={t("home.coffeeTalkTitle")}
+        width={1080}
+        height={1350}
+        locale={locale}
+      />
+    );
+  }
   return (
     <section
       className="coffee-talk-card"

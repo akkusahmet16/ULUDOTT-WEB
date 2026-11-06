@@ -137,6 +137,7 @@ export type PublicContent = ContentRecord & {
   displayStatus: string;
   redirectSlug?: string;
   applicationUrl: string | null;
+  categoryName?: string | null;
   image: { id: string; altText: string; width: number; height: number } | null;
 };
 export function visible(row: ContentRecord, now: Date) {

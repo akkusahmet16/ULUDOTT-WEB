@@ -301,10 +301,18 @@ async function enrich(
     if (f && /^[a-z0-9-]{1,100}$/.test(String(f.slug)))
       applicationUrl = "/basvuru/" + f.slug;
   }
+  let categoryName: string | null = null;
+  if (row.categoryId) {
+    const [c] = await tx.execute(
+      sql`select name from event_categories where id=${row.categoryId}`,
+    );
+    if (c?.name) categoryName = String(c.name);
+  }
   return {
     ...row,
     displayStatus: displayStatus(row, now),
     applicationUrl,
+    categoryName,
     image,
   };
 }
@@ -361,13 +369,31 @@ export async function featured(now = new Date()) {
   });
 }
 
+const DEFAULT_EVENT_CATEGORIES: ReadonlyArray<{ name: string; slug: string }> = [
+  { name: "Eğitim", slug: "egitim" },
+  { name: "Eğlence", slug: "eglence" },
+  { name: "GameJam", slug: "gamejam" },
+  { name: "Topluluk Buluşması", slug: "topluluk-bulusmasi" },
+  { name: "Yarışma", slug: "yarisma" },
+];
+
 export async function editorOptions(actor: Actor) {
   if (!actor.roles.some((r) => ["content_editor", "event_manager"].includes(r)))
     throw Error("Yetki yok");
   return withTransaction(async (tx) => {
-    const categories = await tx.execute(
+    let categories = await tx.execute(
       sql`select id,name from event_categories order by name limit 100`,
     );
+    if (!categories.length) {
+      for (const cat of DEFAULT_EVENT_CATEGORIES) {
+        await tx.execute(
+          sql`insert into event_categories (id, name, slug) values (gen_random_uuid(), ${cat.name}, ${cat.slug}) on conflict (slug) do nothing`,
+        );
+      }
+      categories = await tx.execute(
+        sql`select id,name from event_categories order by name limit 100`,
+      );
+    }
     const scoped = actor.roles.includes("content_editor")
       ? sql``
       : sql`where event_id in (${

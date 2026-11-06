@@ -7,7 +7,7 @@ export async function openEventWithoutApplication(page: Page, title: string) {
   await expect(
     card.getByRole("link", { name: "Başvur", exact: true }),
   ).toHaveCount(0);
-  await card
-    .getByRole("link", { name: "Etkinliği incele", exact: true })
-    .click();
+  await expect(
+    card.getByRole("link", { name: "Etkinliği incele", exact: true }),
+  ).toHaveCount(0);
 }

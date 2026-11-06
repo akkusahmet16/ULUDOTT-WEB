@@ -1,6 +1,8 @@
 import { CoffeeTalkCard } from "../../../components/layout/coffee-talk-card";
 import { PublicShell } from "../../../components/layout/public-shell";
 import { EventCard } from "../../../modules/events/ui/event-card";
+import { PastEventPosterCard } from "../../../modules/events/ui/past-event-poster-card";
+import styles from "../../../modules/events/ui/past-event-poster-card.module.css";
 import { getLocale } from "../../../i18n/server.ts";
 import { getTranslator } from "../../../i18n/translate.ts";
 import { readHomeEvents } from "../../../modules/publication/ui/public-queries";
@@ -39,11 +41,11 @@ export default async function Page() {
         >
           <h2>{t("events.pastHeading")}</h2>
           {past.length || showLegacyCoffeeTalk ? (
-            <div className="featured-events">
+            <div className={styles.pastEventsGrid}>
               {past.map((item) => (
-                <EventCard key={item.id} event={item} locale={locale} />
+                <PastEventPosterCard key={item.id} event={item} locale={locale} />
               ))}
-              {showLegacyCoffeeTalk && <CoffeeTalkCard locale={locale} />}
+              {showLegacyCoffeeTalk && <CoffeeTalkCard posterOnly locale={locale} />}
             </div>
           ) : (
             <p className="event-list-empty">{t("events.pastEmpty")}</p>
