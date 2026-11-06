@@ -9,6 +9,7 @@ import type {
 import { sanitizeMediaSrc } from "../domain/sanitize-src";
 import styles from "../../admin/ui/content-workspace.module.css";
 import uploadStyles from "./site-asset-picker.module.css";
+import { StatusMark, type StatusMarkStatus } from "../../../components/ui/status-mark";
 
 export function SiteAssetPicker({
   scope,
@@ -37,6 +38,9 @@ export function SiteAssetPicker({
   const [query, setQuery] = useState("");
   const [folder, setFolder] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState<StatusMarkStatus>("idle");
+  const [uploadProgress, setUploadProgress] = useState<number | undefined>(undefined);
+  const [selectedFileName, setSelectedFileName] = useState("");
   const [uploadError, setUploadError] = useState("");
   const [uploadSuccess, setUploadSuccess] = useState("");
   const [deletingPath, setDeletingPath] = useState("");
@@ -70,8 +74,12 @@ export function SiteAssetPicker({
 
   async function handleUpload(file: File) {
     setUploading(true);
+    setUploadStatus("running");
+    setUploadProgress(0.08);
     setUploadError("");
     setUploadSuccess("");
+    setSelectedFileName(file.name);
+
     try {
       const csrfResponse = await fetch("/api/admin/csrf", { cache: "no-store" });
       if (!csrfResponse.ok) throw new Error("İstek doğrulanamadı");
@@ -81,27 +89,46 @@ export function SiteAssetPicker({
       formData.append("scope", scope === "all" ? "general" : scope);
       formData.append("file", file);
 
-      const response = await fetch("/api/admin/site-assets", {
-        method: "POST",
-        headers: {
-          "x-csrf-token": csrfToken,
-        },
-        body: formData,
+      const result = await new Promise<{ item: SiteAsset; error?: string }>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/api/admin/site-assets");
+        xhr.setRequestHeader("x-csrf-token", csrfToken);
+
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable && event.total > 0) {
+            const ratio = event.loaded / event.total;
+            setUploadProgress(Math.min(0.95, Math.max(0.08, ratio)));
+          }
+        };
+
+        xhr.onload = () => {
+          try {
+            const data = JSON.parse(xhr.responseText);
+            if (xhr.status >= 200 && xhr.status < 300) {
+              setUploadProgress(1);
+              resolve(data);
+            } else {
+              reject(new Error(data.error || "Dosya yüklenemedi"));
+            }
+          } catch {
+            reject(new Error("Sunucu yanıtı geçersiz"));
+          }
+        };
+
+        xhr.onerror = () => reject(new Error("Ağ bağlantısı hatası oluştu"));
+        xhr.send(formData);
       });
 
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.error ?? "Dosya yüklenemedi");
-      }
-
       onChange(result.item.path);
-      setUploadSuccess("Dosya başarıyla cihazdan yüklendi ve seçildi.");
+      setUploadStatus("done");
+      setUploadSuccess(`"${file.name}" yüklendi ve seçildi.`);
       setItems((prev) => [
         result.item,
         ...prev.filter((i) => i.path !== result.item.path),
       ]);
       setLoaded(true);
     } catch (err) {
+      setUploadStatus("failed");
       setUploadError(err instanceof Error ? err.message : "Dosya yüklenemedi");
     } finally {
       setUploading(false);
@@ -325,15 +352,37 @@ export function SiteAssetPicker({
           </div>
         )}
 
-        {uploadError && (
-          <p role="alert" className={uploadStyles.pickerError}>
-            {uploadError}
-          </p>
-        )}
-        {uploadSuccess && (
-          <p role="status" className={uploadStyles.pickerSuccess}>
-            {uploadSuccess}
-          </p>
+        {/* ReactBits StatusMark Micro-Interaction: PDF / Dosya Seçildiğinde Canlı Yükleme Belirteci */}
+        {uploadStatus !== "idle" && (
+          <div className={uploadStyles.statusMarkBox} role="status" aria-live="polite">
+            <StatusMark
+              status={uploadStatus}
+              progress={uploadProgress}
+              strike={uploadStatus === "done"}
+              label={
+                uploadStatus === "running"
+                  ? `${selectedFileName || (kind === "document" ? "PDF Belgesi" : "Dosya")} yükleniyor...`
+                  : uploadStatus === "done"
+                    ? uploadSuccess || "Yüklendi ve seçildi"
+                    : uploadError || "Yükleme başarısız"
+              }
+              classes={{
+                root: uploadStyles.statusMark,
+                glyph: uploadStyles.statusMarkGlyph,
+                track: uploadStyles.statusMarkTrack,
+                ring: uploadStyles.statusMarkRing,
+                ringPending: uploadStyles.statusMarkRingPending,
+                ringRunning: uploadStyles.statusMarkRingRunning,
+                ringDone: uploadStyles.statusMarkRingDone,
+                ringFailed: uploadStyles.statusMarkRingFailed,
+                check: uploadStyles.statusMarkCheck,
+                cross: uploadStyles.statusMarkCross,
+                label: uploadStyles.statusMarkLabel,
+                strike: uploadStyles.statusMarkStrike,
+                srOnly: uploadStyles.statusMarkSrOnly,
+              }}
+            />
+          </div>
         )}
       </div>
 
