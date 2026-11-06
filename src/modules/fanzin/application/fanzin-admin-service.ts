@@ -1,12 +1,13 @@
 import "server-only";
 import { createHash } from "node:crypto";
 import { revalidatePath, revalidateTag } from "next/cache";
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, desc, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 import { fanzinIssues, fanzinPages, fanzinArticles } from "../../../db/schema/fanzin.ts";
 import { getDatabase } from "../../../lib/database/client.ts";
 import { withTransaction } from "../../../lib/database/transaction.ts";
 import { appendAudit, type Actor } from "../../../lib/logging/audit.ts";
+import type { FanzinIssue, FanzinPageContent } from "../domain/fanzin-types.ts";
 
 export const fanzinIssueInputSchema = z
   .strictObject({
@@ -23,20 +24,73 @@ export const fanzinIssueInputSchema = z
     pdfFileSize: z.string().trim().max(32).optional().nullable(),
     coverImageUrl: z.string().trim().max(500).optional().nullable(),
     status: z.enum(["draft", "published", "upcoming", "archived"]).default("draft"),
-  })
-  .superRefine((data, ctx) => {
-    if (data.status === "published") {
-      if (!data.pdfUrl || data.pdfUrl === "#" || data.pdfUrl.trim() === "") {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Fanzini yayına almak için geçerli bir PDF dosyası yüklenmelidir",
-          path: ["pdfUrl"],
-        });
-      }
-    }
   });
 
 export type FanzinIssueInput = z.infer<typeof fanzinIssueInputSchema>;
+
+export async function getPublicFanzinData(): Promise<{
+  activeIssue: FanzinIssue | null;
+  issues: FanzinIssue[];
+}> {
+  try {
+    const rows = await getDatabase()
+      .select()
+      .from(fanzinIssues)
+      .where(inArray(fanzinIssues.status, ["published", "upcoming"]))
+      .orderBy(desc(fanzinIssues.issueNumber));
+
+    const mappedIssues: FanzinIssue[] = await Promise.all(
+      rows.map(async (row) => {
+        const pages = await getDatabase()
+          .select()
+          .from(fanzinPages)
+          .where(eq(fanzinPages.issueId, row.id))
+          .orderBy(fanzinPages.pageNumber);
+
+        const fanzinPagesList: FanzinPageContent[] = pages.map((p) => ({
+          pageNumber: p.pageNumber,
+          imageUrl: p.pageImageAssetId ? `/uploads/fanzin/${p.pageImageAssetId}` : undefined,
+          title: p.title ?? undefined,
+          type: (p.pageType === "cover" || p.pageType === "backcover" ? p.pageType : "page") as FanzinPageContent["type"],
+        }));
+
+        if (fanzinPagesList.length === 0 && row.coverImageUrl) {
+          fanzinPagesList.push({
+            pageNumber: 1,
+            imageUrl: row.coverImageUrl,
+            title: row.title,
+            type: "cover",
+          });
+        }
+
+        return {
+          id: row.id,
+          issueNumber: row.issueNumber,
+          title: row.title,
+          slug: row.slug,
+          subtitle: row.subtitle ?? "",
+          season: row.season,
+          year: row.year,
+          description: row.description,
+          pageCount: row.pageCount,
+          pdfUrl: row.pdfUrl,
+          pdfFileSize: row.pdfFileSize ?? "",
+          coverImageUrl: row.coverImageUrl ?? "",
+          accessType: "Açık Erişim",
+          publishedAt: row.publishedAt ? row.publishedAt.toISOString().split("T")[0] : "",
+          status: row.status as "published" | "upcoming",
+          pages: fanzinPagesList,
+        };
+      })
+    );
+
+    const activeIssue = mappedIssues.find((i) => i.status === "published") ?? null;
+    return { activeIssue, issues: mappedIssues };
+  } catch (error) {
+    console.error("Failed to load public fanzin data:", error);
+    return { activeIssue: null, issues: [] };
+  }
+}
 
 export async function listFanzinIssues() {
   return getDatabase()

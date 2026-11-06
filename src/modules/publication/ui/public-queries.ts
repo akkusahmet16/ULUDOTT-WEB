@@ -31,6 +31,7 @@ import { getHomepageSettings } from "../../site-settings/application/homepage-se
 import { getSponsorsSettings } from "../../site-settings/application/sponsors-settings.ts";
 import { getPlacesSettings } from "../../site-settings/application/places-settings.ts";
 import { listPublishedArchives } from "../../site-settings/application/archives.ts";
+import { getPublicFanzinData } from "../../fanzin/application/fanzin-admin-service.ts";
 import { listIndexablePublications } from "../service.ts";
 import type { ContentRecord, ContentType } from "../domain.ts";
 
@@ -200,3 +201,9 @@ export const readPlacesSettings = cachePublicRead(
 export async function readPublishedArchives() {
   return listPublishedArchives();
 }
+
+export const readPublicFanzin = cachePublicRead(
+  "public-fanzin",
+  [CACHE_TAGS.fanzin],
+  () => getPublicFanzinData(),
+);

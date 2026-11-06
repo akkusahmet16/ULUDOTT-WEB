@@ -9,6 +9,7 @@ export const CACHE_TAGS = {
   siteGames: "public:site-games",
   games: "public:games",
   siteSettings: "public:site-settings",
+  fanzin: "public:fanzin",
 } as const;
 
 export type CacheTag = (typeof CACHE_TAGS)[keyof typeof CACHE_TAGS];

@@ -172,7 +172,7 @@ export function FlipbookReader({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [hasPages]);
 
-  if (!hasPages) {
+  if (!issue) {
     return (
       <div className="fanzin-reader-container">
         <div className="fanzin-book-stage fanzin-stage-empty">
@@ -186,6 +186,29 @@ export function FlipbookReader({
             <p className="fanzin-empty-desc">
               {emptyDesc ||
                 "Çok yakında ilk sayımız burada çevrimiçi olarak okunabilecek. Yeni sayılar çıktığında doğrudan bu ekrandan sayfaları çevirerek okuyabilirsiniz."}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasPages) {
+    return (
+      <div className="fanzin-reader-container">
+        <div className="fanzin-book-stage fanzin-stage-empty">
+          <div className="fanzin-empty-card">
+            <span className="fanzin-empty-icon" aria-hidden="true">
+              📄
+            </span>
+            <h3 className="fanzin-empty-title">
+              Sayı #{String(issue.issueNumber).padStart(2, "0")}: {issue.title}
+            </h3>
+            <p className="fanzin-empty-desc">
+              Bu sayı yayımlandı! İnteraktif çevrimiçi sayfalar çok yakında bu ekranda okunabilecek.
+              {issue.pdfUrl && issue.pdfUrl !== "#"
+                ? " Dilerseniz yukarıdaki butondan PDF baskısını hemen cihazınıza indirebilirsiniz."
+                : ""}
             </p>
           </div>
         </div>

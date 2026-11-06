@@ -27,6 +27,7 @@ export function FanzinAdminList() {
   const [issues, setIssues] = useState<FanzinIssue[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
   async function load() {
     try {
@@ -45,6 +46,23 @@ export function FanzinAdminList() {
   useEffect(() => {
     load();
   }, []);
+
+  async function handleTogglePublish(item: FanzinIssue, targetStatus: "published" | "draft") {
+    setTogglingId(item.id);
+    try {
+      await formRequest("/api/admin/fanzin", {
+        ...item,
+        status: targetStatus,
+      });
+      setIssues((prev) =>
+        prev.map((i) => (i.id === item.id ? { ...i, status: targetStatus } : i))
+      );
+    } catch (err: unknown) {
+      alert("Durum güncellenemedi: " + (err instanceof Error ? err.message : "Hata"));
+    } finally {
+      setTogglingId(null);
+    }
+  }
 
   async function handleDelete(id: string) {
     if (!confirm("Bu fanzin sayısını silmek istediğinize emin misiniz?")) return;
@@ -157,7 +175,26 @@ export function FanzinAdminList() {
                   </span>
                 </td>
                 <td style={{ textAlign: "right" }}>
-                  <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+                  <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end", alignItems: "center" }}>
+                    {item.status === "published" ? (
+                      <button
+                        type="button"
+                        disabled={togglingId === item.id}
+                        onClick={() => handleTogglePublish(item, "draft")}
+                        className={styles.unpublishBtn}
+                      >
+                        {togglingId === item.id ? "..." : "Yayından Kaldır"}
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled={togglingId === item.id}
+                        onClick={() => handleTogglePublish(item, "published")}
+                        className={styles.publishBtn}
+                      >
+                        {togglingId === item.id ? "..." : "Yayımla"}
+                      </button>
+                    )}
                     <Link href={`/admin/fanzin/${item.id}`} className={styles.editBtn}>
                       Düzenle
                     </Link>

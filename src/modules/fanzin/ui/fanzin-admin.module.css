@@ -187,6 +187,39 @@
   border-color: var(--purple);
 }
 
+.publishBtn {
+  background: var(--color-ffffff12);
+  border: 1px solid var(--lime);
+  color: var(--lime);
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.publishBtn:hover {
+  background: var(--color-ffffff26);
+  box-shadow: 0 0 10px var(--color-edb2e430);
+}
+
+.unpublishBtn {
+  background: transparent;
+  border: 1px solid var(--color-ffffff33);
+  color: var(--admin-muted);
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.unpublishBtn:hover {
+  background: var(--color-ffffff15);
+  color: var(--cream);
+}
+
 .deleteBtn {
   background: transparent;
   border: 1px solid var(--color-ffffff33);

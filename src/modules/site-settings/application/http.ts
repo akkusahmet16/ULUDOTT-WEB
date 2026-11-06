@@ -78,9 +78,9 @@ export function settingsHandler(
                       data.expectedRevision,
                     )
                   : await saveArchive(actor, data.input, data.expectedRevision);
-      revalidateTag(CACHE_TAGS.siteSettings, "max");
+      revalidateTag(CACHE_TAGS.siteSettings, { expire: 0 });
       if (scope !== "contact") {
-        revalidateTag(CACHE_TAGS.ulujam, "max");
+        revalidateTag(CACHE_TAGS.ulujam, { expire: 0 });
       }
       return Response.json(result, { headers: privateHeaders });
     } catch (error) {

@@ -23,8 +23,8 @@ describe("Fanzin Admin Service Unit Tests", () => {
     expect(parsed.success).toBe(true);
   });
 
-  it("yayınlanmış (published) fanzinde boş pdfUrl reddedilir", () => {
-    const invalid = {
+  it("yayınlanmış (published) fanzin geçerli verilerle doğrulanır", () => {
+    const publishedWithoutPdf = {
       id: "fanzin-issue-01",
       issueNumber: 1,
       title: "Vice & Pixels",
@@ -37,6 +37,24 @@ describe("Fanzin Admin Service Unit Tests", () => {
       pdfUrl: "",
       pdfFileSize: "66 KB",
       coverImageUrl: "/uploads/fanzin/cover-01.webp",
+      status: "published",
+    };
+
+    const parsed = fanzinIssueInputSchema.safeParse(publishedWithoutPdf);
+    expect(parsed.success).toBe(true);
+  });
+
+  it("başlığı boş fanzin girişi reddedilir", () => {
+    const invalid = {
+      id: "fanzin-issue-01",
+      issueNumber: 1,
+      title: "   ",
+      slug: "sayi-01",
+      season: "Bahar",
+      year: 2026,
+      description: "Açıklama",
+      pageCount: 0,
+      pdfUrl: "",
       status: "published",
     };
 

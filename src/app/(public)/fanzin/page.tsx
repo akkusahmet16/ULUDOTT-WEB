@@ -5,21 +5,18 @@ import { buildMetadata } from "../../../seo/build-metadata.ts";
 import { FanzinHero } from "../../../modules/fanzin/ui/fanzin-hero.tsx";
 import { FlipbookReader } from "../../../modules/fanzin/ui/flipbook-reader.tsx";
 import { FanzinArchive } from "../../../modules/fanzin/ui/fanzin-archive.tsx";
-import {
-  FANZIN_ISSUE_01,
-  ALL_FANZIN_ISSUES,
-} from "../../../modules/fanzin/domain/mock-fanzin-data.ts";
+import { readPublicFanzin } from "../../../modules/publication/ui/public-queries.ts";
 
 export async function generateMetadata() {
   return buildMetadata({ routeId: "fanzin", locale: await getLocale() });
 }
 
 export default async function FanzinPage() {
-  const locale = await getLocale();
+  const [locale, { activeIssue, issues }] = await Promise.all([
+    getLocale(),
+    readPublicFanzin(),
+  ]);
   const t = getTranslator(locale);
-
-  const activeIssue = FANZIN_ISSUE_01;
-  const issues = ALL_FANZIN_ISSUES;
 
   return (
     <PublicShell>

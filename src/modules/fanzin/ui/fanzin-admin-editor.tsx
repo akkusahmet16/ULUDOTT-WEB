@@ -39,7 +39,26 @@ export function FanzinAdminEditor({ issueId }: { issueId?: string }) {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    if (!isNew && issueId) {
+    if (isNew) {
+      async function fetchNextNumber() {
+        try {
+          const res = await fetch("/api/admin/fanzin");
+          if (res.ok) {
+            const list = await res.json();
+            if (Array.isArray(list) && list.length > 0) {
+              const maxNo = Math.max(
+                ...list.map((i: { issueNumber?: number }) => i.issueNumber || 0),
+                0,
+              );
+              setForm((prev) => ({ ...prev, issueNumber: maxNo + 1 }));
+            }
+          }
+        } catch {
+          // ignore
+        }
+      }
+      fetchNextNumber();
+    } else if (issueId) {
       async function load() {
         try {
           const res = await fetch(`/api/admin/fanzin/${issueId}`);
@@ -387,28 +406,53 @@ export function FanzinAdminEditor({ issueId }: { issueId?: string }) {
             alignItems: "center",
           }}
         >
-          <button
-            type="button"
-            disabled={saving}
-            className={editorStyles.secondaryBtn}
-            onClick={() => void handleSave(undefined, "draft")}
-            style={{ minWidth: "160px" }}
-          >
-            {saving && form.status === "draft"
-              ? "KAYDEDİLİYOR..."
-              : "TASLAĞI KAYDET"}
-          </button>
-          <button
-            type="button"
-            disabled={saving}
-            className={editorStyles.primaryBtn}
-            onClick={() => void handleSave(undefined, "published")}
-            style={{ minWidth: "180px" }}
-          >
-            {saving && form.status === "published"
-              ? "YAYIMLANIYOR..."
-              : "YAYIMLA & SİTEDE AÇ"}
-          </button>
+          {form.status === "published" ? (
+            <>
+              <button
+                type="button"
+                disabled={saving}
+                className={editorStyles.secondaryBtn}
+                onClick={() => void handleSave(undefined, "draft")}
+                style={{ minWidth: "160px" }}
+              >
+                {saving ? "KAYDEDİLİYOR..." : "YAYINDAN KALDIR (TASLAK)"}
+              </button>
+              <button
+                type="button"
+                disabled={saving}
+                className={editorStyles.primaryBtn}
+                onClick={() => void handleSave(undefined, "published")}
+                style={{ minWidth: "180px" }}
+              >
+                {saving ? "KAYDEDİLİYOR..." : "GÜNCELLE & KAYDET"}
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                disabled={saving}
+                className={editorStyles.secondaryBtn}
+                onClick={() => void handleSave(undefined, form.status === "upcoming" ? "upcoming" : "draft")}
+                style={{ minWidth: "160px" }}
+              >
+                {saving
+                  ? "KAYDEDİLİYOR..."
+                  : form.status === "upcoming"
+                    ? "YAKINDA OLARAK KAYDET"
+                    : "TASLAĞI KAYDET"}
+              </button>
+              <button
+                type="button"
+                disabled={saving}
+                className={editorStyles.primaryBtn}
+                onClick={() => void handleSave(undefined, "published")}
+                style={{ minWidth: "180px" }}
+              >
+                {saving ? "YAYIMLANIYOR..." : "YAYIMLA & SİTEDE AÇ"}
+              </button>
+            </>
+          )}
         </div>
       </form>
     </div>
