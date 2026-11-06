@@ -21,7 +21,7 @@ export default async function MediaPage() {
             display: "inline-flex",
             alignItems: "center",
             gap: 6,
-            color: "var(--color-ffd1df, #edb2e4)",
+            color: "var(--color-ffd1df)",
             fontSize: 13,
             fontWeight: 700,
             textDecoration: "none",
@@ -37,7 +37,7 @@ export default async function MediaPage() {
             fontFamily: "var(--font-secondary, inherit)",
             fontSize: "clamp(24px, 4vw, 36px)",
             fontWeight: 800,
-            color: "#ffffff",
+            color: "var(--color-white)",
             margin: "0 0 8px",
             letterSpacing: "-0.02em",
           }}
@@ -47,7 +47,7 @@ export default async function MediaPage() {
         <p
           style={{
             margin: 0,
-            color: "#8c829c",
+            color: "var(--color-8b94ae)",
             fontSize: 14,
             maxWidth: 700,
             lineHeight: 1.5,

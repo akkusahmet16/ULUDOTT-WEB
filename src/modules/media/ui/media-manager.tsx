@@ -167,15 +167,15 @@ export function MediaManager() {
 
       {/* Global Upload Zone */}
       <div className={styles.uploadZone}>
-        <h3 style={{ margin: 0, fontSize: "18px", color: "var(--color-fff2b7, #fff9cb)" }}>
+        <h3 style={{ margin: 0, fontSize: "18px", color: "var(--color-fff2b7)" }}>
           Cihazdan Yeni Dosya Yükle
         </h3>
-        <p style={{ margin: 0, color: "#8c829c", fontSize: "13px" }}>
+        <p style={{ margin: 0, color: "var(--color-8b94ae)", fontSize: "13px" }}>
           Görseller (PNG, JPG, WebP, SVG, AVIF, GIF), videolar (MP4, WebM) ve PDF belgeleri doğrudan sunucuya yüklenir.
         </p>
 
         <div className={styles.uploadInputWrapper}>
-          <label style={{ fontSize: "13px", color: "#d0bed8", display: "flex", alignItems: "center", gap: 6 }}>
+          <label style={{ fontSize: "13px", color: "var(--color-d0bed8)", display: "flex", alignItems: "center", gap: 6 }}>
             <span>Hedef Klasör:</span>
             <select
               value={uploadScope}
@@ -208,8 +208,8 @@ export function MediaManager() {
           </label>
         </div>
 
-        {error && <p style={{ color: "#ff8899", margin: "4px 0", fontSize: "13px" }}>{error}</p>}
-        {message && <p style={{ color: "#fff1bc", margin: "4px 0", fontSize: "13px" }}>{message}</p>}
+        {error && <p style={{ color: "var(--color-f7a9b8)", margin: "4px 0", fontSize: "13px" }}>{error}</p>}
+        {message && <p style={{ color: "var(--color-fff1bc)", margin: "4px 0", fontSize: "13px" }}>{message}</p>}
       </div>
 
       {/* Filter & Search Bar */}
@@ -227,7 +227,7 @@ export function MediaManager() {
             onClick={() => void load()}
             disabled={loading}
             className={styles.filterPill}
-            style={{ color: "#fff9cb", borderColor: "rgba(237, 178, 228, 0.4)" }}
+            style={{ color: "var(--color-fff9cb)", borderColor: "var(--color-edb2e440, var(--color-edb2e433))" }}
           >
             {loading ? "Yenileniyor…" : "↻ Yenile"}
           </button>
@@ -304,11 +304,11 @@ export function MediaManager() {
                       unoptimized
                     />
                   ) : asset.kind === "video" ? (
-                    <div style={{ color: "#fff9cb", fontSize: "16px", fontWeight: 700 }}>
+                    <div style={{ color: "var(--color-fff9cb)", fontSize: "16px", fontWeight: 700 }}>
                       ▶ Video
                     </div>
                   ) : (
-                    <div style={{ color: "#edb2e4", fontSize: "16px", fontWeight: 700 }}>
+                    <div style={{ color: "var(--color-edb2e4)", fontSize: "16px", fontWeight: 700 }}>
                       📄 PDF Belgesi
                     </div>
                   )}

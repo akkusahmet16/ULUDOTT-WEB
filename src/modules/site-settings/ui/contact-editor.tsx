@@ -164,9 +164,9 @@ export function ContactEditor({
                       style={{
                         padding: "3px 10px",
                         borderRadius: "100px",
-                        border: "1px solid rgba(237, 178, 228, 0.5)",
-                        background: "rgba(237, 178, 228, 0.12)",
-                        color: "var(--color-fff2b7, #fff9cb)",
+                        border: "1px solid var(--color-edb2e4aa)",
+                        background: "var(--color-edb2e420)",
+                        color: "var(--color-fff2b7)",
                         fontSize: "11px",
                         fontWeight: 700,
                         letterSpacing: "0.06em",
@@ -184,8 +184,8 @@ export function ContactEditor({
                         width: "28px",
                         height: "28px",
                         borderRadius: "50%",
-                        border: "1px solid rgba(255, 255, 255, 0.2)",
-                        background: "rgba(255, 255, 255, 0.06)",
+                        border: "1px solid var(--color-ffffff20)",
+                        background: "var(--color-ffffff08)",
                       }}
                     >
                       <SocialIcon icon={item.icon} size={16} />

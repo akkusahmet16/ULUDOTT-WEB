@@ -1,43 +1,23 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import Image from "next/image";
+import type { PageFlip } from "page-flip";
 import type { FanzinIssue } from "../domain/fanzin-types.ts";
 
 interface FlipbookReaderProps {
   readonly issue: FanzinIssue;
   readonly initialPage?: number;
-  readonly labels: {
-    readonly prevPage: string;
-    readonly nextPage: string;
-    readonly singlePageView: string;
-    readonly spreadView: string;
-  };
 }
 
 export function FlipbookReader({
   issue,
   initialPage = 1,
-  labels,
 }: FlipbookReaderProps) {
-  const [currentPage, setCurrentPage] = useState<number>(initialPage);
-  const [isFlipping, setIsFlipping] = useState<"forward" | "backward" | null>(null);
-  const [isMobile, setIsMobile] = useState<boolean>(false);
-  const [viewMode, setViewMode] = useState<"spread" | "single">("single");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const pageFlipRef = useRef<PageFlip | null>(null);
+  const currentPageRef = useRef<number>(initialPage > 0 ? initialPage - 1 : 0);
 
-  // Responsive cihaz genişliği kontrolü
-  useEffect(() => {
-    const checkMobile = () => {
-      const mobile = window.innerWidth < 900;
-      setIsMobile(mobile);
-      if (mobile) {
-        setViewMode("single");
-      }
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Web Audio API ile gerçekçi kağıt çevirme sesi
   const playPageTurnAudio = useCallback(() => {
@@ -49,7 +29,7 @@ export function FlipbookReader({
       if (!AudioCtx) return;
       const ctx = new AudioCtx();
       if (ctx.state === "suspended") {
-        ctx.resume();
+        void ctx.resume();
       }
       const duration = 0.16;
       const bufferSize = Math.floor(ctx.sampleRate * duration);
@@ -77,234 +57,126 @@ export function FlipbookReader({
       gain.connect(ctx.destination);
       noise.start();
     } catch {
-      // Etkileşim öncesi tarayıcı ses kısıtlamalarını sessizce yut
+      // Tarayıcı ses kısıtlamalarını sessizce yönet
     }
   }, []);
 
-  const isSinglePage = isMobile || viewMode === "single";
-  const step = isSinglePage ? 1 : 2;
+  // PageFlip başlatma ve yaşam döngüsü
+  useEffect(() => {
+    if (!containerRef.current) return;
 
-  // Sayfa çevirme aksiyonları
-  const turnNext = useCallback(() => {
-    if (isFlipping) return;
-    if (currentPage + step <= issue.pageCount) {
-      setIsFlipping("forward");
-      playPageTurnAudio();
-      setTimeout(() => {
-        setCurrentPage((prev) => Math.min(prev + step, issue.pageCount));
-        setIsFlipping(null);
-      }, 550);
-    }
-  }, [currentPage, isFlipping, issue.pageCount, playPageTurnAudio, step]);
+    let isMounted = true;
+    let pageFlipInstance: PageFlip | null = null;
 
-  const turnPrev = useCallback(() => {
-    if (isFlipping) return;
-    if (currentPage > 1) {
-      setIsFlipping("backward");
-      playPageTurnAudio();
-      setTimeout(() => {
-        setCurrentPage((prev) => Math.max(1, prev - step));
-        setIsFlipping(null);
-      }, 550);
-    }
-  }, [currentPage, isFlipping, playPageTurnAudio, step]);
+    // React DOM senkronizasyonunu korumak için izole mount öğesi
+    const mountEl = document.createElement("div");
+    mountEl.className = "fanzin-pageflip-instance";
+    containerRef.current.innerHTML = "";
+    containerRef.current.appendChild(mountEl);
 
-  // Klavye ok tuşları ile gezinti
+    const initPageFlip = async () => {
+      try {
+        const { PageFlip } = await import("page-flip");
+        if (!isMounted) return;
+
+        const pageImages = issue.pages
+          .map((p) => p.imageUrl)
+          .filter((url): url is string => Boolean(url));
+
+        if (pageImages.length === 0) {
+          setIsLoading(false);
+          return;
+        }
+
+        // US Letter / A4 fanzin en-boy oranı (1224x1584 ~ 1:1.294)
+        const pageFlip = new PageFlip(mountEl, {
+          width: 580,
+          height: 750,
+          size: "stretch",
+          minWidth: 320,
+          maxWidth: 950,
+          minHeight: 414,
+          maxHeight: 1230,
+          drawShadow: true,
+          maxShadowOpacity: 0.5,
+          showCover: true,
+          usePortrait: true,
+          showPageCorners: true,
+          useMouseEvents: true,
+          mobileScrollSupport: false,
+          flippingTime: 700,
+          startPage: currentPageRef.current,
+        });
+
+        pageFlipInstance = pageFlip;
+        pageFlipRef.current = pageFlip;
+
+        pageFlip.on("init", (e) => {
+          if (!isMounted) return;
+          setIsLoading(false);
+          currentPageRef.current = e.data.page;
+        });
+
+        pageFlip.on("flip", (e) => {
+          if (!isMounted) return;
+          currentPageRef.current = e.data;
+        });
+
+        pageFlip.on("changeState", (e) => {
+          if (!isMounted) return;
+          if (e.data === "flipping") {
+            playPageTurnAudio();
+          }
+        });
+
+        pageFlip.loadFromImages(pageImages);
+      } catch (err) {
+        console.error("PageFlip yüklenirken hata oluştu:", err);
+        if (isMounted) setIsLoading(false);
+      }
+    };
+
+    void initPageFlip();
+
+    return () => {
+      isMounted = false;
+      if (pageFlipInstance) {
+        try {
+          pageFlipInstance.destroy();
+        } catch {
+          // ignore
+        }
+        pageFlipRef.current = null;
+      }
+      mountEl.remove();
+    };
+  }, [issue.pages, playPageTurnAudio]);
+
+  // Klavye sol/sağ ok tuşları ile sayfa çevirme
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") {
-        turnNext();
+        pageFlipRef.current?.flipNext();
       } else if (e.key === "ArrowLeft") {
-        turnPrev();
+        pageFlipRef.current?.flipPrev();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [turnNext, turnPrev]);
-
-  // Dokunmatik cihazlar için sağ/sol kaydırma
-  const touchStartX = useRef<number | null>(null);
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0]?.clientX ?? null;
-  };
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
-    const touchEndX = e.changedTouches[0]?.clientX ?? 0;
-    const diff = touchStartX.current - touchEndX;
-    if (diff > 50) {
-      turnNext();
-    } else if (diff < -50) {
-      turnPrev();
-    }
-    touchStartX.current = null;
-  };
-
-  // Aktif gösterilen sayfalar
-  const leftPageNum = currentPage;
-  const rightPageNum = isSinglePage
-    ? null
-    : Math.min(currentPage + 1, issue.pageCount);
-
-  const leftPageData = issue.pages.find((p) => p.pageNumber === leftPageNum);
-  const rightPageData = rightPageNum
-    ? issue.pages.find((p) => p.pageNumber === rightPageNum)
-    : null;
-
-  const renderPage = (
-    pageData: (typeof issue.pages)[number] | undefined | null,
-    isRight: boolean,
-  ) => {
-    if (!pageData) {
-      return (
-        <div
-          className={`fanzin-book-page ${isSinglePage ? "fanzin-single-page" : isRight ? "fanzin-right-page" : "fanzin-left-page"}`}
-        >
-          <div className="fanzin-page-blank" />
-        </div>
-      );
-    }
-
-    return (
-      <div
-        className={`fanzin-book-page ${isSinglePage ? "fanzin-single-page" : isRight ? "fanzin-right-page" : "fanzin-left-page"}`}
-        onClick={isRight ? turnNext : turnPrev}
-        role="button"
-        tabIndex={0}
-        aria-label={isRight ? labels.nextPage : labels.prevPage}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            if (isRight) turnNext();
-            else turnPrev();
-          }
-        }}
-      >
-        {pageData.imageUrl ? (
-          <Image
-            src={pageData.imageUrl}
-            alt=""
-            width={1200}
-            height={1700}
-            className="fanzin-page-image"
-            priority={pageData.pageNumber <= 2}
-            sizes="(max-width: 900px) 100vw, 850px"
-          />
-        ) : (
-          <div className="fanzin-page-blank" />
-        )}
-      </div>
-    );
-  };
+  }, []);
 
   return (
-    <div
-      className="fanzin-reader-container"
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-    >
-      {/* Görünüm Modu Değiştirici (Masaüstü için Tek / Çift Sayfa) */}
-      {!isMobile && (
-        <div className="fanzin-reader-toolbar">
-          <div className="fanzin-view-toggle" role="group" aria-label="Görünüm modu">
-            <button
-              type="button"
-              className={`fanzin-toggle-btn ${viewMode === "single" ? "active" : ""}`}
-              onClick={() => setViewMode("single")}
-              aria-pressed={viewMode === "single"}
-            >
-              📄 {labels.singlePageView}
-            </button>
-            <button
-              type="button"
-              className={`fanzin-toggle-btn ${viewMode === "spread" ? "active" : ""}`}
-              onClick={() => setViewMode("spread")}
-              aria-pressed={viewMode === "spread"}
-            >
-              📖 {labels.spreadView}
-            </button>
-          </div>
-        </div>
-      )}
-
+    <div className="fanzin-reader-container">
       <div className="fanzin-book-stage">
-        {/* Sol sayfa çevirme oku */}
-        <button
-          type="button"
-          className="fanzin-side-arrow fanzin-side-arrow-left"
-          onClick={turnPrev}
-          disabled={currentPage <= 1 || isFlipping !== null}
-          aria-label={labels.prevPage}
-        >
-          ‹
-        </button>
-
-        {/* 3D Kitap Gövdesi (Ekrana Oranla Büyük Ölçek) */}
-        <div
-          className={`fanzin-book-frame ${isSinglePage ? "fanzin-single-frame" : "fanzin-spread-frame"}`}
-        >
-          {/* Sol Sayfa (Tek sayfada merkez sayfa) */}
-          {renderPage(leftPageData, false)}
-
-          {/* Orta Dikiş / Cilt Gölgelendirmesi (Sadece Çift Sayfada) */}
-          {!isSinglePage && (
-            <div className="fanzin-book-spine" aria-hidden="true">
-              <div className="fanzin-book-spine-line" />
+        {/* PageFlip Canvas Sahnesi (GTA VI Neon Estetiği) */}
+        <div className="fanzin-pageflip-wrapper">
+          {isLoading && (
+            <div className="fanzin-reader-loading" aria-live="polite">
+              <div className="fanzin-loading-spinner" />
             </div>
           )}
-
-          {/* Sağ Sayfa (Çift Sayfa Modunda) */}
-          {!isSinglePage && renderPage(rightPageData, true)}
-
-          {/* 3D Sayfa Çevirme Animasyon Yaprağı */}
-          {isFlipping === "forward" && (
-            <div
-              className={`fanzin-flipping-leaf fanzin-flip-forward ${isSinglePage ? "fanzin-leaf-single" : ""}`}
-              aria-hidden="true"
-            >
-              <div className="fanzin-book-page fanzin-flipping-page">
-                {(isSinglePage ? leftPageData : rightPageData)?.imageUrl && (
-                  <Image
-                    src={(isSinglePage ? leftPageData : rightPageData)!.imageUrl!}
-                    alt=""
-                    width={1200}
-                    height={1700}
-                    className="fanzin-page-image"
-                    sizes="850px"
-                  />
-                )}
-              </div>
-            </div>
-          )}
-          {isFlipping === "backward" && (
-            <div
-              className={`fanzin-flipping-leaf fanzin-flip-backward ${isSinglePage ? "fanzin-leaf-single" : ""}`}
-              aria-hidden="true"
-            >
-              <div className="fanzin-book-page fanzin-flipping-page">
-                {leftPageData?.imageUrl && (
-                  <Image
-                    src={leftPageData.imageUrl}
-                    alt=""
-                    width={1200}
-                    height={1700}
-                    className="fanzin-page-image"
-                    sizes="850px"
-                  />
-                )}
-              </div>
-            </div>
-          )}
+          <div ref={containerRef} className="fanzin-pageflip-container" />
         </div>
-
-        {/* Sağ sayfa çevirme oku */}
-        <button
-          type="button"
-          className="fanzin-side-arrow fanzin-side-arrow-right"
-          onClick={turnNext}
-          disabled={currentPage >= issue.pageCount || isFlipping !== null}
-          aria-label={labels.nextPage}
-        >
-          ›
-        </button>
       </div>
     </div>
   );

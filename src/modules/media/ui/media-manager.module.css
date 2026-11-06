@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-  color: #ffffff;
+  color: var(--color-white);
 }
 
 .statsBar {
@@ -12,8 +12,8 @@
 }
 
 .statCard {
-  background: #111422;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--color-101322);
+  border: 1px solid var(--color-ffffff12);
   border-radius: 4px;
   padding: 16px 20px;
   display: flex;
@@ -26,20 +26,20 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #887d96;
+  color: var(--color-8b94ae);
 }
 
 .statValue {
-  font-family: var(--font-secondary, inherit);
+  font-family: inherit;
   font-size: 26px;
   font-weight: 800;
-  color: var(--color-fff2b7, #fff9cb);
+  color: var(--color-fff2b7);
   letter-spacing: -0.02em;
 }
 
 .uploadZone {
-  background: #131728;
-  border: 2px dashed rgba(237, 178, 228, 0.35);
+  background: var(--color-141827);
+  border: 2px dashed var(--color-edb2e433);
   border-radius: 6px;
   padding: 24px;
   display: flex;
@@ -52,8 +52,8 @@
 }
 
 .uploadZone:hover {
-  border-color: #edb2e4;
-  background: #181d33;
+  border-color: var(--color-edb2e4);
+  background: var(--color-181e3a);
 }
 
 .uploadInputWrapper {
@@ -66,10 +66,10 @@
 
 .scopeSelect {
   padding: 8px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--color-ffffff20);
   border-radius: 4px;
-  background: #090a14;
-  color: #ffffff;
+  background: var(--color-080914);
+  color: var(--color-white);
   font-size: 13px;
   font-weight: 600;
 }
@@ -79,10 +79,10 @@
   align-items: center;
   gap: 8px;
   padding: 10px 22px;
-  border: 1px solid #edb2e4;
+  border: 1px solid var(--color-edb2e4);
   border-radius: 4px;
-  background: rgba(237, 178, 228, 0.15);
-  color: #fff9cb;
+  background: var(--color-edb2e420);
+  color: var(--color-fff9cb);
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -92,8 +92,8 @@
 }
 
 .deviceUploadBtn:hover {
-  background: #edb2e4;
-  color: #0c0d1b;
+  background: var(--color-edb2e4);
+  color: var(--color-0c0d1b);
   transform: translateY(-2px);
 }
 
@@ -110,8 +110,8 @@
 }
 
 .filterSection {
-  background: #111422;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-101322);
+  border: 1px solid var(--color-ffffff0a);
   border-radius: 4px;
   padding: 16px 20px;
   display: flex;
@@ -131,10 +131,10 @@
   flex: 1;
   min-width: 260px;
   padding: 10px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--color-ffffff15);
   border-radius: 4px;
-  background: #090a14;
-  color: #ffffff;
+  background: var(--color-080914);
+  color: var(--color-white);
   font-size: 14px;
 }
 
@@ -146,10 +146,10 @@
 
 .filterPill {
   padding: 6px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--color-ffffff12);
   border-radius: 3px;
-  background: rgba(255, 255, 255, 0.03);
-  color: #8c829c;
+  background: var(--color-ffffff03);
+  color: var(--color-8b94ae);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -159,14 +159,14 @@
 }
 
 .filterPill:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
+  background: var(--color-ffffff08);
+  color: var(--color-white);
 }
 
 .filterPillActive {
-  background: rgba(237, 178, 228, 0.2);
-  border-color: #edb2e4;
-  color: #fff9cb;
+  background: var(--color-edb2e420);
+  border-color: var(--color-edb2e4);
+  color: var(--color-fff9cb);
 }
 
 .grid {
@@ -176,8 +176,8 @@
 }
 
 .card {
-  background: #111422;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-101322);
+  border: 1px solid var(--color-ffffff0a);
   border-radius: 4px;
   overflow: hidden;
   display: flex;
@@ -186,16 +186,16 @@
 }
 
 .card:hover {
-  border-color: rgba(237, 178, 228, 0.4);
+  border-color: var(--color-edb2e433);
   transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 20px var(--color-0c0d1b90);
 }
 
 .thumbContainer {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 10;
-  background: #07080f;
+  background: var(--color-050812ed);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -208,9 +208,9 @@
   left: 8px;
   padding: 2px 8px;
   border-radius: 3px;
-  background: rgba(12, 13, 27, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff9cb;
+  background: var(--color-0c0d1bd9);
+  border: 1px solid var(--color-ffffff20);
+  color: var(--color-fff9cb);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -229,7 +229,7 @@
 .fileName {
   font-size: 13px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-white);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -238,7 +238,7 @@
 .filePath {
   font-size: 11px;
   font-family: monospace;
-  color: #8c829c;
+  color: var(--color-8b94ae);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -248,7 +248,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 11px;
-  color: #736982;
+  color: var(--color-734968);
   margin-top: 4px;
 }
 
@@ -256,16 +256,16 @@
   padding: 8px 14px 12px;
   display: flex;
   gap: 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid var(--color-ffffff07);
 }
 
 .actionBtn {
   flex: 1;
   padding: 6px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--color-ffffff15);
   border-radius: 3px;
-  background: rgba(255, 255, 255, 0.04);
-  color: #d0bed8;
+  background: var(--color-ffffff04);
+  color: var(--color-d0bed8);
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
@@ -277,16 +277,16 @@
 }
 
 .actionBtn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
+  background: var(--color-ffffff12);
+  color: var(--color-white);
 }
 
 .deleteActionBtn {
   padding: 6px 10px;
-  border: 1px solid rgba(255, 70, 70, 0.4);
+  border: 1px solid var(--color-8e526855);
   border-radius: 3px;
-  background: rgba(255, 40, 40, 0.08);
-  color: #ff7788;
+  background: var(--color-8e526855);
+  color: var(--color-f7a9b8);
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
@@ -296,16 +296,16 @@
 }
 
 .deleteActionBtn:hover {
-  background: #cc2233;
-  color: #ffffff;
-  border-color: #ff3344;
+  background: var(--color-dcabc5);
+  color: var(--color-white);
+  border-color: var(--color-dcabc5);
 }
 
 .emptyState {
   padding: 40px;
   text-align: center;
-  color: #8c829c;
-  background: #111422;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--color-8b94ae);
+  background: var(--color-101322);
+  border: 1px solid var(--color-ffffff08);
   border-radius: 4px;
 }

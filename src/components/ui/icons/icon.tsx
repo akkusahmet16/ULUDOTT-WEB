@@ -115,7 +115,7 @@ export const ICON_REGISTRY: Readonly<Record<IconId, IconRegistryEntry>> = {
     kind: "inline-svg",
     viewBox: "0 0 24 24",
     fill: "none",
-    stroke: "#ffffff",
+    stroke: "currentColor",
     strokeWidth: "2",
     defaultSize: 28,
     paths: [

@@ -189,8 +189,8 @@ export function SiteAssetPicker({
                 height: 60,
                 borderRadius: 4,
                 overflow: "hidden",
-                background: "#0c0d1b",
-                border: "1px solid rgba(255, 255, 255, 0.15)",
+                background: "var(--color-0c0d1b)",
+                border: "1px solid var(--color-ffffff16)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -205,7 +205,7 @@ export function SiteAssetPicker({
                   unoptimized
                 />
               ) : (
-                <span style={{ fontSize: 10, color: "#888" }}>Önizleme yok</span>
+                <span style={{ fontSize: 10, color: "var(--color-8b94ae)" }}>Önizleme yok</span>
               )}
             </div>
           ) : kind === "video" ? (
@@ -221,9 +221,9 @@ export function SiteAssetPicker({
               style={{
                 padding: "8px 14px",
                 borderRadius: 4,
-                border: "1px solid rgba(237, 178, 228, 0.4)",
-                background: "rgba(237, 178, 228, 0.1)",
-                color: "#fff9cb",
+                border: "1px solid var(--color-edb2e433)",
+                background: "var(--color-edb2e420)",
+                color: "var(--color-fff9cb)",
                 fontSize: 12,
                 fontWeight: 700,
                 display: "flex",
@@ -236,7 +236,7 @@ export function SiteAssetPicker({
                 href={value}
                 target="_blank"
                 rel="noreferrer"
-                style={{ color: "#edb2e4", textDecoration: "underline" }}
+                style={{ color: "var(--color-edb2e4)", textDecoration: "underline" }}
               >
                 Görüntüle ↗
               </a>
@@ -265,9 +265,9 @@ export function SiteAssetPicker({
                 padding: "2px 8px",
                 fontSize: 11,
                 borderRadius: 3,
-                border: "1px solid rgba(255, 80, 80, 0.3)",
+                border: "1px solid var(--color-8e526855)",
                 background: "transparent",
-                color: "#ff8899",
+                color: "var(--color-f7a9b8)",
                 cursor: "pointer",
               }}
             >
@@ -441,9 +441,9 @@ export function SiteAssetPicker({
                       unoptimized
                     />
                   ) : asset.kind === "video" ? (
-                    <span style={{ fontSize: 13, color: "#fff9cb" }}>▶ Video</span>
+                    <span style={{ fontSize: 13, color: "var(--color-fff9cb)" }}>▶ Video</span>
                   ) : (
-                    <span style={{ fontSize: 13, color: "#edb2e4" }}>📄 PDF</span>
+                    <span style={{ fontSize: 13, color: "var(--color-edb2e4)" }}>📄 PDF</span>
                   )}
 
                   {/* VDS Permanent Delete Button */}

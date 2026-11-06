@@ -42,15 +42,7 @@ export default async function FanzinPage() {
           <p className="eyebrow">{t("fanzin.readerEyebrow")}</p>
           <h2>{t("fanzin.readerHeading")}</h2>
         </div>
-        <FlipbookReader
-          issue={FANZIN_ISSUE_01}
-          labels={{
-            prevPage: t("fanzin.prevPage"),
-            nextPage: t("fanzin.nextPage"),
-            singlePageView: t("fanzin.singlePageView"),
-            spreadView: t("fanzin.spreadView"),
-          }}
-        />
+        <FlipbookReader issue={FANZIN_ISSUE_01} />
       </section>
 
       {/* Sayılar ve Yayınlar Arşivi */}
