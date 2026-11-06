@@ -34,6 +34,7 @@ describe("Faz 2 / İş 2A & 2B — Rota görünürlük, indeksleme, kanonik SEO 
       "ulujam",
       "events",
       "games",
+      "fanzin",
       "contact",
     ]);
 

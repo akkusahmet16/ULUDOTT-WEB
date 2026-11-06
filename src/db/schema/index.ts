@@ -9,3 +9,5 @@ export * from "./gallery.ts";
 export * from "./people.ts";
 export * from "./site-games.ts";
 export * from "./site-settings.ts";
+export * from "./fanzin.ts";
+export * from "./analytics.ts";

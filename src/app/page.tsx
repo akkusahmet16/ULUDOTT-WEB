@@ -9,7 +9,10 @@ import {
   readHomeEvents,
   readHistoricalResults,
   readUlujamPresentation,
+  readHomepageSettings,
+  readSponsorsSettings,
 } from "../modules/publication/ui/public-queries";
+import type { SponsorItem } from "../modules/site-settings/domain/sponsors";
 import { getLocale } from "../i18n/server.ts";
 import { getTranslator } from "../i18n/translate.ts";
 import { buildMetadata } from "../seo/build-metadata.ts";
@@ -18,12 +21,16 @@ export async function generateMetadata() {
   return buildMetadata({ routeId: "home", locale: await getLocale() });
 }
 export default async function HomePage() {
-  const [locale, events, results, ulujam] = await Promise.all([
+  const [locale, events, ulujam, homepageData, sponsorsData] = await Promise.all([
     getLocale(),
     readHomeEvents(),
-    readHistoricalResults(2026),
     readUlujamPresentation(),
+    readHomepageSettings(),
+    readSponsorsSettings(),
   ]);
+  const activeYear = homepageData.data.storyPanels.activeUlujamYear || 2026;
+  const isCustomGames = homepageData.data.storyPanels.gamesMode === "custom_games";
+  const results = isCustomGames ? [] : await readHistoricalResults(activeYear);
   const t = getTranslator(locale);
   return (
     <PublicShell>
@@ -66,8 +73,16 @@ export default async function HomePage() {
         </a>
       </section>
       <StoryPanels
-        degreeContent={<DegreeGames results={results} locale={locale} />}
+        degreeContent={
+          <DegreeGames
+            results={results}
+            customGames={isCustomGames ? homepageData.data.storyPanels.customGames : undefined}
+            year={activeYear}
+            locale={locale}
+          />
+        }
         presentation={ulujam}
+        settings={homepageData.data.storyPanels}
       />
       <section className={styles.intro} data-sky="#24223b">
         <p className="eyebrow">{t("home.introEyebrow")}</p>
@@ -105,7 +120,7 @@ export default async function HomePage() {
         data-sky="#223b45"
       >
         <Image
-          src="/theme/reference/venue-2.avif"
+          src={homepageData.data.communityWorld.image || "/theme/reference/venue-2.avif"}
           alt=""
           width={2560}
           height={1440}
@@ -113,18 +128,18 @@ export default async function HomePage() {
           unoptimized
         />
         <div>
-          <p className="eyebrow">{t("home.communityWorldEyebrow")}</p>
+          <p className="eyebrow">{homepageData.data.communityWorld.eyebrow || t("home.communityWorldEyebrow")}</p>
           <h2>
-            <span>{t("home.communityWorldHeadingHighlight")}</span>
+            <span>{homepageData.data.communityWorld.headingHighlight || t("home.communityWorldHeadingHighlight")}</span>
             <br />
-            {t("home.communityWorldHeadingLine2")}
+            {homepageData.data.communityWorld.headingLine1 || t("home.communityWorldHeadingLine2")}
           </h2>
-          <p>{t("home.communityWorldCopy")}</p>
-          <Link className="button" href="/hakkimizda#yonetim-kurulu">
-            {t("home.discoverBoardCta")}
+          <p>{homepageData.data.communityWorld.copy || t("home.communityWorldCopy")}</p>
+          <Link className="button" href={homepageData.data.communityWorld.boardButtonUrl || "/hakkimizda#yonetim-kurulu"}>
+            {homepageData.data.communityWorld.boardButtonText || t("home.discoverBoardCta")}
           </Link>
-          <Link className="button secondary" href="/hakkimizda#mekanlar">
-            {t("home.discoverPlacesCta")}
+          <Link className="button secondary" href={homepageData.data.communityWorld.placesButtonUrl || "/hakkimizda#mekanlar"}>
+            {homepageData.data.communityWorld.placesButtonText || t("home.discoverPlacesCta")}
           </Link>
         </div>
       </section>
@@ -133,15 +148,38 @@ export default async function HomePage() {
         aria-label={t("home.sponsorsAria")}
         data-sky="#262943"
       >
-        <p className="eyebrow">{t("home.sponsorsEyebrow")}</p>
+        <p className="eyebrow">{sponsorsData.data.title || t("home.sponsorsEyebrow")}</p>
         <div className={styles.sponsorLogos}>
-          <Image
-            src="/community/01-anasayfa/sponsorlar/sponsor-dijipin-logo.webp"
-            alt={t("home.sponsorDijipinAlt")}
-            width={2000}
-            height={510}
-            sizes="(max-width: 699px) 55vw, 280px"
-          />
+          {sponsorsData.data.sponsors.filter((s: SponsorItem) => s.visible).map((sponsor: SponsorItem) => (
+            sponsor.websiteUrl ? (
+              <a
+                key={sponsor.id}
+                href={sponsor.websiteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={sponsor.name}
+              >
+                <Image
+                  src={sponsor.logoUrl}
+                  alt={sponsor.name || t("home.sponsorDijipinAlt")}
+                  width={2000}
+                  height={510}
+                  sizes="(max-width: 699px) 55vw, 280px"
+                  unoptimized
+                />
+              </a>
+            ) : (
+              <Image
+                key={sponsor.id}
+                src={sponsor.logoUrl}
+                alt={sponsor.name}
+                width={2000}
+                height={510}
+                sizes="(max-width: 699px) 55vw, 280px"
+                unoptimized
+              />
+            )
+          ))}
         </div>
       </section>
       <section

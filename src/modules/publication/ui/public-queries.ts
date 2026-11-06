@@ -27,6 +27,9 @@ import { listPublishedSiteGames } from "../../games/application/site-game-servic
 import { getPeopleContent } from "../../community/people-content.ts";
 import { getContactSettings } from "../../site-settings/application/contact-settings.ts";
 import { getUlujamPresentation } from "../../site-settings/application/ulujam-settings.ts";
+import { getHomepageSettings } from "../../site-settings/application/homepage-settings.ts";
+import { getSponsorsSettings } from "../../site-settings/application/sponsors-settings.ts";
+import { getPlacesSettings } from "../../site-settings/application/places-settings.ts";
 import { listPublishedArchives } from "../../site-settings/application/archives.ts";
 import { listIndexablePublications } from "../service.ts";
 import type { ContentRecord, ContentType } from "../domain.ts";
@@ -176,6 +179,21 @@ export const readUlujamPresentation = cachePublicRead(
   "ulujam-presentation",
   [CACHE_TAGS.siteSettings, CACHE_TAGS.ulujam, CACHE_TAGS.events],
   () => getUlujamPresentation(),
+);
+export const readHomepageSettings = cachePublicRead(
+  "homepage-settings",
+  [CACHE_TAGS.siteSettings],
+  () => getHomepageSettings(),
+);
+export const readSponsorsSettings = cachePublicRead(
+  "sponsors-settings",
+  [CACHE_TAGS.siteSettings],
+  () => getSponsorsSettings(),
+);
+export const readPlacesSettings = cachePublicRead(
+  "places-settings",
+  [CACHE_TAGS.siteSettings],
+  () => getPlacesSettings(),
 );
 // The revision-0 default archive filters by live historical results. The
 // service deliberately keeps saved editorial archives independently governed.

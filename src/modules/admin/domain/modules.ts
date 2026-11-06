@@ -21,6 +21,19 @@ export function adminModulesFor(actor: Actor): AdminModule[] {
     ...(editor || manager
       ? ([
           {
+            href: "/admin/analitik",
+            label: "Site analitiği",
+            description: "Ziyaretçi sayıları, popüler sayfalar ve fanzin indirmeleri.",
+            group: "PANEL",
+          },
+          {
+            href: "/admin/site-icerikleri",
+            label: "Ana sayfa bölümleri",
+            description: "İkili kolon ve Topluluğun Dünyası vitrini.",
+            group: "SİTE İÇERİKLERİ",
+            publicHref: "/",
+          },
+          {
             href: "/admin/etkinlikler",
             label: "Etkinlikler",
             description: "Etkinlik, afiş, tarih ve yayın yönetimi.",
@@ -29,22 +42,36 @@ export function adminModulesFor(actor: Actor): AdminModule[] {
           },
           {
             href: "/admin/people",
-            label: "Hakkımızda",
-            description: "Kişiler, bölümler ve açılış videoları.",
+            label: "Hakkımızda & Mekanlar",
+            description: "Kişiler, bölümler ve etkinlik mekanları.",
             group: "SİTE İÇERİKLERİ",
             publicHref: "/hakkimizda",
           },
           {
             href: "/admin/oyunlar",
-            label: "Oyunlar",
+            label: "Oyunlar & Dereceler",
             description: "Oyun kartları, kapaklar ve yapımcı bilgileri.",
             group: "SİTE İÇERİKLERİ",
             publicHref: "/oyunlar",
           },
           {
+            href: "/admin/sponsorlar",
+            label: "Sponsorlar",
+            description: "Ana sayfa altındaki sponsor logoları ve bağlantılar.",
+            group: "SİTE İÇERİKLERİ",
+            publicHref: "/",
+          },
+          {
+            href: "/admin/fanzin",
+            label: "Fanzin",
+            description: "Dijital fanzin sayıları, PDF yükleme ve flipbook yönetimi.",
+            group: "SİTE İÇERİKLERİ",
+            publicHref: "/fanzin",
+          },
+          {
             href: "/admin/iletisim",
-            label: "İletişim",
-            description: "İletişim bilgileri ve ortak alt bağlantılar.",
+            label: "İletişim & Sosyal Medya",
+            description: "İletişim bilgileri ve resmi sosyal medya bağlantıları.",
             group: "SİTE İÇERİKLERİ",
             publicHref: "/iletisim",
           },

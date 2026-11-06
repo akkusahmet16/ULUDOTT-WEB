@@ -12,14 +12,19 @@ import { readJson } from "../../../lib/http/read-json.ts";
 import { getContactSettings, saveContactSettings } from "./contact-settings.ts";
 import { ulujamEditorData, saveUlujamSettings } from "./ulujam-settings.ts";
 import { listArchives, saveArchive } from "./archives.ts";
+import { getHomepageSettings, saveHomepageSettings } from "./homepage-settings.ts";
+import { getSponsorsSettings, saveSponsorsSettings } from "./sponsors-settings.ts";
+import { getPlacesSettings, savePlacesSettings } from "./places-settings.ts";
 import { listPublishedSiteGames } from "../../games/application/site-game-service.ts";
-export function settingsHandler(scope: "ulujam" | "archives" | "contact") {
+export function settingsHandler(
+  scope: "ulujam" | "archives" | "contact" | "homepage" | "sponsors" | "places",
+) {
   return async (request: Request) => {
     try {
       const actor = await adminActor(request);
       requirePermission(
         actor,
-        scope === "contact" ? "links.write" : "publication.write",
+        scope === "contact" ? "links.write" : "content.write",
       );
       if (request.method === "GET") {
         const data =
@@ -27,10 +32,16 @@ export function settingsHandler(scope: "ulujam" | "archives" | "contact") {
             ? await ulujamEditorData(actor)
             : scope === "contact"
               ? await getContactSettings()
-              : {
-                  items: await listArchives(actor),
-                  gameOptions: await listPublishedSiteGames(),
-                };
+              : scope === "homepage"
+                ? await getHomepageSettings()
+                : scope === "sponsors"
+                  ? await getSponsorsSettings()
+                  : scope === "places"
+                    ? await getPlacesSettings()
+                    : {
+                        items: await listArchives(actor),
+                        gameOptions: await listPublishedSiteGames(),
+                      };
         return Response.json(data, { headers: privateHeaders });
       }
       const data = z
@@ -48,10 +59,28 @@ export function settingsHandler(scope: "ulujam" | "archives" | "contact") {
                 data.input,
                 data.expectedRevision,
               )
-            : await saveArchive(actor, data.input, data.expectedRevision);
-      revalidateTag(CACHE_TAGS.siteSettings, { expire: 0 });
+            : scope === "homepage"
+              ? await saveHomepageSettings(
+                  actor,
+                  data.input,
+                  data.expectedRevision,
+                )
+              : scope === "sponsors"
+                ? await saveSponsorsSettings(
+                    actor,
+                    data.input,
+                    data.expectedRevision,
+                  )
+                : scope === "places"
+                  ? await savePlacesSettings(
+                      actor,
+                      data.input,
+                      data.expectedRevision,
+                    )
+                  : await saveArchive(actor, data.input, data.expectedRevision);
+      revalidateTag(CACHE_TAGS.siteSettings, "max");
       if (scope !== "contact") {
-        revalidateTag(CACHE_TAGS.ulujam, { expire: 0 });
+        revalidateTag(CACHE_TAGS.ulujam, "max");
       }
       return Response.json(result, { headers: privateHeaders });
     } catch (error) {

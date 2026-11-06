@@ -75,6 +75,12 @@ export const AUDITED_COLOR_EXCEPTION_MANIFEST: readonly AuditedColorException[] 
     reason: "v0.1 DOM data-sky sahne veri özniteliği (--scene-bg çalışma anı scroll-motion girdisi; themes.css içinde --sky-* olarak kayıtlı).",
   },
   {
+    file: "src/app/(public)/fanzin/page.tsx",
+    allowedLiterals: ["#24223b", "#192437"],
+    category: "runtime-scene-sky",
+    reason: "Fanzin DOM data-sky sahne veri özniteliği (--scene-bg çalışma anı scroll-motion girdisi; themes.css içinde --sky-* olarak kayıtlı).",
+  },
+  {
     file: "src/components/layout/story-panels.tsx",
     allowedLiterals: ["#192437"],
     category: "runtime-scene-sky",
@@ -355,7 +361,7 @@ describe("Theme Centralization Guard Suite (Faz 1 — İş 1A)", () => {
 
   it("forbids browser UI colors and local token definitions in all CSS files outside src/styles/themes.css", () => {
     const cssFiles = walkFiles(srcDir, (f) => f.endsWith(".css"));
-    expect(cssFiles.length).toBe(13); // themes.css + base.css + tokens.css + cinematic.css + home.module.css + 8 module.css files
+    expect(cssFiles.length).toBe(18); // themes.css + base.css + tokens.css + cinematic.css + home.module.css + 13 module.css files
 
     const allErrors: string[] = [];
     for (const fullPath of cssFiles) {

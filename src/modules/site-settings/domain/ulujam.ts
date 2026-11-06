@@ -48,7 +48,8 @@ export const ulujamSettingsSchema = z
     videoDescription: z.string().trim().max(2000),
     videoCover: z.string().min(1).max(500),
     videoPublished: z.boolean(),
-    formId: z.uuid().nullable(),
+    formId: z.uuid().nullable().optional(),
+    applicationUrl: z.string().trim().max(1000).optional(),
     managedFormIds: z.array(z.uuid()).max(100).default([]),
     applicationPublished: z.boolean(),
     applicationTitle: z.string().trim().min(1).max(160),
@@ -61,8 +62,8 @@ export const ulujamSettingsSchema = z
     "Video bağlantısı gerekli",
   )
   .refine(
-    (value) => !value.applicationPublished || !!value.formId,
-    "Başvuru formu seçin",
+    (value) => !value.applicationPublished || !!value.formId || !!value.applicationUrl,
+    "Başvuru formu veya bağlantı linki girin",
   );
 export type UlujamSettings = z.infer<typeof ulujamSettingsSchema>;
 export const defaultUlujamSettings: UlujamSettings = {

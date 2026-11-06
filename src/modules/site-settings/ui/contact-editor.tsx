@@ -196,9 +196,13 @@ export function ContactEditor({
                         {
                           instagram: "Instagram",
                           whatsapp: "WhatsApp",
-                          x: "X",
+                          x: "X (Twitter)",
                           youtube: "YouTube",
-                          link: "Diğer bağlantı",
+                          discord: "Discord",
+                          linkedin: "LinkedIn",
+                          kick: "Kick",
+                          link: "Diğer bağlantı (İkon)",
+                          text: "Özel Yazı Bağlantısı",
                         }[icon]
                       }
                     </option>

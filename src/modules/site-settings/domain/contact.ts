@@ -4,7 +4,11 @@ export const socialIcons = [
   "whatsapp",
   "x",
   "youtube",
+  "discord",
+  "linkedin",
+  "kick",
   "link",
+  "text",
 ] as const;
 export const httpsUrl = z
   .string()

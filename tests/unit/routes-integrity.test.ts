@@ -252,10 +252,11 @@ describe("Faz 2 / İş 2A — Typed route sözleşmesi ve dosya sistemi bütünl
   it("src/app dosya sistemini route-group ve dinamik segmentleri çözerek tarar; 6 genel sayfa, 2 dinamik detay, özel/admin/API sınıflarını doğrular", () => {
     const discovered = scanAppFilesystem(APP_DIR);
 
-    // 6 genel statik sayfa
+    // 7 genel statik sayfa
     expect(discovered.publicStaticPages).toEqual([
       "/",
       "/etkinlikler",
+      "/fanzin",
       "/hakkimizda",
       "/iletisim",
       "/oyunlar",
@@ -314,12 +315,13 @@ describe("Faz 2 / İş 2A — Typed route sözleşmesi ve dosya sistemi bütünl
       "/ulujam",
       "/etkinlikler",
       "/oyunlar",
+      "/fanzin",
       "/iletisim",
     ]);
 
     // Navbar sıralaması benzersiz ve artan olmalıdır
     const orders = navbarRoutes.map((r) => r.order);
-    expect(orders).toEqual([0, 1, 2, 3, 4, 5]);
+    expect(orders).toEqual([0, 1, 2, 3, 4, 5, 6]);
 
     for (const route of ROUTES) {
       const pageFile = resolvePageFileForRoutePath(route.pattern);

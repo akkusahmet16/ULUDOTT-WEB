@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { SESSION_COOKIE, resolveSession } from "../../../lib/auth/session";
 import { requirePermission } from "../../../modules/admin/domain/permissions";
-import { PeopleEditor } from "../../../modules/community/people-editor";
+import { AboutManagement } from "../../../modules/community/about-management";
 
 export default async function Page() {
   const session = await resolveSession(
@@ -32,7 +32,7 @@ export default async function Page() {
         Fotoğrafları cihazınızdan yükleyebilir veya mevcut dosyalar arasından
         seçebilirsiniz. Kişiyi silmek görsel dosyasını silmez.
       </p>
-      <PeopleEditor />
+      <AboutManagement />
     </main>
   );
 }

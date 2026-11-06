@@ -1,14 +1,19 @@
 "use client";
-export async function formRequest(url: string, body: unknown) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function formRequest<T = any>(
+  url: string,
+  body: unknown = {},
+  method: string = "POST",
+): Promise<T> {
   const c = await fetch("/api/admin/csrf", { cache: "no-store" });
   if (!c.ok) throw Error("İstek doğrulanamadı");
   const { csrfToken } = await c.json();
   const r = await fetch(url, {
-    method: "POST",
+    method,
     headers: { "Content-Type": "application/json", "x-csrf-token": csrfToken },
-    body: JSON.stringify(body),
+    body: method === "GET" || method === "DELETE" ? undefined : JSON.stringify(body),
   });
   const d = await r.json();
   if (!r.ok) throw Error(d.error ?? "İşlem tamamlanamadı");
-  return d;
+  return d as T;
 }

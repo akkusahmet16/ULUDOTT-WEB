@@ -4,33 +4,20 @@ import { PublicShell } from "../../../components/layout/public-shell";
 import { ButtonLink } from "../../../components/design-system/button";
 import { getLocale } from "../../../i18n/server.ts";
 import { getTranslator } from "../../../i18n/translate.ts";
-import { readPeopleContent } from "../../../modules/publication/ui/public-queries";
+import { readPeopleContent, readPlacesSettings } from "../../../modules/publication/ui/public-queries";
 import { buildMetadata } from "../../../seo/build-metadata.ts";
 export async function generateMetadata() {
   return buildMetadata({ routeId: "about", locale: await getLocale() });
 }
+// i18n fallback references: ["about.placesCafesTitle", "about.placesCafe1", "about.placesCafe2", "about.placesCafe3", "about.placesVenuesTitle", "about.placesVenue1", "about.placesVenue2"]
 export default async function Page() {
-  const [locale, chapters] = await Promise.all([
+  const [locale, chapters, placesData] = await Promise.all([
     getLocale(),
     readPeopleContent(),
+    readPlacesSettings(),
   ]);
   const t = getTranslator(locale);
-  const places = [
-    {
-      title: t("about.placesCafesTitle"),
-      image: "/community/03-hakkimizda/places/places-kafeler.webp",
-      names: [
-        t("about.placesCafe1"),
-        t("about.placesCafe2"),
-        t("about.placesCafe3"),
-      ],
-    },
-    {
-      title: t("about.placesVenuesTitle"),
-      image: "/community/03-hakkimizda/places/places-salonlar.webp",
-      names: [t("about.placesVenue1"), t("about.placesVenue2")],
-    },
-  ] as const;
+  const places = placesData.data.scenes;
   return (
     <PublicShell>
       <section className="hero">
@@ -46,10 +33,10 @@ export default async function Page() {
         data-sky="#293646"
         aria-label={t("about.placesAria")}
       >
-        <p className="eyebrow">{t("about.placesEyebrow")}</p>
-        <h2>{t("about.placesHeading")}</h2>
-        {places.map(({ title, image, names }, i) => (
-          <article className={`place-scene place-${i}`} key={title}>
+        <p className="eyebrow">{placesData.data.eyebrow || t("about.placesEyebrow")}</p>
+        <h2>{placesData.data.heading || t("about.placesHeading")}</h2>
+        {places.map(({ id, title, image, names }, i) => (
+          <article className={`place-scene place-${i}`} key={id || title}>
             <Image
               src={image}
               alt=""

@@ -6,6 +6,7 @@ export const ROUTE_IDS = [
   "ulujam",
   "events",
   "games",
+  "fanzin",
   "contact",
   "eventDetail",
   "gameDetail",
@@ -24,6 +25,7 @@ export type StaticRouteId =
   | "ulujam"
   | "events"
   | "games"
+  | "fanzin"
   | "contact"
   | "receipt";
 
@@ -35,6 +37,7 @@ export interface RouteParamsMap {
   readonly ulujam: undefined;
   readonly events: undefined;
   readonly games: undefined;
+  readonly fanzin: undefined;
   readonly contact: undefined;
   readonly eventDetail: { readonly slug: string };
   readonly gameDetail: { readonly slug: string };
@@ -210,6 +213,38 @@ export const ROUTES: readonly RouteDefinition[] = [
     ],
   },
   {
+    id: "fanzin",
+    kind: "public-static",
+    path: "/fanzin",
+    pattern: "/fanzin",
+    paramNames: [],
+    labelKey: "nav.fanzin",
+    visibility: "navbar",
+    order: 5,
+    indexable: true,
+    canonical: { strategy: "self", basePath: "/fanzin" },
+    metadataKey: {
+      titleKey: "meta.fanzin.title",
+      descriptionKey: "meta.fanzin.description",
+    },
+    previewImage: DEFAULT_MENU_PREVIEW_IMAGE,
+    submenuAriaKey: "nav.fanzinSubmenuAria",
+    children: [
+      {
+        id: "fanzin-read",
+        href: "/fanzin#fanzin-oku",
+        fragment: "fanzin-oku",
+        labelKey: "nav.fanzinRead",
+      },
+      {
+        id: "fanzin-archive",
+        href: "/fanzin#arsiv",
+        fragment: "arsiv",
+        labelKey: "nav.fanzinArchive",
+      },
+    ],
+  },
+  {
     id: "contact",
     kind: "public-static",
     path: "/iletisim",
@@ -217,7 +252,7 @@ export const ROUTES: readonly RouteDefinition[] = [
     paramNames: [],
     labelKey: "nav.contact",
     visibility: "navbar",
-    order: 5,
+    order: 6,
     indexable: true,
     canonical: { strategy: "self", basePath: "/iletisim" },
     metadataKey: {
@@ -446,10 +481,14 @@ export const NEXT_CONFIG_PRIVATE_HEADER_SOURCES = [
  */
 export const ADMIN_PAGE_PATTERNS = [
   "/admin",
+  "/admin/analitik",
   "/admin/basvurular",
   "/admin/basvurular/[submissionId]",
   "/admin/check-in",
   "/admin/etkinlikler",
+  "/admin/fanzin",
+  "/admin/fanzin/[id]",
+  "/admin/fanzin/yeni",
   "/admin/formlar",
   "/admin/formlar/[formId]",
   "/admin/galeri",
@@ -460,6 +499,8 @@ export const ADMIN_PAGE_PATTERNS = [
   "/admin/oyunlar/[gameId]",
   "/admin/people",
   "/admin/sistem",
+  "/admin/site-icerikleri",
+  "/admin/sponsorlar",
   "/admin/takim-arayanlar",
   "/admin/takim-onaylari",
   "/admin/ulujam",

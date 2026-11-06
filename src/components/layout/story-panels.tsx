@@ -4,7 +4,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTranslator } from "../../i18n/client.tsx";
 import type { UlujamPresentation } from "../../modules/site-settings/domain/ulujam";
-export function StoryPanels({ degreeContent, presentation }: { degreeContent: ReactNode; presentation: UlujamPresentation }) {
+import type { HomepageSettings } from "../../modules/site-settings/domain/homepage";
+export function StoryPanels({
+  degreeContent,
+  presentation,
+  settings,
+}: {
+  degreeContent: ReactNode;
+  presentation: UlujamPresentation;
+  settings?: HomepageSettings["storyPanels"];
+}) {
   const t = useTranslator();
   const [active, setActive] = useState<"ulujam" | "games" | null>(null);
   const [playing, setPlaying] = useState(false);
@@ -39,20 +48,29 @@ export function StoryPanels({ degreeContent, presentation }: { degreeContent: Re
           [
             [
               "ulujam",
-              presentation.panelTitle,
-              presentation.panelDescription,
-              "ulujam",
+              settings?.leftTitle || presentation.panelTitle,
+              settings?.leftDescription || presentation.panelDescription,
+              settings?.leftImage || "/community/01-anasayfa/anasayfa-ulujam-panel.webp",
               t("home.openUlujamStoryAria"),
+              settings?.leftEyebrow ||
+                (presentation.application.open
+                  ? t("home.applicationsOpenEyebrow")
+                  : t("home.createTogetherEyebrow")),
             ],
             [
               "games",
-              t("home.degreeGamesTitle"),
-              t("home.degreeGamesSubtitle"),
-              "community",
+              settings?.rightTitle || t("home.degreeGamesTitle"),
+              settings?.rightDescription || t("home.degreeGamesSubtitle"),
+              settings?.rightImage || "/community/01-anasayfa/anasayfa-derece-panel.webp",
               t("home.openDegreeGamesStoryAria"),
+              settings?.gamesMode === "custom_games"
+                ? "BİZİM YAPTIKLARIMIZ"
+                : settings?.activeUlujamYear
+                  ? `ULUJAM ${settings.activeUlujamYear}`
+                  : t("home.ulujam2026Eyebrow"),
             ],
           ] as const
-        ).map(([id, title, description, art, label]) => (
+        ).map(([id, title, description, art, label, eyebrowText]) => (
           <button
             key={id}
             className="story-panel-button"
@@ -66,24 +84,14 @@ export function StoryPanels({ degreeContent, presentation }: { degreeContent: Re
             data-open-story={id}
           >
             <Image
-              src={
-                art === "ulujam"
-                  ? "/community/01-anasayfa/anasayfa-ulujam-panel.webp"
-                  : "/community/01-anasayfa/anasayfa-derece-panel.webp"
-              }
+              src={art}
               alt=""
               width={1080}
               height={1600}
               unoptimized
             />
             <span className="panel-caption">
-              <span className="eyebrow">
-                {id === "ulujam"
-                  ? presentation.application.open
-                    ? t("home.applicationsOpenEyebrow")
-                    : t("home.createTogetherEyebrow")
-                  : t("home.ulujam2026Eyebrow")}
-              </span>
+              <span className="eyebrow">{eyebrowText}</span>
               <strong>{title}</strong>
               <span>{description}</span>
             </span>
