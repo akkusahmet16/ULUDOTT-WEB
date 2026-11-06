@@ -6,9 +6,9 @@ import Link from "next/link";
 import { PublicShell } from "../components/layout/public-shell";
 import { OpeningGlow } from "../components/layout/opening-glow";
 import { coffeeTalkEndsAt } from "../modules/events/domain/legacy-coffee-talk";
-import { PastEventsCarousel } from "../modules/events/ui/past-events-carousel";
 import { EventCard } from "../modules/events/ui/event-card";
 import { PastEventPosterCard } from "../modules/events/ui/past-event-poster-card";
+import posterStyles from "../modules/events/ui/past-event-poster-card.module.css";
 import {
   readHomeEvents,
   readHistoricalResults,
@@ -29,20 +29,21 @@ export default async function HomePage() {
     readUlujamPresentation(),
   ]);
   const t = getTranslator(locale);
-  const pastSlides = events.past.map((event) => ({
+  const pastEvents = events.past.map((event) => ({
     id: event.id,
-    title: event.title,
     endedAt: (event.endsAt ?? event.startsAt)?.getTime() ?? 0,
-    content: <PastEventPosterCard event={event} locale={locale} />,
+    node: <PastEventPosterCard key={event.id} event={event} locale={locale} />,
   }));
   if (events.showLegacyCoffeeTalk)
-    pastSlides.push({
+    pastEvents.push({
       id: "legacy-coffee-talk",
-      title: t("home.coffeeTalkTitle"),
       endedAt: coffeeTalkEndsAt.getTime(),
-      content: <CoffeeTalkCard posterOnly locale={locale} />,
+      node: (
+        <CoffeeTalkCard key="legacy-coffee-talk" posterOnly locale={locale} />
+      ),
     });
-  pastSlides.sort((a, b) => b.endedAt - a.endedAt || a.id.localeCompare(b.id));
+  pastEvents.sort((a, b) => b.endedAt - a.endedAt || a.id.localeCompare(b.id));
+  const recentPastEvents = pastEvents.slice(0, 4);
   return (
     <PublicShell>
       <section className={`clone-opening ${styles.opening}`}>
@@ -157,8 +158,10 @@ export default async function HomePage() {
             {t("home.allEventsLink")} <span aria-hidden="true">↗</span>
           </Link>
         </div>
-        {pastSlides.length ? (
-          <PastEventsCarousel slides={pastSlides} />
+        {recentPastEvents.length ? (
+          <div className={posterStyles.homePastEventsGrid}>
+            {recentPastEvents.map((item) => item.node)}
+          </div>
         ) : (
           <p className={styles.emptyEvents}>{t("home.pastEventsEmpty")}</p>
         )}
