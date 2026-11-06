@@ -23,7 +23,7 @@ export function FlipbookReader({
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const hasPages = Boolean(issue?.pages && issue.pages.length > 0);
+  const hasPages = Boolean(issue?.pages && issue.pages.length >= 2);
 
   // Web Audio API ile gerçekçi kağıt çevirme sesi
   const playPageTurnAudio = useCallback(() => {
