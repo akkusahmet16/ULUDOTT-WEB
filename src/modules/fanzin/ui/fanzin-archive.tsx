@@ -2,6 +2,7 @@ import type { FanzinIssue } from "../domain/fanzin-types.ts";
 
 interface FanzinArchiveProps {
   readonly issues: readonly FanzinIssue[];
+  readonly activeIssueId?: string | null;
   readonly labels: {
     readonly archiveHeading: string;
     readonly archiveEyebrow: string;
@@ -16,7 +17,7 @@ interface FanzinArchiveProps {
   };
 }
 
-export function FanzinArchive({ issues, labels }: FanzinArchiveProps) {
+export function FanzinArchive({ issues, activeIssueId, labels }: FanzinArchiveProps) {
   return (
     <section id="arsiv" className="section fanzin-archive-section">
       <div>
@@ -29,6 +30,11 @@ export function FanzinArchive({ issues, labels }: FanzinArchiveProps) {
         <div className="grid fanzin-archive-grid">
           {issues.map((issue) => {
             const isPublished = issue.status === "published";
+            const isCurrent = activeIssueId
+              ? issue.id === activeIssueId
+              : isPublished && issue.id === issues.find((i) => i.status === "published")?.id;
+            const hasPdf = Boolean(issue.pdfUrl && issue.pdfUrl !== "#" && issue.pdfUrl.trim() !== "");
+
             return (
               <article key={issue.id} className="card fanzin-archive-card">
                 <div className="fanzin-archive-card-meta">
@@ -48,16 +54,21 @@ export function FanzinArchive({ issues, labels }: FanzinArchiveProps) {
                 <div className="fanzin-archive-actions">
                   {isPublished ? (
                     <>
-                      <a href="#fanzin-oku" className="button">
-                        {labels.readButton}
-                      </a>
-                      <a
-                        href={issue.pdfUrl.includes("?") ? `${issue.pdfUrl}&download=1` : `${issue.pdfUrl}?download=1`}
-                        download={`uludott-fanzin-sayi-${String(issue.issueNumber).padStart(2, "0")}.pdf`}
-                        className="button secondary"
-                      >
-                        {labels.downloadButton}
-                      </a>
+                      {/* Güncel fanzin için hem okuyucu hem indirme butonu, arşivdeki diğer sayılar için yalnızca indirme butonu */}
+                      {isCurrent && (
+                        <a href="#fanzin-oku" className="button">
+                          {labels.readButton}
+                        </a>
+                      )}
+                      {hasPdf ? (
+                        <a
+                          href={issue.pdfUrl.includes("?") ? `${issue.pdfUrl}&download=1` : `${issue.pdfUrl}?download=1`}
+                          download={`uludott-fanzin-sayi-${String(issue.issueNumber).padStart(2, "0")}.pdf`}
+                          className={isCurrent ? "button secondary" : "button"}
+                        >
+                          {labels.downloadButton}
+                        </a>
+                      ) : null}
                     </>
                   ) : (
                     <span

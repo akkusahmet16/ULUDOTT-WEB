@@ -56,6 +56,7 @@ export default async function FanzinPage() {
       {/* Sayılar ve Yayınlar Arşivi */}
       <FanzinArchive
         issues={issues}
+        activeIssueId={activeIssue?.id}
         labels={{
           archiveHeading: t("fanzin.archiveHeading"),
           archiveEyebrow: t("fanzin.archiveEyebrow"),
