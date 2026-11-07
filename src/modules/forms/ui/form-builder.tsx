@@ -399,10 +399,25 @@ export function FormBuilder({
     }
     setBusy(true);
     try {
+      let currentRevision = revision;
+      if (action === "publish" && !form.settings.opensAt) {
+        const updatedSettings = await formRequest(
+          "/api/admin/forms/" + form.id,
+          {
+            action: "settings",
+            input: {
+              ...form.settings,
+              opensAt: new Date().toISOString(),
+            },
+            expectedRevision: currentRevision,
+          },
+        );
+        currentRevision = updatedSettings.revision;
+      }
       const saved = await formRequest("/api/admin/forms/" + form.id, {
         action,
         input,
-        expectedRevision: revision,
+        expectedRevision: currentRevision,
       });
       setRevision(saved.revision);
       if (action === "definition") setSavedFields(fields);

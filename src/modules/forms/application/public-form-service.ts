@@ -10,13 +10,8 @@ export async function getPublicForm(slug: string) {
   if (!/^[a-z0-9-]{1,100}$/.test(slug)) return null;
   return withTransaction(async (tx) => {
     const [f] = await tx.select().from(forms).where(eq(forms.slug, slug));
-    if (
-      !f ||
-      !f.currentVersionId ||
-      f.status === "draft" ||
-      f.status === "archived"
-    )
-      return null;
+    const activeVersionId = f?.currentVersionId ?? f?.draftVersionId ?? null;
+    if (!f || !activeVersionId || f.status === "archived") return null;
     const [event] = f.eventId
       ? await tx.select().from(events).where(eq(events.id, f.eventId))
       : [];
@@ -25,14 +20,13 @@ export async function getPublicForm(slug: string) {
     const parsedSettings = settingsSchema.safeParse(f.settings);
     const description = parsedSettings.success ? parsedSettings.data.description : "";
     if (
-      f.status !== "published" ||
+      !["published", "draft"].includes(f.status) ||
       !(await applicationEnabled(tx, f.id)) ||
       (event?.kind === "ulujam" &&
         (!["published", "draft", "scheduled"].includes(event.status) ||
           (event.status === "published" && !event.startsAt) ||
           (!!event.endsAt && event.endsAt <= date))) ||
-      !f.opensAt ||
-      f.opensAt > date ||
+      (f.opensAt && f.opensAt > date) ||
       (f.closesAt && f.closesAt <= date)
     )
       return {
@@ -47,7 +41,7 @@ export async function getPublicForm(slug: string) {
             : "Bu form şu anda başvuru almıyor.",
         version: null,
       };
-    const v = await readFormVersion(tx, f.currentVersionId);
+    const v = await readFormVersion(tx, activeVersionId);
     return {
       title: f.title,
       description,
@@ -55,7 +49,10 @@ export async function getPublicForm(slug: string) {
       eventId: f.eventId,
       eventKind: event?.kind ?? "general",
       state: "open",
-      version: v.publishedAt ? { id: v.id, definition: v.definition } : null,
+      version:
+        v.publishedAt || activeVersionId === f.draftVersionId
+          ? { id: v.id, definition: v.definition }
+          : null,
     };
   });
 }

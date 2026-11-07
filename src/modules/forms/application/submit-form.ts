@@ -117,22 +117,23 @@ export async function submitFormInTransaction(
     return receiptSchema.parse(decryptReplay(prior.responseEncrypted, scope));
   }
   if (prior) await tx.delete(idempotencyRecords).where(where);
+  const activeVersionId =
+    f.currentVersionId ?? (f.status === "draft" ? f.draftVersionId : null);
   if (
-    f.status !== "published" ||
+    !["published", "draft"].includes(f.status) ||
     !(await applicationEnabled(tx, f.id)) ||
-    !f.currentVersionId ||
-    !f.opensAt ||
-    f.opensAt > currentTime ||
+    !activeVersionId ||
+    (f.opensAt && f.opensAt > currentTime) ||
     (f.closesAt && f.closesAt <= currentTime)
   )
     throw new SubmissionError(409, "Form şu anda başvuru almıyor");
-  if (versionId && versionId !== f.currentVersionId)
+  if (versionId && versionId !== activeVersionId)
     throw new SubmissionError(
       409,
       "Form güncellendi. Sayfayı yenileyip yanıtları tekrar kontrol edin.",
     );
-  const version = await readFormVersion(tx, f.currentVersionId);
-  if (!version.publishedAt)
+  const version = await readFormVersion(tx, activeVersionId);
+  if (!version.publishedAt && activeVersionId !== f.draftVersionId)
     throw new SubmissionError(409, "Form şu anda başvuru almıyor");
   const fileFields = new Set(version.definition.fields.filter((field) => field.type === "file").map((field) => field.id));
   const files = context.files ?? new Map<string, File>();
