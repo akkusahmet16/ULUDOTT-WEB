@@ -26,7 +26,14 @@ export function PastEventPosterCard({
   const t = getTranslator(locale);
 
   const cardTitle = title ?? event?.title ?? "";
-  const imageSrc = posterSrc ?? (event?.image ? `/media/${event.image.id}` : null);
+  const imageSrc =
+    posterSrc ??
+    (event?.image
+      ? event.image.url ||
+        (event.image.id.startsWith("/")
+          ? event.image.id
+          : `/media/${event.image.id}`)
+      : null);
   const imageAlt = alt ?? event?.image?.altText ?? cardTitle;
   const imageWidth = width ?? event?.image?.width ?? 1080;
   const imageHeight = height ?? event?.image?.height ?? 1350;

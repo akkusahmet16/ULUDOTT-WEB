@@ -70,6 +70,7 @@ const columns: Record<string, string> = {
   maxTeamSize: "max_team_size",
   formId: "form_id",
   mediaId: "media_id",
+  posterUrl: "poster_url",
   eventId: "event_id",
   ctaUrl: "cta_url",
   ctaLabel: "cta_label",
@@ -87,8 +88,8 @@ export async function write(
   input: Record<string, unknown>,
   id?: string,
 ) {
-  const entries = Object.entries(input).filter(([k]) =>
-    Object.hasOwn(columns, k),
+  const entries = Object.entries(input).filter(
+    ([k]) => Object.hasOwn(columns, k) && !(type === "announcement" && k === "posterUrl"),
   );
   const rows = id
     ? await tx.execute(

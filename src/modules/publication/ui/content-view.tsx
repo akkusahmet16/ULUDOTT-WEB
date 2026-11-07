@@ -38,9 +38,13 @@ export function ContentView({
         <picture className={type === "event" ? "event-poster" : undefined}>
           <img
             src={
-              preview
-                ? `/api/admin/media?preview=${image.id}`
-                : `/media/${image.id}`
+              ("url" in image && image.url)
+                ? (image.url as string)
+                : image.id.startsWith("/")
+                  ? image.id
+                  : preview
+                    ? `/api/admin/media?preview=${image.id}`
+                    : `/media/${image.id}`
             }
             alt={image.altText}
             width={image.width}

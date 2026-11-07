@@ -277,13 +277,22 @@ async function enrich(
   if (!(await liveCta(tx, row.ctaUrl, now)))
     row = { ...row, ctaUrl: null, ctaLabel: null };
   let image: PublicContent["image"] = null;
-  if (row.mediaId) {
+  if (row.posterUrl) {
+    image = {
+      id: row.posterUrl,
+      url: row.posterUrl,
+      width: 1080,
+      height: 1350,
+      altText: row.title,
+    };
+  } else if (row.mediaId) {
     const v = await tx.execute(
       sql`select v.id,v.width,v.height,a.alt_text from media_variants v join media_assets a on a.id=v.asset_id where a.id=${row.mediaId} and a.status='ready' and v.published_at is not null and v.mime_type='image/webp'`,
     );
     if (v[0])
       image = {
         id: v[0].id as string,
+        url: `/media/${v[0].id}`,
         width: v[0].width as number,
         height: v[0].height as number,
         altText: v[0].alt_text as string,
@@ -447,4 +456,50 @@ export async function listIndexablePublications(
     return z.array(indexablePublication).parse(rows);
   });
 }
+
+export async function remove(type: ContentType, id: string, actor: Actor) {
+  return withTransaction(async (tx) => {
+    await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${type}))`);
+    const current = await find(tx, type, id);
+    if (!current) throw Error("İçerik bulunamadı");
+    permission(actor, type, current);
+
+    if (type === "event") {
+      const subCount = await tx.execute(
+        sql`select count(*)::int as count from submissions where event_id=${id}`,
+      );
+      const count = Number((subCount[0] as { count?: unknown })?.count ?? 0);
+      if (count > 0) {
+        throw Error("Bu etkinliğe ait kullanıcı başvuruları olduğu için doğrudan silinemez. Durumunu 'Arşiv' yapabilirsiniz.");
+      }
+      await tx.execute(sql`delete from event_gallery where event_id=${id}`);
+      await tx.execute(sql`delete from admin_event_scopes where event_id=${id}`);
+      await tx.execute(sql`delete from featured_slots where event_id=${id}`);
+      await tx.execute(sql`delete from event_years where event_id=${id}`);
+      await tx.execute(sql`delete from awards where event_id=${id}`);
+      await tx.execute(sql`delete from finalists where event_id=${id}`);
+      await tx.execute(sql`delete from applications where event_id=${id}`);
+      await tx.execute(sql`delete from memberships where event_id=${id}`);
+      await tx.execute(sql`delete from teams where event_id=${id}`);
+      await tx.execute(sql`delete from games where event_id=${id}`);
+      await tx.execute(sql`delete from forms where event_id=${id}`);
+      await tx.execute(sql`delete from announcements where event_id=${id}`);
+    }
+
+    await tx.execute(
+      sql`delete from content_redirects where content_type=${type} and content_id=${id}`,
+    );
+    await tx.execute(sql`delete from ${table(type)} where id=${id}`);
+
+    await appendAudit(
+      tx,
+      actor,
+      `${type}.deleted`,
+      { type, id },
+      { title: current.title, slug: current.slug },
+    );
+    return { success: true, id };
+  });
+}
+
 

@@ -53,6 +53,7 @@ export const eventInput = z
     maxTeamSize: z.int().min(1).max(100).default(6),
     formId: z.uuid().nullable().default(null),
     featuredPosition: z.int().min(0).max(1000).nullable().default(null),
+    posterUrl: z.string().trim().max(1000).nullable().default(null),
   })
   .refine(windowCheck, "Geçersiz yayın penceresi")
   .refine(
@@ -125,6 +126,7 @@ export type ContentRecord = {
   capacity: number | null;
   maxTeamSize: number;
   mediaId: string | null;
+  posterUrl?: string | null;
   formId: string | null;
   eventId: string | null;
   ctaUrl: string | null;
@@ -138,7 +140,7 @@ export type PublicContent = ContentRecord & {
   redirectSlug?: string;
   applicationUrl: string | null;
   categoryName?: string | null;
-  image: { id: string; altText: string; width: number; height: number } | null;
+  image: { id: string; url?: string; altText: string; width: number; height: number } | null;
 };
 export function visible(row: ContentRecord, now: Date) {
   return (

@@ -11,7 +11,9 @@ import {
   type ContentRecord,
 } from "../../publication/domain";
 import { formRequest } from "../../forms/ui/admin-fetch";
+import { SiteAssetPicker } from "../../media/ui/site-asset-picker";
 import styles from "./event-editor.module.css";
+import posterStyles from "./event-poster.module.css";
 
 type Media = {
   id: string;
@@ -63,42 +65,9 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
   const [formId, setFormId] = useState("");
   const [preview, setPreview] = useState<ContentRecord | null>(null);
   const [mobile, setMobile] = useState(true);
-  const [posterId, setPosterId] = useState("");
-  const [posterFile, setPosterFile] = useState<File | null>(null);
-  const [posterAlt, setPosterAlt] = useState("");
-  const [posterRights, setPosterRights] = useState(false);
-  const [posterPreview, setPosterPreview] = useState("");
-  const [posterDimensions, setPosterDimensions] = useState<{
-    width: number;
-    height: number;
-  } | null>(null);
-
-  useEffect(() => {
-    if (!posterFile) {
-      setPosterPreview("");
-      setPosterDimensions(null);
-      return;
-    }
-    const url = URL.createObjectURL(posterFile);
-    setPosterPreview(url);
-
-    const img = new window.Image();
-    img.onload = () => {
-      setPosterDimensions({
-        width: img.naturalWidth,
-        height: img.naturalHeight,
-      });
-    };
-    img.onerror = () => {
-      setPosterDimensions(null);
-    };
-    img.src = url;
-
-    return () => {
-      URL.revokeObjectURL(url);
-    };
-  }, [posterFile]);
+  const [posterUrl, setPosterUrl] = useState("");
   const [pending, setPending] = useState<ContentRecord | "new" | null>(null);
+
   async function refresh() {
     const response = await fetch("/api/admin/events", { cache: "no-store" });
     const data = await response.json();
@@ -124,7 +93,7 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
       setKind("general");
       setCategoryId("");
       setFormId("");
-      setPosterId("");
+      setPosterUrl("");
     } else {
       const response = await fetch(`/api/admin/events?preview=${item.id}`, {
         cache: "no-store",
@@ -138,11 +107,13 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
       setKind(data.kind);
       setCategoryId(data.categoryId ?? "");
       setFormId(data.formId ?? "");
-      setPosterId(data.mediaId ?? "");
+      setPosterUrl(
+        data.posterUrl ||
+          (data.image?.url ??
+            (data.image?.id?.startsWith("/") ? data.image.id : "")) ||
+          "",
+      );
     }
-    setPosterFile(null);
-    setPosterRights(false);
-    setPosterAlt("");
     setPreview(null);
     setDirty(false);
     setPending(null);
@@ -162,19 +133,15 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
           setKind(data.kind);
           setCategoryId(data.categoryId ?? "");
           setFormId(data.formId ?? "");
-          setPosterId(data.mediaId ?? "");
+          setPosterUrl(
+            data.posterUrl ||
+              (data.image?.url ??
+                (data.image?.id?.startsWith("/") ? data.image.id : "")) ||
+              "",
+          );
         })
         .catch(() => setMessage("Etkinlik alınamadı"));
   }, []);
-  useEffect(() => {
-    if (!posterFile) {
-      setPosterPreview("");
-      return;
-    }
-    const url = URL.createObjectURL(posterFile);
-    setPosterPreview(url);
-    return () => URL.revokeObjectURL(url);
-  }, [posterFile]);
   async function mutate(body: Record<string, unknown>) {
     setBusy(true);
     setMessage("");
@@ -184,7 +151,12 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
       setKind(data.kind);
       setCategoryId(data.categoryId ?? "");
       setFormId(data.formId ?? "");
-      setPosterId(data.mediaId ?? "");
+      setPosterUrl(
+        data.posterUrl ||
+          (data.image?.url ??
+            (data.image?.id?.startsWith("/") ? data.image.id : "")) ||
+          "",
+      );
       setDirty(false);
       setPending(null);
       setPreview(null);
@@ -227,7 +199,8 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
         location: optional("location"),
         kind,
         year: kind === "ulujam" && text("year") ? Number(text("year")) : null,
-        mediaId: posterId || null,
+        posterUrl: posterUrl || null,
+        mediaId: posterUrl ? null : (selected?.mediaId ?? null),
         categoryId: categoryId || null,
         locationType: text("locationType"),
         organizer: optional("organizer"),
@@ -241,50 +214,33 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
       },
     });
   }
-  async function uploadPoster() {
-    if (!posterFile || !posterRights || !posterAlt.trim()) {
-      setMessage("Afişi, görsel açıklamasını ve yayın hakkı onayını tamamla.");
-      return;
-    }
-    if (
-      posterDimensions &&
-      (posterDimensions.width !== 1080 || posterDimensions.height !== 1350)
-    ) {
-      setMessage(
-        `Etkinlik afişi tam 1080×1350 piksel olmalı. Seçilen görsel: ${posterDimensions.width}×${posterDimensions.height} piksel.`,
-      );
-      return;
-    }
+  async function deleteSelectedEvent() {
+    if (!selected) return false;
+    const confirmed = window.confirm(
+      `"${selected.title}" etkinliğini kalıcı olarak silmek istediğinize emin misiniz?\n\nBu işlem geri alınamaz.`,
+    );
+    if (!confirmed) return false;
+
     setBusy(true);
     setMessage("");
     try {
-      const csrf = await fetch("/api/admin/csrf", { cache: "no-store" });
-      if (!csrf.ok) throw Error("İstek doğrulanamadı");
-      const { csrfToken } = await csrf.json();
-      const body = new FormData();
-      body.set("file", posterFile);
-      body.set("purpose", "event-poster");
-      body.set("altText", posterAlt.trim());
-      const response = await fetch("/api/admin/media", {
-        method: "POST",
-        headers: { "x-csrf-token": csrfToken },
-        body,
+      await formRequest("/api/admin/events", {
+        action: "delete",
+        id: selected.id,
       });
-      const uploaded = await response.json();
-      if (!response.ok) throw Error(uploaded.error ?? "Afiş yüklenemedi");
-      await formRequest("/api/admin/media", {
-        action: "publish",
-        assetId: uploaded.id,
-        confirmed: true,
-      });
-      await refreshMedia();
-      setPosterId(uploaded.id);
-      setDirty(true);
-      setPosterFile(null);
-      setPosterRights(false);
-      setMessage("Afiş hazır. Etkinliği kaydederek ilişkilendir.");
+      setSelected(null);
+      setDirty(false);
+      setPending(null);
+      setPreview(null);
+      setPosterUrl("");
+      setMessage("Etkinlik başarıyla silindi.");
+      await refresh();
+      return true;
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Afiş yüklenemedi");
+      setMessage(
+        error instanceof Error ? error.message : "Silme işlemi başarısız",
+      );
+      return false;
     } finally {
       setBusy(false);
     }
@@ -307,10 +263,6 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
         .includes(query.trim().toLocaleLowerCase("tr-TR")) &&
       (filter === "all" || item.status === filter),
   );
-  const variant = media
-    .find((item) => item.id === posterId)
-    ?.variants.find((item) => item.mimeType === "image/webp");
-  const selectedMedia = media.find((item) => item.id === posterId);
   const availableForms = options.forms.filter(
     (form) => form.eventId === selected?.id,
   );
@@ -534,149 +486,54 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
                 </section>
                 <section
                   className={styles.card}
-                  aria-label="Etkinlik afişi yükleme"
+                  aria-label="Etkinlik afişi"
                 >
                   <p className={styles.kicker}>02 / AFİŞ</p>
-                  <h3>Görseli hazırla</h3>
+                  <h3>Etkinlik Afişi</h3>
                   <p className={styles.hint}>
-                    1080 × 1350 piksel. PNG, JPEG veya WebP; en fazla 8 MiB.
+                    Önerilen boyut 1080 × 1350 piksel. Bilgisayarınızdan afiş yükleyebilir veya kütüphaneden seçebilirsiniz.
                   </p>
-                  <div className={styles.posterLayout}>
-                    <div className={styles.poster}>
-                      {posterPreview || variant ? (
+                  <div style={{ marginTop: "14px", marginBottom: "16px" }}>
+                    <SiteAssetPicker
+                      scope="events"
+                      kind="image"
+                      label="Afiş Görseli (Cihazdan Yükle veya Kütüphaneden Seç)"
+                      value={posterUrl}
+                      onChange={(path) => {
+                        setPosterUrl(path);
+                        setDirty(true);
+                        setMessage("Afiş güncellendi ve bu etkinliğe otomatik atandı. Değişiklikleri kaydedin.");
+                      }}
+                    />
+                  </div>
+                  {posterUrl && (
+                    <div className={posterStyles.posterPreviewBox}>
+                      <div className={posterStyles.posterThumbnail}>
                         <Image
                           unoptimized
-                          src={
-                            posterPreview ||
-                            `/api/admin/media?preview=${variant!.id}`
-                          }
-                          alt={
-                            posterPreview
-                              ? "Seçilen afiş önizlemesi"
-                              : (selectedMedia?.altText ?? "Afiş önizlemesi")
-                          }
-                          width={1080}
-                          height={1350}
+                          src={posterUrl}
+                          alt="Seçilen etkinlik afişi"
+                          width={72}
+                          height={90}
                         />
-                      ) : (
-                        <span>
-                          AFİŞ
-                          <br />
-                          <small>1080 × 1350</small>
-                        </span>
-                      )}
-                    </div>
-                    <div className={styles.uploadFields}>
-                      <label className={styles.field}>
-                        Afiş dosyası
-                        <input
-                          type="file"
-                          accept="image/png,image/jpeg,image/webp"
-                          onChange={(event) =>
-                            setPosterFile(event.target.files?.[0] ?? null)
-                          }
-                        />
-                      </label>
-                      {posterDimensions && (
-                        <div
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: 600,
-                            padding: "6px 10px",
-                            borderRadius: "6px",
-                            marginTop: "-4px",
-                            marginBottom: "8px",
-                            background:
-                              posterDimensions.width === 1080 &&
-                              posterDimensions.height === 1350
-                                ? "rgba(113, 224, 109, 0.15)"
-                                : "rgba(255, 158, 121, 0.15)",
-                            color:
-                              posterDimensions.width === 1080 &&
-                              posterDimensions.height === 1350
-                                ? "#71e06d"
-                                : "#ff9e79",
-                            border: `1px solid ${
-                              posterDimensions.width === 1080 &&
-                              posterDimensions.height === 1350
-                                ? "rgba(113, 224, 109, 0.4)"
-                                : "rgba(255, 158, 121, 0.4)"
-                            }`,
+                      </div>
+                      <div className={posterStyles.posterInfo}>
+                        <strong>Etkinliğe Atanan Afiş:</strong>
+                        <code>{posterUrl}</code>
+                        <button
+                          type="button"
+                          className={posterStyles.removePosterBtn}
+                          onClick={() => {
+                            setPosterUrl("");
+                            setDirty(true);
+                            setMessage("Afiş kaldırıldı. Kaydederek onaylayın.");
                           }}
                         >
-                          {posterDimensions.width === 1080 &&
-                          posterDimensions.height === 1350
-                            ? "✓ Boyut uygun: 1080 × 1350 px"
-                            : `⚠️ Boyut uyarısı: ${posterDimensions.width} × ${posterDimensions.height} px (Tam 1080 × 1350 px olmalıdır)`}
-                        </div>
-                      )}
-                      <label className={styles.field}>
-                        Görsel açıklaması
-                        <input
-                          value={posterAlt}
-                          maxLength={250}
-                          onChange={(event) => setPosterAlt(event.target.value)}
-                        />
-                      </label>
-                      <label className={styles.checkbox}>
-                        <input
-                          type="checkbox"
-                          checked={posterRights}
-                          onChange={(event) =>
-                            setPosterRights(event.target.checked)
-                          }
-                        />
-                        Görselin yayın hakkını ve varsa kişilerin iznini
-                        onaylıyorum.
-                      </label>
-                      <button
-                        type="button"
-                        disabled={
-                          busy ||
-                          !posterFile ||
-                          !posterRights ||
-                          !posterAlt.trim() ||
-                          (posterDimensions !== null &&
-                            (posterDimensions.width !== 1080 ||
-                              posterDimensions.height !== 1350))
-                        }
-                        onClick={() => void uploadPoster()}
-                      >
-                        Afişi yükle ve hazırla
-                      </button>
+                          Afişi Kaldır
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  <label className={styles.field}>
-                    Afiş
-                    <select
-                      value={posterId}
-                      onChange={(event) => {
-                        setPosterId(event.target.value);
-                        setDirty(true);
-                      }}
-                    >
-                      <option value="">Afiş seçilmedi</option>
-                      {media
-                        .filter(
-                          (item) =>
-                            item.id === selected?.mediaId ||
-                            item.variants.some(
-                              (variant) =>
-                                variant.purpose === "event-poster-webp" &&
-                                variant.width === 1080 &&
-                                variant.height === 1350,
-                            ),
-                        )
-                        .map((item) => (
-                          <option key={item.id} value={item.id}>
-                            {item.altText}
-                            {item.variants.some((variant) => variant.published)
-                              ? ""
-                              : " (özel)"}
-                          </option>
-                        ))}
-                    </select>
-                  </label>
+                  )}
                 </section>
                 <details className={styles.card}>
                   <summary>Gelişmiş etkinlik ayarları</summary>
@@ -885,6 +742,14 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
                         Arşivlemeyi onayla
                       </button>
                     </Dialog>
+                    <button
+                      type="button"
+                      disabled={busy}
+                      className={posterStyles.deleteEventBtn}
+                      onClick={() => void deleteSelectedEvent()}
+                    >
+                      Etkinliği sil
+                    </button>
                   </div>
                   <details className={styles.otherActions}>
                     <summary>Diğer durum işlemleri</summary>
@@ -945,6 +810,16 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
                         displayStatus: preview.status,
                         applicationUrl: null,
                         image: (() => {
+                          if (preview.posterUrl || posterUrl) {
+                            const p = preview.posterUrl || posterUrl;
+                            return {
+                              id: p,
+                              url: p,
+                              altText: preview.title,
+                              width: 1080,
+                              height: 1350,
+                            };
+                          }
                           const asset = media.find(
                             (asset) => asset.id === preview.mediaId,
                           );

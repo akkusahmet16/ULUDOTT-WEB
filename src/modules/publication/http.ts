@@ -4,7 +4,7 @@ import { CACHE_TAGS } from "../../lib/cache/tags.ts";
 import { z } from "zod";
 import { resolveSession, SESSION_COOKIE } from "../../lib/auth/session.ts";
 import { readCookie, verifyCsrf } from "../../lib/auth/csrf.ts";
-import { save, list, preview, transition, editorOptions } from "./service.ts";
+import { save, list, preview, transition, remove, editorOptions } from "./service.ts";
 import type { ContentType } from "./domain.ts";
 const headers = {
   "Cache-Control": "no-store",
@@ -77,6 +77,7 @@ export function handler(type: ContentType) {
             "archive",
             "ended",
             "cancelled",
+            "delete",
           ]),
           id: z.uuid().optional(),
           expectedRevision: z.int().positive().optional(),
@@ -84,6 +85,12 @@ export function handler(type: ContentType) {
           input: z.unknown().optional(),
         })
         .parse(await body(request));
+      if (d.action === "delete") {
+        if (!d.id) throw Error("Silinecek içerik kimliği gerekli");
+        await remove(type, d.id, session.actor);
+        revalidateTag(type === "event" ? CACHE_TAGS.events : CACHE_TAGS.announcements, { expire: 0 });
+        return json({ success: true, id: d.id });
+      }
       if (d.action === "save") {
         const result = await save(type, session.actor, d.input, d.id, d.expectedRevision);
         // Servis await'i transaction COMMIT'ini içerir; transaction içinde çağrılmaz.

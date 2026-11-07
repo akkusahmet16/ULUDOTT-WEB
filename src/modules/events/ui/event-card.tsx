@@ -37,7 +37,12 @@ export function EventCard({
         {event.image ? (
           <Image
             unoptimized
-            src={`/media/${event.image.id}`}
+            src={
+              event.image.url ||
+              (event.image.id.startsWith("/")
+                ? event.image.id
+                : `/media/${event.image.id}`)
+            }
             alt={event.image.altText}
             width={event.image.width}
             height={event.image.height}

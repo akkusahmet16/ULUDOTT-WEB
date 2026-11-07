@@ -34,6 +34,7 @@ export const events = pgTable(
     organizer: text("organizer"),
     locationType: text("location_type").default("physical").notNull(),
     mediaId: uuid("media_id").references(() => mediaAssets.id),
+    posterUrl: text("poster_url"),
     formId: uuid("form_id"),
     location: text("location"),
     startsAt: instant("starts_at"),

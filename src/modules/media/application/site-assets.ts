@@ -40,6 +40,7 @@ const roots: Record<SiteAssetScope, string[]> = {
     "/uploads/places/",
   ],
   events: [
+    "/community/04-etkinlikler/",
     "/community/05-etkinlikler/",
     "/uploads/events/",
   ],
