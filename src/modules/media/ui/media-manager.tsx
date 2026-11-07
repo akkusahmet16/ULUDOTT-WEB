@@ -51,7 +51,8 @@ export function MediaManager() {
 
       const formData = new FormData();
       formData.append("scope", uploadScope);
-      formData.append("file", file);
+      const safeFilename = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      formData.append("file", file, safeFilename || "upload.pdf");
 
       const response = await fetch("/api/admin/site-assets", {
         method: "POST",

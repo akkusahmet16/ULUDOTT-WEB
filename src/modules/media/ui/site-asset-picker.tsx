@@ -87,7 +87,8 @@ export function SiteAssetPicker({
 
       const formData = new FormData();
       formData.append("scope", scope === "all" ? "general" : scope);
-      formData.append("file", file);
+      const safeFilename = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      formData.append("file", file, safeFilename || "upload.pdf");
 
       const result = await new Promise<{ item: SiteAsset; error?: string }>((resolve, reject) => {
         const xhr = new XMLHttpRequest();

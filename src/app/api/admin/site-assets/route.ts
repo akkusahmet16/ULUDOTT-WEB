@@ -64,6 +64,15 @@ export async function POST(request: Request) {
     return Response.json({ item }, { status: 201, headers: privateHeaders });
   } catch (error) {
     if (error instanceof Error) {
+      if (error.message.includes("Failed to parse body as FormData")) {
+        return Response.json(
+          {
+            error:
+              "Dosya yükleme akışı tamamlanamadı. Dosya boyutu sunucu (Nginx reverse proxy) sınırını aşmış olabilir. Nginx yapılandırmanızda 'client_max_body_size 100M;' tanımlı olduğundan emin olun.",
+          },
+          { status: 413, headers: privateHeaders },
+        );
+      }
       if (error.message === "Yetki yok") {
         return Response.json(
           { error: error.message },
