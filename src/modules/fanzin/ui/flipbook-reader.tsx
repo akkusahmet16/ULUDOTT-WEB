@@ -174,6 +174,7 @@ export function FlipbookReader({
         if (!isMounted) return;
 
         let pageImages: string[] = [];
+        let bodyPages: string[] = [];
 
         // 1. Kapak görseli var mı ve erişilebilir mi kontrol et
         const candidateCover =
@@ -198,52 +199,50 @@ export function FlipbookReader({
           }
         }
 
-        // 2. Hazır statik sayfalar var mı kontrol et
-        const staticPages = (issue?.pages ?? [])
-          .map((p) => p.imageUrl)
-          .filter((url): url is string => Boolean(url));
-
-        if (staticPages.length >= 2) {
-          const firstUrl = staticPages[0];
-          const testOk = firstUrl.startsWith("data:")
-            ? true
-            : await new Promise<boolean>((resolve) => {
-                const img = new Image();
-                img.onload = () => resolve(true);
-                img.onerror = () => resolve(false);
-                img.src = firstUrl;
-              });
-
-          if (testOk) {
-            pageImages = staticPages;
-          }
-        }
-
-        // 3. Statik sayfa yoksa veya 404 ise, PDF'ten dinamik yüksek çözünürlüklü render et
-        if (pageImages.length < 2 && issue?.pdfUrl && issue.pdfUrl !== "#" && issue.pdfUrl.trim() !== "") {
+        // 2. PDF URL varsa doğrudan PDF'ten yüksek kaliteli rasterize et
+        if (issue?.pdfUrl && issue.pdfUrl !== "#" && issue.pdfUrl.trim() !== "") {
           try {
             const renderedFromPdf = await loadPdfPages(issue.pdfUrl);
             if (renderedFromPdf.length > 0) {
-              pageImages = renderedFromPdf;
+              bodyPages = renderedFromPdf;
             }
           } catch (pdfErr) {
             console.error("PDF sayfaları ayrıştırılırken hata:", pdfErr);
           }
         }
 
-        // 4. Kapak görseli kuralı:
-        // Kapak yüklendiyse ilk sayfaya kapak resmini koy.
-        // Yüklenmediyse ilk sayfayı asla boş gösterme (PDF'in ilk sayfası kalsın).
-        if (validCoverUrl) {
-          if (pageImages.length === 0) {
-            pageImages = [validCoverUrl];
-          } else if (issue?.pageCount && issue.pageCount > pageImages.length) {
-            // PDF yalnızca iç sayfaları içeriyorsa kapak görselini en başa ekle
-            pageImages = [validCoverUrl, ...pageImages];
-          } else {
-            // PDF zaten kapak dahil sayfaları içeriyorsa ilk sayfayı yüksek kaliteli kapak görseli yap
-            pageImages = [validCoverUrl, ...pageImages.slice(1)];
+        // 3. PDF yoksa veya yüklenemediyse hazır statik sayfa kayıtlarına bak
+        if (bodyPages.length === 0) {
+          const staticPages = (issue?.pages ?? [])
+            .map((p) => p.imageUrl)
+            .filter((url): url is string => Boolean(url));
+
+          if (staticPages.length >= 1) {
+            const firstUrl = staticPages[0];
+            const testOk = firstUrl.startsWith("data:")
+              ? true
+              : await new Promise<boolean>((resolve) => {
+                  const img = new Image();
+                  img.onload = () => resolve(true);
+                  img.onerror = () => resolve(false);
+                  img.src = firstUrl;
+                });
+
+            if (testOk) {
+              bodyPages = staticPages;
+            }
           }
+        }
+
+        // 4. Kapak görseli kuralı:
+        // Yüklenen kapak görseli ilk sayfanın yerine GEÇMESİN.
+        // Soldaki kısım ilk sayfada kapak görseli olsun.
+        // PDF ilk sayfası yine sağda yer alsın.
+        if (validCoverUrl) {
+          pageImages = [validCoverUrl, ...bodyPages];
+        } else {
+          // Kapak yüklenmediyse ilk sayfayı asla boş gösterme:
+          pageImages = [...bodyPages];
         }
 
         if (!isMounted) return;
@@ -259,8 +258,6 @@ export function FlipbookReader({
           pageImages = [pageImages[0], pageImages[0]];
         }
 
-        const hasCover = Boolean(validCoverUrl);
-
         // US Letter / A4 fanzin en-boy oranı (1224x1584 ~ 1:1.294)
         const pageFlip = new PageFlip(mountEl, {
           width: 580,
@@ -272,7 +269,7 @@ export function FlipbookReader({
           maxHeight: 1230,
           drawShadow: true,
           maxShadowOpacity: 0.35,
-          showCover: hasCover,
+          showCover: false, // Sol tarafta kapak görseli, sağ tarafta PDF ilk sayfası olarak iki sayfa açık başlasın
           usePortrait: true,
           showPageCorners: true,
           useMouseEvents: true,
