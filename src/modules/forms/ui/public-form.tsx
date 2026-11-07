@@ -80,8 +80,11 @@ export function PublicForm({
         const { csrfToken } = await csrf.json();
         const body = new FormData();
         body.set("payload", JSON.stringify(payload));
-        for (const [id, file] of Object.entries(files.current))
-          body.set("file:" + id, file);
+        for (const [id, file] of Object.entries(files.current)) {
+          if (answers[id] !== undefined) {
+            body.set("file:" + id, file);
+          }
+        }
         const response = await fetch("/api/forms/" + slug + "/submit", {
           method: "POST",
           headers: { "x-csrf-token": csrfToken },
@@ -158,6 +161,8 @@ export function PublicForm({
           onFileChange={(id, file) => {
             if (file) files.current[id] = file;
             else delete files.current[id];
+            setFieldErrors({});
+            key.current = null;
           }}
         />
         <div style={{ display: "none" }} aria-hidden="true">

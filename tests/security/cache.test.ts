@@ -65,6 +65,18 @@ it("Perimeter accepts Turkish text, search punctuation, RSC navigation and a val
     edgeDecision(
       new Request("https://example.test/api/forms/a/submit", {
         method: "POST",
+        headers: {
+          "content-type": "multipart/form-data; boundary=x",
+          "content-length": "2500000",
+        },
+        body: "x",
+      }),
+    ),
+  ).toBeNull();
+  expect(
+    edgeDecision(
+      new Request("https://example.test/api/forms/a/submit", {
+        method: "POST",
         headers: { "content-length": "99999999" },
         body: "x",
       }),

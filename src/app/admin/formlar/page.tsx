@@ -29,24 +29,28 @@ export default async function Page() {
   ]);
 
   const ulujamEvents = events.filter((e) => e.kind === "ulujam");
+  const generalEvents = events.filter((e) => e.kind === "general");
   const ulujamEventIds = new Set(ulujamEvents.map((e) => e.id));
+  const primaryGeneralEvent =
+    generalEvents.find(
+      (e) => e.id === "c0ffee00-0000-4000-8000-000000000014",
+    ) ?? generalEvents[0];
   const primaryUlujamEvent =
     ulujamEvents.find(
       (e) => e.id === "90202700-0000-4000-8000-000000000001",
     ) ?? ulujamEvents[0];
-  const creatorEvents = events
-    .filter(
-      (e) =>
-        !(
-          e.id === "80202600-0000-4000-8000-000000000001" &&
-          ulujamEvents.length > 1
-        ),
-    )
-    .map((e) =>
-      primaryUlujamEvent && e.id === primaryUlujamEvent.id
-        ? { ...e, title: "UluJam Formu" }
-        : e,
-    );
+  const creatorUlujamEvent =
+    ulujamEvents.find(
+      (e) => e.id === "16000000-0000-4000-8000-000000000001",
+    ) ?? primaryUlujamEvent;
+  const creatorEvents = [
+    ...(primaryGeneralEvent
+      ? [{ id: primaryGeneralEvent.id, title: "Genel Form", kind: "general" }]
+      : []),
+    ...(creatorUlujamEvent
+      ? [{ id: creatorUlujamEvent.id, title: "UluJam", kind: "ulujam" }]
+      : []),
+  ];
 
   return (
     <main style={{ maxWidth: "1080px", margin: "0 auto", padding: "24px 16px" }}>
@@ -156,20 +160,21 @@ export default async function Page() {
                       <h3 style={{ margin: 0, fontSize: "1.2rem" }}>
                         <Link href={"/admin/formlar/" + f.id}>{f.title}</Link>
                       </h3>
-                      {isUlujamForm && (
-                        <span
-                          style={{
-                            padding: "2px 8px",
-                            borderRadius: "999px",
-                            fontSize: "11px",
-                            fontWeight: 700,
-                            background: "var(--purple)",
-                            color: "var(--cream)",
-                          }}
-                        >
-                          UluJam Formu
-                        </span>
-                      )}
+                      <span
+                        style={{
+                          padding: "2px 8px",
+                          borderRadius: "999px",
+                          fontSize: "11px",
+                          fontWeight: 700,
+                          background: isUlujamForm
+                            ? "var(--purple)"
+                            : "var(--panel)",
+                          color: "var(--cream)",
+                          border: "1px solid var(--admin-border)",
+                        }}
+                      >
+                        {isUlujamForm ? "UluJam" : "Genel Form"}
+                      </span>
                     </div>
                     <div
                       style={{

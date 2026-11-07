@@ -9,7 +9,7 @@ test("form oluşturma, klavye alanları, önizleme ve sürümlü yayın", async 
   await expect(page.getByText("Yönetim oturumu açık.")).toBeVisible();
   await page.goto("/admin/formlar");
   await page
-    .getByRole("combobox", { name: "Etkinlik", exact: true })
+    .getByRole("combobox", { name: "Form Tipi", exact: true })
     .selectOption("c0ffee00-0000-4000-8000-000000000014");
   await page.getByLabel("Soru / alan başlığı").fill("İletişim");
   await page.getByLabel("Yanıt türü").selectOption("email");
@@ -93,7 +93,7 @@ test("UluJam etkinliği için yeni gerçek form takım şablonuyla oluşturulur"
   await expect(page.getByText("Yönetim oturumu açık.")).toBeVisible();
   await page.goto("/admin/formlar");
   await page
-    .getByRole("combobox", { name: "Etkinlik", exact: true })
+    .getByRole("combobox", { name: "Form Tipi", exact: true })
     .selectOption("16000000-0000-4000-8000-000000000001");
   await expect(
     page.getByRole("region", { name: "UluJam başvuru şablonu", exact: true }),

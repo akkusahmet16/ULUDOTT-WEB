@@ -74,7 +74,7 @@ export function FormCreator({
       </p>
       <p role="status">{message}</p>
       <label className="field">
-        Etkinlik
+        Form Tipi
         <select value={eventId} onChange={(e) => setEvent(e.target.value)}>
           {events.map((e) => (
             <option key={e.id} value={e.id}>

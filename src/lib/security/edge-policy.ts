@@ -23,9 +23,15 @@ export function edgeDecision(
     const length = req.headers.get("content-length");
     const isUploadPath =
       path === "/api/admin/media" || path === "/api/admin/site-assets";
+    const isFormSubmitUpload =
+      /^\/api\/forms\/[a-z0-9-]{1,100}\/submit$/.test(path) &&
+      (req.headers.get("content-type")?.startsWith("multipart/form-data") ??
+        false);
     const limit = isUploadPath
       ? 100 * 1024 * 1024 + 64 * 1024
-      : 128 * 1024;
+      : isFormSubmitUpload
+        ? 3 * 5 * 1024 * 1024 + 128 * 1024
+        : 128 * 1024;
     if (
       length !== null &&
       (!/^\d{1,12}$/.test(length) || Number(length) > limit)
