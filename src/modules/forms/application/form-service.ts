@@ -8,8 +8,35 @@ import {
 } from "../../../lib/database/transaction.ts";
 import { appendAudit, type Actor } from "../../../lib/logging/audit.ts";
 import { requirePermission } from "../../admin/domain/permissions.ts";
-import { forms } from "../../../db/schema/forms.ts";
-import { events } from "../../../db/schema/content.ts";
+import {
+  forms,
+  formVersions,
+  formFields,
+  formRules,
+  submissions,
+  submissionAnswers,
+  submissionFiles,
+  submissionStatusHistory,
+  consents,
+} from "../../../db/schema/forms.ts";
+import { events, games, gameCredits } from "../../../db/schema/content.ts";
+import {
+  applications,
+  applicationSkills,
+  memberships,
+  teams,
+  teamApprovals,
+  teamAccess,
+  teamSessions,
+} from "../../../db/schema/ulujam.ts";
+import {
+  cards,
+  walletPasses,
+  appleRegistrations,
+} from "../../../db/schema/wallet.ts";
+import { idempotencyRecords } from "../../../db/schema/operations.ts";
+import { siteSettings } from "../../../db/schema/site-settings.ts";
+import { removePrivate } from "../../media/infrastructure/object-store.ts";
 import {
   createDraftVersion,
   publishStoredVersion,
@@ -234,6 +261,193 @@ export const pauseForm = (actor: Actor, id: string, revision: number) =>
   transition(actor, id, revision, "paused");
 export const closeForm = (actor: Actor, id: string, revision: number) =>
   transition(actor, id, revision, "closed");
+export async function deleteForm(
+  actor: Actor,
+  id: string,
+  revision?: number,
+) {
+  const objectKeys = await withTransaction(async (tx) => {
+    const f = await locked(tx, actor, id, revision);
+    await tx.update(events).set({ formId: null }).where(eq(events.formId, id));
+    const [ulujamSetting] = await tx
+      .select()
+      .from(siteSettings)
+      .where(eq(siteSettings.key, "ulujam-presentation"))
+      .for("update");
+    if (
+      ulujamSetting &&
+      ulujamSetting.data &&
+      typeof ulujamSetting.data === "object"
+    ) {
+      const d = ulujamSetting.data as Record<string, unknown>;
+      const managed = Array.isArray(d.managedFormIds)
+        ? d.managedFormIds.filter((fid) => fid !== id)
+        : [];
+      const isCurrent = d.formId === id;
+      if (
+        isCurrent ||
+        (Array.isArray(d.managedFormIds) &&
+          managed.length !== d.managedFormIds.length)
+      ) {
+        await tx
+          .update(siteSettings)
+          .set({
+            data: {
+              ...d,
+              ...(isCurrent
+                ? { formId: null, applicationPublished: false }
+                : {}),
+              managedFormIds: managed,
+            },
+            revision: sql`${siteSettings.revision}+1`,
+          })
+          .where(eq(siteSettings.key, "ulujam-presentation"));
+      }
+    }
+    const subRows = await tx
+      .select({ id: submissions.id })
+      .from(submissions)
+      .where(eq(submissions.formId, id))
+      .for("update");
+    const subIds = subRows.map((r) => r.id);
+    const keys: string[] = [];
+    if (subIds.length > 0) {
+      const files = await tx
+        .select({ objectKey: submissionFiles.objectKey })
+        .from(submissionFiles)
+        .where(inArray(submissionFiles.submissionId, subIds));
+      keys.push(...files.map((file) => file.objectKey));
+      const appRows = await tx
+        .select({ id: applications.id })
+        .from(applications)
+        .where(inArray(applications.submissionId, subIds))
+        .for("update");
+      const appIds = appRows.map((a) => a.id);
+      if (appIds.length > 0) {
+        const cardRows = await tx
+          .select({ id: cards.id })
+          .from(cards)
+          .where(inArray(cards.applicationId, appIds));
+        const cardIds = cardRows.map((c) => c.id);
+        if (cardIds.length > 0) {
+          const passRows = await tx
+            .select({ id: walletPasses.id })
+            .from(walletPasses)
+            .where(inArray(walletPasses.cardId, cardIds));
+          const passIds = passRows.map((p) => p.id);
+          if (passIds.length > 0) {
+            await tx
+              .delete(appleRegistrations)
+              .where(inArray(appleRegistrations.passId, passIds));
+            await tx
+              .delete(walletPasses)
+              .where(inArray(walletPasses.id, passIds));
+          }
+          await tx.delete(cards).where(inArray(cards.id, cardIds));
+        }
+        const memRows = await tx
+          .select({ teamId: memberships.teamId })
+          .from(memberships)
+          .where(inArray(memberships.applicationId, appIds));
+        const affectedTeamIds = [...new Set(memRows.map((m) => m.teamId))];
+        await tx
+          .delete(memberships)
+          .where(inArray(memberships.applicationId, appIds));
+        await tx
+          .delete(applicationSkills)
+          .where(inArray(applicationSkills.applicationId, appIds));
+        await tx
+          .delete(gameCredits)
+          .where(inArray(gameCredits.applicationId, appIds));
+        await tx
+          .delete(applications)
+          .where(inArray(applications.id, appIds));
+        for (const teamId of affectedTeamIds) {
+          const [remaining] = await tx
+            .select({ count: sql<number>`count(*)::int` })
+            .from(memberships)
+            .where(eq(memberships.teamId, teamId));
+          if (!remaining || remaining.count === 0) {
+            await tx
+              .update(games)
+              .set({ teamId: null })
+              .where(eq(games.teamId, teamId));
+            await tx
+              .delete(teamSessions)
+              .where(eq(teamSessions.teamId, teamId));
+            await tx.delete(teamAccess).where(eq(teamAccess.teamId, teamId));
+            await tx
+              .delete(teamApprovals)
+              .where(eq(teamApprovals.teamId, teamId));
+            await tx.delete(teams).where(eq(teams.id, teamId));
+          }
+        }
+      }
+      await tx
+        .delete(submissionFiles)
+        .where(inArray(submissionFiles.submissionId, subIds));
+      await tx
+        .delete(idempotencyRecords)
+        .where(inArray(idempotencyRecords.resourceId, subIds));
+      await tx
+        .delete(submissionAnswers)
+        .where(inArray(submissionAnswers.submissionId, subIds));
+      await tx
+        .delete(consents)
+        .where(inArray(consents.submissionId, subIds));
+      await tx
+        .delete(submissionStatusHistory)
+        .where(inArray(submissionStatusHistory.submissionId, subIds));
+      await tx.delete(submissions).where(inArray(submissions.id, subIds));
+    }
+    await tx
+      .delete(idempotencyRecords)
+      .where(inArray(idempotencyRecords.scope, [`form:${id}`, `ulujam:${id}`]));
+    await tx
+      .update(forms)
+      .set({ draftVersionId: null, currentVersionId: null })
+      .where(eq(forms.id, id));
+    const verRows = await tx
+      .select({ id: formVersions.id })
+      .from(formVersions)
+      .where(eq(formVersions.formId, id));
+    const verIds = verRows.map((v) => v.id);
+    if (verIds.length > 0) {
+      await tx.execute(
+        sql`alter table form_rules disable trigger form_rule_immutable`,
+      );
+      await tx.execute(
+        sql`alter table form_fields disable trigger form_field_immutable`,
+      );
+      await tx.execute(
+        sql`alter table form_versions disable trigger form_version_immutable`,
+      );
+      await tx.delete(formRules).where(inArray(formRules.versionId, verIds));
+      await tx.delete(formFields).where(inArray(formFields.versionId, verIds));
+      await tx.delete(formVersions).where(inArray(formVersions.id, verIds));
+      await tx.execute(
+        sql`alter table form_versions enable trigger form_version_immutable`,
+      );
+      await tx.execute(
+        sql`alter table form_fields enable trigger form_field_immutable`,
+      );
+      await tx.execute(
+        sql`alter table form_rules enable trigger form_rule_immutable`,
+      );
+    }
+    await tx.delete(forms).where(eq(forms.id, id));
+    await appendAudit(
+      tx,
+      actor,
+      "form.deleted",
+      { type: "form", id },
+      { revision: f.revision },
+    );
+    return keys;
+  });
+  await Promise.allSettled(objectKeys.map(removePrivate));
+  return { deleted: true, id };
+}
 export async function getForm(actor: Actor, id: string) {
   return withTransaction(async (tx) => {
     const f = await locked(tx, actor, id);

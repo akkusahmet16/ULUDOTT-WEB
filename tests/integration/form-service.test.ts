@@ -9,9 +9,13 @@ import {
   publishForm,
   pauseForm,
   closeForm,
+  deleteForm,
+  listForms,
   getForm,
   saveFormSettings,
 } from "../../src/modules/forms/application/form-service";
+import { submitUlujam } from "../../src/modules/applications/application/submit-ulujam";
+import { ulujamFields as uf } from "../../src/modules/applications/domain/ulujam-input";
 let local: Awaited<ReturnType<typeof createTestDatabase>>,
   old: string | undefined,
   eventId: string;
@@ -209,4 +213,86 @@ it("yeni UluJam formu başvuru ve takım şablonuyla gerçek taslak olarak oluş
   );
   await publishForm(actor, created.id, created.revision);
   expect((await getForm(actor, created.id)).status).toBe("published");
+});
+
+it("UluJam formu özel başlıkla (UluJam'26) saklanır ve silindiğinde cevaplarla birlikte veritabanından tamamen silinir", async () => {
+  await local.sql`update events set kind='ulujam', status='draft' where id=${eventId}`;
+  const created = await createDraftForm(actor, eventId, {
+    ...settings,
+    title: "UluJam'26",
+    slug: "ulujam-26",
+  });
+  await publishForm(actor, created.id, created.revision);
+  const formsList = await listForms(actor);
+  expect(formsList.find((x) => x.id === created.id)?.title).toBe("UluJam'26");
+
+  const form = await getForm(actor, created.id);
+  await submitUlujam(
+    {
+      slug: "ulujam-26",
+      versionId: form.current!.id,
+      answers: {
+        [uf.fullName]: "Test Katılımcı",
+        [uf.email]: "katilimci@test.invalid",
+        [uf.phone]: "+905551112233",
+        [uf.mode]: "new",
+        [uf.teamName]: "Silinecek Takım",
+        [uf.expectedSize]: 3,
+        [uf.skills]: ["software"],
+        [uf.levels.software]: 3,
+      },
+    },
+    randomUUID(),
+  );
+
+  const [beforeCounts] = await local.sql`select
+    (select count(*)::int from forms where id=${created.id}) as forms,
+    (select count(*)::int from form_versions where form_id=${created.id}) as versions,
+    (select count(*)::int from submissions where form_id=${created.id}) as submissions,
+    (select count(*)::int from submission_answers) as answers,
+    (select count(*)::int from applications where event_id=${eventId}) as applications,
+    (select count(*)::int from application_skills) as skills,
+    (select count(*)::int from memberships) as memberships,
+    (select count(*)::int from teams where event_id=${eventId}) as teams`;
+  expect(beforeCounts.forms).toBe(1);
+  expect(beforeCounts.submissions).toBe(1);
+  expect(beforeCounts.answers).toBeGreaterThan(0);
+  expect(beforeCounts.applications).toBe(1);
+  expect(beforeCounts.skills).toBe(1);
+  expect(beforeCounts.memberships).toBe(1);
+  expect(beforeCounts.teams).toBe(1);
+
+  await deleteForm(actor, created.id, form.revision);
+
+  const [afterCounts] = await local.sql`select
+    (select count(*)::int from forms where id=${created.id}) as forms,
+    (select count(*)::int from form_versions where form_id=${created.id}) as versions,
+    (select count(*)::int from form_fields) as fields,
+    (select count(*)::int from form_rules) as rules,
+    (select count(*)::int from submissions where form_id=${created.id}) as submissions,
+    (select count(*)::int from submission_answers) as answers,
+    (select count(*)::int from consents) as consents,
+    (select count(*)::int from submission_status_history) as history,
+    (select count(*)::int from idempotency_records) as idempotency,
+    (select count(*)::int from applications where event_id=${eventId}) as applications,
+    (select count(*)::int from application_skills) as skills,
+    (select count(*)::int from memberships) as memberships,
+    (select count(*)::int from cards) as cards,
+    (select count(*)::int from teams where event_id=${eventId}) as teams`;
+  expect(afterCounts).toEqual({
+    forms: 0,
+    versions: 0,
+    fields: 0,
+    rules: 0,
+    submissions: 0,
+    answers: 0,
+    consents: 0,
+    history: 0,
+    idempotency: 0,
+    applications: 0,
+    skills: 0,
+    memberships: 0,
+    cards: 0,
+    teams: 0,
+  });
 });

@@ -15,7 +15,21 @@ import {
   submissionStatusHistory,
   consents,
 } from "../../../db/schema/forms.ts";
-import { applications } from "../../../db/schema/ulujam.ts";
+import {
+  applications,
+  applicationSkills,
+  memberships,
+  teams,
+  teamAccess,
+  teamApprovals,
+  teamSessions,
+} from "../../../db/schema/ulujam.ts";
+import {
+  cards,
+  walletPasses,
+  appleRegistrations,
+} from "../../../db/schema/wallet.ts";
+import { games, gameCredits } from "../../../db/schema/content.ts";
 import { idempotencyRecords } from "../../../db/schema/operations.ts";
 import { readFormVersion } from "../infrastructure/form-repository.ts";
 import { validateSubmission } from "./form-validator.ts";
@@ -373,18 +387,66 @@ export async function correctSubmission(
   };
   return existingTx ? work(existingTx) : withTransaction(work);
 }
-async function linked(tx: DbTx, id: string) {
-  return (
-    (
-      await tx
-        .select({ id: applications.id })
-        .from(applications)
-        .where(eq(applications.submissionId, id))
-        .limit(1)
-    ).length > 0
-  );
-}
 async function erase(tx: DbTx, id: string) {
+  const appRows = await tx
+    .select({ id: applications.id })
+    .from(applications)
+    .where(eq(applications.submissionId, id));
+  const appIds = appRows.map((a) => a.id);
+  if (appIds.length > 0) {
+    const cardRows = await tx
+      .select({ id: cards.id })
+      .from(cards)
+      .where(inArray(cards.applicationId, appIds));
+    const cardIds = cardRows.map((c) => c.id);
+    if (cardIds.length > 0) {
+      const passRows = await tx
+        .select({ id: walletPasses.id })
+        .from(walletPasses)
+        .where(inArray(walletPasses.cardId, cardIds));
+      const passIds = passRows.map((p) => p.id);
+      if (passIds.length > 0) {
+        await tx
+          .delete(appleRegistrations)
+          .where(inArray(appleRegistrations.passId, passIds));
+        await tx.delete(walletPasses).where(inArray(walletPasses.id, passIds));
+      }
+      await tx.delete(cards).where(inArray(cards.id, cardIds));
+    }
+    const memberTeams = await tx
+      .select({ teamId: memberships.teamId })
+      .from(memberships)
+      .where(inArray(memberships.applicationId, appIds));
+    const teamIds = [...new Set(memberTeams.map((m) => m.teamId))];
+    await tx
+      .delete(memberships)
+      .where(inArray(memberships.applicationId, appIds));
+    await tx
+      .delete(applicationSkills)
+      .where(inArray(applicationSkills.applicationId, appIds));
+    await tx
+      .update(gameCredits)
+      .set({ applicationId: null })
+      .where(inArray(gameCredits.applicationId, appIds));
+    await tx.delete(applications).where(inArray(applications.id, appIds));
+    for (const teamId of teamIds) {
+      const remaining = await tx
+        .select({ id: memberships.id })
+        .from(memberships)
+        .where(eq(memberships.teamId, teamId))
+        .limit(1);
+      if (remaining.length === 0) {
+        await tx
+          .update(games)
+          .set({ teamId: null })
+          .where(eq(games.teamId, teamId));
+        await tx.delete(teamSessions).where(eq(teamSessions.teamId, teamId));
+        await tx.delete(teamAccess).where(eq(teamAccess.teamId, teamId));
+        await tx.delete(teamApprovals).where(eq(teamApprovals.teamId, teamId));
+        await tx.delete(teams).where(eq(teams.id, teamId));
+      }
+    }
+  }
   const files = await tx.select({ objectKey: submissionFiles.objectKey }).from(submissionFiles)
     .where(eq(submissionFiles.submissionId, id));
   await tx.delete(submissionFiles).where(eq(submissionFiles.submissionId, id));
@@ -408,8 +470,6 @@ export async function deleteSubmission(
 ) {
   const keys = await withTransaction(async (tx) => {
     await locked(tx, actor, id, "applications.write", revision);
-    if (await linked(tx, id))
-      throw Error("Bağlı katılımcı kaydı önce yönetilmelidir");
     const removed = await erase(tx, id);
     await appendAudit(
       tx,
@@ -439,13 +499,9 @@ export async function purgeExpiredSubmissions(actor: Actor, formId: string) {
       .limit(1000)
       .for("update");
     const keys: string[] = [];
-    let deleted = 0,
-      blocked = 0;
+    let deleted = 0;
+    const blocked = 0;
     for (const s of rows) {
-      if (await linked(tx, s.id)) {
-        blocked++;
-        continue;
-      }
       keys.push(...await erase(tx, s.id));
       deleted++;
     }

@@ -21,44 +21,39 @@ const roots: Record<SiteAssetScope, string[]> = {
   people: [
     "/community/03-hakkimizda/people/",
     "/theme/reference/people/",
-    "/community/",
-    "/uploads/",
+    "/uploads/people/",
   ],
   games: [
     "/community/06-oyunlar/",
-    "/community/",
-    "/uploads/",
+    "/uploads/games/",
   ],
   ulujam: [
     "/community/02-ulujam/",
-    "/community/",
-    "/uploads/",
+    "/uploads/ulujam/",
   ],
   sponsors: [
     "/community/01-anasayfa/sponsorlar/",
-    "/community/",
-    "/uploads/",
+    "/uploads/sponsors/",
   ],
   places: [
     "/community/03-hakkimizda/places/",
-    "/community/",
-    "/uploads/",
+    "/uploads/places/",
   ],
   events: [
     "/community/04-etkinlikler/",
     "/community/05-etkinlikler/",
-    "/community/",
-    "/uploads/",
+    "/uploads/events/",
   ],
   fanzin: [
+    "/uploads/fanzin/",
     "/uploads/",
   ],
   homepage: [
     "/community/01-anasayfa/",
-    "/community/",
-    "/uploads/",
+    "/uploads/homepage/",
   ],
   general: [
+    "/uploads/general/",
     "/uploads/",
     "/community/",
   ],
@@ -151,22 +146,24 @@ export async function uploadSiteAsset(
     await writeFile(targetPath, buffer);
 
     // Tüm olası standalone ve kök uploads dizinlerine senkronize et
-    const cwd = process.cwd();
-    const candidateUploadDirs = [
-      join(cwd, "public", "uploads", uploadFolder),
-      join(cwd, "uploads", uploadFolder),
-      join(cwd, "..", "public", "uploads", uploadFolder),
-      join(cwd, "..", "..", "public", "uploads", uploadFolder),
-      join(cwd, ".next", "standalone", "public", "uploads", uploadFolder),
-      join(cwd, ".next", "standalone", "uploads", uploadFolder),
-    ];
-    for (const dir of candidateUploadDirs) {
-      if (dir !== targetDir) {
-        try {
-          await mkdir(dir, { recursive: true, mode: 0o755 });
-          await writeFile(join(dir, filename), buffer);
-        } catch {
-          // ignore
+    if (!publicRoot) {
+      const cwd = process.cwd();
+      const candidateUploadDirs = [
+        join(cwd, "public", "uploads", uploadFolder),
+        join(cwd, "uploads", uploadFolder),
+        join(cwd, "..", "public", "uploads", uploadFolder),
+        join(cwd, "..", "..", "public", "uploads", uploadFolder),
+        join(cwd, ".next", "standalone", "public", "uploads", uploadFolder),
+        join(cwd, ".next", "standalone", "uploads", uploadFolder),
+      ];
+      for (const dir of candidateUploadDirs) {
+        if (dir !== targetDir) {
+          try {
+            await mkdir(dir, { recursive: true, mode: 0o755 });
+            await writeFile(join(dir, filename), buffer);
+          } catch {
+            // ignore
+          }
         }
       }
     }
@@ -263,22 +260,24 @@ export async function uploadSiteAsset(
 
   await writeFile(targetPath, optimizedBuffer);
 
-  const cwd = process.cwd();
-  const candidateUploadDirs = [
-    join(cwd, "public", "uploads", uploadFolder),
-    join(cwd, "uploads", uploadFolder),
-    join(cwd, "..", "public", "uploads", uploadFolder),
-    join(cwd, "..", "..", "public", "uploads", uploadFolder),
-    join(cwd, ".next", "standalone", "public", "uploads", uploadFolder),
-    join(cwd, ".next", "standalone", "uploads", uploadFolder),
-  ];
-  for (const dir of candidateUploadDirs) {
-    if (dir !== targetDir) {
-      try {
-        await mkdir(dir, { recursive: true, mode: 0o755 });
-        await writeFile(join(dir, filename), optimizedBuffer);
-      } catch {
-        // ignore
+  if (!publicRoot) {
+    const cwd = process.cwd();
+    const candidateUploadDirs = [
+      join(cwd, "public", "uploads", uploadFolder),
+      join(cwd, "uploads", uploadFolder),
+      join(cwd, "..", "public", "uploads", uploadFolder),
+      join(cwd, "..", "..", "public", "uploads", uploadFolder),
+      join(cwd, ".next", "standalone", "public", "uploads", uploadFolder),
+      join(cwd, ".next", "standalone", "uploads", uploadFolder),
+    ];
+    for (const dir of candidateUploadDirs) {
+      if (dir !== targetDir) {
+        try {
+          await mkdir(dir, { recursive: true, mode: 0o755 });
+          await writeFile(join(dir, filename), optimizedBuffer);
+        } catch {
+          // ignore
+        }
       }
     }
   }
@@ -383,18 +382,10 @@ export async function assertSiteAsset(
   ) {
     return;
   }
-  const allowedRoots = Array.from(
-    new Set([
-      "/uploads/",
-      "/community/",
-      "/theme/reference/",
-      ...(roots[scope] ?? []),
-      ...(roots.all ?? []),
-    ]),
-  );
+  const allowedRoots = roots[scope] ?? [];
   if (
     !allowedRoots.some((root) => cleanPath.startsWith(root)) ||
-    (kindOf(cleanPath) !== kind && !cleanPath.startsWith("/uploads/"))
+    kindOf(cleanPath) !== kind
   )
     throw Error("İzin verilmeyen medya yolu");
   try {

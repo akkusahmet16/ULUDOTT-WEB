@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { formRequest } from "./admin-fetch";
 
 export function CopyLinkButton({
   url,
@@ -100,5 +102,58 @@ export function FormLinkPill({
         {status === "published" ? "Formu Görüntüle ↗" : "Form Önizleme ↗"}
       </a>
     </div>
+  );
+}
+
+export function DeleteFormButton({
+  formId,
+  formTitle,
+}: {
+  formId: string;
+  formTitle: string;
+}) {
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
+
+  async function remove() {
+    if (
+      typeof window !== "undefined" &&
+      !window.confirm(
+        `"${formTitle}" formunu ve bu forma gelen tüm cevapları veritabanından kalıcı olarak silmek istediğinize emin misiniz?`,
+      )
+    ) {
+      return;
+    }
+    setBusy(true);
+    try {
+      await formRequest("/api/admin/forms/" + formId, { action: "delete" });
+      router.refresh();
+    } catch (e) {
+      if (typeof window !== "undefined") {
+        window.alert(e instanceof Error ? e.message : "Form silinemedi");
+      }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      disabled={busy}
+      onClick={() => void remove()}
+      style={{
+        padding: "4px 10px",
+        fontSize: "13px",
+        cursor: busy ? "not-allowed" : "pointer",
+        borderRadius: "8px",
+        border: "1px solid var(--coral)",
+        background: "transparent",
+        color: "var(--coral)",
+        fontWeight: 600,
+      }}
+    >
+      {busy ? "Siliniyor..." : "Sil"}
+    </button>
   );
 }

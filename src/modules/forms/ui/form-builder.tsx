@@ -85,11 +85,12 @@ export function FormCreator({
       </label>
       {isUlujam ? (
         <section aria-label="UluJam başvuru şablonu">
-          <h3>UluJam başvuru şablonu</h3>
+          <h3>UluJam Formu</h3>
           <p>
-            Katılımcı bilgileri, beceriler ve takım seçenekleri hazır gelir.
-            Taslağı oluşturduktan sonra soruları ve başvuru tarihlerini
-            düzenleyebilirsiniz.
+            Katılımcı bilgileri, beceriler ve takım seçenekleri kendine özel
+            yapısıyla hazır gelir. Aşağıdaki Form başlığı alanına{" "}
+            <strong>UluJam&apos;26</strong> veya <strong>UluJam&apos;27</strong>{" "}
+            gibi bir isim girerek formu o başlık altında saklayabilirsiniz.
           </p>
           <FormPreview
             key={eventId}
@@ -788,6 +789,40 @@ export function FormBuilder({
         onClick={() => void action("close")}
       >
         Kapat
+      </button>
+      <button
+        className="button"
+        type="button"
+        disabled={busy}
+        style={{
+          borderColor: "var(--coral)",
+          color: "var(--coral)",
+        }}
+        onClick={async () => {
+          if (
+            typeof window !== "undefined" &&
+            !window.confirm(
+              `"${form.settings.title}" formunu ve bu forma gelen tüm cevapları veritabanından kalıcı olarak silmek istediğinize emin misiniz?`,
+            )
+          ) {
+            return;
+          }
+          setBusy(true);
+          try {
+            await formRequest("/api/admin/forms/" + form.id, {
+              action: "delete",
+              expectedRevision: revision,
+            });
+            router.push("/admin/formlar");
+            router.refresh();
+          } catch (e) {
+            setMessage(e instanceof Error ? e.message : "Form silinemedi");
+          } finally {
+            setBusy(false);
+          }
+        }}
+      >
+        Formu sil
       </button>
     </>
   );

@@ -119,8 +119,8 @@ export async function submitUlujam(
       return result;
     }
     if (
-      event.status !== "published" ||
-      !event.startsAt ||
+      !["published", "draft", "scheduled"].includes(event.status) ||
+      (event.status === "published" && !event.startsAt) ||
       (event.endsAt && event.endsAt <= new Date())
     )
       throw new SubmissionError(409, "UluJam başvurusu açık değil");

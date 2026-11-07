@@ -28,8 +28,8 @@ export async function getPublicForm(slug: string) {
       f.status !== "published" ||
       !(await applicationEnabled(tx, f.id)) ||
       (event?.kind === "ulujam" &&
-        (event.status !== "published" ||
-          !event.startsAt ||
+        (!["published", "draft", "scheduled"].includes(event.status) ||
+          (event.status === "published" && !event.startsAt) ||
           (!!event.endsAt && event.endsAt <= date))) ||
       !f.opensAt ||
       f.opensAt > date ||

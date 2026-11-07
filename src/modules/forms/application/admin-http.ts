@@ -12,6 +12,7 @@ import {
   publishForm,
   pauseForm,
   closeForm,
+  deleteForm,
   getForm,
   listForms,
 } from "./form-service.ts";
@@ -104,23 +105,40 @@ export async function handleForms(req: Request, id?: string) {
         { status: 201, headers: privateHeaders },
       );
     }
+    if (req.method === "DELETE" && id) {
+      const result = await deleteForm(actor, id);
+      revalidateTag(CACHE_TAGS.events, { expire: 0 });
+      revalidateTag(CACHE_TAGS.ulujam, { expire: 0 });
+      return Response.json(result, { headers: privateHeaders });
+    }
     const d = z
       .strictObject({
-        action: z.enum(["definition", "settings", "publish", "pause", "close"]),
+        action: z.enum([
+          "definition",
+          "settings",
+          "publish",
+          "pause",
+          "close",
+          "delete",
+        ]),
         input: z.unknown().optional(),
-        expectedRevision: z.int().positive(),
+        expectedRevision: z.int().positive().optional(),
       })
       .parse(await readJson(req, 128 * 1024));
+    if (d.action !== "delete" && d.expectedRevision === undefined)
+      throw Error("Sürüm çakışması");
     const result =
-      d.action === "definition"
-        ? await saveDraftForm(actor, id, d.input, d.expectedRevision)
-        : d.action === "settings"
-          ? await saveFormSettings(actor, id, d.input, d.expectedRevision)
-          : d.action === "publish"
-            ? await publishForm(actor, id, d.expectedRevision)
-            : d.action === "pause"
-              ? await pauseForm(actor, id, d.expectedRevision)
-              : await closeForm(actor, id, d.expectedRevision);
+      d.action === "delete"
+        ? await deleteForm(actor, id, d.expectedRevision)
+        : d.action === "definition"
+          ? await saveDraftForm(actor, id, d.input, d.expectedRevision!)
+          : d.action === "settings"
+            ? await saveFormSettings(actor, id, d.input, d.expectedRevision!)
+            : d.action === "publish"
+              ? await publishForm(actor, id, d.expectedRevision!)
+              : d.action === "pause"
+                ? await pauseForm(actor, id, d.expectedRevision!)
+                : await closeForm(actor, id, d.expectedRevision!);
     revalidateTag(CACHE_TAGS.events, { expire: 0 });
     revalidateTag(CACHE_TAGS.ulujam, { expire: 0 });
     return Response.json(result, { headers: privateHeaders });

@@ -9,7 +9,7 @@ test("UluJam dört mod ve beceriler; yalnız önizleme, parola temizlenir", asyn
   await expect(page.getByText("Yönetim oturumu açık.")).toBeVisible();
   await page.goto("/admin/formlar");
   await page
-    .getByRole("link", { name: /UluJam 2027.*özel form önizlemesi/ })
+    .getByRole("link", { name: /UluJam formu önizlemesi/i })
     .click();
   await expect(page.getByText("Bu önizleme başvuru kaydetmez.")).toBeVisible();
   await expect(page.getByLabel(/Oyuncu adı|Takma ad/)).toHaveCount(0);

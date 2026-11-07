@@ -43,6 +43,7 @@ export function FormSettings({
           onChange={(e) => patch("title", e.target.value)}
           required
           maxLength={160}
+          placeholder="Örnek: UluJam'26, UluJam'27 veya Etkinlik Başvurusu"
         />
       </label>
       <label className="field">

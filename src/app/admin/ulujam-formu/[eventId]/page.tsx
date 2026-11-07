@@ -22,7 +22,7 @@ export default async function Page({
   return (
     <main>
       <Link href="/admin/formlar">Form listesine dön</Link>
-      <h1>{preview.title} özel form önizlemesi</h1>
+      <h1>UluJam formu önizlemesi</h1>
       <UlujamForm eventId={preview.eventId} definition={preview.definition} />
     </main>
   );
