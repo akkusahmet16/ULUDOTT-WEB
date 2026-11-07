@@ -4,7 +4,6 @@ import Link from "next/link";
 import { formatLocaleTimestamp } from "../../../i18n/format.ts";
 import type { UlujamSettings } from "../domain/ulujam";
 import { formRequest } from "../../forms/ui/admin-fetch";
-import { SiteAssetPicker } from "../../media/ui/site-asset-picker";
 import styles from "../../admin/ui/content-workspace.module.css";
 type FormOption = {
   id: string;
@@ -131,55 +130,6 @@ export function UlujamEditor({
               }
               required
             />
-          </label>
-        </section>
-        <section className={styles.card} aria-label="UluJam video ayarları">
-          <h2>UluJam videosu</h2>
-          <label className="field">
-            YouTube video bağlantısı
-            <input
-              type="url"
-              value={data.videoUrl}
-              maxLength={1000}
-              onChange={(event) => change("videoUrl", event.target.value)}
-              placeholder="https://youtu.be/…"
-            />
-          </label>
-          <label className="field">
-            Video başlığı
-            <input
-              value={data.videoTitle}
-              maxLength={160}
-              onChange={(event) => change("videoTitle", event.target.value)}
-              required
-            />
-          </label>
-          <label className="field">
-            Video açıklaması
-            <textarea
-              value={data.videoDescription}
-              maxLength={2000}
-              onChange={(event) =>
-                change("videoDescription", event.target.value)
-              }
-            />
-          </label>
-          <SiteAssetPicker
-            scope="ulujam"
-            label="Video kapak görseli"
-            value={data.videoCover}
-            onChange={(path) => change("videoCover", path)}
-            disabled={busy}
-          />
-          <label className={styles.toggle}>
-            <input
-              type="checkbox"
-              checked={data.videoPublished}
-              onChange={(event) =>
-                change("videoPublished", event.target.checked)
-              }
-            />{" "}
-            Videoyu sitede göster
           </label>
         </section>
         <section className={styles.card} aria-label="UluJam başvuru ayarları">

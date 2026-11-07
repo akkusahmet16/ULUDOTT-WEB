@@ -61,10 +61,10 @@ export async function saveArchive(
   const data = archiveSchema.parse(input);
   for (const image of data.gallery)
     if (image.src && image.src.trim() !== "")
-      await assertSiteAsset(image.src, "ulujam", "image");
+      await assertSiteAsset(image.src, "all", "image");
   for (const game of data.games)
     if (game.image && game.image.trim() !== "")
-      await assertSiteAsset(game.image, "games", "image");
+      await assertSiteAsset(game.image, "all", "image");
   const saved = await writeSetting(
     actor,
     `ulujam-archive:${data.year}`,

@@ -137,12 +137,6 @@ export function adminModulesFor(actor: Actor): AdminModule[] {
             description: "Afişler ve yüklenen görseller.",
             group: "ARAÇLAR",
           },
-          {
-            href: "/admin/linkler",
-            label: "Bağlantı merkezi",
-            description: "Paylaşılacak bağlantıları yönetin.",
-            group: "ARAÇLAR",
-          },
         ] as AdminModule[])
       : []),
     ...(actor.roles.includes("system_admin")

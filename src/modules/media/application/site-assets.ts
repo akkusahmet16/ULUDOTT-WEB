@@ -21,39 +21,46 @@ const roots: Record<SiteAssetScope, string[]> = {
   people: [
     "/community/03-hakkimizda/people/",
     "/theme/reference/people/",
-    "/uploads/people/",
+    "/community/",
+    "/uploads/",
   ],
   games: [
     "/community/06-oyunlar/",
-    "/uploads/games/",
+    "/community/",
+    "/uploads/",
   ],
   ulujam: [
     "/community/02-ulujam/",
-    "/uploads/ulujam/",
+    "/community/",
+    "/uploads/",
   ],
   sponsors: [
     "/community/01-anasayfa/sponsorlar/",
-    "/uploads/sponsors/",
+    "/community/",
+    "/uploads/",
   ],
   places: [
     "/community/03-hakkimizda/places/",
-    "/uploads/places/",
+    "/community/",
+    "/uploads/",
   ],
   events: [
     "/community/04-etkinlikler/",
     "/community/05-etkinlikler/",
-    "/uploads/events/",
+    "/community/",
+    "/uploads/",
   ],
   fanzin: [
-    "/uploads/fanzin/",
+    "/uploads/",
   ],
   homepage: [
     "/community/01-anasayfa/",
-    "/uploads/homepage/",
+    "/community/",
+    "/uploads/",
   ],
   general: [
-    "/uploads/general/",
     "/uploads/",
+    "/community/",
   ],
 };
 
@@ -249,10 +256,32 @@ export async function uploadSiteAsset(
   const filename = `${Date.now()}-${safeBase}.webp`;
   const targetPath = join(targetDir, filename);
 
-  await sharp(buffer)
+  const optimizedBuffer = await sharp(buffer)
     .rotate()
     .webp({ quality: 85 })
-    .toFile(targetPath);
+    .toBuffer();
+
+  await writeFile(targetPath, optimizedBuffer);
+
+  const cwd = process.cwd();
+  const candidateUploadDirs = [
+    join(cwd, "public", "uploads", uploadFolder),
+    join(cwd, "uploads", uploadFolder),
+    join(cwd, "..", "public", "uploads", uploadFolder),
+    join(cwd, "..", "..", "public", "uploads", uploadFolder),
+    join(cwd, ".next", "standalone", "public", "uploads", uploadFolder),
+    join(cwd, ".next", "standalone", "uploads", uploadFolder),
+  ];
+  for (const dir of candidateUploadDirs) {
+    if (dir !== targetDir) {
+      try {
+        await mkdir(dir, { recursive: true, mode: 0o755 });
+        await writeFile(join(dir, filename), optimizedBuffer);
+      } catch {
+        // ignore
+      }
+    }
+  }
 
   const webPath = `/uploads/${uploadFolder}/${filename}`;
   return {
@@ -260,7 +289,7 @@ export async function uploadSiteAsset(
     name: filename,
     folder: `/uploads/${uploadFolder}`,
     kind: "image",
-    size: buffer.length,
+    size: optimizedBuffer.length,
     updatedAt: new Date().toISOString(),
   };
 }
@@ -322,7 +351,8 @@ export async function deleteSiteAsset(
 }
 
 async function checkedFile(path: string, publicRoot: string) {
-  const segments = path.slice(1).split("/");
+  const cleanPath = path.trim().replace(/^\/+/, "/").split("?")[0].split("#")[0];
+  const segments = cleanPath.slice(1).split("/").filter(Boolean);
   let current = publicRoot;
   for (const segment of segments) {
     if (
@@ -345,13 +375,37 @@ export async function assertSiteAsset(
   kind: SiteAssetKind,
   publicRoot = join(process.cwd(), "public"),
 ): Promise<void> {
+  const cleanPath = path.trim().replace(/^\/+/, "/");
   if (
-    !roots[scope]?.some((root) => path.startsWith(root)) ||
-    kindOf(path) !== kind
+    cleanPath.startsWith("http://") ||
+    cleanPath.startsWith("https://") ||
+    cleanPath.startsWith("data:")
+  ) {
+    return;
+  }
+  const allowedRoots = Array.from(
+    new Set([
+      "/uploads/",
+      "/community/",
+      "/theme/reference/",
+      ...(roots[scope] ?? []),
+      ...(roots.all ?? []),
+    ]),
+  );
+  if (
+    !allowedRoots.some((root) => cleanPath.startsWith(root)) ||
+    (kindOf(cleanPath) !== kind && !cleanPath.startsWith("/uploads/"))
   )
     throw Error("İzin verilmeyen medya yolu");
   try {
-    if (!(await checkedFile(path, publicRoot)).isFile())
+    const root = resolveUploadRoot(publicRoot);
+    let stat;
+    try {
+      stat = await checkedFile(cleanPath, root);
+    } catch {
+      stat = await checkedFile(cleanPath, publicRoot);
+    }
+    if (!stat.isFile())
       throw Error("Dosya yok");
   } catch {
     throw Error("Medya dosyası bulunamadı veya izin verilmiyor");
