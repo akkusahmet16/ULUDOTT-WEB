@@ -1,114 +1,117 @@
-# Veritabanı omurgası — Görev 2
+# Veritabanı Mimarisi ve Şema Tasarımı
 
-2 Ekim 2026. PostgreSQL 17 / Drizzle. Bu belge uygulanmış temel şemayı anlatır; sonraki ürün servislerinin tamamlandığını söylemez. Migration seed içermez: yönetici, kişi, takım, başvuru, kart, geçmiş oyun dahil 40 public tablo boş açılır. 2026 editoryal başlangıç yükü Görev 8'de ayrı komuttur.
+Güncelleme: Kasım 2026 (v0.2 Final Sürümü).  
+Altyapı: PostgreSQL 17 / Drizzle ORM.  
+Veritabanı bağlantı havuzu: `src/lib/database/index.ts` üzerinden `server-only` sınırıyla yönetilir.
 
-```mermaid
-erDiagram
-  admins ||--o{ admin_roles : roles
-  admins ||--o{ admin_sessions : sessions
-  admins ||--o{ admin_event_scopes : scopes
-  events ||--o{ admin_event_scopes : scopes
-  event_categories o|--o{ events : category
-  events ||--o| event_years : year
-  events o|--o{ announcements : content
-  events ||--o| featured_slots : featured
-  media_assets ||--o{ media_variants : variants
-  media_assets o|--o{ announcements : poster
-  media_assets o|--o{ featured_slots : poster
-  events o|--o{ forms : event
-  forms ||--o{ form_versions : versions
-  form_versions ||--o{ form_fields : fields
-  form_versions ||--o{ form_rules : rules
-  forms ||--o{ submissions : submissions
-  form_versions ||--o{ submissions : snapshot
-  submissions ||--o{ submission_answers : answers
-  form_fields ||--o{ submission_answers : version_field
-  submissions ||--o{ submission_status_history : history
-  submissions ||--o{ consents : consent
-  events ||--o{ applications : applications
-  submissions o|--o| applications : specialised
-  applications ||--o{ application_skills : skills
-  events ||--o{ teams : teams
-  teams ||--o{ memberships : roster
-  applications ||--o{ memberships : membership_history
-  teams ||--o{ team_approvals : revision_decisions
-  team_approvals o|--o{ memberships : approved_revision
-  admins ||--o{ team_approvals : approver
-  teams ||--o| team_access : access
-  teams ||--o{ team_sessions : sessions
-  events ||--o{ games : games
-  teams o|--o{ games : author
-  media_assets o|--o{ games : cover
-  games ||--o{ game_credits : credits
-  applications o|--o{ game_credits : consenting_author
-  events ||--o{ awards : ranks
-  games ||--o| awards : award
-  events ||--o{ finalists : finalists
-  games ||--o| finalists : finalist
-  applications ||--o| cards : card
-  cards ||--o{ wallet_passes : providers
-  apple_devices ||--o{ apple_registrations : registrations
-  wallet_passes ||--o{ apple_registrations : registrations
-  link_groups ||--o{ links : links
-  admins ||--o{ audit_logs : actor
+---
+
+## 1. Mimari Prensipler ve Tasarım Kararları
+
+1. **Katmanlı İzolasyon ve Server-Only Sınırı:**
+   Veritabanı modelleri ve sorguları yalnızca sunucu tarafında çalışır. İstemci bileşenleri hiçbir zaman veritabanı sürücüsünü içe aktaramaz.
+2. **Transaction ve Audit Bütünlüğü:**
+   İş kuralı mutasyonları `withTransaction` yardımcısı ile yürütülür. Her kritik işlem (onay, ret, durum değişikliği, ayar güncellemesi) aynı işlem bloğunda `audit_logs` tablosuna ve gerekiyorsa `outbox` kuyruğuna yazılır.
+3. **No Cascade Delete:**
+   İlişkili tablolarda sessiz silinmeleri (`ON DELETE CASCADE`) engellemek için doğrudan dış anahtarlar `NO ACTION` veya `RESTRICT` kurallarıyla korunur. Veri silme işlemleri kontrollü yazılımsal temizlik (soft-delete veya denetimli retention worker) ile yapılır.
+4. **Idempotency ve Eşzamanlılık Koruması:**
+   Aynı anahtarla gelen mükerrer istekler `idempotency_records` tablosunda atomik olarak kilitlenir. Eşzamanlı işlemlerde çifte kayıt veya kontenjan aşımı veritabanı kısıtlarıyla engellenir.
+5. **JSONB ve Sürüm Kontrolü:**
+   Form şemaları (`form_rules`, `form_fields`), dinamik CMS ayarları (`site_settings`), geliştirici künyeleri ve fanzin galeri öğeleri JSONB olarak saklanır ve her kayıtta artan pozitif `revision` alanı denetlenir (`CHECK (revision > 0)`).
+
+---
+
+## 2. Modüller ve Tablo Envanteri (13 Alan / 48 Tablo)
+
+### A. Yönetici ve Yetkilendirme (Admin & Auth)
+- `admins`: Yönetici kullanıcıları, normalize e-posta, parola karması (Argon2id), durum ve kilit zamanları.
+- `admin_roles`: Yöneticilere atanan roller (superadmin, event_manager, reviewer vb.).
+- `admin_sessions`: Oturum anahtarları (hashlenmiş), son erişim ve geçerlilik süreleri.
+- `admin_event_scopes`: Yöneticinin işlem yetkisine sahip olduğu etkinlik kısıtları.
+- `audit_logs`: Yönetici eylemleri, aktör ID, işlem türü, hedef kaynak, IP ve zaman damgası.
+
+### B. Etkinlik ve Yayıncılık (Events & Content)
+- `events`: Topluluk etkinlikleri, slug, durum (draft, published, cancelled, archived), başlama/bitiş tarihleri, konum ve kapasite.
+- `event_categories`: Etkinlik kategorileri (Game Jam, Coffee Talk, Atölye vb.).
+- `event_years`: UluJam ve etkinlik arşiv yılları.
+- `announcements`: Etkinlik duyuruları, afiş referansları ve yayın durumları.
+- `featured_slots`: Ana sayfada öne çıkan etkinlik yerleşimleri.
+- `event_gallery`: Etkinliğe bağlı galeri görselleri ve sıralama.
+- `content_redirects`: Değişen içerik slugları için kalıcı yönlendirme kayıtları.
+
+### C. Medya Yönetimi (Media)
+- `media_assets`: Orijinal yüklenen görseller, dosya boyutu, MIME türü, EXIF/hash bilgisi ve alt metin.
+- `media_variants`: Farklı ekran boyutları için üretilmiş optimize WebP/AVIF türevleri.
+
+### D. Formlar ve Başvurular (Forms & Submissions)
+- `forms`: Dinamik form şablonları, slug, durum ve başvuru pencereleri.
+- `form_versions`: Değişmez (immutable) form sürüm anlık görüntüleri (snapshot).
+- `form_fields`: Sürüme bağlı form alanları (metin, sayı, radyo, seçim, dosya vb.).
+- `form_rules`: Alanlar arası görünürlük koşulları ve doğrulama kuralları.
+- `submissions`: Form başvuruları, benzersiz başvuru kodu, onay/ret statüsü.
+- `submission_answers`: Başvurulan alanlara verilen cevaplar ve dosya referansları.
+- `submission_status_history`: Başvuru durumu değişiklik geçmişi ve gerekçesi.
+- `consents`: KVKK ve açık rıza onay kayıtları.
+
+### E. UluJam ve Eşleştirme Sistemi (UluJam & Matching)
+- `applications`: UluJam katılımcı başvuruları, mod tercihi (solo, team, team-seeker, solo-open).
+- `application_skills`: Katılımcının yetenek seviyeleri (1–5 arası yazılım, tasarım, ses, müzik, hikaye).
+- `teams`: UluJam takımları, takım adı, kontenjanı, durumu.
+- `memberships`: Takım üyelikleri, lider/üye rolleri, ayrılma zamanları.
+- `team_approvals`: Takım kadro revizyonu onay kararları.
+- `team_access`: Takım yönetim portalı için hashlenmiş erişim anahtarları.
+- `team_sessions`: Takım lideri aktif oturumları.
+
+### F. Oyun Kataloğu ve Dereceler (Games & Awards)
+- `games`: UluJam ve topluluk oyunları, başlık, açıklama, itch.io URL, kapak görseli.
+- `game_credits`: Oyunda emeği geçen geliştiricilerin ad ve rıza durumları.
+- `awards`: Yarışma dereceleri (1., 2., 3. ve özel kategori ödülleri).
+- `finalists`: Jüri değerlendirmesine kalan finalist oyunlar.
+- `site_game_entries`: Ana sayfa ve harici vitrin için öne çıkarılan oyun kayıtları.
+
+### G. Katılımcı Kartları ve Dijital Cüzdan (Cards & Wallet)
+- `cards`: Katılımcı için üretilen benzersiz dijital kimlik kartı ve check-in durumu.
+- `wallet_passes`: Google Wallet (ve ileride Apple Wallet) kart nesnesi ve durumu.
+- `apple_devices`, `apple_registrations`: Apple Wallet cihaz kayıtları ve bildirim anahtarları.
+
+### H. Link Merkezi (Link Hub)
+- `link_groups`: Link kategorileri ve sıralama düzeni.
+- `links`: Kısa linkler, hedef doğrulanmış URL, QR kod anahtarı, tıklama sayacı.
+
+### I. Fanzin ve Çevrimiçi Okuyucu (Fanzin & Flipbook)
+- `fanzin_issues`: Fanzin sayıları, başlık, yayın sezonu, yıl, PDF dosya yolu ve kapak görseli.
+- `fanzin_pages`: Fanzin sayılarına ait sayfa detayları, sayfa tipi, HTML içerik, yazar ve galeri öğeleri.
+
+### J. Site İçerikleri ve CMS Ayarları (Site Settings & People)
+- `site_settings`: Ana sayfa, hakkımızda, iletişim, mekanlar ve sponsorlar için dinamik JSON ayarları.
+- `people_overrides`: Topluluk üyeleri ve konuşmacı slotları için özel içerik güncellemeleri.
+
+### K. Analitik ve Ziyaretçi İstatistikleri (Analytics)
+- `site_page_views`: Anonimleştirilmiş sayfa görüntülemeleri, referer analizi ve ziyaretçi karması.
+
+### L. Operasyon ve Kuyruk Motoru (Operations & Outbox)
+- `outbox`: Transactional outbox kuyruğu, bekleyen e-posta ve harici bildirim işleri, retry sayaçları ve kilitler.
+- `idempotency_records`: API istek idempotency anahtarları ve yanıt önbelleği.
+- `rate_limits`: IP/kullanıcı bazlı istek frekans takip tabloları.
+- `retention_runs`: Veri saklama ve otomatik KVKK anonimleştirme çalıştırma kayıtları.
+
+---
+
+## 3. Migration ve Veritabanı Komutları
+
+```sh
+# Drizzle schema değişikliklerinden yeni migration dosyaları üretir
+pnpm db:generate
+
+# Migration dosyalarının metadata tutarlılığını doğrular
+pnpm db:check
+
+# Bekleyen migration'ları hedef veritabanına uygular
+pnpm db:migrate
+
+# 2026 yılı tarihî oyun ve derece verilerini idempotent olarak ekler
+pnpm db:seed:2026
+
+# UluJam taslak başlangıç verilerini ekler
+pnpm db:seed:ulujam
 ```
-
-Outbox, idempotency_records ve rate_limits polimorfik altyapı kayıtlarıdır; outbox aggregate ve audit object kimlikleri UUID'dir, birçok modüle ait olabildiği için tek tablo FK'si yoktur. Audit actor FK'si vardır. Başlangıç outbox API'si yalnızca UUID referansları taşır; kişi verisi ve sağlayıcı sırrını payload'a kabul etmez.
-
-| Alan | FK / unique / CHECK kararı | İndeks ve zaman |
-|---|---|---|
-| Admin | Normalize e-posta ve token hash unique; admin-role ve admin-event bileşik PK; role allowlist | Admin/session expiry ve etkinlik scope reverse index; expiry > created |
-| Etkinlik/içerik | Slug unique; kategoriler ve medya FK; statü/tür allowlist; kapasite/team size/revision pozitif; tarih aralığı tutarlı | Status+publish/start, announcement event; bilinmeyen tarihler NULL |
-| Form/sürüm | Form+version unique; submission form/version bileşik FK; varsa form/event bileşik FK; field key sürüme bağlı; answer submission/version ve field/version bileşik FK; file türü kapalı | Form event, submission form+created+id cursor ve event+email, status history |
-| UluJam | Event+normalize email unique; telefon NOT NULL ve E.164 biçimi; dört mod; skill 1–5; takım event+normalize name unique; memberships team/event ve application/event FK | Application cursor/status; takım review; tek aktif üyelik partial unique (left_at NULL); kapatılmış geçmiş üyelikler saklanır |
-| Onay/erişim | Approval team+revision PK ve admin FK; membership approved revision aynı takım approval FK; yeni üyelikte NULL; erişim token hash unique | Team/session expiry index; roster/access revision pozitif; late member otomatik onay almaz |
-| Oyun/derece | İsteğe bağlı takım aynı etkinlikte; awards/finalists game/event bileşik FK; sıra 1–3 ve event+rank unique; HTTPS itch.io hostname; bilinmeyen title/team/credits NULL | Game event; credit game; 2026 kısmi yayın ve rıza kontrolü Görev 8/20 servislerinde |
-| Kart/Wallet | Application başına tek kart; pending default; provider/card ve provider/object unique; provider/status allowlist; yalnızca hashlenmiş erişim anahtarları | Apple registration reverse pass index; gerçek uygunluk Görev 18/22 |
-| Link | Grup FK; pozisyon >=0; kategori sırası ve grup+link sırası unique; revision >0; HTTPS veya yerel path | Group+published+position; starts_at/ends_at görünürlük penceresi ve verified_at |
-| İşletme | Outbox type+aggregate+revision unique; attempts >=0; statü allowlist; idempotency scope+keyHash PK; rate window bileşik PK | Pending available ve processing lease partial index; expiry indeksleri |
-
-Bütün anlar `timestamptz` olarak saklanır, uygulama İstanbul saatinde gösterir. Tablolar UUID `gen_random_uuid()` kullanır. Cascade silme yoktur; FK'ler NO ACTION'dır. Saklama/anonimleştirme politikası Görev 25'te kontrollü komutlarla uygulanır; personel veya içerik silinince ilişkili kayıtların sessizce kaybolması önlenir.
-
-`getDatabase()` bağlantıyı ilk kullanımda açar; process başına en fazla 5 bağlantı, 20 sn idle ve 5 sn connect timeout vardır. Web/worker havuzları toplamı VDS'ye göre sonradan ölçülür. Server-only sınırı korunur. `withTransaction` transaction sonucunu döndürür ve hatayı korur; otomatik yan etkili retry yapmaz. Application değişikliği, `appendAudit` ve `enqueue` aynı `DbTx` ile yürür. Audit metadata strict allowlist'tir: yalnızca revision, önceki revision, izinli status ve değişen alan adları. Ham kişi değerleri, not/parola/token alınmaz.
-
-## Migration ve test işletimi
-
-- `pnpm db:generate`: Drizzle schema'dan yeni SQL/snapshot üretir; çıktı incelenmeden uygulanmaz.
-- `pnpm db:check`: migration metadata tutarlılığını kontrol eder; PostgreSQL kabulünün yerine geçmez.
-- `pnpm db:migrate`: pending migration'ları uygular, seed veya truncate yapmaz. İkinci çalışma yeni kayıt yaratmaz. Dağıtımda migration komutu tek işletme sürecinden çalıştırılır.
-- `0000` temel şema; `0001` izolasyon kısıtlarıdır. Drizzle ikinci SQL'de yeni parent unique'i child FK'den sonra üretti: `form_event_identity_unique` elle FK'nin önüne taşındı. Snapshot aynı şemayı temsil eder; bu sıralama değişikliği gerçek boş DB testiyle doğrulandı.
-- Testler her koşuda yalnızca localhost PostgreSQL'de rastgele `uludott_test_*` veritabanı açar ve kaldırır; geliştirme DB'sini truncate etmez. Yerel test DB oluşturma izni gerekir. Test örnekleri buradadır, üretim migration'ında yoktur.
-- Next standalone web imajı migration CLI ortamı değildir; migration kaynak/dependency ortamından dağıtım öncesi çalıştırılır. Canlı paketleme Görev 28'de tamamlanır.
-
-Takım kapasite kilidi/constraint trigger, tam NFKC Türkçe isim normalizasyonu, yayımlanmış form snapshot değişmezliği, başvuru kapasite yarışı ve Wallet uygunluğu ilgili sonraki görevlerde servis ve DB testleriyle tamamlanır. Buradaki iskelet bu domain kabulünü kendiliğinden sağlamaz. Hash/encrypted adları kriptografik uygulamanın tamamlandığını söylemez; gerçek üretim ve doğrulama Görev 3/12/17/24'te yapılır.
-
-
-## Görev 6 şema genişletmesi
-
-0003: etkinlikte excerpt/organizer/location_type/media_id/form_id, duyuruda excerpt/seo/cta_url/cta_label, `content_redirects` eski slug envanteri. Yeni toplam 41 public tablo. 0004: events(id,form_id) → forms(event_id,id) bileşik FK, location_type physical/online CHECK. Döngüsel referans migration ile iki tablo kurulduktan sonra eklenir; TypeScript callback dönüş tipi AnyPgColumn ile açıkça tanımlanır. Etkinlik afişinin FK'si media_assets'e bağlıdır. Soft arşivleme, redirect hedef kimliğini ve audit geçmişini korur. Yayın alanları mevcut publish_at/unpublish_at/revision omurgasını kullanır; worker olmadan okuma anındaki zaman penceresi görünürlüğü belirler.
-
-## Görev 7 şema genişletmesi
-
-0005: link_groups ve links revision, links verified_at, kategori sırası ve kategori içi link sırası unique kısıtları. Yeni tablo yok; toplam 41. Bağlantı servisleri advisory transaction kilidi ve expectedRevision ile eski ekranın yeni kaydı ezmesini önler. Sıralama önce boş pozisyon aralığına, sonra tam hedef sırasına aynı transaction içinde taşır. Genel okuma yayın penceresini ve hedef uygunluğunu denetler. [Bağlantı işletme rehberi](../operations/links.md).
-
-## Görev 8 editoryal seed
-
-Şema değişmedi; toplam 41 tablo. games.historical_partial/published_at, awards event+rank unique ve event_years year unique kullanılır. `pnpm db:seed:2026` ayrı açık transaction ile 1 draft etkinlik kabuğu + 1 yıl + 3 oyun + 3 derece oluşturur; tekrar/eşzamanlı koşuda advisory lock ve sabit kimlikler kullanılır. Gizleme ve düzenleme ezilmez, çelişki rollback olur. Başvuru/kişi/takım/credit/finalist/kart oluşturulmaz. Public kısmi okuyucu yalnız 2026 bilinen envanterini gösterir; başka yıl bayrağı tam sonuç yayın kontrolünü aşamaz. [Seed işletme rehberi](../operations/historical-results.md).
-
-## Görev 9 galeri genişletmesi
-
-0006 event_gallery: event/media FK, event+position unique, 0–49 position ve positive revision, verified_at. Toplam 42 tablo. Medya reference kontrolü galeri ilişkisini içerir. 2027 yılı ayrı tarihsiz draft seed ile ilişkilendirilir; ana editoryal satır toplamı 10 olur, kişisel tablo boşluğu korunur. [Arşiv rehberi](../operations/ulujam-archive.md).
-
-## Görev 10 — form sürümü mühürleme
-
-0007_form_versioning custom/journal migration tablo sayısını değiştirmez (42). form_versions snapshot ve form_fields/form_rules çocukları published_at sonrası trigger'larla değişmez. Child mutasyonu version parent'ını kilitler; yayınlama repository'si de aynı kilitle aynaların tutarlılığını doğrular. versionId+fieldKey composite PK/FK geçmiş cevapları korur; yeni etiket eski yanıtı değiştirmez. Actor servis/panel Görev 11, gerçek submission transaction Görev 12 kapsamıdır. Ayrıntılar docs/operations/form-definitions.md.
-
-
-## Görev 11 form yönetimi
-
-0008_form_settings forms içine settings JSONB, draft/current version pointer ve paused ekler. Composite FK (forms.id,versionId) → (form_versions.form_id,id) başka forma bağlantıyı reddeder. 42 tablo; form mutation scoped forms.write/revision/audit transaction kullanır.
-
-
-## Görev 12 receipt ve kapasite
-
-0009_submission_receipts: submissions revision>0 ve expires_at>created_at, expiry index, waitlisted status/history CHECK; idempotency_records nullable resource_id. Form parent lock kapasite ve idempotency/duplicate kontrolünü serileştirir. Answers/consents/history aynı transaction. Receipt token hash ve AES-GCM replay ayrı AAD; replay TTL 24 saat ve resource expiry/deletion kontrolü. 42 tablo, ana DB kişisel veri boşluğu sürer.

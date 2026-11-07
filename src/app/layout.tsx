@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { connection } from "next/server";
 import "../styles/tokens.css";
 import "../styles/cinematic.css";
+import "../styles/fanzin.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { BootScript } from "../components/boot/BootScript.tsx";

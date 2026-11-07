@@ -258,7 +258,7 @@ export function SiteAssetPicker({
                 gap: 8,
               }}
             >
-              <span>📄 PDF BELGESİ</span>
+              <span>[PDF] BELGESİ</span>
               <a
                 href={value}
                 target="_blank"
@@ -324,10 +324,10 @@ export function SiteAssetPicker({
               {uploading
                 ? "Dosya yükleniyor…"
                 : kind === "document"
-                  ? "⬆ Cihazdan PDF Yükle"
+                  ? "+ Cihazdan PDF Yükle"
                   : kind === "video"
-                    ? "⬆ Cihazdan Video Yükle"
-                    : "⬆ Cihazdan Görsel Yükle"}
+                    ? "+ Cihazdan Video Yükle"
+                    : "+ Cihazdan Görsel Yükle"}
             </span>
           </label>
 
@@ -393,7 +393,7 @@ export function SiteAssetPicker({
         }}
       >
         <summary style={{ cursor: "pointer", fontWeight: 700 }}>
-          📁 Medya Kütüphanesinden Seç ({matches.length || "Yükleniyor…"})
+          Medya Kütüphanesinden Seç ({matches.length || "Yükleniyor…"})
         </summary>
 
         {/* Scope selector tabs for universal asset reuse */}
@@ -492,7 +492,7 @@ export function SiteAssetPicker({
                   ) : asset.kind === "video" ? (
                     <span style={{ fontSize: 13, color: "var(--color-fff9cb)" }}>▶ Video</span>
                   ) : (
-                    <span style={{ fontSize: 13, color: "var(--color-edb2e4)" }}>📄 PDF</span>
+                    <span style={{ fontSize: 13, color: "var(--color-edb2e4)" }}>[PDF]</span>
                   )}
 
                   {/* VDS Permanent Delete Button */}

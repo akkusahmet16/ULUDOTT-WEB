@@ -30,7 +30,7 @@ export function DegreeGames({
               height={900}
               sizes="(max-width: 699px) 100vw, 33vw"
             />
-            <p className="eyebrow">{game.team || "Topluluk Yapımı"}</p>
+            <p className="eyebrow">{game.team || t("home.createTogetherEyebrow")}</p>
             <h3>{game.title}</h3>
             {game.description && (
               <p style={{ fontSize: "14px", color: "var(--muted)", margin: "4px 0" }}>
@@ -38,7 +38,7 @@ export function DegreeGames({
               </p>
             )}
             <a href={game.itchUrl} target="_blank" rel="noopener noreferrer">
-              {game.title} oyununu aç <span aria-hidden="true">↗</span>
+              {t("ulujam.openGameOnItch", { title: game.title })}
             </a>
           </article>
         ))}
@@ -61,7 +61,7 @@ export function DegreeGames({
               sizes="(max-width: 699px) 100vw, 33vw"
             />
             <p className="eyebrow">
-              {`UluJam ${year} · ${result.rank}. derece`}
+              {t("ulujam.heading", { year })} · {t("ulujam.rankBadge", { rank: result.rank })}
             </p>
             <h3>{game.title}</h3>
             <a href={result.itchUrl} target="_blank" rel="noopener noreferrer">

@@ -1,0 +1,335 @@
+/* ==========================================================================
+   ULUDOTT FANZİN — GTA VI / ROCKSTAR GAMES THEMED PUBLICATION
+   ========================================================================== */
+
+.fanzin-hero-section {
+  position: relative;
+  padding: clamp(55px, 8vw, 120px) 0 32px;
+}
+
+.fanzin-hero-content {
+  display: flex;
+  flex-direction: column;
+  max-width: 960px;
+}
+
+.fanzin-hero-heading {
+  font-family: var(--heading);
+  font-size: clamp(44px, 6.5vw, 88px);
+  line-height: 0.95;
+  text-transform: uppercase;
+  color: var(--color-white);
+  margin: 12px 0 18px;
+}
+
+.fanzin-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  margin: 28px 0 0;
+}
+
+/* 3D Flipbook Reader (Ekrana Oranla Genişletilmiş Okuma Deneyimi) */
+.fanzin-reader-section {
+  position: relative;
+  padding: clamp(48px, 6vw, 96px) 0;
+}
+
+.fanzin-reader-container {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  margin: 24px auto 0;
+}
+
+.fanzin-book-stage {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(660px, 86vh, 1080px);
+}
+
+.fanzin-pageflip-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.fanzin-pageflip-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: clamp(520px, 78vh, 880px);
+}
+
+.fanzin-pageflip-instance {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.stf__parent {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  transform: translateZ(0);
+  touch-action: pan-y;
+  margin: 0 auto;
+  border-radius: var(--radius-8px);
+  box-shadow: var(--shadow-03);
+}
+
+.stf__parent canvas {
+  filter: drop-shadow(0 18px 45px var(--color-0c0d1b90));
+  border-radius: var(--radius-8px);
+}
+
+.fanzin-reader-loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--color-0c0d1b66);
+  backdrop-filter: blur(4px);
+  z-index: var(--z-3);
+  border-radius: var(--radius-8px);
+}
+
+.fanzin-loading-spinner {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-50pct);
+  border: 3px solid var(--color-ffffff1a);
+  border-top-color: var(--color-ffd1df);
+  animation: fanzin-spin var(--motion-1000ms) linear infinite;
+}
+
+@keyframes fanzin-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Sayılar ve Yayınlar Arşivi (Metin & Başlık Odaklı, Görselsiz) */
+.fanzin-archive-section {
+  position: relative;
+  padding: clamp(55px, 8vw, 120px) 0;
+  border-top: 1px solid var(--color-ffffff20);
+}
+
+.fanzin-archive-grid {
+  margin-top: 40px;
+}
+
+.fanzin-archive-card {
+  padding: clamp(28px, 3.5vw, 44px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid var(--color-eab7cf30);
+  background: var(--gradient-17);
+  border-radius: var(--radius);
+  transition: transform var(--motion-300ms) var(--ease), border-color var(--motion-300ms);
+}
+
+.fanzin-archive-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--lime);
+}
+
+.fanzin-archive-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.fanzin-card-status-pill {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 4px 12px;
+  border-radius: var(--radius-999px);
+  background: var(--color-0c0d1b66);
+  border: 1px solid var(--color-eed5df66);
+  color: var(--lime);
+}
+
+.fanzin-archive-card-title {
+  font-family: var(--heading);
+  font-size: clamp(24px, 2.5vw, 32px);
+  line-height: 1.15;
+  color: var(--cream);
+  margin: 0;
+}
+
+.fanzin-archive-card-desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0;
+}
+
+.fanzin-archive-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.fanzin-disabled-button {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.fanzin-stage-empty {
+  min-height: clamp(320px, 42vh, 460px);
+}
+
+.fanzin-empty-card {
+  max-width: 600px;
+  width: 100%;
+  padding: clamp(32px, 5vw, 48px);
+  text-align: center;
+  border-radius: var(--radius-1-5rem);
+  background: var(--color-0c0d1b66);
+  border: 1px solid var(--color-eed5df66);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-03);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin: 0 auto;
+}
+
+.fanzin-empty-icon {
+  font-size: 48px;
+  line-height: 1;
+  filter: drop-shadow(0 0 16px var(--color-edb2e466));
+}
+
+.fanzin-empty-title {
+  font-family: inherit;
+  font-size: clamp(20px, 2.5vw, 26px);
+  color: var(--cream);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.fanzin-empty-desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 480px;
+  margin: 0;
+}
+
+.fanzin-empty-archive {
+  width: 100%;
+  margin-top: 24px;
+}
+
+@media (max-width: 760px) {
+  .fanzin-book-stage {
+    min-height: clamp(480px, 70vh, 720px);
+  }
+  .fanzin-archive-actions {
+    gap: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fanzin-archive-card {
+    transition: none !important;
+  }
+}
+
+/* Footer and Contact Social Link Enhancements */
+.footer-socials a.footer-social-icon-link {
+  width: 48px;
+  height: 48px;
+  padding: 12px;
+  border-radius: var(--radius-100px);
+}
+.footer-socials a.footer-social-text-link {
+  width: auto;
+  min-height: 48px;
+  padding: 0 18px;
+  gap: 8px;
+  border-radius: var(--radius-100px);
+  border: 1px solid var(--color-edb2e4aa);
+  background: var(--color-ffffff04);
+  color: var(--color-fff2b7);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.footer-socials a.footer-social-text-link:hover {
+  background: var(--color-edb2e420);
+  border-color: var(--color-edb2e4);
+  color: var(--color-white);
+  transform: translateY(-2px);
+}
+.footer-social-arrow {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--color-ffd1df);
+  transition: transform var(--motion-200ms);
+}
+.footer-socials a.footer-social-text-link:hover .footer-social-arrow {
+  transform: translate(2px, -2px);
+}
+
+.contact-text-link {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.6rem;
+  width: auto !important;
+  min-height: 4rem;
+  padding: 0 1.75rem !important;
+  border: 1px solid var(--color-edb2e4aa) !important;
+  border-radius: var(--radius-100px) !important;
+  background: var(--color-ffffff04);
+  color: var(--color-fff2b7) !important;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background var(--motion-200ms), border-color var(--motion-200ms), color var(--motion-200ms), transform var(--motion-200ms);
+}
+.contact-text-link:hover {
+  background: var(--color-edb2e420) !important;
+  border-color: var(--color-edb2e4) !important;
+  color: var(--color-white) !important;
+  transform: translateY(-3px);
+}
+.contact-text-arrow {
+  font-size: 1.1rem;
+  color: var(--color-ffd1df);
+  transition: transform var(--motion-200ms);
+}
+.contact-text-link:hover .contact-text-arrow {
+  transform: translate(2px, -2px);
+}

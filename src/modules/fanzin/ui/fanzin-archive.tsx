@@ -10,6 +10,9 @@ interface FanzinArchiveProps {
     readonly downloadButton: string;
     readonly archiveUpcomingBadge: string;
     readonly archiveEmptyDesc: string;
+    readonly publishedBadge: string;
+    readonly issueLabel: (num: string | number) => string;
+    readonly pagesSuffix: (count: number) => string;
   };
 }
 
@@ -30,15 +33,15 @@ export function FanzinArchive({ issues, labels }: FanzinArchiveProps) {
               <article key={issue.id} className="card fanzin-archive-card">
                 <div className="fanzin-archive-card-meta">
                   <span className="eyebrow">
-                    {issue.season} {issue.year} • {issue.pageCount} Sayfa • {issue.accessType}
+                    {issue.season} {issue.year} • {labels.pagesSuffix(issue.pageCount)} • {issue.accessType}
                   </span>
                   <span className="fanzin-card-status-pill">
-                    {isPublished ? "Yayında" : labels.archiveUpcomingBadge}
+                    {isPublished ? labels.publishedBadge : labels.archiveUpcomingBadge}
                   </span>
                 </div>
 
                 <h3 className="fanzin-archive-card-title">
-                  Sayı #{String(issue.issueNumber).padStart(2, "0")}: {issue.title}
+                  {labels.issueLabel(String(issue.issueNumber).padStart(2, "0"))}: {issue.title}
                 </h3>
                 <p className="fanzin-archive-card-desc">{issue.description}</p>
 

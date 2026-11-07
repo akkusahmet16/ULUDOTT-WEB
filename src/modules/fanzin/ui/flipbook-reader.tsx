@@ -9,6 +9,9 @@ interface FlipbookReaderProps {
   readonly initialPage?: number;
   readonly emptyTitle?: string;
   readonly emptyDesc?: string;
+  readonly issueLabel?: string;
+  readonly digitalReadyText?: string;
+  readonly interactiveSoonText?: string;
 }
 
 async function loadPdfPages(pdfUrl: string): Promise<string[]> {
@@ -88,6 +91,9 @@ export function FlipbookReader({
   initialPage = 1,
   emptyTitle,
   emptyDesc,
+  issueLabel,
+  digitalReadyText,
+  interactiveSoonText,
 }: FlipbookReaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const pageFlipRef = useRef<PageFlip | null>(null);
@@ -289,14 +295,13 @@ export function FlipbookReader({
         <div className="fanzin-book-stage fanzin-stage-empty">
           <div className="fanzin-empty-card">
             <span className="fanzin-empty-icon" aria-hidden="true">
-              📖
+              ✦
             </span>
             <h3 className="fanzin-empty-title">
-              {emptyTitle || "Henüz Yayımlanmış Sayı Yok"}
+              {emptyTitle}
             </h3>
             <p className="fanzin-empty-desc">
-              {emptyDesc ||
-                "Çok yakında ilk sayımız burada çevrimiçi olarak okunabilecek. Yeni sayılar çıktığında doğrudan bu ekrandan sayfaları çevirerek okuyabilirsiniz."}
+              {emptyDesc}
             </p>
           </div>
         </div>
@@ -310,15 +315,15 @@ export function FlipbookReader({
         <div className="fanzin-book-stage fanzin-stage-empty">
           <div className="fanzin-empty-card">
             <span className="fanzin-empty-icon" aria-hidden="true">
-              📄
+              ✦
             </span>
             <h3 className="fanzin-empty-title">
-              Sayı #{String(issue.issueNumber).padStart(2, "0")}: {issue.title}
+              {issueLabel ? `${issueLabel}: ${issue.title}` : issue.title}
             </h3>
             <p className="fanzin-empty-desc">
               {issue.pdfUrl && issue.pdfUrl !== "#"
-                ? "Bu sayının dijital baskısı hazırlandı. Dilerseniz yukarıdaki butondan PDF baskısını hemen cihazınıza indirebilirsiniz."
-                : "Bu sayı yayımlandı! İnteraktif çevrimiçi sayfalar çok yakında bu ekranda okunabilecek."}
+                ? digitalReadyText
+                : interactiveSoonText}
             </p>
           </div>
         </div>

@@ -35,7 +35,6 @@ export function UlujamArchive({
                     alt={image.alt}
                     width={640}
                     height={480}
-                    unoptimized
                     sizes={index === 0
                       ? "(max-width: 699px) 100vw, (max-width: 1500px) 67vw, 960px"
                       : "(max-width: 699px) 100vw, (max-width: 1500px) 33vw, 460px"}
@@ -72,10 +71,9 @@ export function UlujamArchive({
                 <article className="degree-game-card" key={game.rank}>
                   <Image
                     src={safeGameImage}
-                    alt={game.title || "Oyun"}
+                    alt={game.title}
                     width={1600}
                     height={900}
-                    unoptimized
                     sizes="(max-width: 699px) 100vw, (max-width: 1500px) 33vw, 470px"
                   />
                   <p className="eyebrow">

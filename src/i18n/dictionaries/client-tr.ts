@@ -93,6 +93,7 @@ export const clientTrSlice: DefaultClientTrSlice = {
     applicationsOpenEyebrow: "Başvurular açık",
     createTogetherEyebrow: "Birlikte üret",
     ulujam2026Eyebrow: "UluJam 2026",
+    customGamesEyebrow: "Bizim Yaptıklarımız",
     ulujamApplicationsAria: "UluJam başvuruları",
     playVlogAria: "Vlogu oynat",
     watchOnYoutube: "YouTube’da izle ↗",

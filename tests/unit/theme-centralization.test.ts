@@ -361,7 +361,7 @@ describe("Theme Centralization Guard Suite (Faz 1 — İş 1A)", () => {
 
   it("forbids browser UI colors and local token definitions in all CSS files outside src/styles/themes.css", () => {
     const cssFiles = walkFiles(srcDir, (f) => f.endsWith(".css"));
-    expect(cssFiles.length).toBe(19); // themes.css + base.css + tokens.css + cinematic.css + home.module.css + 14 module.css files
+    expect(cssFiles.length).toBe(20); // themes.css + base.css + tokens.css + cinematic.css + fanzin.css + home.module.css + 14 module.css files
 
     const allErrors: string[] = [];
     for (const fullPath of cssFiles) {

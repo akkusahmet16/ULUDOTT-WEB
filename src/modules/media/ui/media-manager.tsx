@@ -204,7 +204,7 @@ export function MediaManager() {
                 if (f) void handleUpload(f);
               }}
             />
-            <span>{uploading ? "Dosya yükleniyor…" : "⬆ Bilgisayardan Dosya Seç"}</span>
+            <span>{uploading ? "Dosya yükleniyor…" : "+ Bilgisayardan Dosya Seç"}</span>
           </label>
         </div>
 
@@ -309,7 +309,7 @@ export function MediaManager() {
                     </div>
                   ) : (
                     <div style={{ color: "var(--color-edb2e4)", fontSize: "16px", fontWeight: 700 }}>
-                      📄 PDF Belgesi
+                      [PDF] Belgesi
                     </div>
                   )}
                 </div>

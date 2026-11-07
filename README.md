@@ -1,81 +1,131 @@
-# Uludott Web
+# Uludott Web (v0.2 Final Kabul Sürümü)
 
-Repo: [akkusahmet16/ULUDOTT-WEB](https://github.com/akkusahmet16/ULUDOTT-WEB).
+Uludott Oyun Geliştirme Topluluğu'nun resmî web platformu. Bu sürüm, v0.1'in ödüllü ve özgün sinematik ArtDeco görsel kimliğini %100 sadakatle korurken; arka planda Next.js 16 (App Router & Turbopack), PostgreSQL 17 (Drizzle ORM), çok dilli sözlük altyapısı (TR/EN i18n), dinamik form motoru, UluJam takım portalı, katılımcı kartları, dijital cüzdan entegrasyonu, Fanzin çevrimiçi okuyucu ve kapsamlı yönetim paneli sunar.
 
-Görev 1–23 ve 25–27 yerel uygulama teslimleri mevcut;28 CI/yük/güvenlik otomasyonu ve29 dağıtım/restore/geliştirici rehberi bu teslimdedir. Apple Görev 24 kullanıcı kararıyla ertelendi. Gerçek ekran okuyucu/dış pentest, Google public/device, hukuk ve canlı VDS/domain kabulü açık. Site şu an yerelde; [son kabul matrisi](docs/operations/final-acceptance.md) açık işleri ve bütün aşamaları gösterir.
+- **GitHub Deposu:** [akkusahmet16/ULUDOTT-WEB](https://github.com/akkusahmet16/ULUDOTT-WEB)
+- **Aktif Dal:** `GeminiImplemente`
 
-## Önce okunacaklar
+---
 
-Her işlem öncesi [uygulama planı](docs/design/2026-10-02-uygulama-plani.md) ve [ilerleme raporu](docs/operations/progress.md) okunur. İş başında yerel web/worker cwd doğrulanıp durdurulur, iş sonunda yeniden başlatılır. Next rehberleri kurulu `node_modules/next/dist/docs/` içinden okunur.
+## 1. Mimari ve Teknoloji Yığını
 
-[Mimari](docs/architecture/overview.md) · [ER](docs/architecture/er-diagram.md) · [kararlar](docs/architecture/decision-log.md) · [rota/API](docs/product/routes.md) · [roller](docs/product/roles.md) · [değişiklik rehberi](docs/product/change-guide.md).
+| Katman | Teknoloji | Açıklama |
+|---|---|---|
+| **Web Framework** | Next.js 16.3.8 | Turbopack, React Server Components (RSC), Server Actions |
+| **Arayüz (UI)** | React 19.3.0 | CSS Modules, ArtDeco tasarım tokenları, `themes.css` |
+| **Çalışma Zamanı** | Node.js 24.21.0 LTS | pnpm 11.19.0 (frozen lockfile & devEngines) |
+| **Tip Sistemi** | TypeScript 6.0.3 | Strict mode, `noEmit` tam tip güvenliği |
+| **Veritabanı** | PostgreSQL 17 / Drizzle 0.45.3 | 48 tablo, bileşik dış anahtarlar, transaction izolasyonu |
+| **Nesne Depolama** | S3 Uyumlu (Garage / MinIO) | Optimize edilmiş görsel varyantları ve güvenli dosya saklama |
+| **Test Paketi** | Vitest 5.0.3 / Playwright 1.57.0 | 48 birim test dosyası (309 test), entegrasyon ve TLS E2E testleri |
 
-## Araçlar ve kurulum
+---
 
-Node **24.21.0 LTS**, pnpm **11.19.0**. `packageManager` ve lockfile sabittir; pnpm `devEngines.runtime` üzerinden proje komutlarını doğru Node ile çalıştırır. Sistem Node kurulumu değiştirilmez. Docker Engine/Desktop veya uyumlu bir daemon ve Compose eklentisi yerel veri hizmetleri için gereklidir. Bu Mac'te Homebrew ile Colima, Docker CLI, Compose ve Buildx kuruldu. Projeye özel VM: `colima start --profile uludott --cpu 2 --memory 4 --disk 20 --vm-type vz`; kapatma: `colima stop --profile uludott`. VM diski üst sınırdır; VDS kapasite kararı değildir. Homebrew kurulumu: `brew install colima docker docker-compose docker-buildx`. Global Docker ayarları değiştirilmedi; eklenti bulunmazsa `docker-compose` komutunu kullanın.
+## 2. Temel İlkeler ve Değişmezler
+
+1. **Görsel Kilit (Visual Lock):** v0.1 görsel stili `tests/fixtures/golden-declarations.json` içindeki 2.889 CSS bildirimiyle kilitlidir. Rastgele stil eklenemez; tüm renkler `src/styles/themes.css` tokenlarına bağlıdır.
+2. **Server-Only Sınırı:** Veritabanı, kimlik doğrulama ve kuyruk işlemleri `"server-only"` modülüyle korunur; istemciye veri sızıntısı engellenir.
+3. **i18n ve Sıfır Hardcode Metin:** Arayüzdeki tüm metinler `src/i18n/dictionaries/{tr,en,client-tr}.ts` sözlüklerine bağlıdır. AST bekçisi (`no-hardcoded-text.test.ts`) hardcoded metinleri engeller.
+4. **Merkezi Rotalar:** Rotalar, metadata ve canonical politikaları `src/config/routes.config.ts` üzerinden tekil kaynaktan yönetilir.
+5. **İkon ve Marka Ayrımı:** Arayüzde emoji kullanılmaz; tüm ikonlar `src/components/ui/icons/icon.tsx` kayıtlı SVG'ler veya tipografik sembollerdir (`✦`, `+`, `[PDF]`).
+
+---
+
+## 3. Kurulum ve Başlangıç
+
+### 3.1. Ön Gereksinimler
+- Node.js `24.21.0`
+- pnpm `11.19.0`
+- Docker & Docker Compose (yerel PostgreSQL ve Garage S3 için)
+
+### 3.2. Adım Adım Kurulum
 
 ```sh
+# Bağımlılıkları yükleyin
 pnpm install --frozen-lockfile
+
+# Ortam değişkenlerini oluşturun
 cp .env.example .env.local
-```
 
-`.env.local` içindeki yerel DB ve depo parolalarını değiştirin. `DATABASE_URL` parolası `LOCAL_POSTGRES_PASSWORD` ile eşleşmelidir; özel karakterler URL-encode edilmelidir. Gerçek sırları `.env.example` veya Git'e koymayın. Değişken adlarının açıklamaları örnek dosyadadır.
-
-Garage yerel RPC sırrını yalnızca ilk kurulumda oluşturun; mevcut dosyanın üzerine yazmayın:
-
-```sh
+# Yerel Garage RPC sırrını oluşturun (yalnızca ilk kurulumda)
 mkdir -p .local
 (umask 077; set -C; openssl rand -hex 32 > .local/garage-rpc.secret)
-```
 
-Depo erişim kimliği `GK` + 32 hexadecimal karakter olmalıdır; `.env.local` içinde yalnızca yerel kurulum için belirleyin. Örnek sıfırlı kimlik gerçek sağlayıcı kimliği değildir.
-
-```sh
+# Yapılandırmayı doğrulayın
 pnpm config:check
+
+# Yerel veritabanı ve S3 servislerini başlatın
 docker-compose --env-file .env.local up -d
-docker-compose --env-file .env.local ps
-pnpm dev
-```
 
-Uygulama: http://127.0.0.1:3000 . Yerel PostgreSQL: 127.0.0.1:5432. S3 uyumlu Garage: 127.0.0.1:9000. Garage başlangıçta özel bucket ve yerel anahtarı oluşturur; API için path-style adresler ve `garage` region kullanılır. `docker-compose --env-file .env.local exec object-store /garage status` ile servis kontrol edilir. Tek düğümlü depo yalnızca geliştirme içindir; canlı depo sağlayıcısı seçilmedi. Compose ve Docker çalıştırma kabulü yerel ortamda geçti; raporda kanıtları bulunur. Resmî yerel kurulum: https://garagehq.deuxfleurs.fr/documentation/quick-start/
-
-`config:check` yalnızca ayarları doğrular; servislerin erişilebilir olduğunu kanıtlamaz. Ana sayfa ve yayın listeleri artık DB okur; PostgreSQL servisi gerekir. Boş DB kabulü ayrıca entegrasyon testleriyle doğrulanır.
-
-## Veri ve çalışma
-
-```sh
+# Veritabanı şemasını uygulayın
 pnpm db:migrate
+
+# 2026 yılı başlangıç ve tarihî oyun verilerini yükleyin
 pnpm db:seed:2026
-# Tarihsiz 2027 taslağı da isteniyorsa: pnpm db:seed:ulujam
+
+# Geliştirme sunucusunu başlatın
 pnpm dev
-# Ayrı terminal:
+
+# Ayrı bir terminalde kuyruk işleyicisini (worker) başlatın
 pnpm worker
 ```
 
-Migration 43 public tabloyu boş açar; seed yalnız 3 verilen 2026 URL/ödül ve editoryal ilişkiler, kişi/takım/kart yaratmaz. Admin varsayılan parola yok: [bootstrap](docs/operations/admin-bootstrap.md). Test verileri yalnız izole UUID DB/S3 anahtarlarında; entegrasyon testleri servis yoksa atlanmaz.
+- **Uygulama:** http://127.0.0.1:3000
+- **PostgreSQL:** 127.0.0.1:5432
+- **Garage S3:** 127.0.0.1:9000
 
-## Doğrulama
+---
+
+## 4. Test ve Doğrulama Komutları
 
 ```sh
-pnpm ci:check
+# TypeScript strict tip denetimi (0 hata)
+pnpm typecheck
+
+# ESLint kod kalitesi denetimi (0 uyarı)
+pnpm lint
+
+# 48 birim test dosyasını çalıştırın (309/309 PASS)
+pnpm vitest run tests/unit
+
+# Üretim derlemesi oluşturun (67 rota)
+pnpm build
+
+# Entegrasyon testlerini çalıştırın
 pnpm test:integration
-pnpm test:load
+
+# Tüm CI kalite kapılarını sırayla çalıştırın
+pnpm ci:check
 ```
 
-`ci:check`: typegen/ts, lint, migration metadata, birim+gerçek PG/S3 entegrasyon+restore, build, üretim TLS Playwright/axe, production audit ve kaynak/Wallet paket sır taraması. Playwright chromium gerekir: `pnpm exec playwright install chromium`; k6 yük aracı ayrıca kuruludur. CI workflow aynı zincir ve k6'ı çalıştırır, başarısız verify paket işini durdurur; otomatik canlı deploy yok. [Yük](docs/operations/load-report.md), [güvenlik](docs/operations/security-test-report.md), [erişilebilirlik](docs/operations/accessibility-report.md).
+---
 
-### Tema Altın Liste (Faz 1 — İş 1A)
-`tests/fixtures/golden-declarations.json` dosyası `1715682f396d1698871c6615766623cacb0d8405` commit'inden üretilmiş sabit altın listedir. `scripts/build-golden-declarations.ts` betiği yalnızca tek seferlik üretim içindir; açık izin ve onay olmadan yeniden üretilmez.
+## 5. Modül ve Sayfa Yapısı
 
-## Yeni Sayfa, Tema ve Dil Ekleme Rehberi (Genişleme Sözleşmesi)
+- **Genel Yüzey (Public):**
+  - `/`: Sinematik açılış, kahraman hikaye panelleri, etkinlik karuseli ve mini oyunlar
+  - `/hakkimizda`: Topluluk felsefesi ve ekip tanıtımı
+  - `/ulujam`: UluJam oyun maratonu merkezi ve başvuru
+  - `/etkinlikler` & `/etkinlikler/[slug]`: Etkinlik takvimi ve detayları
+  - `/oyunlar` & `/oyunlar/[slug]`: Oyun kataloğu ve künye detayları
+  - `/fanzin`: Uludott Fanzin arşivi ve interaktif sayfa çevirmeli flipbook okuyucu
+  - `/iletisim`: İletişim adresleri ve sosyal medya bağlantıları
+- **Özel / Katılımcı Alanı:**
+  - `/basvuru/[formSlug]`: Dinamik form başvuru ekranı
+  - `/makbuz`: Başvuru makbuzu ve takip özeti
+  - `/kart/[token]`: Katılımcı dijital kimlik kartı ve check-in QR
+  - `/takim/[token]`: UluJam takım yönetim portalı
+  - `/yayin-onayi/[token]`: Oyun künyesi yayın onayı portalı
+- **Yönetim Paneli (`/admin`):**
+  - Analitik, Başvurular, Etkinlikler, Fanzin, Formlar, Galeri, Linkler, Medya, Oyunlar, Sponsorlar, Site İçerikleri CMS, Takım Onayları ve Sistem Sağlığı
 
-Geliştiriciler sunum katmanını genişletirken v0.1 görsel kilit ve merkezileştirme sözleşmelerini izlemelidir:
+---
 
-### 1. Yeni Sayfa ve Rota Ekleme
-1. **Rota Tanımı (`src/config/routes.config.ts`):** `ROUTE_IDS` dizisine yeni rota kimliğini ekleyin. `ROUTES` içine `RouteDefinition` kaydını oluşturun (`id`, `kind: "public-static"`, `path`, `visibility`, `canonical: { strategy: "self", basePath }`, `metadataKey`).
-2. **Sözlük Anahtarları (`src/i18n/keys.ts`):** `meta.<sayfa>Title`, `meta.<sayfa>Description` ve arayüz metin anahtarlarını tanımlayın.
-3. **Çok Dilli Metinler (`src/i18n/dictionaries/{tr,en}.ts`):** Hem `tr.ts` hem de `en.ts` içine tüm yaprak anahtarları bire bir ekleyin.
-4. **Sayfa Bileşeni (`src/app/(public)/<yol>/page.tsx`):**
+## 6. Yeni Özellik ve Sayfa Ekleme Rehberi
+
+1. **Rota Tanımı (`src/config/routes.config.ts`):** `ROUTE_IDS` dizisine yeni rota kimliğini ekleyin ve `ROUTES` altında rota yapılandırmasını (`id`, `kind`, `path`, `visibility`, `metadataKey`) tanımlayın.
+2. **Sözlük Tanımları (`src/i18n/keys.ts` & `src/i18n/dictionaries/*`):** `tr.ts`, `en.ts` ve gerekiyorsa `client-tr.ts` dosyalarına yeni anahtarları bire bir ekleyin.
+3. **Sayfa Bileşeni (`src/app/(public)/<sayfa>/page.tsx`):**
    ```tsx
    import { PublicShell } from "@/components/layout/public-shell";
    import { getLocale } from "@/i18n/server";
@@ -95,33 +145,18 @@ Geliştiriciler sunum katmanını genişletirken v0.1 görsel kilit ve merkezile
      );
    }
    ```
-5. **Doğrulama:** `pnpm typecheck` ve `vitest run tests/unit/routes-integrity.test.ts tests/unit/no-hardcoded-text.test.ts`.
+4. **Doğrulama:** `pnpm typecheck` ve `pnpm vitest run tests/unit` ile değişiklikleri doğrulayın.
 
-### 2. Yeni Tema Tokenı veya Profili Ekleme
-1. **Tema Kaydı (`src/config/theme.config.ts`):** `THEMES` listesine yeni temanızı (örn. `"terminal"`) ekleyin ve `THEME_REGISTRY` içine tanımlayın.
-2. **CSS Token Tanımları (`src/styles/themes.css`):**
-   ```css
-   [data-theme="yeni-tema"] {
-     color-scheme: dark;
-     --ink: #...;
-     --panel: #...;
-     --cream: #...;
-     --muted: #...;
-   }
-   ```
-3. **Doğrulama:** `vitest run tests/unit/theme-contrast.test.ts tests/unit/theme-centralization.test.ts`.
+---
 
-### 3. Yeni Dil (Locale) Ekleme
-1. **Dil Konfigürasyonu (`src/i18n/config.ts`):** `LOCALES` dizisine dil kodunu (örn. `"de"`) ekleyin.
-2. **Sözlük Dosyası (`src/i18n/dictionaries/<dil>.ts`):** `PublicDictionary` arayüzünü uygulayan dosyayı oluşturun.
-3. **Çevirmen Bağlantısı (`src/i18n/translate.ts`):** Yeni sözlüğü `dictionaries` nesnesine ekleyin.
-4. **Tarih Biçimlendirici (`src/i18n/format.ts`):** `LOCALE_TAGS` içine formatlama etiketini ekleyin (örn. `de: "de-DE"`).
-5. **Doğrulama:** `vitest run tests/unit/i18n-parity.test.ts`.
+## 7. Belgeler ve Detaylı Kılavuzlar
 
-Geliştirme sürecinde faz bazlı küçük commit ve etiketli yerel kabul noktaları önerilir; kullanıcı onayı olmadan push, merge veya canlıya alma işlemi yapılmaz.
-
-## İşletme rehberleri
-
-[Deploy/ortam](docs/operations/deploy.md) · [eşlenmiş yedek/restore](docs/operations/backup-restore.md) · [rollback](docs/operations/rollback.md) · [etkinlik/afiş](docs/operations/events.md) · [form/başvuru/export](docs/operations/forms.md) · [linkler](docs/operations/links.md) · [takımlar](docs/operations/teams.md) · [Wallet](docs/operations/wallet.md) · [veri hakları](docs/operations/data-rights.md) · [VDS değerlendirmesi](docs/operations/vds-assessment.md).
-
-Docker: `docker build --target runtime -t uludott-web:local .` ve `docker build --target worker -t uludott-worker:local .`; her ikisi nonroot, web/worker ayrı süreç. Sırlar runtime env/read-only mount ile, image içine girmez. `.dockerignore`allowlist yerel env, ham Media, log/testdump/anahtarları dışlar. Kaynak varlıklar ve eski Wallet secret klasörü repo dışındadır; içeriği uygulama/test/rapora alınmaz.
+- [Nihai Kabul Raporu](docs/operations/final-acceptance.md)
+- [Geliştirme ve İlerleme Raporu](docs/operations/progress.md)
+- [Birleşik Uygulama Planı](docs/design/2026-10-20-birlesik-uygulama-plani.md)
+- [Sunum Katmanı Kuralları](docs/design/sunum-katmani-kurallari.md)
+- [Rota ve API Haritası](docs/product/routes.md)
+- [Veritabanı Mimarisi](docs/architecture/database.md) & [ER Diyagramı](docs/architecture/er-diagram.md)
+- [Yönetici Giriş ve Güvenlik](docs/operations/admin-auth.md)
+- [Yedekleme ve Geri Yükleme](docs/operations/backup-restore.md)
+- [Canlı Dağıtım Rehberi](docs/operations/deploy.md)

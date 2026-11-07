@@ -75,12 +75,12 @@ export default async function Page() {
                 <a
                   key={social.id}
                   href={social.url}
-                  className={styles.textLink}
+                  className="contact-text-link"
                   target="_blank"
                   rel="noopener noreferrer external"
                 >
                   <span>{social.title}</span>
-                  <span aria-hidden="true" className={styles.textArrow}>
+                  <span aria-hidden="true" className="contact-text-arrow">
                     ↗
                   </span>
                 </a>

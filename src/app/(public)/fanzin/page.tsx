@@ -47,6 +47,9 @@ export default async function FanzinPage() {
           issue={activeIssue}
           emptyTitle={t("fanzin.readerEmptyTitle")}
           emptyDesc={t("fanzin.readerEmptyDesc")}
+          issueLabel={activeIssue ? t("fanzin.issueLabel", { number: String(activeIssue.issueNumber).padStart(2, "0") }) : undefined}
+          digitalReadyText={t("fanzin.digitalReadyText")}
+          interactiveSoonText={t("fanzin.interactiveSoonText")}
         />
       </section>
 
@@ -61,6 +64,9 @@ export default async function FanzinPage() {
           downloadButton: t("fanzin.downloadButton"),
           archiveUpcomingBadge: t("fanzin.archiveUpcomingBadge"),
           archiveEmptyDesc: t("fanzin.archiveEmptyDesc"),
+          publishedBadge: t("fanzin.publishedBadge"),
+          issueLabel: (num) => t("fanzin.issueLabel", { number: String(num) }),
+          pagesSuffix: (count) => t("fanzin.pagesSuffix", { count }),
         }}
       />
     </PublicShell>

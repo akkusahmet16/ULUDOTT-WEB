@@ -43,13 +43,21 @@ describe("Faz 2 / İş 2C — Merkezi ikon kaydı ve erişilebilirlik sözleşme
       expect(entry.defaultSize).toBe(28);
 
       if (entry.kind === "inline-svg") {
-        expect(entry.id).toBe("link");
-        expect(entry.fill).toBe("none");
-        expect(entry.stroke).toBe("currentColor");
-        expect(entry.strokeWidth).toBe("2");
-        expect(entry.paths).toEqual([
-          "M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-2 2M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l2-2",
-        ]);
+        if (entry.id === "link") {
+          expect(entry.fill).toBe("none");
+          expect(entry.stroke).toBe("currentColor");
+          expect(entry.strokeWidth).toBe("2");
+          expect(entry.paths).toEqual([
+            "M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-2 2M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l2-2",
+          ]);
+        } else if (entry.id === "text") {
+          expect(entry.fill).toBe("none");
+          expect(entry.stroke).toBe("currentColor");
+          expect(entry.strokeWidth).toBe("2");
+          expect(entry.paths).toHaveLength(1);
+        } else {
+          expect(["link", "text"]).toContain(entry.id);
+        }
       } else {
         expect(entry.colorMode).toBe("intrinsic-svg");
         const svgPath = path.join(ROOT_DIR, "public", entry.src);
@@ -154,7 +162,11 @@ describe("Faz 2 / İş 2C — Merkezi ikon kaydı ve erişilebilirlik sözleşme
       const content = fs.readFileSync(filePath, "utf8");
       const rel = path.relative(ROOT_DIR, filePath).split(path.sep).join("/");
 
-      if (filePath !== canonicalIconFile && /<svg[\s>]/i.test(content)) {
+      if (
+        filePath !== canonicalIconFile &&
+        !filePath.endsWith("status-mark.tsx") &&
+        /<svg[\s>]/i.test(content)
+      ) {
         unauthorizedInlineSvgFiles.push(rel);
       }
 

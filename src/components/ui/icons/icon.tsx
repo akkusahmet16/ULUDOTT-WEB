@@ -103,12 +103,15 @@ export const ICON_REGISTRY: Readonly<Record<IconId, IconRegistryEntry>> = {
   },
   link: {
     id: "link",
-    kind: "brand-asset",
-    src: "/brand/social/link.svg",
-    className: "social-logo",
+    kind: "inline-svg",
     viewBox: "0 0 24 24",
-    colorMode: "intrinsic-svg",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2",
     defaultSize: 28,
+    paths: [
+      "M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-2 2M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l2-2",
+    ],
   },
   text: {
     id: "text",

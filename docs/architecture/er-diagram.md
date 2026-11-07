@@ -1,6 +1,6 @@
-# Güncel ER ve tablo envanteri
+# Güncel ER ve Tablo Envanteri
 
-3 Ekim 2026: gerçek boş migration/restore tatbikatında43 public tablo. Eski [database.md](database.md) görev2–12 tarihî değişimlerini içerir; güncel kaynak src/db/schema ve migration journal.
+Güncelleme: Kasım 2026 (v0.2 Final Sürümü). PostgreSQL 17 / Drizzle ORM omurgası üzerinde toplam 48 tablo tanımlıdır. 
 
 ```mermaid
 erDiagram
@@ -54,6 +54,7 @@ erDiagram
   events ||--o{ event_gallery : gallery
   media_assets ||--o{ event_gallery : image
   media_assets o|--o{ events : poster
+  fanzin_issues ||--o{ fanzin_pages : pages
   content_redirects {
     uuid content_id
   }
@@ -69,10 +70,41 @@ erDiagram
   retention_runs {
     uuid id
   }
+  site_settings {
+    text key
+  }
+  site_game_entries {
+    uuid id
+  }
+  people_overrides {
+    text slot
+  }
+  site_page_views {
+    uuid id
+  }
 ```
 
-Tablolar: `admin_event_scopes`, `admin_roles`, `admin_sessions`, `admins`, `announcements`, `apple_devices`, `apple_registrations`, `application_skills`, `applications`, `audit_logs`, `awards`, `cards`, `consents`, `content_redirects`, `event_categories`, `event_gallery`, `event_years`, `events`, `featured_slots`, `finalists`, `form_fields`, `form_rules`, `form_versions`, `forms`, `game_credits`, `games`, `idempotency_records`, `link_groups`, `links`, `media_assets`, `media_variants`, `memberships`, `outbox`, `rate_limits`, `retention_runs`, `submission_answers`, `submission_status_history`, `submissions`, `team_access`, `team_approvals`, `team_sessions`, `teams`, `wallet_passes`.
+---
 
-Outbox/redirect/audit nesne kimliği polimorfik referanstır; tek hedefFK varsayılmaz. form/event, submission/version, answer/version-field ve team/event bileşikFK izolasyonu sağlar; active membership partial unique. Approval roster revision üzerinden bağlı; geç üye onaysızdır. Form yayın snapshotları trigger ile değişmez. AUTH ile şifreli capability replay ve MFA alanları PG yedek ve ayrı anahtar kasası ile kurtarılır; eposta/event tekil, telefon zorunlu. S3 media keys DB ile eşlenir; [restore](../operations/backup-restore.md).
+## Modüler Tablo Listesi
 
-Genel form yanıtları JSONB ve aranabilir kişi kolonları DB içinde açık değerdir; AUTH anahtarı bunları topluca şifrelemez. DB/disk erişimi, sunucu yetkisi ve şifreli dış yedek bu veriler için ayrıca korunur.
+1. **Yönetim ve Güvenlik (Admin & Auth):** `admins`, `admin_roles`, `admin_sessions`, `admin_event_scopes`, `audit_logs`
+2. **Etkinlik ve İçerik (Events & Content):** `events`, `event_categories`, `event_years`, `announcements`, `featured_slots`, `event_gallery`, `content_redirects`
+3. **Medya (Media Engine):** `media_assets`, `media_variants`
+4. **Form ve Başvurular (Forms & Submissions):** `forms`, `form_versions`, `form_fields`, `form_rules`, `submissions`, `submission_answers`, `submission_status_history`, `consents`
+5. **UluJam ve Eşleştirme (Jam & Teams):** `applications`, `application_skills`, `teams`, `memberships`, `team_approvals`, `team_access`, `team_sessions`
+6. **Oyun Kataloğu ve Dereceler (Games & Awards):** `games`, `game_credits`, `awards`, `finalists`, `site_game_entries`
+7. **Kart ve Dijital Cüzdan (Cards & Wallet):** `cards`, `wallet_passes`, `apple_devices`, `apple_registrations`
+8. **Link Merkezi (Link Hub):** `link_groups`, `links`
+9. **Fanzin Modülü (Fanzin & Flipbook):** `fanzin_issues`, `fanzin_pages`
+10. **CMS ve Dinamik Ayarlar (Site Settings & People):** `site_settings`, `people_overrides`
+11. **Analitik (Analytics Engine):** `site_page_views`
+12. **Altyapı ve Kuyruk (Operations & Infrastructure):** `outbox`, `idempotency_records`, `rate_limits`, `retention_runs`
+
+---
+
+## Güvenlik ve İzolasyon Standartları
+
+- **Server-Only Sınırı:** Veritabanı sorguları ve şema importları kesinlikle `"server-only"` modülü altında tutulur. İstemci bileşenlerine asla doğrudan erişim verilmez.
+- **Bileşik Dış Anahtarlar (Composite Foreign Keys):** Form/etkinlik, başvuru/sürüm, cevap/alan ve takım/etkinlik bileşik anahtarları veri sızıntısını ve çapraz erişimi veritabanı seviyesinde engeller.
+- **İdempotency ve Outbox:** Tüm dış servis bildirimleri (e-posta, Google Wallet pass oluşturma) transaction içi outbox tablosu ve idempotency kontrolleriyle asenkron worker tarafından güvenle işlenir.

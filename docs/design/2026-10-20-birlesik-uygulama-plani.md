@@ -14,8 +14,8 @@
 **Mimari:** v0.2 ana tabandır. Mevcut application/domain/infrastructure katmanları yeniden yazılmaz; sunum adaptörleri bunları kullanır. batu-try yalnızca doğrulanmış Faz 0 fikirleri ve test senaryoları için referanstır.
 **Teknoloji:** Depodaki tam sürümler: Next 16.3.8, React 19.3.0, Node 24.21.0, pnpm 11.19.0, TypeScript strict, Drizzle/PostgreSQL, S3 uyumlu depo, Vitest, Playwright.
 **Tasarım ve kapsam sözleşmesi:** [sunum-katmani-kurallari.md](./sunum-katmani-kurallari.md).
-**Kanıtlı değerlendirme:** [21 Ekim plan analizi](../operations/2026-10-21-birlesik-plan-analizi.md).
-**Özgün gereksinim:** [GitHub Issue #1](https://github.com/akkusahmet16/ULUDOTT-WEB/issues/1); [yerel gövde kaydı](./github-issue-1-mimari-plan.md).
+**Kanıtlı değerlendirme ve ilerleme:** [İlerleme Raporu](../operations/progress.md).
+**Özgün gereksinim:** [GitHub Issue #1](https://github.com/akkusahmet16/ULUDOTT-WEB/issues/1).
 
 ## 1. Kaynakların önceliği ve karar kaydı
 
@@ -65,7 +65,7 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 ### İş 0A — Doğru çalışma tabanı ve tekrar üretilebilir ortam
 
-**Dosyalar:** package.json, pnpm-lock.yaml, AGENTS.md, playwright.config.ts, vitest.config.ts, tests/helpers/local-database.ts, tests/helpers/start-e2e.ts; değişecek kayıt docs/operations/sunum-katmani-ilerleme.md.
+**Dosyalar:** package.json, pnpm-lock.yaml, AGENTS.md, playwright.config.ts, vitest.config.ts, tests/helpers/local-database.ts, tests/helpers/start-e2e.ts; değişecek kayıt docs/operations/progress.md.
 **Girdi:** mevcut v0.2 ve yerel geliştirme yapılandırması. **Çıktı:** yeniden üretilebilir başlangıç kabulü.
 
 - [x] Hedef klasör, dal, HEAD ve kirli dosyaları kaydet. v0.1'in son kaydedilmemiş değişikliklerinin v0.2'de karşılığı olup olmadığını dosya bazında kontrol et; eksikse seçerek aktarım listesi çıkar.
@@ -75,7 +75,7 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 - [x] Tam standart kapıyı sırayla çalıştır; üretim build rota tablosunu, statik/dinamik durumunu ve mevcut uyarıları kaydet. Başlangıç hatasını sonraki refactor'a taşıma.
 - [x] Kabul: bütün komutlar kanıtlı; geliştirme verisine fixture karışmamış; yinelenebilir ortam ve mevcut ürün envanteri kayıtlı.
 
-**21 Ekim 0A kabul kaydı:** Genel paket 381/381, ayrı entegrasyon 226/226; tam üretim TLS E2E 101/101, HTTP'ye özgü iki senaryo ayrıca 2/2 geçti. Tip/kod/derleme/DB/config, bağımlılık ve kaynak/paket güvenlik kapıları yeşil. Çalışma DB'si 47 tablo/26 migration ile değişmedi; testler kendi DB'lerini temizledi, dokuz eski DB korundu. v0.1 kaynakları ve tüm tema/görsel varlıklar aynı; yalnız v0.2'de mevcut form başarı mesajını koruyan tek key satırı düzeltildi. Kapsam eşlemesi, önceki kırmızı koşular ve son kanıtlar [0A kabul raporunda](../operations/2026-10-21-faz-0a-baslangic-kabulu.md). 0B/0C ve Faz 1 başlamadı.
+**21 Ekim 0A kabul kaydı:** Genel paket 381/381, ayrı entegrasyon 226/226; tam üretim TLS E2E 101/101, HTTP'ye özgü iki senaryo ayrıca 2/2 geçti. Tip/kod/derleme/DB/config, bağımlılık ve kaynak/paket güvenlik kapıları yeşil. Çalışma DB'si 47 tablo/26 migration ile değişmedi; testler kendi DB'lerini temizledi, dokuz eski DB korundu. v0.1 kaynakları ve tüm tema/görsel varlıklar aynı; yalnız v0.2'de mevcut form başarı mesajını koruyan tek key satırı düzeltildi. Kapsam eşlemesi, önceki kırmızı koşular ve son kanıtlar [İlerleme Raporunda](../operations/progress.md). 0B/0C ve Faz 1 başlamadı.
 
 ### İş 0B — Önbellek bağımlılıklarını tamamla
 
@@ -90,13 +90,13 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 - [x] Sayaç sıcak cache testi batu-try/tests/cache-e2e/countdown.spec.ts senaryosundan güncel giriş akışına uyarlanır; standart Playwright test listesinde gerçekten seçildiği doğrulanır.
 - [x] Kabul: hedefli test kırmızı→yeşil, üretim cache davranışı kanıtlı ve tam kapı yeşil. Faz 0 bütünü için 0C hâlâ gereklidir.
 
-**22 Ekim 0B kabul kaydı:** Dört hassas okuma aynı SQL/service'i cache dışında kullanıyor; uygunluk LIMIT'ten önce, oyun ve ad aynı snapshot'ta. 12 gerçek DB regresyonu kırmızı→yeşil; genel paket 393/393, ayrı entegrasyon 238/238, üretim TLS 105/105 ve HTTP ek koşusu 2/2 geçti. Normal istemci gezinmesi ve sıcak sayaç kontrolü dahil. v0.1, tema/DOM/stiller ve 114 public varlık aynı; çalışma DB'si ve dokuz eski test DB'si korundu. [Bağımlılık matrisi, karar ve tam kanıt](../operations/2026-10-22-faz-0b-cache-kabulu.md). 0C ve Faz 1 başlamadı.
+**22 Ekim 0B kabul kaydı:** Dört hassas okuma aynı SQL/service'i cache dışında kullanıyor; uygunluk LIMIT'ten önce, oyun ve ad aynı snapshot'ta. 12 gerçek DB regresyonu kırmızı→yeşil; genel paket 393/393, ayrı entegrasyon 238/238, üretim TLS 105/105 ve HTTP ek koşusu 2/2 geçti. Normal istemci gezinmesi ve sıcak sayaç kontrolü dahil. v0.1, tema/DOM/stiller ve 114 public varlık aynı; çalışma DB'si ve dokuz eski test DB'si korundu. [Bağımlılık matrisi, karar ve tam kanıt İlerleme Raporunda](../operations/progress.md). 0C ve Faz 1 başlamadı.
 
 ### İş 0C — Görsel ve davranış referansı
 
 **Dosyalar:** yeni tests/e2e/visual-cinematic.spec.ts, tests/e2e/__baseline-cinematic__/README.md ve onaylı PNG'ler; mevcut presentation-panels, scroll-scrub, people-editor, event-sections, admin-rebuild E2E testleri.
 
-- [x] Aynı sabit Chromium sürümü/OS/font ve doğal DPR=2 ile 1280×800 ve 375×812 CSS boyutlarını kullan. PNG boyutları bunların tam iki katıdır; yeniden boyutlandırma yapılmaz. Gerçek DPR, CSS boyutları ve zoom=1 doğrulanır. Saat, timezone, rastgelelik, font ve görsel yüklenmesi deterministik olur. DPR=1 hikâye blur kararsızlığı nedeniyle yapılan bu teknik yakalama revizyonu [0C kaydında](../operations/2026-10-22-faz-0c-gorsel-kabulu.md) açıklanır; DPR=1 piksel eşliği iddia edilmez.
+- [x] Aynı sabit Chromium sürümü/OS/font ve doğal DPR=2 ile 1280×800 ve 375×812 CSS boyutlarını kullan. PNG boyutları bunların tam iki katıdır; yeniden boyutlandırma yapılmaz. Gerçek DPR, CSS boyutları ve zoom=1 doğrulanır. Saat, timezone, rastgelelik, font ve görsel yüklenmesi deterministik olur. DPR=1 hikâye blur kararsızlığı nedeniyle yapılan bu teknik yakalama revizyonu [İlerleme Raporunda](../operations/progress.md) açıklanır; DPR=1 piksel eşliği iddia edilmez.
 - [x] Üç veri senaryosu kullan: boş veri, izole sentetik dolu akışlar, onaylı mevcut statik varlıklarla görsel referans. Çalışma DB'sine test için kayıt ekleme.
 - [x] Önce v0.1'in mevcut çalışma dosyalarından salt okunur görsel manifest/referans al; aynı içerik ve durumda v0.2 ile karşılaştır. Fark varsa v0.2 referansını doğru kabul etme. Genel/özel/admin ekranlar, detaylar, açık/kapalı menü/alt menü/diyalog, People/video, karusel ve hover/focus/active/disabled/loading/error/boş/dolu durumları kapsanır. 320/375/390/768/1280/1440 genişlikleri ve mevcut breakpoint çevreleri incelenir.
 - [x] Video currentTime/seeking ve animasyonlar için sabit yakalama noktası belirle; reduced-motion görüntüsü gerçek kaydırma davranışı testinin yerine geçmez.
@@ -214,7 +214,7 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **5 Kasım 3B kabul kaydı:** `docs/operations/i18n-content-policy.md` ile sözlük (statik krom) ↔ CMS/panel verisi ve sunucu hata adaptasyonu sınırları belgelendi. 4 dilim (Dilim 1: ortak bileşenler; Dilim 2: 8 genel sayfa + community/events/games/publication/links UI; Dilim 3: formlar, makbuz, özel kart/cüzdan/takım/yayın onayı + `src/i18n/error-adapter.ts` ile `adaptUiErrorMessage`/`adaptFieldErrors`; Dilim 4: admin kabuğu `AdminWorkspace`/`AdminNavigation` ve admin alt modüllerindeki tarih biçimleyiciler) eksiksiz taşındı. `src/i18n/dictionaries/{tr,en,client-tr,admin-tr}.ts` 396 yaprak anahtarlık %100 TR/EN ve `{placeholder}` eşliğiyle genişletildi; `src/i18n/format.ts` içine `formatLocaleTimestamp`, `formatLocaleDate` ve `formatLocaleDateRange` eklendi; `src/modules/publication/domain.ts` içindeki `degreeLabels` sözlük tabanlı `getDegreeLabel(degree, locale)` yardımcısına bağlandı. AST tabanlı `tests/unit/no-hardcoded-text.test.ts` (3/3; `tests/unit/i18n-guard-fixtures/{compliant-component,violating-component}.tsx` pozitif/negatif fixture doğrulamalı) ve `tests/unit/i18n-unused.test.ts` (2/2; 396 yaprak anahtar + dinamik `DYNAMICALLY_CONSUMED_KEYS` manifesti + `adminTrDictionary` kullanım denetimi) eklendi. Üretim derlemesinde `.next/static/chunks/*.js` toplamı 39 chunk / 1.531,68 KB ham / 455,39 KB gzip (`serverLeakCount: 0`) olarak doğrulandı. `vitest` (14 dosya / 57 test), `tsc --noEmit`, `eslint`, `next build` (56 rota), `security:source` (885 dosya / 0 sır) ve `check-baseline.mjs` (647/647 PNG) yeşil.
 
-**Faz 3 çıkışı:** 3A ve 3B tamam; [ilerleme kaydı](../operations/sunum-katmani-ilerleme.md) kanıtlı.
+**Faz 3 çıkışı:** 3A ve 3B tamam; [ilerleme kaydı](../operations/progress.md) kanıtlı.
 
 ## 8. Faz 4 — Ortak sunum bütünlüğü
 
@@ -230,7 +230,7 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **5 Kasım 4A kabul kaydı:** GitHub Issue #1 Faz 4'teki yeni arcade ana sayfa yerine v0.1'in mevcut `StoryPanels`, `PastEventsCarousel`, `PeopleStory`, `PhotoGallery`, `SceneVideo`, `UlujamComingSoon`, `Header`, `PublicShell`, `Dialog`, `OpeningGlow`, `PairMatch` ve `StarCatch` kompozisyonu ve etkileşimleri yeni merkezi tema/rota/i18n katmanı altında korundu. `src/components/layout/header.tsx` içinde router dışı bağlam güvenliği (`usePathname() ?? "/"`) sağlandı; `src/modules/community/{pair-match,star-catch}.tsx` içinde görünümü değiştirmeden `<p role="status" aria-live="polite">` ve `<button type="button">` semantik güvenceleri eklendi. `tests/unit/presentation-interactions.test.ts` (4/4; TR/EN SSR DOM yapısı, `getPinnedVideoTime` NaN/0 süre + kısa ekran + `prefers-reduced-motion` korumaları, mini oyun `aria-pressed`/`aria-live` sözleşmesi ve gerçek Chromium'da enforced CSP altında `BootScript`, skip link, diyalog `Escape` + odak iadesi ve klavyeyle mini oyun etkileşimi) eklendi. `vitest` (17 dosya / 68 test), `tsc --noEmit`, `eslint`, `next build` (56 rota), `security:source` (886 dosya / 0 sır) ve `check-baseline.mjs` (647/647 PNG) yeşil.
 
-**Faz 4 çıkışı:** 4A tamam; [ilerleme kaydı](../operations/sunum-katmani-ilerleme.md) kanıtlı.
+**Faz 4 çıkışı:** 4A tamam; [ilerleme kaydı](../operations/progress.md) kanıtlı.
 
 ## 9. Faz 5 — Detay sayfaları, galeri ve hata yüzeyleri
 
@@ -246,13 +246,13 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 **5 Kasım 5A kabul kaydı:** `src/modules/events/ui/ulujam-archive.tsx` içinde v0.1'in mevcut galeri mozaik düzeni (`archive-gallery-mosaic`, `archive-gallery-featured`, `archive-gallery-side`, `figure`, `figcaption`, `eyebrow` ve alt metin) korundu; GitHub Issue #1'in talep ettiği yeni lightbox bileşeni görsel/etkileşim kilidi gereği uygulanmayarak açık fark olarak kaydedildi ve DOM'da sıfır lightbox/modal bulunduğu doğrulandı. `src/modules/publication/ui/content-view.tsx`, `src/modules/games/ui/{public-game,result-card}.tsx` ve `src/modules/events/ui/{countdown,ulujam-coming-soon}.tsx` bileşenlerinin boş/eksik veri (görselsiz, tarihsiz, konumsuz, organizatörsüz, derecesiz, finalist olmayan ve kısmi editoryal arşiv kayıtları) sınır durumları TR ve EN dillerinde doğrulandı. `src/app/admin/error.tsx` (`role="alert"`, retry çağrısı) ve `src/app/admin/loading.tsx` (`role="status"`, `aria-live="polite"`) erişilebilirlik ve sır sızdırmama sözleşmesi kanıtlandı. `tests/unit/gallery-error-boundaries.test.ts` (12/12) ve `tests/e2e/error-pages.spec.ts` (404 status, noindex meta/header, sıfır yığın/sır sızıntısı ve lightbox yokluğu) eklendi. `vitest` (18 dosya / 80 test), `tsc --noEmit`, `eslint`, `next build` (56 rota), `security:source` (888 dosya / 0 sır) ve `check-baseline.mjs` (647/647 PNG) yeşil.
 
-**Faz 5 çıkışı:** 5A tamam; [ilerleme kaydı](../operations/sunum-katmani-ilerleme.md) kanıtlı.
+**Faz 5 çıkışı:** 5A tamam; [ilerleme kaydı](../operations/progress.md) kanıtlı.
 
 ## 10. Faz 6 — Ürün akışlarının regresyon kabulü
 
 ### İş 6A — Form, başvuru ve mevcut operasyon modülleri
 
-**Dosyalar:** mevcut forms/teams/cards/check-in/games/outbox UI ve tests/integration + tests/e2e akışları; docs/operations/sunum-katmani-kabul.md.
+**Dosyalar:** mevcut forms/teams/cards/check-in/games/outbox UI ve tests/integration + tests/e2e akışları; docs/operations/final-acceptance.md.
 
 - [x] Form oluştur→önizle→yayınla→açık gönderim→makbuz→liste/detay/export/silme; değişmez sürümler, gerçek PublicForm ile önizleme, klavyeyle alan sıralama, koşullu/dosya alanları, kapasite/kapalı/sürüm değişimi, 409 ve özel dosya yetkisini mevcut testlerle doğrula. Eksik klavye alternatifi yeni görünür kontrol veya etkileşim tasarımı gerektiriyorsa açık bulgudur; otomatik eklenmez.
 - [x] Coffee Talk senaryosu sentetik izole fixture ile taslak→gerçek veri alanları dolu→yayın→ana sayfada afiş/tarih/form CTA zincirini doğrular. Gerçek çalışma verisine tarih/konum eklenmez. Eksik Turnstile/bildirim/hukuk bağımlılığı kapalı feature flag/adaptör kabulüyle ayrı kaydedilir.
@@ -264,9 +264,9 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 - [x] Her modül için durum: kaynak var / otomatik test geçti / gerçek dış kabul bekliyor / ayrı geliştirme. “Eksiksiz mevcut” toplu ifadesi kullanılmaz.
 - [x] Kabul: mevcut ürün zinciri iki genel dilde işlevsel, admin TR, hassas başlık/yetki/dosya davranışı korunmuş; tam kapı yeşil.
 
-**5 Kasım 6A kabul kaydı:** `docs/operations/sunum-katmani-kabul.md` oluşturularak tüm ürün ve operasyon modülleri (formlar, gönderim, idempotency, makbuz, CSV formül kaçışı, Coffee Talk, takım yönetimi, kartlar, yayın onayı, worker/outbox, Google Wallet ve check-in) sözleşmede tanımlanan 4 standart durumla (`kaynak var`, `otomatik test geçti`, `gerçek dış kabul bekliyor`, `ayrı geliştirme`) kayıt altına alındı; "eksiksiz mevcut" toplu ifadesi kullanılmadı. Issue #1 K1–K8 açık farkları (K3: İş 6B yeni iletişim formu dahil) belgelendi. `tests/unit/operations-forms-acceptance.test.ts` (13/13; CSV safeCell formül enjeksiyonu koruması, serializeExport BOM/tırnak kaçışı, koşullu alanlar ve gizli alan enjeksiyonu reddi, WebCard/PendingCard durumları, TeamLogin/Logout, ReceiptView, CreditConsent ve sunucu hata adaptasyonu) eklendi. `vitest` (19 dosya / 93 test), `tsc --noEmit`, `eslint`, `next build` (56 rota), `security:source` (889 dosya / 0 sır) ve `check-baseline.mjs` (647/647 PNG) yeşil.
+**5 Kasım 6A kabul kaydı:** `docs/operations/final-acceptance.md` oluşturularak tüm ürün ve operasyon modülleri (formlar, gönderim, idempotency, makbuz, CSV formül kaçışı, Coffee Talk, takım yönetimi, kartlar, yayın onayı, worker/outbox, Google Wallet ve check-in) sözleşmede tanımlanan 4 standart durumla (`kaynak var`, `otomatik test geçti`, `gerçek dış kabul bekliyor`, `ayrı geliştirme`) kayıt altına alındı; "eksiksiz mevcut" toplu ifadesi kullanılmadı. Issue #1 K1–K8 açık farkları (K3: İş 6B yeni iletişim formu dahil) belgelendi. `tests/unit/operations-forms-acceptance.test.ts` (13/13; CSV safeCell formül enjeksiyonu koruması, serializeExport BOM/tırnak kaçışı, koşullu alanlar ve gizli alan enjeksiyonu reddi, WebCard/PendingCard durumları, TeamLogin/Logout, ReceiptView, CreditConsent ve sunucu hata adaptasyonu) eklendi. `vitest` (19 dosya / 93 test), `tsc --noEmit`, `eslint`, `next build` (56 rota), `security:source` (889 dosya / 0 sır) ve `check-baseline.mjs` (647/647 PNG) yeşil.
 
-**Faz 6 çıkışı:** 6A tamam; [kabul belgesi](../operations/sunum-katmani-kabul.md) ve [ilerleme kaydı](../operations/sunum-katmani-ilerleme.md) kanıtlı.
+**Faz 6 çıkışı:** 6A tamam; [kabul belgesi](../operations/final-acceptance.md) ve [ilerleme kaydı](../operations/progress.md) kanıtlı.
 
 ### İş 6B — Kapsam dışı kayıt: yeni iletişim formu
 
@@ -289,7 +289,7 @@ K1/K3/K8 önceki birleşik planın korunan yönüdür. K2/K4/K5/K6/K7 belirsizli
 
 ### İş 7B — Mevcut CI'ı genişlet ve teslimi kaydet
 
-**Dosyalar:** .github/workflows/ci.yml, scripts/ci-check.sh, tests/operations/ci-gate.test.ts, README.md, docs/operations/{sunum-katmani-kabul,deploy,rollback,backup-restore,vds-olcum}.md.
+**Dosyalar:** .github/workflows/ci.yml, scripts/ci-check.sh, tests/operations/ci-gate.test.ts, README.md, docs/operations/{final-acceptance,deploy,rollback,backup-restore,vds-assessment}.md.
 
 - [x] Var olan Acceptance verify/package işlerini güncelle; sıfırdan yazıp image build, worker, audit, source/wallet security, db:check veya load güvencelerini düşürme.
 - [x] Tam sürümler/frozen lockfile, geçici PostgreSQL/S3, production E2E, merkezileştirme testleri, Lighthouse ve başarısızlıkta trace/screenshot/log artifact'leri zorunlu. Workflow yeni feat dalında manuel/PR ile seçilebilir olmalı; dal adı yanlışsa sessiz test yokluğu başarı sayılmaz.

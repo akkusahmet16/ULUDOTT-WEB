@@ -64,9 +64,9 @@ export function StoryPanels({
               settings?.rightImage || "/community/01-anasayfa/anasayfa-derece-panel.webp",
               t("home.openDegreeGamesStoryAria"),
               settings?.gamesMode === "custom_games"
-                ? "BİZİM YAPTIKLARIMIZ"
+                ? t("home.customGamesEyebrow")
                 : settings?.activeUlujamYear
-                  ? `ULUJAM ${settings.activeUlujamYear}`
+                  ? t("ulujam.heading", { year: settings.activeUlujamYear })
                   : t("home.ulujam2026Eyebrow"),
             ],
           ] as const
