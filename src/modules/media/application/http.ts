@@ -118,16 +118,48 @@ export async function handleMediaRequest(request: Request) {
     revalidateTag(CACHE_TAGS.media, { expire: 0 });
     return json({ ok: true });
   } catch (error) {
+    console.error("[media-request-error]", error);
     const m = error instanceof Error ? error.message : "";
     if (m === "Yetki yok") return json({ error: "Yetki yok" }, 403);
     if (m === "Medya işleme meşgul") return json({ error: m }, 429);
     if (m === "Bağlı medya silinemez") return json({ error: m }, 409);
     if (m === "Dosya boyutu sınırı") return json({ error: m }, 413);
-    if (m === "Etkinlik afişi tam 1080×1350 piksel olmalı" || m === "Etkinlik afişi PNG, JPEG veya WebP olmalı")
+    if (
+      m === "Etkinlik afişi tam 1080×1350 piksel olmalı" ||
+      m === "Etkinlik afişi PNG, JPEG veya WebP olmalı" ||
+      m === "MIME ve gerçek içerik eşleşmiyor" ||
+      m === "Geçersiz görsel" ||
+      m === "Medya yayına uygun değil" ||
+      m === "Görsel işleme süresi aşıldı" ||
+      m === "Görsel işleme başarısız" ||
+      m === "Görsel doğrulanamadı veya sınırları aşıyor" ||
+      m === "Geçersiz istek"
+    )
       return json({ error: m }, 400);
+
+    const isStorageError =
+      (error &&
+        typeof error === "object" &&
+        "code" in error &&
+        (error.code === "ECONNREFUSED" || error.code === "ECONNRESET")) ||
+      m.includes("ECONNREFUSED") ||
+      m.includes("connect") ||
+      m.includes("Endpoint");
+
+    if (isStorageError) {
+      return json(
+        {
+          error:
+            "Medya depolama servisine bağlanılamadı (S3/Garage). Lütfen depolama servisinin çalıştığından emin olun.",
+        },
+        503,
+      );
+    }
+
     return json(
       {
         error:
+          m ||
           "Medya işlemi tamamlanamadı. Dosyayı, alt metni ve yayın durumunu kontrol edin.",
       },
       400,

@@ -68,6 +68,36 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
   const [posterAlt, setPosterAlt] = useState("");
   const [posterRights, setPosterRights] = useState(false);
   const [posterPreview, setPosterPreview] = useState("");
+  const [posterDimensions, setPosterDimensions] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!posterFile) {
+      setPosterPreview("");
+      setPosterDimensions(null);
+      return;
+    }
+    const url = URL.createObjectURL(posterFile);
+    setPosterPreview(url);
+
+    const img = new window.Image();
+    img.onload = () => {
+      setPosterDimensions({
+        width: img.naturalWidth,
+        height: img.naturalHeight,
+      });
+    };
+    img.onerror = () => {
+      setPosterDimensions(null);
+    };
+    img.src = url;
+
+    return () => {
+      URL.revokeObjectURL(url);
+    };
+  }, [posterFile]);
   const [pending, setPending] = useState<ContentRecord | "new" | null>(null);
   async function refresh() {
     const response = await fetch("/api/admin/events", { cache: "no-store" });
@@ -214,6 +244,15 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
   async function uploadPoster() {
     if (!posterFile || !posterRights || !posterAlt.trim()) {
       setMessage("Afişi, görsel açıklamasını ve yayın hakkı onayını tamamla.");
+      return;
+    }
+    if (
+      posterDimensions &&
+      (posterDimensions.width !== 1080 || posterDimensions.height !== 1350)
+    ) {
+      setMessage(
+        `Etkinlik afişi tam 1080×1350 piksel olmalı. Seçilen görsel: ${posterDimensions.width}×${posterDimensions.height} piksel.`,
+      );
       return;
     }
     setBusy(true);
@@ -538,6 +577,39 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
                           }
                         />
                       </label>
+                      {posterDimensions && (
+                        <div
+                          style={{
+                            fontSize: "12px",
+                            fontWeight: 600,
+                            padding: "6px 10px",
+                            borderRadius: "6px",
+                            marginTop: "-4px",
+                            marginBottom: "8px",
+                            background:
+                              posterDimensions.width === 1080 &&
+                              posterDimensions.height === 1350
+                                ? "rgba(113, 224, 109, 0.15)"
+                                : "rgba(255, 158, 121, 0.15)",
+                            color:
+                              posterDimensions.width === 1080 &&
+                              posterDimensions.height === 1350
+                                ? "#71e06d"
+                                : "#ff9e79",
+                            border: `1px solid ${
+                              posterDimensions.width === 1080 &&
+                              posterDimensions.height === 1350
+                                ? "rgba(113, 224, 109, 0.4)"
+                                : "rgba(255, 158, 121, 0.4)"
+                            }`,
+                          }}
+                        >
+                          {posterDimensions.width === 1080 &&
+                          posterDimensions.height === 1350
+                            ? "✓ Boyut uygun: 1080 × 1350 px"
+                            : `⚠️ Boyut uyarısı: ${posterDimensions.width} × ${posterDimensions.height} px (Tam 1080 × 1350 px olmalıdır)`}
+                        </div>
+                      )}
                       <label className={styles.field}>
                         Görsel açıklaması
                         <input
@@ -563,7 +635,10 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
                           busy ||
                           !posterFile ||
                           !posterRights ||
-                          !posterAlt.trim()
+                          !posterAlt.trim() ||
+                          (posterDimensions !== null &&
+                            (posterDimensions.width !== 1080 ||
+                              posterDimensions.height !== 1350))
                         }
                         onClick={() => void uploadPoster()}
                       >
