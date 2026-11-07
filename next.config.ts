@@ -33,6 +33,12 @@ const config: NextConfig = {
   serverExternalPackages: ["sharp", "libheif-js"],
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "100mb",
+    },
+    proxyClientMaxBodySize: "100mb",
+  },
   async headers() {
     const headers = [
       { key: "Cache-Control", value: "no-store" },

@@ -51,7 +51,8 @@ export function MediaManager() {
 
       const formData = new FormData();
       formData.append("scope", uploadScope);
-      formData.append("file", file);
+      const safeFilename = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      formData.append("file", file, safeFilename || "upload.pdf");
 
       const response = await fetch("/api/admin/site-assets", {
         method: "POST",
@@ -204,7 +205,7 @@ export function MediaManager() {
                 if (f) void handleUpload(f);
               }}
             />
-            <span>{uploading ? "Dosya yükleniyor…" : "⬆ Bilgisayardan Dosya Seç"}</span>
+            <span>{uploading ? "Dosya yükleniyor…" : "+ Bilgisayardan Dosya Seç"}</span>
           </label>
         </div>
 
@@ -309,7 +310,7 @@ export function MediaManager() {
                     </div>
                   ) : (
                     <div style={{ color: "var(--color-edb2e4)", fontSize: "16px", fontWeight: 700 }}>
-                      📄 PDF Belgesi
+                      [PDF] Belgesi
                     </div>
                   )}
                 </div>

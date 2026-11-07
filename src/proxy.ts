@@ -17,6 +17,18 @@ export function proxy(request: NextRequest) {
       { error: "İstek kabul edilmedi." },
       { status: denied, headers: { ...secure, "Cache-Control": "no-store" } },
     );
+
+  // API rotaları (özellikle dosya yüklemeleri: fanzin PDF, medya, form submit):
+  // Next.js middleware'inde `request: { headers }` verildiğinde istek gövdesi (body) tamponlanır
+  // ve varsayılan 10MB sınırında akış kesilerek "Failed to parse body as FormData" hatasına yol açar.
+  // API isteklerinde gövdeyi tamponlamadan ham akış olarak Route Handler'a iletiyoruz:
+  if (request.nextUrl.pathname.startsWith("/api/")) {
+    const response = NextResponse.next();
+    for (const [name, value] of Object.entries(secure))
+      response.headers.set(name, value);
+    return response;
+  }
+
   const headers = new Headers(request.headers);
   headers.delete("x-uludott-origin");
   headers.set("x-nonce", nonce);
