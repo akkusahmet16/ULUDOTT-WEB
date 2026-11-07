@@ -44,10 +44,23 @@ it("displays custom category name when present or fallback eyebrow", () => {
   expect(defaultCategory).toContain("Topluluk buluşması");
 });
 
-it("preserves applications on a published event", () => {
+it("preserves applications on a published event and supports custom ctaUrl and ctaLabel", () => {
   const html = renderToStaticMarkup(createElement(EventCard, { event }));
   expect(html).toContain(event.applicationUrl);
   expect(html).toContain("Başvur");
+
+  const customCta = renderToStaticMarkup(
+    createElement(EventCard, {
+      event: {
+        ...event,
+        applicationUrl: null,
+        ctaUrl: "/basvuru/ozel-link",
+        ctaLabel: "Kayıt Ol",
+      },
+    }),
+  );
+  expect(customCta).toContain('href="/basvuru/ozel-link"');
+  expect(customCta).toContain("Kayıt Ol");
 });
 
 it("renders time without end-time when endsAt is null and omits venue when location is null", () => {

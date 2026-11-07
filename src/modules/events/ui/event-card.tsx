@@ -91,10 +91,13 @@ export function EventCard({
             </div>
           ) : null}
         </dl>
-        {!closed && event.applicationUrl && (
+        {!closed && (event.ctaUrl?.trim() || event.applicationUrl) && (
           <div className="event-feature-actions">
-            <Link className="button" href={event.applicationUrl}>
-              {t("common.apply")}
+            <Link
+              className="button"
+              href={(event.ctaUrl?.trim() || event.applicationUrl)!}
+            >
+              {event.ctaLabel?.trim() || t("common.apply")}
             </Link>
           </div>
         )}

@@ -37,6 +37,19 @@ export function windowCheck(v: {
 }) {
   return !v.unpublishAt || (!!v.publishAt && v.unpublishAt > v.publishAt);
 }
+export function eventCtaUrl(value: string) {
+  if (/^\/(?!\/)[^\s]*$/.test(value)) return true;
+  try {
+    const u = new URL(value);
+    return (
+      (u.protocol === "https:" || u.protocol === "http:") &&
+      !u.username &&
+      !u.password
+    );
+  } catch {
+    return false;
+  }
+}
 export const eventInput = z
   .strictObject({
     ...common,
@@ -52,6 +65,14 @@ export const eventInput = z
     capacity: z.int().positive().nullable().default(null),
     maxTeamSize: z.int().min(1).max(100).default(6),
     formId: z.uuid().nullable().default(null),
+    ctaUrl: z
+      .string()
+      .trim()
+      .max(2000)
+      .refine(eventCtaUrl, "Geçersiz buton bağlantısı")
+      .nullable()
+      .default(null),
+    ctaLabel: z.string().trim().max(80).nullable().default(null),
     featuredPosition: z.int().min(0).max(1000).nullable().default(null),
     posterUrl: z.string().trim().max(1000).nullable().default(null),
   })

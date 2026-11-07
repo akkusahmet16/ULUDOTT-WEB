@@ -76,9 +76,16 @@ export function ContentView({
             </p>
           )}
           <p className="content-body">{item.description}</p>
-          {"applicationUrl" in item && item.applicationUrl && (
-            <Link className="button" href={item.applicationUrl}>
-              {t("common.apply")}
+          {(item.ctaUrl?.trim() ||
+            ("applicationUrl" in item && item.applicationUrl)) && (
+            <Link
+              className="button"
+              href={
+                (item.ctaUrl?.trim() ||
+                  ("applicationUrl" in item ? item.applicationUrl : ""))!
+              }
+            >
+              {item.ctaLabel?.trim() || t("common.apply")}
             </Link>
           )}
         </>

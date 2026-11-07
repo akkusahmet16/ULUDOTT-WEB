@@ -27,10 +27,6 @@ type Media = {
     purpose: string;
   }[];
 };
-type Options = {
-  categories: { id: string; name: string }[];
-  forms: { id: string; title: string; eventId: string | null }[];
-};
 const labels: Record<string, string> = {
   draft: "Taslak",
   scheduled: "Planlı",
@@ -47,10 +43,6 @@ const localInstant = (date: Date | null) =>
     : "";
 export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
   const [items, setItems] = useState<ContentRecord[]>([]);
-  const [options, setOptions] = useState<Options>({
-    categories: [],
-    forms: [],
-  });
   const [selected, setSelected] = useState<ContentRecord | null>(null);
   const [media, setMedia] = useState<Media[]>([]);
   const [query, setQuery] = useState("");
@@ -61,8 +53,6 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
   const [dirty, setDirty] = useState(false);
   const [epoch, setEpoch] = useState(0);
   const [kind, setKind] = useState("general");
-  const [categoryId, setCategoryId] = useState("");
-  const [formId, setFormId] = useState("");
   const [preview, setPreview] = useState<ContentRecord | null>(null);
   const [mobile, setMobile] = useState(true);
   const [posterUrl, setPosterUrl] = useState("");
@@ -73,7 +63,6 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
     const data = await response.json();
     if (!response.ok) throw Error(data.error ?? "Etkinlikler alınamadı");
     setItems(data.items);
-    setOptions(data.options);
     setLoaded(true);
   }
   async function refreshMedia() {
@@ -91,8 +80,6 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
     if (item === "new") {
       setSelected(null);
       setKind("general");
-      setCategoryId("");
-      setFormId("");
       setPosterUrl("");
     } else {
       const response = await fetch(`/api/admin/events?preview=${item.id}`, {
@@ -105,8 +92,6 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
       const data = await response.json();
       setSelected(data);
       setKind(data.kind);
-      setCategoryId(data.categoryId ?? "");
-      setFormId(data.formId ?? "");
       setPosterUrl(
         data.posterUrl ||
           (data.image?.url ??
@@ -131,8 +116,6 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
           const data = await response.json();
           setSelected(data);
           setKind(data.kind);
-          setCategoryId(data.categoryId ?? "");
-          setFormId(data.formId ?? "");
           setPosterUrl(
             data.posterUrl ||
               (data.image?.url ??
@@ -149,8 +132,6 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
       const data = await formRequest("/api/admin/events", body);
       setSelected(data);
       setKind(data.kind);
-      setCategoryId(data.categoryId ?? "");
-      setFormId(data.formId ?? "");
       setPosterUrl(
         data.posterUrl ||
           (data.image?.url ??
@@ -184,6 +165,12 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
     const optional = (key: string) => text(key).trim() || null;
     const date = (key: string) =>
       text(key) ? new Date(`${text(key)}:00+03:00`).toISOString() : null;
+    const baseSlug = slugifyContentTitle(text("title")) || "etkinlik";
+    const resolvedSlug =
+      selected?.slug ||
+      (items.some((item) => item.slug === baseSlug)
+        ? `${baseSlug}-${Date.now().toString(36).slice(-4)}`
+        : baseSlug);
     await mutate({
       action: "save",
       ...(selected
@@ -191,7 +178,7 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
         : {}),
       input: {
         title: text("title"),
-        slug: text("slug") || slugifyContentTitle(text("title")),
+        slug: resolvedSlug,
         excerpt: optional("excerpt"),
         description: optional("description"),
         startsAt: date("startsAt"),
@@ -201,12 +188,14 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
         year: kind === "ulujam" && text("year") ? Number(text("year")) : null,
         posterUrl: posterUrl || null,
         mediaId: posterUrl ? null : (selected?.mediaId ?? null),
-        categoryId: categoryId || null,
-        locationType: text("locationType"),
-        organizer: optional("organizer"),
-        capacity: text("capacity") ? Number(text("capacity")) : null,
-        maxTeamSize: Number(text("maxTeamSize") || 6),
-        formId: formId || null,
+        categoryId: selected?.categoryId ?? null,
+        locationType: selected?.locationType ?? "physical",
+        organizer: selected?.organizer ?? null,
+        capacity: selected?.capacity ?? null,
+        maxTeamSize: selected?.maxTeamSize ?? 6,
+        formId: selected?.formId ?? null,
+        ctaUrl: optional("ctaUrl"),
+        ctaLabel: optional("ctaLabel"),
         featuredPosition: selected?.featuredPosition ?? null,
         publishAt: date("publishAt"),
         unpublishAt: date("unpublishAt"),
@@ -262,9 +251,6 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
         .toLocaleLowerCase("tr-TR")
         .includes(query.trim().toLocaleLowerCase("tr-TR")) &&
       (filter === "all" || item.status === filter),
-  );
-  const availableForms = options.forms.filter(
-    (form) => form.eventId === selected?.id,
   );
   const field = (
     name: string,
@@ -482,6 +468,29 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
                         max: 2200,
                       })}
                   </div>
+                  <div className={styles.row}>
+                    {field(
+                      "ctaUrl",
+                      "Buton bağlantısı / Link (opsiyonel)",
+                      selected?.ctaUrl ?? "",
+                      {
+                        maxLength: 2000,
+                        placeholder: "https://... veya /basvuru/...",
+                      },
+                    )}
+                    {field(
+                      "ctaLabel",
+                      "Buton yazısı (opsiyonel)",
+                      selected?.ctaLabel ?? "",
+                      {
+                        maxLength: 80,
+                        placeholder: "Başvur",
+                      },
+                    )}
+                  </div>
+                  <p className={styles.hint}>
+                    Bağlantı girildiğinde ana sayfa ve etkinlikler sayfasındaki etkinlik kartında buton açılır. Buton yazısı boş bırakılırsa &quot;Başvur&quot; görünür.
+                  </p>
                 </section>
                 <section
                   className={styles.card}
@@ -534,96 +543,6 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
                     </div>
                   )}
                 </section>
-                <details className={styles.card}>
-                  <summary>Gelişmiş etkinlik ayarları</summary>
-                  <div className={styles.advanced}>
-                    {field(
-                      "slug",
-                      "Etkinlik adresi (boşsa başlıktan oluşturulur)",
-                      selected?.slug ?? "",
-                      { pattern: "[a-z0-9]+(-[a-z0-9]+)*" },
-                    )}
-                    <div className={styles.row}>
-                      <label className={styles.field}>
-                        Kategori
-                        <select
-                          name="categoryId"
-                          value={categoryId}
-                          onChange={(event) =>
-                            setCategoryId(event.target.value)
-                          }
-                        >
-                          <option value="">Kategori seçilmedi</option>
-                          {categoryId &&
-                            !options.categories.some(
-                              (item) => item.id === categoryId,
-                            ) && (
-                              <option value={categoryId}>
-                                Mevcut kategori (seçenek listesinde bulunmuyor)
-                              </option>
-                            )}
-                          {options.categories.map((item) => (
-                            <option key={item.id} value={item.id}>
-                              {item.name}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      <label className={styles.field}>
-                        Konum türü
-                        <select
-                          name="locationType"
-                          defaultValue={selected?.locationType ?? "physical"}
-                        >
-                          <option value="physical">Fiziksel</option>
-                          <option value="online">Çevrim içi (HTTPS)</option>
-                        </select>
-                      </label>
-                    </div>
-                    {field(
-                      "organizer",
-                      "Düzenleyen ekip",
-                      selected?.organizer ?? "",
-                    )}
-                    <div className={styles.row}>
-                      {field(
-                        "capacity",
-                        "Kapasite",
-                        selected?.capacity ?? null,
-                        { type: "number", min: 1 },
-                      )}
-                      {field(
-                        "maxTeamSize",
-                        "En fazla takım üyesi",
-                        selected?.maxTeamSize ?? 6,
-                        { type: "number", min: 1, max: 100 },
-                      )}
-                    </div>
-                    <label className={styles.field}>
-                      İlişkili form
-                      <select
-                        name="formId"
-                        value={formId}
-                        onChange={(event) => setFormId(event.target.value)}
-                      >
-                        <option value="">Form bağlı değil</option>
-                        {formId &&
-                          !availableForms.some(
-                            (form) => form.id === formId,
-                          ) && (
-                            <option value={formId}>
-                              Mevcut form (seçenek listesinde bulunmuyor)
-                            </option>
-                          )}
-                        {availableForms.map((form) => (
-                          <option key={form.id} value={form.id}>
-                            {form.title}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                  </div>
-                </details>
                 <details className={styles.card}>
                   <summary>Yayın zamanı ve arama görünümü</summary>
                   <div className={styles.advanced}>
@@ -807,7 +726,7 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
                       item={{
                         ...preview,
                         displayStatus: preview.status,
-                        applicationUrl: null,
+                        applicationUrl: preview.ctaUrl ?? null,
                         image: (() => {
                           if (preview.posterUrl || posterUrl) {
                             const p = preview.posterUrl || posterUrl;

@@ -301,14 +301,17 @@ async function enrich(
   let applicationUrl: string | null = null;
   if (
     ["general", "ulujam"].includes(row.kind ?? "") &&
-    row.formId &&
     displayStatus(row, now) === "published"
   ) {
-    const [f] = await tx.execute(
-      sql`select f.slug from forms f join form_versions v on v.id=f.current_version_id and v.form_id=f.id where f.id=${row.formId} and f.event_id=${row.id} and f.status='published' and v.published_at is not null and f.opens_at<=${now.toISOString()}::timestamptz and (f.closes_at is null or f.closes_at>${now.toISOString()}::timestamptz)`,
-    );
-    if (f && /^[a-z0-9-]{1,100}$/.test(String(f.slug)))
-      applicationUrl = "/basvuru/" + f.slug;
+    if (row.ctaUrl?.trim()) {
+      applicationUrl = row.ctaUrl.trim();
+    } else if (row.formId) {
+      const [f] = await tx.execute(
+        sql`select f.slug from forms f join form_versions v on v.id=f.current_version_id and v.form_id=f.id where f.id=${row.formId} and f.event_id=${row.id} and f.status='published' and v.published_at is not null and f.opens_at<=${now.toISOString()}::timestamptz and (f.closes_at is null or f.closes_at>${now.toISOString()}::timestamptz)`,
+      );
+      if (f && /^[a-z0-9-]{1,100}$/.test(String(f.slug)))
+        applicationUrl = "/basvuru/" + f.slug;
+    }
   }
   let categoryName: string | null = null;
   if (row.categoryId) {

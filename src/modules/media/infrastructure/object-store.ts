@@ -8,10 +8,15 @@ import {
 import { loadServerConfig } from "../../../lib/config/server.ts";
 function client() {
   const c = loadServerConfig().objectStorage;
+  const endpoint =
+    process.env.OBJECT_STORAGE_INTERNAL_ENDPOINT ??
+    (c.endpoint === "https://media.uludott.com.tr"
+      ? "http://127.0.0.1:3900"
+      : c.endpoint);
   return {
     bucket: c.bucket,
     s3: new S3Client({
-      endpoint: c.endpoint,
+      endpoint,
       region: c.region,
       forcePathStyle: true,
       maxAttempts: 2,
@@ -29,6 +34,7 @@ export async function putPrivate(key: string, data: Buffer, mime: string) {
         Body: data,
         ContentType: mime,
       }),
+      { abortSignal: AbortSignal.timeout(20_000) },
     );
   } finally {
     s3.destroy();
@@ -37,7 +43,9 @@ export async function putPrivate(key: string, data: Buffer, mime: string) {
 export async function readPrivate(key: string): Promise<Buffer> {
   const { bucket, s3 } = client();
   try {
-    const r = await s3.send(new GetObjectCommand({ Bucket: bucket, Key: key }));
+    const r = await s3.send(new GetObjectCommand({ Bucket: bucket, Key: key }), {
+      abortSignal: AbortSignal.timeout(20_000),
+    });
     if (!r.Body) throw new Error("Nesne yok");
     return Buffer.from(await r.Body.transformToByteArray());
   } finally {
