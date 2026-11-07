@@ -58,29 +58,33 @@ async function loadPdfPages(pdfUrl: string): Promise<string[]> {
   const count = doc.numPages;
   const rendered: string[] = [];
 
+  // Yüksek çözünürlüklü rasterizasyon:
+  // Fanzin yazıları, tipografi ve detaylar için Retina / 300 DPI kalitesi
+  const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
+  const targetScale = Math.min(3.2, Math.max(2.6, dpr * 1.5));
+
   for (let i = 1; i <= count; i++) {
     const page = await doc.getPage(i);
-    const viewport = page.getViewport({ scale: 1.5 });
+    const viewport = page.getViewport({ scale: targetScale });
     const canvas = document.createElement("canvas");
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    canvas.width = Math.floor(viewport.width);
+    canvas.height = Math.floor(viewport.height);
+    const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) continue;
 
-    await page.render({ canvasContext: ctx, viewport }).promise;
-    rendered.push(canvas.toDataURL("image/webp", 0.92));
-  }
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
 
-  if (rendered.length === 1) {
-    const blank = document.createElement("canvas");
-    blank.width = 580;
-    blank.height = 750;
-    const bCtx = blank.getContext("2d");
-    if (bCtx) {
-      bCtx.fillStyle = "black";
-      bCtx.fillRect(0, 0, 580, 750);
-    }
-    rendered.push(blank.toDataURL("image/webp", 0.8));
+    await page.render({
+      canvasContext: ctx,
+      viewport,
+      intent: "display",
+    }).promise;
+
+    // Yüksek kaliteli WebP (0.96) ile kayıpsız netlik
+    rendered.push(canvas.toDataURL("image/webp", 0.96));
   }
 
   return rendered;
@@ -169,26 +173,53 @@ export function FlipbookReader({
         const { PageFlip } = await import("page-flip");
         if (!isMounted) return;
 
-        let pageImages = (issue?.pages ?? [])
-          .map((p) => p.imageUrl)
-          .filter((url): url is string => Boolean(url));
+        let pageImages: string[] = [];
 
-        // Eğer hazır sayfalar varsa önce ilk görselin erişilebilir olduğunu kontrol et (404 koruması)
-        if (pageImages.length > 0 && !pageImages[0].startsWith("data:")) {
-          const testOk = await new Promise<boolean>((resolve) => {
-            const img = new Image();
-            img.onload = () => resolve(true);
-            img.onerror = () => resolve(false);
-            img.src = pageImages[0];
-          });
+        // 1. Kapak görseli var mı ve erişilebilir mi kontrol et
+        const candidateCover =
+          issue?.coverImageUrl &&
+          issue.coverImageUrl.trim() !== "" &&
+          issue.coverImageUrl !== "#"
+            ? issue.coverImageUrl.trim()
+            : null;
 
-          if (!testOk) {
-            // Statik sayfa görselleri bulunamadıysa (404), PDF'e yönel
-            pageImages = [];
+        let validCoverUrl: string | null = null;
+        if (candidateCover) {
+          const coverOk = candidateCover.startsWith("data:")
+            ? true
+            : await new Promise<boolean>((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(true);
+                img.onerror = () => resolve(false);
+                img.src = candidateCover;
+              });
+          if (coverOk) {
+            validCoverUrl = candidateCover;
           }
         }
 
-        // Eğer sayfa görselleri 2'den azsa ve PDF URL mevcutsa, PDF'ten dinamik render et
+        // 2. Hazır statik sayfalar var mı kontrol et
+        const staticPages = (issue?.pages ?? [])
+          .map((p) => p.imageUrl)
+          .filter((url): url is string => Boolean(url));
+
+        if (staticPages.length >= 2) {
+          const firstUrl = staticPages[0];
+          const testOk = firstUrl.startsWith("data:")
+            ? true
+            : await new Promise<boolean>((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(true);
+                img.onerror = () => resolve(false);
+                img.src = firstUrl;
+              });
+
+          if (testOk) {
+            pageImages = staticPages;
+          }
+        }
+
+        // 3. Statik sayfa yoksa veya 404 ise, PDF'ten dinamik yüksek çözünürlüklü render et
         if (pageImages.length < 2 && issue?.pdfUrl && issue.pdfUrl !== "#" && issue.pdfUrl.trim() !== "") {
           try {
             const renderedFromPdf = await loadPdfPages(issue.pdfUrl);
@@ -200,6 +231,21 @@ export function FlipbookReader({
           }
         }
 
+        // 4. Kapak görseli kuralı:
+        // Kapak yüklendiyse ilk sayfaya kapak resmini koy.
+        // Yüklenmediyse ilk sayfayı asla boş gösterme (PDF'in ilk sayfası kalsın).
+        if (validCoverUrl) {
+          if (pageImages.length === 0) {
+            pageImages = [validCoverUrl];
+          } else if (issue?.pageCount && issue.pageCount > pageImages.length) {
+            // PDF yalnızca iç sayfaları içeriyorsa kapak görselini en başa ekle
+            pageImages = [validCoverUrl, ...pageImages];
+          } else {
+            // PDF zaten kapak dahil sayfaları içeriyorsa ilk sayfayı yüksek kaliteli kapak görseli yap
+            pageImages = [validCoverUrl, ...pageImages.slice(1)];
+          }
+        }
+
         if (!isMounted) return;
 
         if (pageImages.length === 0) {
@@ -207,6 +253,13 @@ export function FlipbookReader({
           setLoadError(true);
           return;
         }
+
+        // Tek sayfa durumunda güvenli çift sayfa görünümü için tamamla
+        if (pageImages.length === 1) {
+          pageImages = [pageImages[0], pageImages[0]];
+        }
+
+        const hasCover = Boolean(validCoverUrl);
 
         // US Letter / A4 fanzin en-boy oranı (1224x1584 ~ 1:1.294)
         const pageFlip = new PageFlip(mountEl, {
@@ -218,8 +271,8 @@ export function FlipbookReader({
           minHeight: 414,
           maxHeight: 1230,
           drawShadow: true,
-          maxShadowOpacity: 0.5,
-          showCover: true,
+          maxShadowOpacity: 0.35,
+          showCover: hasCover,
           usePortrait: true,
           showPageCorners: true,
           useMouseEvents: true,
@@ -250,6 +303,22 @@ export function FlipbookReader({
         });
 
         pageFlip.loadFromImages(pageImages);
+
+        // CanvasRender'ın tüm canvas'ı beyaza boyayıp kapak açıkken/kapalıyken
+        // sol tarafı boş beyaz dikdörtgen olarak göstermesini önle
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const render = (pageFlip as any).getRender();
+        if (render && typeof render.clear === "function") {
+          render.clear = function () {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const ctx = (this as any).ctx as CanvasRenderingContext2D | undefined;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const cvs = (this as any).canvas as HTMLCanvasElement | undefined;
+            if (ctx && cvs) {
+              ctx.clearRect(0, 0, cvs.width, cvs.height);
+            }
+          };
+        }
       } catch (err) {
         console.error("PageFlip yüklenirken hata oluştu:", err);
         if (isMounted) {
@@ -273,7 +342,7 @@ export function FlipbookReader({
       }
       mountEl.remove();
     };
-  }, [hasPages, issue?.pages, issue?.pdfUrl, playPageTurnAudio]);
+  }, [hasPages, issue?.pages, issue?.pdfUrl, issue?.coverImageUrl, issue?.pageCount, playPageTurnAudio]);
 
   // Klavye sol/sağ ok tuşları ile sayfa çevirme
   useEffect(() => {
