@@ -3,7 +3,7 @@
 **Tarih:** 7 Kasım 2026  
 **Sürüm:** v0.2 Final Kabul Sürümü  
 **Hedef Depo:** `akkusahmet16/ULUDOTT-WEB`  
-**Aktif Dal:** `GeminiImplemente`  
+**Aktif Dal:** `uludott-web-final`  
 **Çalışma Tabanı:** `/Users/taklalie60/Desktop/ULUDOTT/Uludott-Web-Final`  
 **Mimari ve Tasarım Sözleşmesi:** [`docs/design/2026-10-20-birlesik-uygulama-plani.md`](../design/2026-10-20-birlesik-uygulama-plani.md) · [`docs/design/sunum-katmani-kurallari.md`](../design/sunum-katmani-kurallari.md)
 

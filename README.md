@@ -3,7 +3,7 @@
 Uludott Oyun Geliştirme Topluluğu'nun resmî web platformu. Bu sürüm, v0.1'in ödüllü ve özgün sinematik ArtDeco görsel kimliğini %100 sadakatle korurken; arka planda Next.js 16 (App Router & Turbopack), PostgreSQL 17 (Drizzle ORM), çok dilli sözlük altyapısı (TR/EN i18n), dinamik form motoru, UluJam takım portalı, katılımcı kartları, dijital cüzdan entegrasyonu, Fanzin çevrimiçi okuyucu ve kapsamlı yönetim paneli sunar.
 
 - **GitHub Deposu:** [akkusahmet16/ULUDOTT-WEB](https://github.com/akkusahmet16/ULUDOTT-WEB)
-- **Aktif Dal:** `GeminiImplemente`
+- **Aktif Dal:** `uludott-web-final`
 
 ---
 
