@@ -118,6 +118,18 @@ it("bitiş anında geçmişe geçer; devam eden/tarihsiz bitişli kayıtlar üst
   expect(earlier.past.some((event) => event.slug === "just-ended")).toBe(false);
 });
 
+it("bitis saati olmayan etkinlik baslangic saati geldiginde otomatik gecmise duser ve konumsuz yayinlanabilir", async () => {
+  const pastNoEndId = randomUUID();
+  await local.sql`insert into events(id,title,slug,kind,status,starts_at,ends_at,publish_at,location) values(${pastNoEndId},'Bitis Saatsiz','bitis-saatsiz','general','published','2030-01-02T11:00Z',null,'2020-01-01',null)`;
+  const sections = await getHomeEvents(now);
+  expect(sections.past.some((e) => e.slug === "bitis-saatsiz")).toBe(true);
+  expect(sections.upcoming.some((e) => e.slug === "bitis-saatsiz")).toBe(false);
+
+  const beforeStart = await getHomeEvents(new Date("2030-01-02T10:30:00Z"));
+  expect(beforeStart.upcoming.some((e) => e.slug === "bitis-saatsiz")).toBe(true);
+  expect(beforeStart.past.some((e) => e.slug === "bitis-saatsiz")).toBe(false);
+});
+
 it("eski Coffee Talk kartı yalnız geçmişte korunur; paneldeki kayıt taslak olsa bile kopyası geri eklenmez", async () => {
   function legacyCards(node: ReactNode): number {
     return Children.toArray(node).reduce<number>((count, child) => {

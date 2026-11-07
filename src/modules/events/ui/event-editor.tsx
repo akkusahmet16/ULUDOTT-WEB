@@ -452,16 +452,15 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
                     )}
                     {field(
                       "endsAt",
-                      "Bitiş saati / tarih (İstanbul)",
+                      "Bitiş saati / tarih (opsiyonel)",
                       localInstant(selected?.endsAt ?? null),
                       { type: "datetime-local" },
                     )}
                   </div>
                   <p className={styles.hint}>
-                    Bitiş tarihi geçtiğinde ana sayfada geçmiş etkinlikler
-                    alanına taşınır.
+                    Bitiş saati girilmezse etkinlik başlangıç anı geldiğinde otomatik olarak geçmiş etkinlikler alanına taşınır.
                   </p>
-                  {field("location", "Konum", selected?.location ?? "", {
+                  {field("location", "Konum (opsiyonel)", selected?.location ?? "", {
                     maxLength: 500,
                   })}
                   <div className={styles.row}>

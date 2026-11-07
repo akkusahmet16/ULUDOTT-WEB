@@ -50,6 +50,16 @@ it("preserves applications on a published event", () => {
   expect(html).toContain("Başvur");
 });
 
+it("renders time without end-time when endsAt is null and omits venue when location is null", () => {
+  const html = renderToStaticMarkup(
+    createElement(EventCard, {
+      event: { ...event, endsAt: null, location: null },
+    }),
+  );
+  expect(html).not.toContain("–");
+  expect(html).not.toContain("Konum");
+});
+
 it("serves responsive archive images while preserving gallery and game composition", () => {
   const html = renderToStaticMarkup(createElement(UlujamArchive, { archive: defaultArchive2026 }));
   const images = [...html.matchAll(/<img\b[^>]*>/g)].map(([image]) => image);

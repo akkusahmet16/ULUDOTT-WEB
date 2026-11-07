@@ -84,12 +84,12 @@ export function EventCard({
               </dd>
             </div>
           )}
-          {event.location && (
+          {event.location?.trim() ? (
             <div>
               <dt>{t("common.venueLabel")}</dt>
-              <dd>{event.location}</dd>
+              <dd>{event.location.trim()}</dd>
             </div>
-          )}
+          ) : null}
         </dl>
         {!closed && event.applicationUrl && (
           <div className="event-feature-actions">
