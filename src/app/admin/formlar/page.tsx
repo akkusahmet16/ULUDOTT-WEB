@@ -206,7 +206,7 @@ export default async function Page() {
                             : f.status}
                       </span>
                       <Link
-                        href={"/admin/formlar/" + f.id + "/basvurular"}
+                        href={"/admin/basvurular?formId=" + f.id}
                         style={{
                           fontSize: "13px",
                           color: "var(--cream)",

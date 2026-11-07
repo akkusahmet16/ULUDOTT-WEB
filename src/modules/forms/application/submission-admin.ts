@@ -140,13 +140,52 @@ export async function listSubmissions(
       .limit(d.limit + 1);
     const items = rows.slice(0, d.limit),
       last = items.at(-1);
+    const itemIds = items.map((r) => r.id);
+    const fileRows = itemIds.length
+      ? await tx
+          .select({
+            id: submissionFiles.id,
+            submissionId: submissionFiles.submissionId,
+            fieldKey: submissionFiles.fieldKey,
+            fileName: submissionFiles.fileName,
+            mimeType: submissionFiles.mimeType,
+            byteSize: submissionFiles.byteSize,
+          })
+          .from(submissionFiles)
+          .where(inArray(submissionFiles.submissionId, itemIds))
+      : [];
+    const filesBySubmission = new Map<
+      string,
+      {
+        id: string;
+        fieldKey: string;
+        fileName: string;
+        mimeType: string;
+        byteSize: number;
+      }[]
+    >();
+    for (const file of fileRows) {
+      const list = filesBySubmission.get(file.submissionId) ?? [];
+      list.push({
+        id: file.id,
+        fieldKey: file.fieldKey,
+        fileName: file.fileName,
+        mimeType: file.mimeType,
+        byteSize: file.byteSize,
+      });
+      filesBySubmission.set(file.submissionId, list);
+    }
+    const enrichedItems = items.map((item) => ({
+      ...item,
+      files: filesBySubmission.get(item.id) ?? [],
+    }));
     const nextCursor =
       rows.length > d.limit && last
         ? Buffer.from(
             JSON.stringify({ formId, id: last.id, createdAt: last.createdAt }),
           ).toString("base64url")
         : null;
-    return { items, nextCursor };
+    return { items: enrichedItems, nextCursor };
   });
 }
 async function locked(

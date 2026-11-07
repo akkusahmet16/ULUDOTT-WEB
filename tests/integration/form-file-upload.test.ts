@@ -5,7 +5,7 @@ import { migrateEmptyDatabase } from "../../src/lib/database/migrate";
 import { closeDatabase } from "../../src/lib/database/client";
 import { createDraftForm, saveDraftForm, publishForm } from "../../src/modules/forms/application/form-service";
 import { submitForm } from "../../src/modules/forms/application/submit-form";
-import { getSubmission, getSubmissionFile, deleteSubmission } from "../../src/modules/forms/application/submission-admin";
+import { getSubmission, getSubmissionFile, deleteSubmission, listSubmissions } from "../../src/modules/forms/application/submission-admin";
 
 it("stores a form file privately and permits only a scoped admin to download it", async () => {
   const local = await createTestDatabase();
@@ -33,6 +33,10 @@ it("stores a form file privately and permits only a scoped admin to download it"
     const submitted = await submitForm(form.slug, { [emailId]: "person@test.invalid" }, randomUUID(), {
       versionId: version.current_version_id, files: new Map([[fileId, file]]),
     });
+    const list = await listSubmissions(actor, draft.id);
+    expect(list.items).toHaveLength(1);
+    expect(list.items[0].files).toHaveLength(1);
+    expect(list.items[0].files[0].fileName).toBe("portfolyo.pdf");
     const detail = await getSubmission(actor, submitted.id);
     expect(detail.files).toHaveLength(1);
     expect(detail.answers[fileId]).toBe("portfolyo.pdf");

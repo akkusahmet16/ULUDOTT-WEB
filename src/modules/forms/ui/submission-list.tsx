@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { formatLocaleTimestamp } from "../../../i18n/format.ts";
 import { formRequest } from "./admin-fetch";
@@ -16,6 +16,13 @@ type Row = {
   email: string | null;
   status: string;
   createdAt: string;
+  files?: {
+    id: string;
+    fieldKey: string;
+    fileName: string;
+    mimeType: string;
+    byteSize: number;
+  }[];
 };
 export function SubmissionList({
   forms,
@@ -51,10 +58,11 @@ export function SubmissionList({
       setBusy(false);
     }
   }
-  async function load(next: string | null = null) {
+  async function load(next: string | null = null, targetFormId = formId) {
+    if (!targetFormId) return;
     await action(async () => {
       const p = new URLSearchParams({
-        formId,
+        formId: targetFormId,
         ...filters,
         ...(next ? { cursor: next } : {}),
       });
@@ -68,6 +76,13 @@ export function SubmissionList({
       setLoaded(true);
     });
   }
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get("formId");
+    if (requested && forms.some((f) => f.id === requested)) {
+      setFormId(requested);
+      void load(null, requested);
+    }
+  }, []);
   async function download(format: "csv" | "xlsx") {
     await action(async () => {
       const c = await fetch("/api/admin/csrf", { cache: "no-store" });
@@ -215,6 +230,27 @@ export function SubmissionList({
                 </Link>{" "}
                 · {statusLabels[r.status]} ·{" "}
                 {formatLocaleTimestamp(r.createdAt, "tr")}
+                {r.files && r.files.length > 0 && (
+                  <>
+                    {" · "}
+                    {r.files.map((file, idx) => (
+                      <span key={file.id}>
+                        {idx > 0 ? " · " : ""}
+                        <a
+                          href={`/api/admin/submissions/${r.id}/files/${file.id}`}
+                          download={file.fileName}
+                          style={{
+                            fontWeight: 600,
+                            color: "var(--purple)",
+                            textDecoration: "underline",
+                          }}
+                        >
+                          {file.fileName} İndir ({Math.ceil(file.byteSize / 1024)} KiB)
+                        </a>
+                      </span>
+                    ))}
+                  </>
+                )}
               </li>
             ))}
           </ul>

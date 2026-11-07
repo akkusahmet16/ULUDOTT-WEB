@@ -62,6 +62,30 @@ export function SubmissionDetail({ submission: s }: { submission: Detail }) {
       <p>
         Saklama sonu: {formatLocaleTimestamp(s.expiresAt, "tr")}
       </p>
+      {s.files?.length > 0 && (
+        <section aria-label="Yüklenen dosyalar">
+          <h2>Yüklenen dosyalar</h2>
+          <ul>
+            {s.files.map((file) => (
+              <li key={file.id}>
+                <a
+                  href={`/api/admin/submissions/${s.id}/files/${file.id}`}
+                  download={file.fileName}
+                  style={{
+                    fontWeight: 600,
+                    color: "var(--purple)",
+                    textDecoration: "underline",
+                  }}
+                >
+                  {file.fileName}
+                </a>
+                {" · "}
+                {Math.ceil(file.byteSize / 1024)} KiB
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -76,6 +100,16 @@ export function SubmissionDetail({ submission: s }: { submission: Detail }) {
             onChange={setAnswers}
             prefix="correction"
             readOnlyConsent
+            fileLinks={Object.fromEntries(
+              (s.files ?? []).map((file) => [
+                file.fieldKey,
+                {
+                  url: `/api/admin/submissions/${s.id}/files/${file.id}`,
+                  fileName: file.fileName,
+                  byteSize: file.byteSize,
+                },
+              ]),
+            )}
           />
           <p>
             Rıza cevapları değiştirilemez. Yanıtlar başvurunun ilk form sürümüne
@@ -84,15 +118,6 @@ export function SubmissionDetail({ submission: s }: { submission: Detail }) {
           <button type="submit">Düzeltmeyi kaydet</button>
         </fieldset>
       </form>
-      {s.files?.length > 0 && (
-        <section aria-label="Yüklenen dosyalar">
-          <h2>Yüklenen dosyalar</h2>
-          <ul>{s.files.map((file) => <li key={file.id}>
-            <a href={`/api/admin/submissions/${s.id}/files/${file.id}`}>{file.fileName}</a>
-            {" · "}{Math.ceil(file.byteSize / 1024)} KiB
-          </li>)}</ul>
-        </section>
-      )}
       <fieldset disabled={busy}>
         <legend>Durum yönetimi</legend>
         <label className="field">

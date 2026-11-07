@@ -31,6 +31,7 @@ export function FormFields({
   fieldErrors = {},
   onFileChange,
   fileNames = {},
+  fileLinks = {},
 }: {
   definition: ValidFormDefinition;
   answers: Answers;
@@ -40,6 +41,10 @@ export function FormFields({
   fieldErrors?: Record<string, string>;
   onFileChange?: (id: string, file: File | null) => void;
   fileNames?: Record<string, string>;
+  fileLinks?: Record<
+    string,
+    { url: string; fileName: string; byteSize: number }
+  >;
 }) {
   const t = useTranslator();
   const visible = new Set(evaluateVisibility(definition, answers));
@@ -160,7 +165,24 @@ export function FormFields({
               <label htmlFor={id}>{label}</label>
               {f.type === "file" ? (
                 readOnlyConsent ? (
-                  <p>{String(v ?? t("forms.noFileValue"))}</p>
+                  fileLinks[f.id] ? (
+                    <p>
+                      <a
+                        href={fileLinks[f.id].url}
+                        download={fileLinks[f.id].fileName}
+                        style={{
+                          fontWeight: 600,
+                          color: "var(--purple)",
+                          textDecoration: "underline",
+                        }}
+                      >
+                        {fileLinks[f.id].fileName} İndir (
+                        {Math.ceil(fileLinks[f.id].byteSize / 1024)} KiB)
+                      </a>
+                    </p>
+                  ) : (
+                    <p>{String(v ?? t("forms.noFileValue"))}</p>
+                  )
                 ) : (
                   <input
                     id={id}
