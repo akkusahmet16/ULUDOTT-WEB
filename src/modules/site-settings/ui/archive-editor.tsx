@@ -371,12 +371,12 @@ export function ArchiveEditor({
                 />
               </label>
               <label className="field">
-                itch.io oyun bağlantısı
+                itch.io oyun bağlantısı (isteğe bağlı)
                 <input
                   type="url"
                   value={item.itchUrl}
-                  required
                   maxLength={500}
+                  placeholder="https://yazar.itch.io/oyun-adi"
                   onChange={(event) =>
                     game(index, { itchUrl: event.target.value })
                   }
@@ -467,7 +467,7 @@ export function ArchiveEditor({
               .filter((image) => image.src)
               .map((img) => ({ ...img, src: sanitizeMediaSrc(img.src) })),
             games: data.games
-              .filter((game) => game.image && game.title && game.itchUrl)
+              .filter((game) => game.image && game.title)
               .map((g) => ({ ...g, image: sanitizeMediaSrc(g.image) })),
           }}
         />

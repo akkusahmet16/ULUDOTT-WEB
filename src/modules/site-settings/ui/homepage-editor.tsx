@@ -4,10 +4,12 @@ import Image from "next/image";
 import { formRequest } from "../../forms/ui/admin-fetch";
 import { SiteAssetPicker } from "../../media/ui/site-asset-picker";
 import type { HomepageSettings } from "../domain/homepage";
+import type { Archive } from "../domain/archives";
 import styles from "./admin-editors.module.css";
 
 export function HomepageEditor() {
   const [data, setData] = useState<HomepageSettings | null>(null);
+  const [archives, setArchives] = useState<Archive[]>([]);
   const [revision, setRevision] = useState(0);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -17,11 +19,20 @@ export function HomepageEditor() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("/api/admin/homepage-settings");
-        if (res.ok) {
-          const json = await res.json();
+        const [resHome, resArch] = await Promise.all([
+          fetch("/api/admin/homepage-settings"),
+          fetch("/api/admin/ulujam-archives"),
+        ]);
+        if (resHome.ok) {
+          const json = await resHome.json();
           setData(json.data);
           setRevision(json.revision);
+        }
+        if (resArch.ok) {
+          const jsonArch = await resArch.json();
+          if (Array.isArray(jsonArch.items)) {
+            setArchives(jsonArch.items);
+          }
         }
       } catch (err) {
         console.error("Failed to load homepage settings:", err);
@@ -63,6 +74,18 @@ export function HomepageEditor() {
   if (!data) {
     return <div className={styles.errorState}>Veriler yüklenemedi.</div>;
   }
+
+  const availableYears = Array.from(
+    new Set([
+      ...archives.map((a) => a.year),
+      2026,
+      data.storyPanels.activeUlujamYear,
+    ]),
+  ).sort((a, b) => b - a);
+
+  const selectedArchive = archives.find(
+    (a) => a.year === data.storyPanels.activeUlujamYear,
+  );
 
   return (
     <div className={styles.container}>
@@ -188,6 +211,126 @@ export function HomepageEditor() {
                   </div>
                 </div>
               </div>
+
+              {/* Sol Kolon - Açılır Pencere (Modal) ve Vlog Ayarları */}
+              <div className={styles.subBox}>
+                <div className={styles.panelSubHeader}>
+                  <h4>AÇILIR PENCERE (MODAL & VLOG) AYARLARI</h4>
+                  <p className={styles.helpText}>
+                    Ziyaretçi ana sayfada UluJam kolonuna tıkladığında açılan penceredeki video, kapak ve detay metinleri.
+                  </p>
+                </div>
+
+                <div className={styles.fieldGroup}>
+                  <label className={styles.label}>YouTube Video Bağlantısı veya ID</label>
+                  <input
+                    type="text"
+                    className={styles.input}
+                    placeholder="https://youtu.be/... veya video ID"
+                    value={data.storyPanels.ulujamVideoUrl ?? ""}
+                    onChange={(e) =>
+                      setData({
+                        ...data,
+                        storyPanels: {
+                          ...data.storyPanels,
+                          ulujamVideoUrl: e.target.value,
+                        },
+                      })
+                    }
+                  />
+                </div>
+
+                <div style={{ margin: "4px 0" }}>
+                  <SiteAssetPicker
+                    scope="ulujam"
+                    kind="image"
+                    label="Video / Vlog Kapak Görseli (16:9)"
+                    value={data.storyPanels.ulujamVideoCover ?? ""}
+                    onChange={(path) =>
+                      setData({
+                        ...data,
+                        storyPanels: {
+                          ...data.storyPanels,
+                          ulujamVideoCover: path,
+                        },
+                      })
+                    }
+                  />
+                </div>
+
+                <div className={styles.fieldRow}>
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.label}>Açılır Pencere Başlığı</label>
+                    <input
+                      type="text"
+                      className={styles.input}
+                      value={data.storyPanels.ulujamModalTitle ?? ""}
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          storyPanels: {
+                            ...data.storyPanels,
+                            ulujamModalTitle: e.target.value,
+                          },
+                        })
+                      }
+                    />
+                  </div>
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.label}>Açılır Pencere Üst Etiketi (Eyebrow)</label>
+                    <input
+                      type="text"
+                      className={styles.input}
+                      value={data.storyPanels.ulujamModalEyebrow ?? ""}
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          storyPanels: {
+                            ...data.storyPanels,
+                            ulujamModalEyebrow: e.target.value,
+                          },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.fieldGroup}>
+                  <label className={styles.label}>Video Başlığı (Vlog Adı)</label>
+                  <input
+                    type="text"
+                    className={styles.input}
+                    value={data.storyPanels.ulujamVideoTitle ?? ""}
+                    onChange={(e) =>
+                      setData({
+                        ...data,
+                        storyPanels: {
+                          ...data.storyPanels,
+                          ulujamVideoTitle: e.target.value,
+                        },
+                      })
+                    }
+                  />
+                </div>
+
+                <div className={styles.fieldGroup}>
+                  <label className={styles.label}>Açılır Pencere Açıklaması</label>
+                  <textarea
+                    className={styles.textarea}
+                    rows={3}
+                    value={data.storyPanels.ulujamModalDescription ?? ""}
+                    onChange={(e) =>
+                      setData({
+                        ...data,
+                        storyPanels: {
+                          ...data.storyPanels,
+                          ulujamModalDescription: e.target.value,
+                        },
+                      })
+                    }
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Sağ Kolon - Derece Oyunları Paneli */}
@@ -294,12 +437,50 @@ export function HomepageEditor() {
                       })
                     }
                   >
-                    <option value={2026}>UluJam 2026 (Doğrulanmış Dereceler)</option>
-                    <option value={2027}>UluJam 2027 (Yeni Edisyon)</option>
+                    {availableYears.map((yr) => (
+                      <option key={yr} value={yr}>
+                        UluJam {yr} {yr === 2026 ? "(Doğrulanmış Dereceler)" : ""}
+                      </option>
+                    ))}
                   </select>
                   <p className={styles.helpText}>
                     Seçilen yıla göre ana sayfadaki başlık ("UluJam {data.storyPanels.activeUlujamYear}'nin doğrulanmış derece bağlantıları.") ve oyun dereceleri otomatik olarak güncellenir.
                   </p>
+
+                  {/* Seçilen Edisyona Ait Otomatik Gelen Derece Oyunları Önizlemesi */}
+                  {selectedArchive && selectedArchive.games && selectedArchive.games.length > 0 ? (
+                    <div className={styles.autoGamesList}>
+                      <p className={styles.autoGamesNotice}>
+                        ✓ <strong>UluJam {selectedArchive.year}</strong> edisyonuna ait {selectedArchive.games.length} derece oyunu ana sayfada otomatik gösterilecek:
+                      </p>
+                      <div className={styles.gamesGridSmall}>
+                        {selectedArchive.games.map((g) => (
+                          <div key={g.rank} className={styles.gamePreviewItem}>
+                            <span className={styles.gameRankBadge}>{g.rank}. Derece</span>
+                            {g.image && (
+                              <div className={styles.gameThumbMini}>
+                                <Image src={g.image} alt="" width={70} height={44} unoptimized />
+                              </div>
+                            )}
+                            <div className={styles.gamePreviewMeta}>
+                              <strong>{g.title || "Adsız Oyun"}</strong>
+                              {g.team && <span>{g.team}</span>}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className={styles.autoGamesEmpty}>
+                      <p>
+                        UluJam {data.storyPanels.activeUlujamYear} için arşivde henüz kayıtlı derece oyunu bulunmuyor.
+                        <br />
+                        <a href="/admin/ulujam-arsivleri" target="_blank" rel="noopener noreferrer">
+                          UluJam Arşivleri sayfasına giderek bu yıla oyun ekleyebilirsiniz ↗
+                        </a>
+                      </p>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className={styles.subBox}>
@@ -412,6 +593,89 @@ export function HomepageEditor() {
                   ))}
                 </div>
               )}
+
+              {/* Sağ Kolon - Açılır Pencere (Modal) Ayarları */}
+              <div className={styles.subBox}>
+                <div className={styles.panelSubHeader}>
+                  <h4>AÇILIR PENCERE (MODAL) AYARLARI</h4>
+                  <p className={styles.helpText}>
+                    Ziyaretçi ana sayfada Derece Oyunları kolonuna tıkladığında açılan pencerenin üst kapak görseli ve metinleri.
+                  </p>
+                </div>
+
+                <div style={{ margin: "4px 0" }}>
+                  <SiteAssetPicker
+                    scope="games"
+                    kind="image"
+                    label="Açılır Pencere Üst Kapak Görseli (16:9)"
+                    value={data.storyPanels.gamesDialogCover ?? ""}
+                    onChange={(path) =>
+                      setData({
+                        ...data,
+                        storyPanels: {
+                          ...data.storyPanels,
+                          gamesDialogCover: path,
+                        },
+                      })
+                    }
+                  />
+                </div>
+
+                <div className={styles.fieldRow}>
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.label}>Açılır Pencere Başlığı</label>
+                    <input
+                      type="text"
+                      className={styles.input}
+                      value={data.storyPanels.gamesDialogTitle ?? ""}
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          storyPanels: {
+                            ...data.storyPanels,
+                            gamesDialogTitle: e.target.value,
+                          },
+                        })
+                      }
+                    />
+                  </div>
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.label}>Toolbar Üst Yazısı</label>
+                    <input
+                      type="text"
+                      className={styles.input}
+                      value={data.storyPanels.gamesDialogToolbar ?? ""}
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          storyPanels: {
+                            ...data.storyPanels,
+                            gamesDialogToolbar: e.target.value,
+                          },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.fieldGroup}>
+                  <label className={styles.label}>Açılır Pencere Açıklaması</label>
+                  <textarea
+                    className={styles.textarea}
+                    rows={3}
+                    value={data.storyPanels.gamesDialogDescription ?? ""}
+                    onChange={(e) =>
+                      setData({
+                        ...data,
+                        storyPanels: {
+                          ...data.storyPanels,
+                          gamesDialogDescription: e.target.value,
+                        },
+                      })
+                    }
+                  />
+                </div>
+              </div>
             </div>
           </div>
         )}

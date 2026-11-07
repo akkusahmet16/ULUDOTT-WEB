@@ -82,13 +82,15 @@ export function UlujamArchive({
                   <h3>{game.title}</h3>
                   {game.team && <p>{game.team}</p>}
                   {game.description && <p>{game.description}</p>}
-                  <a
-                    href={game.itchUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {t("ulujam.openGameOnItch", { title: game.title })}
-                  </a>
+                  {game.itchUrl ? (
+                    <a
+                      href={game.itchUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {t("ulujam.openGameOnItch", { title: game.title })}
+                    </a>
+                  ) : null}
                 </article>
               );
             })}

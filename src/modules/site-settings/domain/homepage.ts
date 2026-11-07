@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { itchUrl } from "../../games/domain/game-publication.ts";
 
 export const manualGameSchema = z.strictObject({
   id: z.string().min(1).max(64),
@@ -7,7 +6,7 @@ export const manualGameSchema = z.strictObject({
   team: z.string().trim().max(300).default(""),
   image: z.string().min(1).max(500),
   description: z.string().trim().max(2000).default(""),
-  itchUrl,
+  itchUrl: z.string().max(500).default(""),
 });
 
 export const homepageSettingsSchema = z.strictObject({
@@ -18,13 +17,27 @@ export const homepageSettingsSchema = z.strictObject({
     leftTitle: z.string().trim().max(160).default("Birlikte üretmek"),
     leftDescription: z.string().trim().max(300).default("Fikrini oyuna dönüştür."),
 
+    // Sol Kolon — Açılır Pencere (Modal) ve Vlog Detayları
+    ulujamModalTitle: z.string().trim().max(160).default("UluJam"),
+    ulujamModalEyebrow: z.string().trim().max(100).default("Birlikte üretmek"),
+    ulujamModalDescription: z.string().trim().max(3000).default("UluJam maratonlarında fikirler takımlarla buluşur, 48 saatte çalışan prototiplere dönüşür."),
+    ulujamVideoUrl: z.string().trim().max(1000).default("https://youtu.be/_ECGC1V__xo"),
+    ulujamVideoCover: z.string().max(500).default("/community/02-ulujam/ulujam-vlog-kapak.webp"),
+    ulujamVideoTitle: z.string().trim().max(160).default("UluJam vlog"),
+
     rightImage: z.string().min(1).max(500).default("/community/01-anasayfa/anasayfa-derece-panel.webp"),
     rightTitle: z.string().trim().max(160).default("Derece Oyunları"),
     rightDescription: z.string().trim().max(300).default("Öne çıkan topluluk yapımları."),
     
+    // Sağ Kolon — Açılır Pencere (Modal) Detayları
+    gamesDialogCover: z.string().min(1).max(500).default("/community/06-oyunlar/derece-oyunlari-kapak.webp"),
+    gamesDialogTitle: z.string().trim().max(160).default("Derece Oyunları"),
+    gamesDialogToolbar: z.string().trim().max(100).default("UluJam"),
+    gamesDialogDescription: z.string().trim().max(2000).default("UluJam maratonlarında dereceye giren ve topluluğun oylarıyla öne çıkan yapımlar."),
+
     // Oyunlar Kolonu Modu: "ulujam_year" (Otomatik Derece) veya "custom_games" (Bizim Yaptıklarımız / Departman)
     gamesMode: z.enum(["ulujam_year", "custom_games"]).default("ulujam_year"),
-    activeUlujamYear: z.number().int().min(2020).max(2100).default(2026),
+    activeUlujamYear: z.number().int().min(2000).max(2200).default(2026),
     customGames: z.array(manualGameSchema).max(10).default([]),
   }),
 
@@ -54,9 +67,23 @@ export const defaultHomepageSettings: HomepageSettings = {
     leftTitle: "Birlikte üretmek",
     leftDescription: "Fikrini oyuna dönüştür.",
 
+    ulujamModalTitle: "UluJam",
+    ulujamModalEyebrow: "Birlikte üretmek",
+    ulujamModalDescription:
+      "UluJam maratonlarında fikirler takımlarla buluşur, 48 saatte çalışan prototiplere dönüşür.",
+    ulujamVideoUrl: "https://youtu.be/_ECGC1V__xo",
+    ulujamVideoCover: "/community/02-ulujam/ulujam-vlog-kapak.webp",
+    ulujamVideoTitle: "UluJam vlog",
+
     rightImage: "/community/01-anasayfa/anasayfa-derece-panel.webp",
     rightTitle: "Derece Oyunları",
     rightDescription: "Öne çıkan topluluk yapımları.",
+
+    gamesDialogCover: "/community/06-oyunlar/derece-oyunlari-kapak.webp",
+    gamesDialogTitle: "Derece Oyunları",
+    gamesDialogToolbar: "UluJam",
+    gamesDialogDescription:
+      "UluJam maratonlarında dereceye giren ve topluluğun oylarıyla öne çıkan yapımlar.",
 
     gamesMode: "ulujam_year",
     activeUlujamYear: 2026,

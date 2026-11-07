@@ -11,6 +11,7 @@ import {
   readUlujamPresentation,
   readHomepageSettings,
   readSponsorsSettings,
+  readPublishedArchives,
 } from "../modules/publication/ui/public-queries";
 import type { SponsorItem } from "../modules/site-settings/domain/sponsors";
 import { getLocale } from "../i18n/server.ts";
@@ -21,16 +22,26 @@ export async function generateMetadata() {
   return buildMetadata({ routeId: "home", locale: await getLocale() });
 }
 export default async function HomePage() {
-  const [locale, events, ulujam, homepageData, sponsorsData] = await Promise.all([
-    getLocale(),
-    readHomeEvents(),
-    readUlujamPresentation(),
-    readHomepageSettings(),
-    readSponsorsSettings(),
-  ]);
+  const [locale, events, ulujam, homepageData, sponsorsData, archives] =
+    await Promise.all([
+      getLocale(),
+      readHomeEvents(),
+      readUlujamPresentation(),
+      readHomepageSettings(),
+      readSponsorsSettings(),
+      readPublishedArchives(),
+    ]);
   const activeYear = homepageData.data.storyPanels.activeUlujamYear || 2026;
-  const isCustomGames = homepageData.data.storyPanels.gamesMode === "custom_games";
-  const results = isCustomGames ? [] : await readHistoricalResults(activeYear);
+  const isCustomGames =
+    homepageData.data.storyPanels.gamesMode === "custom_games";
+  const selectedArchive = isCustomGames
+    ? null
+    : archives.find((a) => a.year === activeYear);
+  const archiveGames = selectedArchive?.games ?? [];
+  const results =
+    isCustomGames || archiveGames.length > 0
+      ? []
+      : await readHistoricalResults(activeYear);
   const t = getTranslator(locale);
   return (
     <PublicShell>
@@ -76,7 +87,12 @@ export default async function HomePage() {
         degreeContent={
           <DegreeGames
             results={results}
-            customGames={isCustomGames ? homepageData.data.storyPanels.customGames : undefined}
+            customGames={
+              isCustomGames
+                ? homepageData.data.storyPanels.customGames
+                : undefined
+            }
+            archiveGames={archiveGames.length > 0 ? archiveGames : undefined}
             year={activeYear}
             locale={locale}
           />

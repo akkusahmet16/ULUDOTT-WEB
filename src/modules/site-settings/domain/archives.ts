@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { itchUrl } from "../../games/domain/game-publication.ts";
 import { degreeGames } from "../../games/domain/degree-games.ts";
 import { historical2026 } from "../../games/domain/historical-result.ts";
 export const archiveGameSchema = z.strictObject({
@@ -53,24 +52,46 @@ export const archiveSchema = z
             path: ["games", i, "image"],
           });
         }
-        const itchRes = itchUrl.safeParse(g.itchUrl);
-        if (!itchRes.success) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: `${g.rank}. derece oyunu için geçerli bir HTTPS itch.io adresi zorunludur`,
-            path: ["games", i, "itchUrl"],
-          });
+        if (g.itchUrl && g.itchUrl.trim() !== "") {
+          try {
+            let val = g.itchUrl.trim();
+            if (!/^https?:\/\//i.test(val)) val = `https://${val}`;
+            const u = new URL(val);
+            if (u.protocol !== "https:" && u.protocol !== "http:") {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: `${g.rank}. derece oyunu için geçerli bir web veya itch.io adresi giriniz`,
+                path: ["games", i, "itchUrl"],
+              });
+            }
+          } catch {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `${g.rank}. derece oyunu için geçerli bir web veya itch.io adresi giriniz`,
+              path: ["games", i, "itchUrl"],
+            });
+          }
         }
       }
     } else {
       for (let i = 0; i < data.games.length; i++) {
         const g = data.games[i];
         if (g.itchUrl && g.itchUrl.trim() !== "") {
-          const itchRes = itchUrl.safeParse(g.itchUrl);
-          if (!itchRes.success) {
+          try {
+            let val = g.itchUrl.trim();
+            if (!/^https?:\/\//i.test(val)) val = `https://${val}`;
+            const u = new URL(val);
+            if (u.protocol !== "https:" && u.protocol !== "http:") {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: `${g.rank}. derece oyunu için geçerli bir web veya itch.io adresi giriniz`,
+                path: ["games", i, "itchUrl"],
+              });
+            }
+          } catch {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
-              message: `${g.rank}. derece oyunu için geçerli HTTPS itch.io adresi gerekli`,
+              message: `${g.rank}. derece oyunu için geçerli bir web veya itch.io adresi giriniz`,
               path: ["games", i, "itchUrl"],
             });
           }

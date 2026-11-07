@@ -5,6 +5,28 @@ import Link from "next/link";
 import { useTranslator } from "../../i18n/client.tsx";
 import type { UlujamPresentation } from "../../modules/site-settings/domain/ulujam";
 import type { HomepageSettings } from "../../modules/site-settings/domain/homepage";
+function extractVideoId(value?: string | null): string | null {
+  if (!value || !value.trim()) return null;
+  const trimmed = value.trim();
+  if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
+  try {
+    const url = new URL(trimmed);
+    const host = url.hostname;
+    const parts = url.pathname.split("/").filter(Boolean);
+    const id =
+      host === "youtu.be" && parts.length === 1
+        ? parts[0]
+        : host.includes("youtube.com") && url.pathname === "/watch"
+          ? url.searchParams.get("v")
+          : parts.length === 2 && ["embed", "shorts", "live"].includes(parts[0])
+            ? parts[1]
+            : null;
+    return id && /^[a-zA-Z0-9_-]{11}$/.test(id) ? id : null;
+  } catch {
+    return null;
+  }
+}
+
 export function StoryPanels({
   degreeContent,
   presentation,
@@ -27,6 +49,15 @@ export function StoryPanels({
     setPlaying(false);
     trigger.current?.focus();
   };
+
+  const customVideoId = extractVideoId(settings?.ulujamVideoUrl);
+  const effectiveVideoId = customVideoId ?? presentation.videoId;
+  const effectiveVideoCover =
+    settings?.ulujamVideoCover || presentation.videoCover;
+  const effectiveVideoTitle =
+    settings?.ulujamVideoTitle || presentation.videoTitle;
+  const effectiveVideoDescription =
+    settings?.ulujamModalDescription || presentation.videoDescription;
   useEffect(() => {
     if (!active) return;
     const previous = document.body.style.overflow;
@@ -112,7 +143,7 @@ export function StoryPanels({
         }}
       >
         <div className="dialog-toolbar">
-          <span>{t("nav.ulujam")}</span>
+          <span>{settings?.leftEyebrow || t("nav.ulujam")}</span>
           <button onClick={close} data-close-story aria-label={t("common.close")}>
             ×
           </button>
@@ -140,12 +171,12 @@ export function StoryPanels({
             )}
           </section>
         )}
-        {presentation.videoId && (
-          <div className="vlog-player" data-video-id={presentation.videoId}>
+        {effectiveVideoId && (
+          <div className="vlog-player" data-video-id={effectiveVideoId}>
             {playing ? (
               <iframe
-                src={`https://www.youtube-nocookie.com/embed/${presentation.videoId}?autoplay=0&rel=0`}
-                title={presentation.videoTitle}
+                src={`https://www.youtube-nocookie.com/embed/${effectiveVideoId}?autoplay=0&rel=0`}
+                title={effectiveVideoTitle}
                 allow="encrypted-media; picture-in-picture; fullscreen"
                 allowFullScreen
                 referrerPolicy="strict-origin-when-cross-origin"
@@ -157,7 +188,7 @@ export function StoryPanels({
                 onClick={() => setPlaying(true)}
               >
                 <Image
-                  src={presentation.videoCover}
+                  src={effectiveVideoCover}
                   alt=""
                   width={2560}
                   height={1440}
@@ -170,24 +201,29 @@ export function StoryPanels({
         )}
         <div className="dialog-description">
           <div>
-            <p className="eyebrow">{t("home.createTogetherEyebrow")}</p>
+            <p className="eyebrow">{settings?.ulujamModalEyebrow || t("home.createTogetherEyebrow")}</p>
             <h2>
-              {presentation.videoId
-                ? presentation.videoTitle
-                : presentation.panelTitle}
+              {settings?.ulujamModalTitle ||
+                (effectiveVideoId
+                  ? effectiveVideoTitle
+                  : settings?.leftTitle || presentation.panelTitle)}
             </h2>
           </div>
           <div>
-            <p>{presentation.videoDescription}</p>
+            <p>{effectiveVideoDescription || presentation.panelDescription}</p>
             {!presentation.applicationPublished && (
               <p>{presentation.application.message}</p>
             )}
             <Link className="button secondary" href="/ulujam" onClick={close}>
               {t("common.discoverUlujam")}
             </Link>
-            {presentation.videoId && (
+            {effectiveVideoId && (
               <a
-                href={`https://youtu.be/${presentation.videoId}`}
+                href={
+                  settings?.ulujamVideoUrl?.startsWith("http")
+                    ? settings.ulujamVideoUrl
+                    : `https://youtu.be/${effectiveVideoId}`
+                }
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -201,30 +237,41 @@ export function StoryPanels({
         ref={games}
         id="story-games"
         className="story-dialog"
-        aria-label={t("home.degreeGamesTitle")}
+        aria-label={settings?.gamesDialogTitle || t("home.degreeGamesTitle")}
         onCancel={(e) => {
           e.preventDefault();
           close();
         }}
       >
         <div className="dialog-toolbar">
-          <span>{t("home.ulujam2026Eyebrow")}</span>
+          <span>
+            {settings?.gamesDialogToolbar ||
+              (settings?.activeUlujamYear
+                ? t("ulujam.heading", { year: settings.activeUlujamYear })
+                : t("home.ulujam2026Eyebrow"))}
+          </span>
           <button onClick={close} data-close-story aria-label={t("common.close")}>
             ×
           </button>
         </div>
         <div className="degree-dialog-cover">
           <Image
-            src="/community/06-oyunlar/derece-oyunlari-kapak.webp"
+            src={
+              settings?.gamesDialogCover ||
+              "/community/06-oyunlar/derece-oyunlari-kapak.webp"
+            }
             alt=""
             width={1920}
             height={1080}
             unoptimized
           />
-          <h2>{t("home.degreeGamesTitle")}</h2>
+          <h2>{settings?.gamesDialogTitle || t("home.degreeGamesTitle")}</h2>
         </div>
         <div className="dialog-games">
-          <p>{t("home.degreeGamesDialogCopy")}</p>
+          <p>
+            {settings?.gamesDialogDescription ||
+              t("home.degreeGamesDialogCopy")}
+          </p>
           {degreeContent}
           <Link
             className="button secondary"
