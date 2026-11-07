@@ -2,7 +2,7 @@ name: Acceptance
 on:
   pull_request:
   push:
-    branches: [main, development/bootstrap, 'codex/**', 'feat/**']
+    branches: [main, development/bootstrap, 'codex/**', 'feat/**', 'uludott-web-final']
   workflow_dispatch:
 permissions:
   contents: read
