@@ -35,7 +35,7 @@ export function windowCheck(v: {
   publishAt: Date | null;
   unpublishAt: Date | null;
 }) {
-  return !v.unpublishAt || (!!v.publishAt && v.unpublishAt > v.publishAt);
+  return !v.unpublishAt || !v.publishAt || v.unpublishAt > v.publishAt;
 }
 export function eventCtaUrl(value: string) {
   if (/^\/(?!\/)[^\s]*$/.test(value)) return true;
@@ -82,7 +82,7 @@ export const eventInput = z
     { message: "Yıl yalnız UluJam etkinliğine bağlanabilir", path: ["year"] },
   )
   .refine(
-    (v) => !v.endsAt || (!!v.startsAt && v.endsAt > v.startsAt),
+    (v) => !v.endsAt || !v.startsAt || v.endsAt > v.startsAt,
     "Geçersiz etkinlik tarihleri",
   )
   .refine(
@@ -163,19 +163,23 @@ export type PublicContent = ContentRecord & {
   categoryName?: string | null;
   image: { id: string; url?: string; altText: string; width: number; height: number } | null;
 };
-export function visible(row: ContentRecord, now: Date) {
+export function visible(
+  row: ContentRecord,
+  now: Date,
+  type: ContentType = "event",
+) {
   return (
     ["scheduled", "published", "ended", "cancelled"].includes(row.status) &&
     !!row.publishAt &&
     row.publishAt <= now &&
-    (!row.unpublishAt || now < row.unpublishAt)
+    (type === "event" || !row.unpublishAt || now < row.unpublishAt)
   );
 }
 export function displayStatus(row: ContentRecord, now: Date) {
   if (row.status === "cancelled") return "cancelled";
   if (
     row.status === "ended" ||
-    (row.endsAt ? row.endsAt <= now : (row.startsAt ? row.startsAt <= now : false))
+    (!!row.unpublishAt && row.unpublishAt <= now)
   )
     return "ended";
   return "published";

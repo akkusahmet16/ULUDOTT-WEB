@@ -78,11 +78,12 @@ it("planlı yayın ve kaldırma penceresi, bitti/iptal/arşiv öne çıkarılmaz
   expect(
     (await getPublicEvent(e.slug, new Date("2030-01-02T14:00:00Z")))
       ?.displayStatus,
-  ).toBe("ended");
-  expect(await getFeaturedEvents(new Date("2030-01-02T14:00:00Z"))).toEqual([]);
+  ).toBe("published");
   expect(
-    await getPublicEvent(e.slug, new Date("2030-01-03T00:00:00Z")),
-  ).toBeNull();
+    (await getPublicEvent(e.slug, new Date("2030-01-03T00:00:00Z")))
+      ?.displayStatus,
+  ).toBe("ended");
+  expect(await getFeaturedEvents(new Date("2030-01-03T00:00:00Z"))).toEqual([]);
   const c = await changeEventStatus(e.id, actor, p.revision, "cancelled");
   expect(
     (await getPublicEvent(e.slug, new Date("2030-01-01T14:00:00Z")))

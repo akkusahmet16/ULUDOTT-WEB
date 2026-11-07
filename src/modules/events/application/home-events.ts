@@ -24,18 +24,31 @@ export async function getHomeEvents(now = new Date()) {
   ]);
   const visible = items.filter((event) => event.displayStatus !== "cancelled");
   const upcoming = visible
-    .filter((event) => event.displayStatus !== "ended" && event.startsAt)
+    .filter((event) => event.displayStatus !== "ended")
     .sort(
       (a, b) =>
-        a.startsAt!.getTime() - b.startsAt!.getTime() ||
+        ((a.startsAt ?? a.publishAt ?? a.createdAt)?.getTime() ?? 0) -
+          ((b.startsAt ?? b.publishAt ?? b.createdAt)?.getTime() ?? 0) ||
         a.id.localeCompare(b.id),
     );
   const past = visible
     .filter((event) => event.displayStatus === "ended")
     .sort(
       (a, b) =>
-        ((b.endsAt ?? b.startsAt)?.getTime() ?? 0) -
-          ((a.endsAt ?? a.startsAt)?.getTime() ?? 0) ||
+        ((
+          b.unpublishAt ??
+          b.endsAt ??
+          b.startsAt ??
+          b.publishAt ??
+          b.createdAt
+        )?.getTime() ?? 0) -
+          ((
+            a.unpublishAt ??
+            a.endsAt ??
+            a.startsAt ??
+            a.publishAt ??
+            a.createdAt
+          )?.getTime() ?? 0) ||
         a.id.localeCompare(b.id),
     );
   return {

@@ -444,7 +444,7 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
                     )}
                   </div>
                   <p className={styles.hint}>
-                    Bitiş saati girilmezse etkinlik başlangıç anı geldiğinde otomatik olarak geçmiş etkinlikler alanına taşınır.
+                    Burada girilen tarih ve saat bilgileri yalnızca etkinlik kartında bilgi amaçlı gösterilir.
                   </p>
                   {field("location", "Konum (opsiyonel)", selected?.location ?? "", {
                     maxLength: 500,
@@ -549,19 +549,19 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
                     <div className={styles.row}>
                       {field(
                         "publishAt",
-                        "Yayın zamanı (İstanbul)",
+                        "Yayın tarihi (İstanbul)",
                         localInstant(selected?.publishAt ?? null),
                         { type: "datetime-local" },
                       )}
                       {field(
                         "unpublishAt",
-                        "Kaldırma zamanı (İstanbul)",
+                        "Bitiş tarihi (İstanbul)",
                         localInstant(selected?.unpublishAt ?? null),
                         { type: "datetime-local" },
                       )}
                     </div>
                     <p className={styles.hint}>
-                      Yayın zamanını boş bırakırsan onayladığında yayımlanır.
+                      Yayın tarihini boş bırakırsan onayladığında yayımlanır. Bitiş tarihi geçen etkinlikler otomatik olarak geçmiş etkinliklere düşer.
                     </p>
                     {field(
                       "seoTitle",
@@ -625,8 +625,7 @@ export function EventEditor({ canCreate = false }: { canCreate?: boolean }) {
                           : "Onayladığında sitede görünür."}
                       </p>
                       <p>
-                        Tarih ve konum gereklidir. Kaydedilmiş başlık, açıklama
-                        ve afiş yayımlanır.
+                        Kaydedilmiş başlık, açıklama ve afiş yayımlanır.
                       </p>
                       <p role="alert">{message}</p>
                       <button

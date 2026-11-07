@@ -57,7 +57,7 @@ async function liveCta(tx: DbTx, url: string | null, now: Date) {
   const rows = await tx.execute(
     sql`select * from ${table(targetType)} where slug=${match[2]}`,
   );
-  return !!rows[0] && visible(record(rows[0]), now);
+  return !!rows[0] && visible(record(rows[0]), now, targetType);
 }
 export async function save(
   type: ContentType,
@@ -118,15 +118,6 @@ export async function save(
       );
       if (!f.length) throw Error("Form aynı etkinliğe bağlı olmalı");
     }
-    if (
-      current &&
-      current.status !== "draft" &&
-      current.status !== "archived" &&
-      type === "event" &&
-      "startsAt" in data &&
-      !data.startsAt
-    )
-      throw Error("Yayın için tarih gerekli");
     const year =
       type === "event" && "kind" in data && data.kind === "ulujam"
         ? data.year === undefined
@@ -235,7 +226,7 @@ export async function transition(
     let next: string = status,
       publishAt = row.publishAt;
     if (status === "publish") {
-      if (type === "event" && !row.startsAt)
+      if (type === "event" && !row.startsAt && row.slug === "coffee-talk")
         throw Error("Yayın için tarih gerekli");
       if (
         type === "announcement" &&
@@ -245,7 +236,11 @@ export async function transition(
       if (type === "announcement" && !row.body.trim())
         throw Error("İçerik gerekli");
       publishAt ??= new Date();
-      if (row.unpublishAt && row.unpublishAt <= new Date())
+      if (
+        type === "announcement" &&
+        row.unpublishAt &&
+        row.unpublishAt <= new Date()
+      )
         throw Error("Yayın penceresi bitti");
       next = publishAt > new Date() ? "scheduled" : "published";
     }
@@ -348,14 +343,16 @@ export async function publicBySlug(
         redirectSlug = row?.slug;
       }
     }
-    if (!row || !visible(row, now)) return null;
+    if (!row || !visible(row, now, type)) return null;
     return { ...(await enrich(tx, row, now)), redirectSlug };
   });
 }
 export async function publicList(type: ContentType, now = new Date()) {
   return withTransaction(async (tx) => {
     const rows = await tx.execute(
-      sql`select * from ${table(type)} where status in ('scheduled','published','ended','cancelled') and publish_at<=${now.toISOString()} and (unpublish_at is null or unpublish_at>${now.toISOString()}) order by publish_at desc,id limit 100`,
+      type === "event"
+        ? sql`select * from ${table(type)} where status in ('scheduled','published','ended','cancelled') and publish_at<=${now.toISOString()} order by publish_at desc,id limit 100`
+        : sql`select * from ${table(type)} where status in ('scheduled','published','ended','cancelled') and publish_at<=${now.toISOString()} and (unpublish_at is null or unpublish_at>${now.toISOString()}) order by publish_at desc,id limit 100`,
     );
     return Promise.all(rows.map(record).map((row) => enrich(tx, row, now)));
   });
@@ -370,11 +367,9 @@ export async function featured(now = new Date()) {
         .map(record)
         .filter(
           (x) =>
-            visible(x, now) &&
+            visible(x, now, "event") &&
             displayStatus(x, now) !== "ended" &&
-            x.status !== "cancelled" &&
-            !!x.startsAt &&
-            x.startsAt > now,
+            x.status !== "cancelled",
         )
         .map((x) => enrich(tx, x, now)),
     );

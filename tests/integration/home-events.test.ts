@@ -23,7 +23,7 @@ afterAll(async () => {
   process.env.DATABASE_URL = original;
 });
 
-it("bitiş anında geçmişe geçer; devam eden/tarihsiz bitişli kayıtlar üstte, yeni geçmiş önce görünür", async () => {
+it("yayın bitiş tarihi (unpublish_at) geldiğinde otomatik geçmişe geçer; etkinlik bilgileri tarihleri yalnızca bilgi amaçlıdır", async () => {
   for (const [slug, start, end, status, publish, unpublish] of [
     [
       "future-late",
@@ -43,11 +43,11 @@ it("bitiş anında geçmişe geçer; devam eden/tarihsiz bitişli kayıtlar üst
     ],
     [
       "ongoing",
-      "2030-01-02T11:00Z",
-      "2030-01-02T13:00Z",
+      "2030-01-01T11:00Z",
+      "2030-01-01T13:00Z",
       "published",
       "2020-01-01",
-      null,
+      "2030-01-02T13:00Z",
     ],
     [
       "just-ended",
@@ -55,7 +55,7 @@ it("bitiş anında geçmişe geçer; devam eden/tarihsiz bitişli kayıtlar üst
       "2030-01-02T12:00Z",
       "published",
       "2020-01-01",
-      null,
+      "2030-01-02T12:00Z",
     ],
     [
       "older",
@@ -63,7 +63,7 @@ it("bitiş anında geçmişe geçer; devam eden/tarihsiz bitişli kayıtlar üst
       "2030-01-01T12:00Z",
       "ended",
       "2020-01-01",
-      null,
+      "2030-01-01T12:00Z",
     ],
     ["draft", "2030-01-01T10:00Z", "2030-01-01T12:00Z", "draft", null, null],
     [
@@ -90,14 +90,6 @@ it("bitiş anında geçmişe geçer; devam eden/tarihsiz bitişli kayıtlar üst
       "2030-01-03",
       null,
     ],
-    [
-      "removed",
-      "2030-01-01T10:00Z",
-      "2030-01-01T12:00Z",
-      "ended",
-      "2020-01-01",
-      "2030-01-02T11:00Z",
-    ],
   ]) {
     await local.sql`insert into events(id,title,slug,kind,status,starts_at,ends_at,publish_at,unpublish_at) values(${randomUUID()},${slug},${slug},'general',${status},${start},${end},${publish},${unpublish})`;
   }
@@ -118,16 +110,16 @@ it("bitiş anında geçmişe geçer; devam eden/tarihsiz bitişli kayıtlar üst
   expect(earlier.past.some((event) => event.slug === "just-ended")).toBe(false);
 });
 
-it("bitis saati olmayan etkinlik baslangic saati geldiginde otomatik gecmise duser ve konumsuz yayinlanabilir", async () => {
-  const pastNoEndId = randomUUID();
-  await local.sql`insert into events(id,title,slug,kind,status,starts_at,ends_at,publish_at,location) values(${pastNoEndId},'Bitis Saatsiz','bitis-saatsiz','general','published','2030-01-02T11:00Z',null,'2020-01-01',null)`;
+it("etkinlik bilgileri tarihi geçmiş veya boş olsa bile yayın bitiş tarihi gelmeden yaklaşanlarda kalır ve konumsuz yayımlanabilir", async () => {
+  const infoDateId = randomUUID();
+  await local.sql`insert into events(id,title,slug,kind,status,starts_at,ends_at,publish_at,unpublish_at,location) values(${infoDateId},'Bilgi Tarihli','bilgi-tarihli','general','published','2020-01-01T11:00Z',null,'2020-01-01','2030-01-02T11:00Z',null)`;
   const sections = await getHomeEvents(now);
-  expect(sections.past.some((e) => e.slug === "bitis-saatsiz")).toBe(true);
-  expect(sections.upcoming.some((e) => e.slug === "bitis-saatsiz")).toBe(false);
+  expect(sections.past.some((e) => e.slug === "bilgi-tarihli")).toBe(true);
+  expect(sections.upcoming.some((e) => e.slug === "bilgi-tarihli")).toBe(false);
 
-  const beforeStart = await getHomeEvents(new Date("2030-01-02T10:30:00Z"));
-  expect(beforeStart.upcoming.some((e) => e.slug === "bitis-saatsiz")).toBe(true);
-  expect(beforeStart.past.some((e) => e.slug === "bitis-saatsiz")).toBe(false);
+  const beforeUnpublish = await getHomeEvents(new Date("2030-01-02T10:30:00Z"));
+  expect(beforeUnpublish.upcoming.some((e) => e.slug === "bilgi-tarihli")).toBe(true);
+  expect(beforeUnpublish.past.some((e) => e.slug === "bilgi-tarihli")).toBe(false);
 });
 
 it("eski Coffee Talk kartı yalnız geçmişte korunur; paneldeki kayıt taslak olsa bile kopyası geri eklenmez", async () => {
@@ -160,8 +152,8 @@ it("eski Coffee Talk kartı yalnız geçmişte korunur; paneldeki kayıt taslak 
 });
 
 it("Etkinlikler sayfası yaklaşan ve geçmiş başlıklarını ayrı gösterir, Coffee Talk yalnız geçmiştedir", async () => {
-  await local.sql`insert into events(id,title,slug,kind,status,starts_at,ends_at,publish_at) values(${randomUUID()},'Yeni buluşma','section-future','general','published','2099-01-01T10:00Z','2099-01-01T12:00Z','2020-01-01')`;
-  await local.sql`insert into events(id,title,slug,kind,status,starts_at,ends_at,publish_at) values(${randomUUID()},'Eski buluşma','section-past','general','published','2020-01-01T10:00Z','2020-01-01T12:00Z','2020-01-01')`;
+  await local.sql`insert into events(id,title,slug,kind,status,starts_at,ends_at,publish_at,unpublish_at) values(${randomUUID()},'Yeni buluşma','section-future','general','published','2020-01-01T10:00Z','2020-01-01T12:00Z','2020-01-01','2099-01-01T12:00Z')`;
+  await local.sql`insert into events(id,title,slug,kind,status,starts_at,ends_at,publish_at,unpublish_at) values(${randomUUID()},'Eski buluşma','section-past','general','published','2099-01-01T10:00Z','2099-01-01T12:00Z','2020-01-01','2020-01-02T12:00Z')`;
   type Node = React.ReactElement<{
     children?: ReactNode;
     "aria-label"?: string;
