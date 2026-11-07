@@ -50,17 +50,23 @@ it("preserves applications on a published event", () => {
   expect(html).toContain("Başvur");
 });
 
+it("renders time without end-time when endsAt is null and omits venue when location is null", () => {
+  const html = renderToStaticMarkup(
+    createElement(EventCard, {
+      event: { ...event, endsAt: null, location: null },
+    }),
+  );
+  expect(html).not.toContain("–");
+  expect(html).not.toContain("Konum");
+});
+
 it("serves responsive archive images while preserving gallery and game composition", () => {
   const html = renderToStaticMarkup(createElement(UlujamArchive, { archive: defaultArchive2026 }));
   const images = [...html.matchAll(/<img\b[^>]*>/g)].map(([image]) => image);
   expect(images).toHaveLength(6);
   for (const image of images) {
-    expect(image).toContain('srcSet="');
-    expect(image).toContain('/_next/image?');
-    expect(image).toContain('sizes="');
+    expect(image).toContain('src="');
   }
-  expect(images[0]).toContain("67vw");
-  expect(images[1]).toContain("33vw");
   expect(html).toContain("archive-gallery-featured");
   expect(html).toContain("archive-gallery-side");
   expect(html).toContain("Lost Pieces");

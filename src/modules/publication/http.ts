@@ -115,6 +115,7 @@ export function handler(type: ContentType) {
       if (m === "İstek çok büyük") return json({ error: m }, 413);
       const safe = [
         "Yayın için tarih ve konum gerekli",
+        "Yayın için tarih gerekli",
         "Afiş yayımlanmalı",
         "CTA hedefi yayında değil",
         "Afiş hazır değil",

@@ -124,9 +124,9 @@ export async function save(
       current.status !== "archived" &&
       type === "event" &&
       "startsAt" in data &&
-      (!data.startsAt || !data.location)
+      !data.startsAt
     )
-      throw Error("Yayın için tarih ve konum gerekli");
+      throw Error("Yayın için tarih gerekli");
     const year =
       type === "event" && "kind" in data && data.kind === "ulujam"
         ? data.year === undefined
@@ -235,8 +235,8 @@ export async function transition(
     let next: string = status,
       publishAt = row.publishAt;
     if (status === "publish") {
-      if (type === "event" && (!row.startsAt || !row.location?.trim()))
-        throw Error("Yayın için tarih ve konum gerekli");
+      if (type === "event" && !row.startsAt)
+        throw Error("Yayın için tarih gerekli");
       if (
         type === "announcement" &&
         !(await liveCta(tx, row.ctaUrl, row.publishAt ?? new Date()))

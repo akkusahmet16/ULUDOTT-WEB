@@ -150,7 +150,10 @@ export function visible(row: ContentRecord, now: Date) {
 }
 export function displayStatus(row: ContentRecord, now: Date) {
   if (row.status === "cancelled") return "cancelled";
-  if (row.status === "ended" || (row.endsAt && row.endsAt <= now))
+  if (
+    row.status === "ended" ||
+    (row.endsAt ? row.endsAt <= now : (row.startsAt ? row.startsAt <= now : false))
+  )
     return "ended";
   return "published";
 }
