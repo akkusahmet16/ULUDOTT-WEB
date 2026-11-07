@@ -58,10 +58,10 @@ async function loadPdfPages(pdfUrl: string): Promise<string[]> {
   const count = doc.numPages;
   const rendered: string[] = [];
 
-  // Yüksek çözünürlüklü rasterizasyon:
-  // Fanzin yazıları, tipografi ve detaylar için Retina / 300 DPI kalitesi
-  const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
-  const targetScale = Math.min(3.2, Math.max(2.6, dpr * 1.5));
+  // Ultra yüksek çözünürlüklü rasterizasyon:
+  // Fanzin yazıları, tipografi, el çizimleri ve detaylar için 300+ DPI Retina kalitesi
+  const dpr = typeof window !== "undefined" ? Math.max(window.devicePixelRatio || 1, 2) : 2;
+  const targetScale = Math.min(3.8, Math.max(3.2, dpr * 1.6));
 
   for (let i = 1; i <= count; i++) {
     const page = await doc.getPage(i);
@@ -80,11 +80,11 @@ async function loadPdfPages(pdfUrl: string): Promise<string[]> {
     await page.render({
       canvasContext: ctx,
       viewport,
-      intent: "display",
+      intent: "print",
     }).promise;
 
-    // Yüksek kaliteli WebP (0.96) ile kayıpsız netlik
-    rendered.push(canvas.toDataURL("image/webp", 0.96));
+    // Yüksek kaliteli WebP (0.98) ile kayıpsız netlik ve pürüzsüz vektör kenarları
+    rendered.push(canvas.toDataURL("image/webp", 0.98));
   }
 
   return rendered;
@@ -301,20 +301,99 @@ export function FlipbookReader({
 
         pageFlip.loadFromImages(pageImages);
 
-        // CanvasRender'ın tüm canvas'ı beyaza boyayıp kapak açıkken/kapalıyken
-        // sol tarafı boş beyaz dikdörtgen olarak göstermesini önle
+        // CanvasUI ve CanvasRender High-DPI (Retina) optimizasyonu:
+        // PageFlip varsayılan olarak canvas.width/height değerlerini 1x CSS pikseline
+        // eşitlediğinden yüksek çözünürlüklü ekranlarda (Retina/4K) bulanıklaşma oluşur.
+        // Canvas buffer'ını DPR çarpanı ile ölçeklendirip ctx.scale(dpr, dpr) uygulayarak
+        // piksel piksel kristal netliğinde 300+ DPI render sağlıyoruz.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const ui = (pageFlip as any).getUI();
+        if (ui && typeof ui.resizeCanvas === "function") {
+          ui.resizeCanvas = function () {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const cvs = (this as any).canvas as HTMLCanvasElement | undefined;
+            if (!cvs) return;
+            const cs = getComputedStyle(cvs);
+            const width =
+              parseInt(cs.getPropertyValue("width"), 10) || cvs.clientWidth || 1160;
+            const height =
+              parseInt(cs.getPropertyValue("height"), 10) || cvs.clientHeight || 750;
+            const dpr =
+              typeof window !== "undefined"
+                ? Math.max(window.devicePixelRatio || 1, 2)
+                : 2;
+
+            cvs.width = Math.round(width * dpr);
+            cvs.height = Math.round(height * dpr);
+          };
+          ui.resizeCanvas();
+        }
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const render = (pageFlip as any).getRender();
-        if (render && typeof render.clear === "function") {
+        if (render) {
+          // Sayfa boşken veya sayfa çevrilirken tüm tuvali beyaza boyayıp
+          // boş alanları beyaz göstermek yerine saydam tut
           render.clear = function () {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const ctx = (this as any).ctx as CanvasRenderingContext2D | undefined;
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const cvs = (this as any).canvas as HTMLCanvasElement | undefined;
             if (ctx && cvs) {
+              ctx.save();
+              ctx.setTransform(1, 0, 0, 1, 0, 0);
               ctx.clearRect(0, 0, cvs.width, cvs.height);
+              ctx.restore();
             }
           };
+
+          if (typeof render.drawFrame === "function") {
+            const origDrawFrame = render.drawFrame.bind(render);
+            render.drawFrame = function () {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const cvs = (this as any).canvas as HTMLCanvasElement | undefined;
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const ctx = (this as any).ctx as CanvasRenderingContext2D | undefined;
+
+              if (!cvs || !ctx) {
+                origDrawFrame();
+                return;
+              }
+
+              const dpr =
+                typeof window !== "undefined"
+                  ? Math.max(window.devicePixelRatio || 1, 2)
+                  : 2;
+
+              const cs = getComputedStyle(cvs);
+              const cssW =
+                parseInt(cs.getPropertyValue("width"), 10) || cvs.clientWidth || 1160;
+              const cssH =
+                parseInt(cs.getPropertyValue("height"), 10) || cvs.clientHeight || 750;
+              const targetW = Math.round(cssW * dpr);
+              const targetH = Math.round(cssH * dpr);
+
+              if (cvs.width !== targetW || cvs.height !== targetH) {
+                cvs.width = targetW;
+                cvs.height = targetH;
+              }
+
+              ctx.save();
+              ctx.scale(dpr, dpr);
+              ctx.imageSmoothingEnabled = true;
+              ctx.imageSmoothingQuality = "high";
+
+              origDrawFrame();
+
+              ctx.restore();
+            };
+          }
+        }
+
+        try {
+          pageFlip.update();
+        } catch {
+          // ignore
         }
       } catch (err) {
         console.error("PageFlip yüklenirken hata oluştu:", err);
