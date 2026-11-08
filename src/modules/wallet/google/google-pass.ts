@@ -73,7 +73,8 @@ export function buildCommunityClass(
   appOrigin: string,
 ): Record<string, unknown> {
   const classId = googleCommunityClassId(issuerId);
-  const isHttps = appOrigin.startsWith("https://");
+  const assetsOrigin = process.env.WALLET_ASSETS_ORIGIN || appOrigin;
+  const isHttps = assetsOrigin.startsWith("https://");
 
   return {
     id: classId,
@@ -86,13 +87,13 @@ export function buildCommunityClass(
       ? {
           logo: {
             sourceUri: {
-              uri: `${appOrigin}/passes/community/primaryLogo@2x.png`,
+              uri: `${assetsOrigin}/passes/community/primaryLogo@2x.png`,
             },
             contentDescription: localized("Uludott Logo"),
           },
           heroImage: {
             sourceUri: {
-              uri: `${appOrigin}/passes/community/background@2x.png`,
+              uri: `${assetsOrigin}/passes/community/background@2x.png`,
             },
             contentDescription: localized("Uludott Community Pass"),
           },
@@ -108,7 +109,8 @@ export function buildCommunityObject(
 ): Record<string, unknown> {
   const objectId = googleCommunityObjectId(issuerId, grantId);
   const classId = googleCommunityClassId(issuerId);
-  const isHttps = appOrigin.startsWith("https://");
+  const assetsOrigin = process.env.WALLET_ASSETS_ORIGIN || appOrigin;
+  const isHttps = assetsOrigin.startsWith("https://");
 
   return {
     id: objectId,
@@ -117,19 +119,19 @@ export function buildCommunityObject(
     state: "ACTIVE",
     cardTitle: localized("Uludott Community Pass"),
     header: localized("COMMUNITY PASS"),
-    subheader: localized("Sadece bir kart değil, ortak deneyim bileti"),
+    subheader: localized("Dijital Oyun Tasarım Topluluğu"),
     hexBackgroundColor: "#19202B",
     ...(isHttps
       ? {
           logo: {
             sourceUri: {
-              uri: `${appOrigin}/passes/community/primaryLogo@2x.png`,
+              uri: `${assetsOrigin}/passes/community/primaryLogo@2x.png`,
             },
             contentDescription: localized("Uludott Logo"),
           },
           heroImage: {
             sourceUri: {
-              uri: `${appOrigin}/passes/community/background@2x.png`,
+              uri: `${assetsOrigin}/passes/community/background@2x.png`,
             },
             contentDescription: localized("Uludott Community Pass"),
           },
@@ -138,7 +140,7 @@ export function buildCommunityObject(
     textModulesData: [
       {
         id: "motto",
-        header: "Topluluk",
+        header: "Slogan",
         body: "Sadece bir kart değil, ortak deneyim bileti",
       },
     ],
