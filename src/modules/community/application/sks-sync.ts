@@ -1,6 +1,7 @@
 import "server-only";
 import { withTransaction } from "../../../lib/database/transaction.ts";
 import { communityMembers } from "../../../db/schema/community.ts";
+import sksMembersSnapshot from "../../../db/seeds/sks-members-snapshot.json" with { type: "json" };
 
 export interface SksMemberRecord {
   fullName: string;
@@ -13,6 +14,7 @@ export interface SksMemberRecord {
 export interface SyncSksResult {
   totalParsed: number;
   insertedOrUpdated: number;
+  source: "live" | "snapshot";
 }
 
 function decodeEntities(str: string): string {
@@ -155,9 +157,27 @@ export async function syncSksMembers(
   password?: string,
   periodId?: string,
 ): Promise<SyncSksResult> {
-  const members = await fetchSksRoster(username, password, periodId);
+  let members: SksMemberRecord[] = [];
+  let source: "live" | "snapshot" = "live";
+
+  try {
+    members = await fetchSksRoster(username, password, periodId);
+  } catch (error) {
+    console.warn(
+      "Canlı SKS bağlantısı sağlanamadı (VDS ağ kısıtı / sunucu koruması), yerel onaylı üye verisi yedeği (snapshot) kullanılıyor:",
+      error instanceof Error ? error.message : error,
+    );
+    members = sksMembersSnapshot as SksMemberRecord[];
+    source = "snapshot";
+  }
+
   if (members.length === 0) {
-    return { totalParsed: 0, insertedOrUpdated: 0 };
+    members = sksMembersSnapshot as SksMemberRecord[];
+    source = "snapshot";
+  }
+
+  if (members.length === 0) {
+    return { totalParsed: 0, insertedOrUpdated: 0, source };
   }
 
   let count = 0;
@@ -191,5 +211,5 @@ export async function syncSksMembers(
     }
   });
 
-  return { totalParsed: members.length, insertedOrUpdated: count };
+  return { totalParsed: members.length, insertedOrUpdated: count, source };
 }

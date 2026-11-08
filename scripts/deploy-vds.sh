@@ -28,6 +28,9 @@ pnpm install --frozen-lockfile
 echo "==> Veritabanı şeması güncelleniyor (pnpm db:migrate)..."
 pnpm db:migrate
 
+echo "==> SKS Topluluk Üye verileri senkronize ediliyor (pnpm db:sync:sks)..."
+pnpm db:sync:sks || echo "    (Uyarı: Canlı SKS bağlantısı yapılamadı, mevcut veriler korundu)"
+
 # 5. Üretim derlemesi
 echo "==> Next.js üretim derlemesi alınıyor (pnpm build)..."
 pnpm build

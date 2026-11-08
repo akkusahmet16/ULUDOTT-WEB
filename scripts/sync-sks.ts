@@ -5,7 +5,7 @@ try {
   console.log("BUÜ SKS Topluluk Üye Listesi senkronizasyonu başlatılıyor...");
   const res = await syncSksMembers();
   console.log(
-    `Senkronizasyon tamamlandı: ${res.totalParsed} üye bulundu, ${res.insertedOrUpdated} kayıt güncellendi/eklendi.`,
+    `Senkronizasyon tamamlandı (${res.source === "live" ? "Canlı SKS bağlantısı" : "Yerel snapshot yedeği"}): ${res.totalParsed} üye bulundu, ${res.insertedOrUpdated} kayıt güncellendi/eklendi.`,
   );
 } catch (error) {
   console.error("SKS Senkronizasyonu başarısız:", error instanceof Error ? error.message : error);
