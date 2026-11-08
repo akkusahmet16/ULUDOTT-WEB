@@ -56,3 +56,92 @@ export function buildGooglePass(
     ],
   };
 }
+
+export function googleCommunityClassId(issuerId: string) {
+  return `${issuerId}.uludott_community_pass`;
+}
+
+export function googleCommunityObjectId(issuerId: string, grantId?: string) {
+  if (grantId) {
+    return `${issuerId}.uludott_community_${grantId.replaceAll("-", "")}`;
+  }
+  return `${issuerId}.uludott_community_pass_default`;
+}
+
+export function buildCommunityClass(
+  issuerId: string,
+  appOrigin: string,
+): Record<string, unknown> {
+  const classId = googleCommunityClassId(issuerId);
+  const isHttps = appOrigin.startsWith("https://");
+
+  return {
+    id: classId,
+    genericType: "GENERIC_OTHER",
+    cardTitle: localized("Uludott Community Pass"),
+    header: localized("COMMUNITY PASS"),
+    subheader: localized("Dijital Oyun Tasarım Topluluğu"),
+    hexBackgroundColor: "#19202B",
+    ...(isHttps
+      ? {
+          logo: {
+            sourceUri: {
+              uri: `${appOrigin}/passes/community/primaryLogo@2x.png`,
+            },
+            contentDescription: localized("Uludott Logo"),
+          },
+          heroImage: {
+            sourceUri: {
+              uri: `${appOrigin}/passes/community/background@2x.png`,
+            },
+            contentDescription: localized("Uludott Community Pass"),
+          },
+        }
+      : {}),
+  };
+}
+
+export function buildCommunityObject(
+  issuerId: string,
+  appOrigin: string,
+  grantId?: string,
+): Record<string, unknown> {
+  const objectId = googleCommunityObjectId(issuerId, grantId);
+  const classId = googleCommunityClassId(issuerId);
+  const isHttps = appOrigin.startsWith("https://");
+
+  return {
+    id: objectId,
+    classId,
+    genericType: "GENERIC_OTHER",
+    state: "ACTIVE",
+    cardTitle: localized("Uludott Community Pass"),
+    header: localized("COMMUNITY PASS"),
+    subheader: localized("Sadece bir kart değil, ortak deneyim bileti"),
+    hexBackgroundColor: "#19202B",
+    ...(isHttps
+      ? {
+          logo: {
+            sourceUri: {
+              uri: `${appOrigin}/passes/community/primaryLogo@2x.png`,
+            },
+            contentDescription: localized("Uludott Logo"),
+          },
+          heroImage: {
+            sourceUri: {
+              uri: `${appOrigin}/passes/community/background@2x.png`,
+            },
+            contentDescription: localized("Uludott Community Pass"),
+          },
+        }
+      : {}),
+    textModulesData: [
+      {
+        id: "motto",
+        header: "Topluluk",
+        body: "Sadece bir kart değil, ortak deneyim bileti",
+      },
+    ],
+  };
+}
+

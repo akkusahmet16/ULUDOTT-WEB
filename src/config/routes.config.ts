@@ -15,6 +15,7 @@ export const ROUTE_IDS = [
   "privateCard",
   "privateTeam",
   "privateConsent",
+  "memberCardVerification",
 ] as const;
 
 export type RouteId = (typeof ROUTE_IDS)[number];
@@ -27,7 +28,8 @@ export type StaticRouteId =
   | "games"
   | "fanzin"
   | "contact"
-  | "receipt";
+  | "receipt"
+  | "memberCardVerification";
 
 export type ParameterizedRouteId = Exclude<RouteId, StaticRouteId>;
 
@@ -46,6 +48,7 @@ export interface RouteParamsMap {
   readonly privateCard: { readonly token: string };
   readonly privateTeam: { readonly token: string };
   readonly privateConsent: { readonly token: string };
+  readonly memberCardVerification: undefined;
 }
 
 export type RouteKind = "public-static" | "public-dynamic" | "private-page";
@@ -369,6 +372,21 @@ export const ROUTES: readonly RouteDefinition[] = [
     metadataKey: {
       titleKey: "meta.privateConsent.title",
       descriptionKey: "meta.privateConsent.description",
+    },
+  },
+  {
+    id: "memberCardVerification",
+    kind: "public-static",
+    path: "/uye-karti",
+    pattern: "/uye-karti",
+    paramNames: [],
+    labelKey: "meta.memberCardVerification.title",
+    visibility: "public-unlisted",
+    indexable: true,
+    canonical: { strategy: "self", basePath: "/uye-karti" },
+    metadataKey: {
+      titleKey: "meta.memberCardVerification.title",
+      descriptionKey: "meta.memberCardVerification.description",
     },
   },
 ] as const;

@@ -106,6 +106,11 @@ export const trDictionary = {
       title: "Özel yapımcı yayın onayı",
       description: "Oyun yapımcı adı yayın onayı.",
     },
+    memberCardVerification: {
+      title: "Topluluk Üye Kartı",
+      description:
+        "Uludott topluluk üyeliğinizi doğrulayın ve dijital üye kartınızı cüzdanınıza ekleyin.",
+    },
   },
   theme: {
     cinematic: "Sinematik gece",
@@ -497,6 +502,32 @@ export const trDictionary = {
     withdrawnSuccessMessage:
       "Yayın onayınız geri çekildi. Oyun tam yayından kaldırıldı.",
     saveErrorFallback: "Onay kaydedilemedi",
+  },
+  communityCard: {
+    heroEyebrow: "Dijital Oyun Tasarım Topluluğu",
+    heroTitle: "Topluluk Üye Kartı",
+    heroLede:
+      "Sadece bir kart değil, ortak deneyim bileti. Uludott üyelerine özel avantajlar, anlaşmalı mekan indirimleri ve resmi topluluk kimliği için kartınızı cüzdanınıza ekleyin.",
+    fullNameLabel: "Ad Soyad",
+    fullNamePlaceholder: "Adınız ve soyadınız",
+    emailLabel: "SKS Kayıtlı E-posta Adresi",
+    emailPlaceholder: "ornek@ogr.uludag.edu.tr",
+    emailHelp:
+      "Bursa Uludağ Üniversitesi Öğrenci Toplulukları (SKS) otomasyonunda kayıtlı olan e-posta adresinizi giriniz.",
+    submitButton: "Üyeliğimi Doğrula",
+    verifying: "Doğrulanıyor...",
+    notFoundError:
+      "SKS sisteminde onaylı üyeliğiniz bulunamadı. Yeni üye olduysanız sisteme düşmesi biraz zaman alabilir veya üyeliğiniz henüz onaylanmamış olabilir. Lütfen daha sonra tekrar deneyin veya BUÜ SKS üzerinden topluluğumuza üye olun.",
+    genericError:
+      "Doğrulama sırasında bir hata oluştu. Lütfen bilgilerinizi kontrol edip tekrar deneyin.",
+    cardOrg: "ULUDOTT",
+    cardTitle: "COMMUNITY PASS",
+    cardSubtitle: "Dijital Oyun Tasarım Topluluğu",
+    cardMotto: "Sadece bir kart değil, ortak deneyim bileti",
+    addToGoogleWallet: "Google Wallet'a Ekle",
+    appleWalletSoon: "Apple Wallet çok yakında",
+    walletNotice:
+      "Kartınızı Google Wallet içerisine kaydederek etkinliklerde ve anlaşmalı mekanlarda hızlıca gösterebilirsiniz.",
   },
   errors: {
     checkField: "Bu alanı kontrol edin.",

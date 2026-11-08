@@ -252,7 +252,7 @@ describe("Faz 2 / İş 2A — Typed route sözleşmesi ve dosya sistemi bütünl
   it("src/app dosya sistemini route-group ve dinamik segmentleri çözerek tarar; 6 genel sayfa, 2 dinamik detay, özel/admin/API sınıflarını doğrular", () => {
     const discovered = scanAppFilesystem(APP_DIR);
 
-    // 7 genel statik sayfa
+    // 8 genel statik sayfa
     expect(discovered.publicStaticPages).toEqual([
       "/",
       "/etkinlikler",
@@ -261,6 +261,7 @@ describe("Faz 2 / İş 2A — Typed route sözleşmesi ve dosya sistemi bütünl
       "/iletisim",
       "/oyunlar",
       "/ulujam",
+      "/uye-karti",
     ]);
     expect(getStaticIndexableRoutes().map((r) => r.path).sort()).toEqual(
       discovered.publicStaticPages,

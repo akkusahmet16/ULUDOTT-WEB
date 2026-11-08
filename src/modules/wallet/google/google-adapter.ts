@@ -6,6 +6,10 @@ import {
   buildGooglePass,
   googleClassId,
   googleObjectId,
+  buildCommunityClass,
+  buildCommunityObject,
+  googleCommunityClassId,
+  googleCommunityObjectId,
   type GoogleCard,
 } from "./google-pass.ts";
 export class GoogleWalletAdapter {
@@ -127,5 +131,88 @@ export class GoogleWalletAdapter {
         .safeParse(r.data);
       if (!clean.success) throw new GoogleWalletError("GOOGLE_PROTOCOL");
     }
+  }
+
+  async ensureCommunityClass() {
+    const classId = googleCommunityClassId(this.config.issuerId);
+    const body = buildCommunityClass(
+      this.config.issuerId,
+      this.config.appOrigin,
+    );
+
+    let res = await this.client.request(
+      "genericClass",
+      "POST",
+      undefined,
+      body,
+      true,
+    );
+    if (res.conflict) {
+      res = await this.client.request(
+        "genericClass",
+        "PATCH",
+        classId,
+        body,
+      );
+    }
+    if (res.data.id !== classId) {
+      throw new GoogleWalletError("GOOGLE_PROTOCOL");
+    }
+    return classId;
+  }
+
+  async ensureCommunityPass(grantId?: string) {
+    await this.ensureCommunityClass();
+    const body = buildCommunityObject(
+      this.config.issuerId,
+      this.config.appOrigin,
+      grantId,
+    );
+    const objectId = String(body.id);
+
+    let res = await this.client.request(
+      "genericObject",
+      "POST",
+      undefined,
+      body,
+      true,
+    );
+    if (res.conflict) {
+      res = await this.client.request(
+        "genericObject",
+        "PATCH",
+        objectId,
+        body,
+      );
+    }
+    if (
+      res.data.id !== objectId ||
+      (res.data.state !== "ACTIVE" && res.data.state !== "active")
+    ) {
+      throw new GoogleWalletError("GOOGLE_PROTOCOL");
+    }
+    return objectId;
+  }
+
+  createCommunitySaveLink(grantId?: string, origin = this.config.appOrigin): string {
+    const url = new URL(origin);
+    const objectId = googleCommunityObjectId(this.config.issuerId, grantId);
+
+    const jwt = signJwt(
+      {
+        iss: this.config.clientEmail,
+        aud: "google",
+        typ: "savetowallet",
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor(Date.now() / 1000) + 3600,
+        origins: [url.hostname],
+        payload: {
+          genericObjects: [{ id: objectId }],
+        },
+      },
+      this.config.privateKey,
+    );
+
+    return `https://pay.google.com/gp/v/save/${jwt}`;
   }
 }

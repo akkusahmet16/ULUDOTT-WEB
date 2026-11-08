@@ -100,6 +100,11 @@ export const enDictionary: PublicDictionary = {
       title: "Private creator publication consent",
       description: "Game creator credit publication consent.",
     },
+    memberCardVerification: {
+      title: "Community Member Pass",
+      description:
+        "Verify your Uludott community membership and add your digital membership card to your wallet.",
+    },
   },
   theme: {
     cinematic: "Cinematic night",
@@ -490,6 +495,32 @@ export const enDictionary: PublicDictionary = {
     withdrawnSuccessMessage:
       "Your publication consent has been withdrawn. The game has been removed from full public listing.",
     saveErrorFallback: "Could not save consent",
+  },
+  communityCard: {
+    heroEyebrow: "Digital Game Design Community",
+    heroTitle: "Community Member Pass",
+    heroLede:
+      "Not just a card, but a shared experience ticket. Add your card to your wallet for exclusive Uludott member perks, partner discounts, and official community identity.",
+    fullNameLabel: "Full Name",
+    fullNamePlaceholder: "Your full name",
+    emailLabel: "SKS Registered Email Address",
+    emailPlaceholder: "example@ogr.uludag.edu.tr",
+    emailHelp:
+      "Enter the email address registered with Bursa Uludag University Student Communities (SKS) automation.",
+    submitButton: "Verify Membership",
+    verifying: "Verifying...",
+    notFoundError:
+      "Approved membership was not found in the SKS system. If you recently registered, it may take some time to reflect in our system or may be pending approval. Please try again later or join via BUU SKS.",
+    genericError:
+      "An error occurred during verification. Please check your information and try again.",
+    cardOrg: "ULUDOTT",
+    cardTitle: "COMMUNITY PASS",
+    cardSubtitle: "Digital Game Design Community",
+    cardMotto: "Not just a card, but a shared experience ticket",
+    addToGoogleWallet: "Add to Google Wallet",
+    appleWalletSoon: "Apple Wallet coming soon",
+    walletNotice:
+      "Save your card to Google Wallet to present it quickly at community events and partner venues.",
   },
   errors: {
     checkField: "Please check this field.",

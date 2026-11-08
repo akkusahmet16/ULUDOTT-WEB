@@ -19,6 +19,7 @@ import { GoogleWalletAdapter } from "../google/google-adapter.ts";
 import { GoogleWalletError } from "../google/google-client.ts";
 import { googleObjectId, type GoogleCard } from "../google/google-pass.ts";
 import { requestWalletPass } from "./wallet-service.ts";
+import { getMemberCardByToken } from "../../community/application/community-service.ts";
 import { z } from "zod";
 type Card = NonNullable<Awaited<ReturnType<typeof readCard>>>;
 export async function googleCardProjection(
@@ -135,3 +136,18 @@ export async function requestGooglePass(token: string) {
     );
   return result;
 }
+
+export async function requestCommunityGooglePass(token: string) {
+  if (googleReadiness() === "unconfigured") {
+    throw new SubmissionError(503, "Google Wallet henüz yapılandırılmadı");
+  }
+  const { grantId } = await getMemberCardByToken(token);
+  const adapter = new GoogleWalletAdapter(loadGoogleConfig());
+  await adapter.ensureCommunityPass(grantId);
+  const saveUrl = adapter.createCommunitySaveLink(grantId);
+  return {
+    url: saveUrl,
+    readiness: googleReadiness(),
+  };
+}
+

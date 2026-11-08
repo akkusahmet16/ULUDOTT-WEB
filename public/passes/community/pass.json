@@ -1,0 +1,54 @@
+{
+  "barcodes" : [
+    {
+      "_id" : "1AC60F3A-A2CD-461B-9FF0-7FDD6D6A639F",
+      "format" : "PKBarcodeFormatQR",
+      "messageEncoding" : "iso-8859-1"
+    }
+  ],
+  "description" : "Community Pass",
+  "foregroundColor" : "rgb(255,255,255)",
+  "formatVersion" : 1,
+  "organizationName" : "Uludott Community Pass",
+  "passTypeIdentifier" : "pass.",
+  "posterGeneric" : {
+    "auxiliaryFields" : [
+      {
+        "_id" : "47FB51CD-CC3A-45CB-BDFE-4CBB73529F75",
+        "key" : "",
+        "textAlignment" : "PKTextAlignmentNatural",
+        "value" : ""
+      }
+    ],
+    "footerFields" : [
+      {
+        "_id" : "D0836F83-3527-472B-BABF-FDB8E38C8D62",
+        "key" : "",
+        "value" : "Sadece  bir kart değil, ortak deneyim bileti"
+      }
+    ],
+    "headerFields" : [
+
+    ],
+    "primaryFields" : [
+      {
+        "_id" : "0CFC1E87-1B3C-4D1A-BC8E-010E0EB063C3",
+        "key" : "",
+        "value" : "COMMUNITY PASS"
+      }
+    ],
+    "secondaryFields" : [
+      {
+        "_id" : "F1D997E9-3C33-4346-8708-FF529F396FE6",
+        "key" : "",
+        "label" : "Sadece bir Kart Değil. Ortak Deneyim Bileti",
+        "textAlignment" : "PKTextAlignmentNatural",
+        "value" : ""
+      }
+    ]
+  },
+  "serialNumber" : "",
+  "suppressHeaderDarkening" : true,
+  "teamIdentifier" : "com.akkusahmet.uludottcompass",
+  "useAutomaticColors" : false
+}
