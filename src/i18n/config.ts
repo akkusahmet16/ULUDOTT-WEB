@@ -34,6 +34,7 @@ export const CLIENT_NAMESPACES = [
   "teams",
   "consent",
   "errors",
+  "communityCard",
 ] as const;
 
 export type ClientNamespace = (typeof CLIENT_NAMESPACES)[number];
