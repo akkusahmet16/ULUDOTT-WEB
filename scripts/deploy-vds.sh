@@ -35,6 +35,14 @@ pnpm db:sync:sks || echo "    (Uyarı: Canlı SKS bağlantısı yapılamadı, me
 echo "==> Next.js üretim derlemesi alınıyor (pnpm build)..."
 pnpm build
 
+if [ -d ".next/standalone" ]; then
+  echo "==> Standalone statik varlıklar güncelleniyor..."
+  mkdir -p .next/standalone/.next
+  rm -rf .next/standalone/.next/static .next/standalone/public
+  cp -R .next/static .next/standalone/.next/static
+  cp -R public .next/standalone/public
+fi
+
 # 6. Servisleri yeniden başlat
 echo "==> Servisler yeniden başlatılıyor..."
 if systemctl is-active --quiet uludott-web; then
