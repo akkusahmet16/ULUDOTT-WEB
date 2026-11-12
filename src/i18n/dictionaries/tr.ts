@@ -127,6 +127,7 @@ export const trDictionary = {
     closeDialog: "Kapat",
     pageCount: "Sayfa {page} / {total}",
     discoverCommunity: "Topluluğu tanı",
+    getMemberCard: "Üye Kartını Al",
     discoverUlujam: "UluJam’i keşfet",
     apply: "Başvur",
     dateLabel: "Tarih",

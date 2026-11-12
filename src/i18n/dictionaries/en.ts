@@ -121,6 +121,7 @@ export const enDictionary: PublicDictionary = {
     closeDialog: "Close",
     pageCount: "Page {page} of {total}",
     discoverCommunity: "Meet the community",
+    getMemberCard: "Get Member Pass",
     discoverUlujam: "Explore UluJam",
     apply: "Apply",
     dateLabel: "Date",
