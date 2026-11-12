@@ -74,7 +74,10 @@ export function CommunityCardFlow() {
         return;
       }
 
-      window.open(data.url, "_blank", "noopener,noreferrer");
+      const opened = window.open(data.url, "_blank", "noopener,noreferrer");
+      if (!opened) {
+        window.location.assign(data.url);
+      }
     } catch {
       setWalletError(t("communityCard.genericError"));
     } finally {
