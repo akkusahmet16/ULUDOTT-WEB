@@ -1,5 +1,5 @@
 import "server-only";
-import { withTransaction } from "../../../lib/database/transaction.ts";
+import { withSozlukTransaction as withTransaction } from "../../../lib/database/transaction.ts";
 import {
   normalizeSozlukNick,
   normalizeSozlukTitle,

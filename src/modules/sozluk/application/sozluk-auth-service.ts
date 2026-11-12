@@ -2,7 +2,7 @@ import "server-only";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { randomToken, tokenHash } from "../../../lib/auth/crypto.ts";
 import { authKey } from "../../../lib/config/auth.ts";
-import { withTransaction } from "../../../lib/database/transaction.ts";
+import { withSozlukTransaction as withTransaction } from "../../../lib/database/transaction.ts";
 import { normalizeSozlukNick } from "../domain/slug.ts";
 import {
   googleOnboardingSchema,
