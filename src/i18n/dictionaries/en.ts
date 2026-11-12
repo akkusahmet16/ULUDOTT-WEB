@@ -105,6 +105,11 @@ export const enDictionary: PublicDictionary = {
       description:
         "Verify your Uludott community membership and add your digital membership card to your wallet.",
     },
+    memberCardManualVerification: {
+      title: "Manual SKS Verification",
+      description:
+        "Verify your Uludott membership in real time using your BUU student number and automation password.",
+    },
   },
   theme: {
     cinematic: "Cinematic night",
@@ -521,6 +526,27 @@ export const enDictionary: PublicDictionary = {
     appleWalletSoon: "Apple Wallet coming soon",
     walletNotice:
       "Save your card to Google Wallet to present it quickly at community events and partner venues.",
+    manualFallbackHint:
+      "If your name does not appear in the synced roster yet, you can verify instantly with your BUU student number and automation password.",
+    manualFallbackButton: "Verify with Automation Password",
+    manualHeroTitle: "Verify with Automation Password",
+    manualHeroLede:
+      "If you recently joined or do not see your name on the synced list yet, sign in via BUU SKS to verify your membership and proceed to your card.",
+    manualStudentNumberLabel: "BUU Student Number",
+    manualStudentNumberPlaceholder: "e.g. 062590004",
+    manualPasswordLabel: "Automation Password",
+    manualPasswordPlaceholder: "Your BUU automation password",
+    manualPrivacyNotice:
+      "Your student number and automation password are used only for real-time BUU SKS verification and are never stored.",
+    manualSubmitButton: "Verify via SKS & Continue",
+    manualVerifying: "Verifying with SKS...",
+    manualBackButton: "Back to Roster Verification",
+    manualInvalidCredentials:
+      "Incorrect student number or automation password. Please check your BUU credentials.",
+    manualNotMember:
+      "No approved Digital Game Design Community membership was found on BUU SKS. Your membership may still be pending approval.",
+    manualSksUnavailable:
+      "BUU SKS is currently unreachable. Please try again later.",
   },
   errors: {
     checkField: "Please check this field.",

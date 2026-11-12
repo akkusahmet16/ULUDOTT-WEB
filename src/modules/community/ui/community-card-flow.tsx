@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useTranslator } from "../../../i18n/client.tsx";
+
+const MEMBER_GRANT_STORAGE_KEY = "uludott_member_grant";
 
 export function CommunityCardFlow() {
   const t = useTranslator();
@@ -15,6 +18,20 @@ export function CommunityCardFlow() {
   const [grantToken, setGrantToken] = useState<string | null>(null);
   const [walletBusy, setWalletBusy] = useState(false);
   const [walletError, setWalletError] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const pendingGrant = window.sessionStorage.getItem(
+        MEMBER_GRANT_STORAGE_KEY,
+      );
+      if (pendingGrant) {
+        window.sessionStorage.removeItem(MEMBER_GRANT_STORAGE_KEY);
+        setGrantToken(pendingGrant);
+      }
+    } catch {
+      // Ignore storage access errors in restricted browsers
+    }
+  }, []);
 
   async function handleVerify(e: React.FormEvent) {
     e.preventDefault();
@@ -328,6 +345,31 @@ export function CommunityCardFlow() {
           </button>
         </div>
       </form>
+
+      <div
+        style={{
+          borderTop: "1px solid var(--line)",
+          marginTop: "28px",
+          paddingTop: "24px",
+          textAlign: "center",
+        }}
+      >
+        <p
+          style={{
+            color: "var(--muted)",
+            fontSize: "14px",
+            lineHeight: 1.6,
+            margin: "0px auto 16px",
+          }}
+        >
+          {t("communityCard.manualFallbackHint")}
+        </p>
+        <div className="actions" style={{ justifyContent: "center" }}>
+          <Link href="/uye-karti/manuel" className="button secondary">
+            {t("communityCard.manualFallbackButton")}
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

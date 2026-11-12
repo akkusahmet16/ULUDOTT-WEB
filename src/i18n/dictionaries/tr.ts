@@ -111,6 +111,11 @@ export const trDictionary = {
       description:
         "Uludott topluluk üyeliğinizi doğrulayın ve dijital üye kartınızı cüzdanınıza ekleyin.",
     },
+    memberCardManualVerification: {
+      title: "SKS ile Üyelik Doğrulama",
+      description:
+        "BUÜ öğrenci numaranız ve otomasyon şifreniz ile anlık SKS üyelik doğrulaması yapın.",
+    },
   },
   theme: {
     cinematic: "Sinematik gece",
@@ -528,6 +533,27 @@ export const trDictionary = {
     appleWalletSoon: "Apple Wallet çok yakında",
     walletNotice:
       "Kartınızı Google Wallet içerisine kaydederek etkinliklerde ve anlaşmalı mekanlarda hızlıca gösterebilirsiniz.",
+    manualFallbackHint:
+      "Topluluk listesi senkronizasyonunda adınız henüz görünmüyorsa BUÜ öğrenci numaranız ve otomasyon şifreniz ile anlık doğrulama yapabilirsiniz.",
+    manualFallbackButton: "Otomasyon Şifresi ile Doğrula",
+    manualHeroTitle: "Otomasyon Şifresi ile Doğrulama",
+    manualHeroLede:
+      "Yeni üye olduysanız veya listede adınız görünmüyorsa BUÜ SKS öğrenci girişinizle üyeliğinizi anlık olarak doğrulayıp üye kartınıza geçebilirsiniz.",
+    manualStudentNumberLabel: "BUÜ Öğrenci Numarası",
+    manualStudentNumberPlaceholder: "Örn. 062590004",
+    manualPasswordLabel: "Otomasyon Şifresi",
+    manualPasswordPlaceholder: "BUÜ otomasyon şifreniz",
+    manualPrivacyNotice:
+      "Öğrenci numaranız ve otomasyon şifreniz yalnızca anlık BUÜ SKS doğrulaması için kullanılır; sistemimizde kesinlikle kaydedilmez.",
+    manualSubmitButton: "SKS ile Doğrula ve Karta Geç",
+    manualVerifying: "SKS üzerinden doğrulanıyor...",
+    manualBackButton: "Listeden Doğrulamaya Dön",
+    manualInvalidCredentials:
+      "Öğrenci numarası veya otomasyon şifresi hatalı. Lütfen BUÜ otomasyon bilgilerinizi kontrol edin.",
+    manualNotMember:
+      "BUÜ SKS sisteminde Dijital Oyun Tasarım Topluluğu için onaylı üyeliğiniz bulunamadı. Üyelik başvurunuz henüz onaylanmamış olabilir.",
+    manualSksUnavailable:
+      "BUÜ SKS sistemine şu anda ulaşılamıyor. Lütfen biraz sonra tekrar deneyin.",
   },
   errors: {
     checkField: "Bu alanı kontrol edin.",

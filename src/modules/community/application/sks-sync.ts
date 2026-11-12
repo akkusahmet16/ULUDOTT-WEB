@@ -213,3 +213,157 @@ export async function syncSksMembers(
 
   return { totalParsed: members.length, insertedOrUpdated: count, source };
 }
+
+export type StudentSksVerificationResult =
+  | {
+      status: "VERIFIED";
+      fullName: string;
+      email: string;
+    }
+  | {
+      status: "INVALID_CREDENTIALS" | "NOT_MEMBER" | "SKS_UNAVAILABLE";
+    };
+
+/**
+ * Verifies a single student directly against BUU SKS using their own student number
+ * and otomasyon password. Credentials are kept strictly in memory for the single
+ * login request and never persisted or logged.
+ */
+export async function verifyStudentViaSks(
+  studentNumber: string,
+  password: string,
+): Promise<StudentSksVerificationResult> {
+  const cookieJar = new Map<string, string>();
+  const updateCookies = (res: Response) => {
+    for (const c of res.headers.getSetCookie()) {
+      const parts = c.split(";")[0].split("=");
+      cookieJar.set(parts[0].trim(), parts.slice(1).join("=").trim());
+    }
+  };
+  const getCookieHeader = () =>
+    Array.from(cookieJar.entries())
+      .map(([k, v]) => `${k}=${v}`)
+      .join("; ");
+
+  const userAgent =
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+
+  try {
+    const initialRes = await fetch("https://topluluk-etkinlik.uludag.edu.tr/", {
+      headers: { "User-Agent": userAgent },
+      signal: AbortSignal.timeout(12000),
+    });
+    updateCookies(initialRes);
+    const initialHtml = await initialRes.text();
+    const tokenMatch = initialHtml.match(
+      /name="__RequestVerificationToken" type="hidden" value="([^"]+)"/,
+    );
+    if (!tokenMatch) {
+      return { status: "SKS_UNAVAILABLE" };
+    }
+
+    const loginBody = new URLSearchParams({
+      returnUrl: "",
+      UserName: studentNumber.trim(),
+      Password: password,
+      __RequestVerificationToken: tokenMatch[1],
+    });
+
+    const loginRes = await fetch(
+      "https://topluluk-etkinlik.uludag.edu.tr/Account/Login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "User-Agent": userAgent,
+          Cookie: getCookieHeader(),
+          Referer: "https://topluluk-etkinlik.uludag.edu.tr/",
+        },
+        body: loginBody.toString(),
+        redirect: "manual",
+        signal: AbortSignal.timeout(12000),
+      },
+    );
+    updateCookies(loginRes);
+
+    const location = loginRes.headers.get("location") ?? "";
+    if (loginRes.status !== 302 || !location.includes("/Ogrenci")) {
+      return { status: "INVALID_CREDENTIALS" };
+    }
+
+    const indexRes = await fetch(
+      "https://topluluk-etkinlik.uludag.edu.tr/Ogrenci/Index",
+      {
+        headers: {
+          "User-Agent": userAgent,
+          Cookie: getCookieHeader(),
+          Referer: "https://topluluk-etkinlik.uludag.edu.tr/",
+        },
+        signal: AbortSignal.timeout(12000),
+      },
+    );
+    if (!indexRes.ok) {
+      return { status: "SKS_UNAVAILABLE" };
+    }
+
+    const indexHtml = await indexRes.text();
+    const rows = [...indexHtml.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi)];
+    const isApprovedMember = rows.some((row) => {
+      const normalizedRow = normalizeMemberName(
+        decodeEntities(row[1].replace(/<[^>]+>/g, " ")),
+      );
+      return (
+        normalizedRow.includes("dijital oyun tasarim toplulugu") &&
+        !normalizedRow.includes("onay bekliyor") &&
+        !normalizedRow.includes("reddedildi") &&
+        !normalizedRow.includes("iptal")
+      );
+    });
+
+    if (!isApprovedMember) {
+      return { status: "NOT_MEMBER" };
+    }
+
+    const sidebarNameMatch = indexHtml.match(
+      /<div[^>]*class="[^"]*info[^"]*"[^>]*>[\s\S]*?<a[^>]*>([\s\S]*?)<\/a>/i,
+    );
+    const extractedName = sidebarNameMatch
+      ? decodeEntities(sidebarNameMatch[1].replace(/<[^>]+>/g, " "))
+      : "";
+    const fullName = extractedName || studentNumber.trim();
+
+    let email = `${studentNumber.trim().toLowerCase()}@ogr.uludag.edu.tr`;
+    try {
+      const profileRes = await fetch(
+        "https://topluluk-etkinlik.uludag.edu.tr/Ogrenci/BilgilerimiDuzenle",
+        {
+          headers: {
+            "User-Agent": userAgent,
+            Cookie: getCookieHeader(),
+            Referer: "https://topluluk-etkinlik.uludag.edu.tr/Ogrenci/Index",
+          },
+          signal: AbortSignal.timeout(8000),
+        },
+      );
+      if (profileRes.ok) {
+        const profileHtml = await profileRes.text();
+        const emailMatch = profileHtml.match(
+          /name="Email"[^>]*value="([^"]+)"/i,
+        );
+        if (emailMatch?.[1] && emailMatch[1].includes("@")) {
+          email = decodeEntities(emailMatch[1]).toLowerCase();
+        }
+      }
+    } catch {
+      // Fallback to studentNumber@ogr.uludag.edu.tr if profile page fails
+    }
+
+    return {
+      status: "VERIFIED",
+      fullName,
+      email,
+    };
+  } catch {
+    return { status: "SKS_UNAVAILABLE" };
+  }
+}

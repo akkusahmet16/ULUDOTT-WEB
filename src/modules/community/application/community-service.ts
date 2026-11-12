@@ -8,7 +8,7 @@ import {
 } from "../../../db/schema/community.ts";
 import { randomToken, tokenHash } from "../../../lib/auth/crypto.ts";
 import { SubmissionError } from "../../forms/domain/submission-error.ts";
-import { normalizeMemberName } from "./sks-sync.ts";
+import { normalizeMemberName, verifyStudentViaSks } from "./sks-sync.ts";
 
 export const memberTokenSchema = z
   .string()
@@ -18,6 +18,26 @@ export const verifyMemberInputSchema = z.object({
   fullName: z.string().trim().min(2, "En az 2 karakter giriniz").max(100),
   email: z.string().trim().email("Geçerli bir e-posta giriniz").max(120),
 });
+
+export const verifySksLoginInputSchema = z.object({
+  studentNumber: z.string().trim().min(4).max(30),
+  password: z.string().min(1).max(120),
+});
+
+async function issueMemberGrant(memberId: string): Promise<string> {
+  const token = randomToken();
+  const hash = tokenHash(token);
+  const db = getDatabase();
+
+  await db.insert(memberCardGrants).values({
+    memberId,
+    tokenHash: hash,
+    status: "active",
+    lastAccessedAt: new Date(),
+  });
+
+  return token;
+}
 
 export interface CommunityMemberView {
   fullName: string;
@@ -54,15 +74,7 @@ export async function verifyAndGrantMemberCard(input: {
     };
   }
 
-  const token = randomToken();
-  const hash = tokenHash(token);
-
-  await db.insert(memberCardGrants).values({
-    memberId: member.id,
-    tokenHash: hash,
-    status: "active",
-    lastAccessedAt: new Date(),
-  });
+  const token = await issueMemberGrant(member.id);
 
   return {
     success: true as const,
@@ -131,5 +143,54 @@ export async function getMemberCardByToken(token: string): Promise<{
       period: record.period,
       status: record.memberStatus,
     },
+  };
+}
+
+export async function verifyAndGrantMemberCardViaSks(input: {
+  studentNumber: string;
+  password: string;
+}) {
+  const parsed = verifySksLoginInputSchema.parse(input);
+  const sksResult = await verifyStudentViaSks(
+    parsed.studentNumber,
+    parsed.password,
+  );
+
+  if (sksResult.status !== "VERIFIED") {
+    return {
+      success: false as const,
+      error: sksResult.status,
+    };
+  }
+
+  const db = getDatabase();
+  const normalizedName = normalizeMemberName(sksResult.fullName);
+  const normalizedEmail = sksResult.email.toLowerCase();
+
+  const [member] = await db
+    .insert(communityMembers)
+    .values({
+      fullName: sksResult.fullName,
+      normalizedName,
+      email: normalizedEmail,
+      period: "2026 - 2027",
+      role: "member",
+      status: "active",
+      lastSyncedAt: new Date(),
+    })
+    .onConflictDoUpdate({
+      target: communityMembers.email,
+      set: {
+        status: "active",
+        lastSyncedAt: new Date(),
+      },
+    })
+    .returning({ id: communityMembers.id });
+
+  const grantToken = await issueMemberGrant(member.id);
+
+  return {
+    success: true as const,
+    grantToken,
   };
 }
