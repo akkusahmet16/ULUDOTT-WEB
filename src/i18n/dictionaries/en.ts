@@ -60,12 +60,12 @@ export const enDictionary: PublicDictionary = {
     },
     sozlukTopic: {
       title: "{title} — ulusozluk",
-      description: "Entries under {title} on ulusozluk.",
+      description: "Entries and community discussions on ulusozluk.",
       notFoundTitle: "topic not found",
     },
     sozlukAuthor: {
       title: "@{nick} — ulusozluk",
-      description: "ulusozluk author @{nick} profile and entries.",
+      description: "ulusozluk author profile and published entries.",
       notFoundTitle: "author not found",
     },
     events: {

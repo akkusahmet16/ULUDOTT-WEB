@@ -66,12 +66,12 @@ export const trDictionary = {
     },
     sozlukTopic: {
       title: "{title} — ulusözlük",
-      description: "ulusözlük üzerinde {title} başlığı altındaki entry'ler.",
+      description: "ulusözlük başlığı altındaki entry'ler ve topluluk yorumları.",
       notFoundTitle: "başlık bulunamadı",
     },
     sozlukAuthor: {
       title: "@{nick} — ulusözlük",
-      description: "ulusözlük yazarı @{nick} profili ve entry'leri.",
+      description: "ulusözlük yazar profili ve paylaşılan entry'ler.",
       notFoundTitle: "yazar bulunamadı",
     },
     events: {

@@ -23,14 +23,6 @@ function isSozlukHost(hostHeader: string | null): boolean {
 }
 
 export function proxy(request: NextRequest) {
-  console.log(
-    "PROXY_HIT:",
-    request.nextUrl.href,
-    "HOST:",
-    request.headers.get("host"),
-    "PROTO:",
-    request.headers.get("x-forwarded-proto"),
-  );
   const sozlukSubdomain = isSozlukHost(request.headers.get("host"));
   const rawPathname = request.nextUrl.pathname;
   const shouldRewriteToSozluk =

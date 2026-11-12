@@ -146,6 +146,9 @@ export function buildMetadata(input: BuildMetadataInput): Metadata {
     ? input.content?.description?.trim() || undefined
     : t(route.metadataKey.descriptionKey, {
         description: t("brand.defaultDescription"),
+        title: input.content?.title?.trim() || t("brand.name"),
+        nick: input.params?.nick || input.content?.title?.trim() || "",
+        ...(input.params ?? {}),
       }).trim() || undefined;
 
   const result: Metadata = {
