@@ -158,6 +158,7 @@ describe("Faz 3 / İş 3A — Sözlük eşliği (parity), dilim (slice) sınır�
       "consent",
       "errors",
       "communityCard",
+      "sozluk",
     ]);
     expect(isClientNamespace("brand")).toBe(true);
     expect(isClientNamespace("nav")).toBe(true);

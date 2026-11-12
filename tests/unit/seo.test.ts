@@ -39,7 +39,12 @@ describe("Faz 2 / İş 2A & 2B — Rota görünürlük, indeksleme, kanonik SEO 
     ]);
 
     const dynamicIndexableIds = getDynamicIndexableRoutes().map((r) => r.id);
-    expect(dynamicIndexableIds).toEqual(["eventDetail", "gameDetail"]);
+    expect(dynamicIndexableIds).toEqual([
+      "eventDetail",
+      "gameDetail",
+      "sozlukTopic",
+      "sozlukAuthor",
+    ]);
     for (const id of dynamicIndexableIds) {
       const route = getRoute(id);
       expect(route.indexable).toBe(true);

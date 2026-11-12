@@ -12,3 +12,4 @@ export * from "./site-settings.ts";
 export * from "./fanzin.ts";
 export * from "./analytics.ts";
 export * from "./community.ts";
+export * from "./sozluk.ts";

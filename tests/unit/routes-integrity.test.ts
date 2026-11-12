@@ -260,6 +260,7 @@ describe("Faz 2 / İş 2A — Typed route sözleşmesi ve dosya sistemi bütünl
       "/hakkimizda",
       "/iletisim",
       "/oyunlar",
+      "/sozluk",
       "/ulujam",
       "/uye-karti",
       "/uye-karti/manuel",
@@ -268,10 +269,12 @@ describe("Faz 2 / İş 2A — Typed route sözleşmesi ve dosya sistemi bütünl
       discovered.publicStaticPages,
     );
 
-    // 2 dinamik detay sayfası
+    // 4 dinamik detay sayfası
     expect(discovered.publicDynamicPages).toEqual([
       "/etkinlikler/[slug]",
       "/oyunlar/[slug]",
+      "/sozluk/[slug]",
+      "/sozluk/yazar/[nick]",
     ]);
     expect(getDynamicIndexableRoutes().map((r) => r.pattern).sort()).toEqual(
       discovered.publicDynamicPages,

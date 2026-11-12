@@ -17,6 +17,9 @@ export const ROUTE_IDS = [
   "privateConsent",
   "memberCardVerification",
   "memberCardManualVerification",
+  "sozluk",
+  "sozlukTopic",
+  "sozlukAuthor",
 ] as const;
 
 export type RouteId = (typeof ROUTE_IDS)[number];
@@ -31,7 +34,8 @@ export type StaticRouteId =
   | "contact"
   | "receipt"
   | "memberCardVerification"
-  | "memberCardManualVerification";
+  | "memberCardManualVerification"
+  | "sozluk";
 
 export type ParameterizedRouteId = Exclude<RouteId, StaticRouteId>;
 
@@ -52,6 +56,9 @@ export interface RouteParamsMap {
   readonly privateConsent: { readonly token: string };
   readonly memberCardVerification: undefined;
   readonly memberCardManualVerification: undefined;
+  readonly sozluk: undefined;
+  readonly sozlukTopic: { readonly slug: string };
+  readonly sozlukAuthor: { readonly nick: string };
 }
 
 export type RouteKind = "public-static" | "public-dynamic" | "private-page";
@@ -405,6 +412,53 @@ export const ROUTES: readonly RouteDefinition[] = [
     metadataKey: {
       titleKey: "meta.memberCardManualVerification.title",
       descriptionKey: "meta.memberCardManualVerification.description",
+    },
+  },
+  {
+    id: "sozluk",
+    kind: "public-static",
+    path: "/sozluk",
+    pattern: "/sozluk",
+    paramNames: [],
+    labelKey: "nav.sozluk",
+    visibility: "public-unlisted",
+    indexable: true,
+    canonical: { strategy: "self", basePath: "/sozluk" },
+    metadataKey: {
+      titleKey: "meta.sozluk.title",
+      descriptionKey: "meta.sozluk.description",
+    },
+  },
+  {
+    id: "sozlukTopic",
+    kind: "public-dynamic",
+    path: "/sozluk",
+    pattern: "/sozluk/[slug]",
+    paramNames: ["slug"],
+    labelKey: "nav.sozluk",
+    visibility: "public-unlisted",
+    indexable: true,
+    canonical: { strategy: "dynamic-slug", basePath: "/sozluk" },
+    metadataKey: {
+      titleKey: "meta.sozlukTopic.title",
+      descriptionKey: "meta.sozlukTopic.description",
+      notFoundTitleKey: "meta.sozlukTopic.notFoundTitle",
+    },
+  },
+  {
+    id: "sozlukAuthor",
+    kind: "public-dynamic",
+    path: "/sozluk/yazar",
+    pattern: "/sozluk/yazar/[nick]",
+    paramNames: ["nick"],
+    labelKey: "nav.sozluk",
+    visibility: "public-unlisted",
+    indexable: true,
+    canonical: { strategy: "dynamic-slug", basePath: "/sozluk/yazar" },
+    metadataKey: {
+      titleKey: "meta.sozlukAuthor.title",
+      descriptionKey: "meta.sozlukAuthor.description",
+      notFoundTitleKey: "meta.sozlukAuthor.notFoundTitle",
     },
   },
 ] as const;

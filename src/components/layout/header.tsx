@@ -181,6 +181,19 @@ export function Header() {
               </div>
             );
           })}
+          <div
+            className="menu-item"
+            style={{ "--menu-index": navRoutes.length } as CSSProperties}
+          >
+            <div className="menu-row">
+              <a
+                href="https://sozluk.uludott.com.tr"
+                onClick={() => setOpen(false)}
+              >
+                {t("nav.sozluk")}
+              </a>
+            </div>
+          </div>
         </nav>
       </div>
     </header>
