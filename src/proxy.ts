@@ -9,7 +9,7 @@ const SOZLUK_BYPASS_PREFIXES = [
   "/media/",
   "/uploads/",
   "/assets/",
-  "/sozluk",
+  "/sozluk/",
 ];
 
 function isSozlukHost(hostHeader: string | null): boolean {
@@ -27,9 +27,8 @@ export function proxy(request: NextRequest) {
   const rawPathname = request.nextUrl.pathname;
   const shouldRewriteToSozluk =
     sozlukSubdomain &&
-    !SOZLUK_BYPASS_PREFIXES.some(
-      (prefix) => rawPathname === prefix || rawPathname.startsWith(prefix),
-    ) &&
+    rawPathname !== "/sozluk" &&
+    !SOZLUK_BYPASS_PREFIXES.some((prefix) => rawPathname.startsWith(prefix)) &&
     !/\.[a-z0-9]{2,6}$/i.test(rawPathname);
 
   const effectivePathname = shouldRewriteToSozluk
