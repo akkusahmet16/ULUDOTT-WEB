@@ -41,7 +41,7 @@ export const enDictionary: PublicDictionary = {
     home: {
       title: "Digital Game Design Community",
       description:
-        "UluDOTT community, events, applications, and UluJam digital participation platform.",
+        "Bursa Uludag University Digital Game Design Community (ULUDOTT). Bringing together design, code, art, and storytelling to create games, events, and UluJam.",
     },
     about: {
       title: "About",

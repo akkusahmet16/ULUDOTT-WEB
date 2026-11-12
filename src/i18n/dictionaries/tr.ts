@@ -47,7 +47,7 @@ export const trDictionary = {
     home: {
       title: "Dijital Oyun Tasarım Topluluğu",
       description:
-        "UluDOTT topluluk, etkinlik, başvuru ve UluJam dijital katılım platformu.",
+        "Bursa Uludağ Üniversitesi Dijital Oyun Tasarım Topluluğu (ULUDOTT). Tasarım, kod, sanat ve hikâyeyi bir araya getiriyor; oyun geliştirme etkinlikleri ve UluJam ile üretiyoruz.",
     },
     about: {
       title: "Hakkımızda",
