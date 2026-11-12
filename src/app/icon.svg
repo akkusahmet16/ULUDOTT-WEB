@@ -1,0 +1,9 @@
+<svg viewBox="0 0 3000 3000" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    path { fill: #ffffff; }
+    @media (prefers-color-scheme: light) {
+      path { fill: #0e1217; }
+    }
+  </style>
+  <path id="uludott-ico" fill="currentColor" fill-rule="evenodd" stroke="none" d="uludott-ico" />
+</svg>
