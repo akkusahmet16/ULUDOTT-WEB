@@ -10,8 +10,8 @@ function buildPgClient(databaseUrl: string) {
   const isTransactionPooler = databaseUrl.includes(":6543");
 
   const sql = postgres(databaseUrl, {
-    max: 5,
-    idle_timeout: 20,
+    max: 10,
+    idle_timeout: 120,
     connect_timeout: isSupabase ? 15 : 5,
     prepare: isTransactionPooler ? false : true,
     ssl: isSupabase ? "require" : undefined,

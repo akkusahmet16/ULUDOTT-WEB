@@ -2,6 +2,7 @@ import "server-only";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { randomToken, tokenHash } from "../../../lib/auth/crypto.ts";
 import { authKey } from "../../../lib/config/auth.ts";
+import { getSozlukDatabase } from "../../../lib/database/client.ts";
 import { withSozlukTransaction as withTransaction } from "../../../lib/database/transaction.ts";
 import { normalizeSozlukNick } from "../domain/slug.ts";
 import {
@@ -185,31 +186,57 @@ export async function completeGoogleOnboarding(
   });
 }
 
+const sessionCache = new Map<
+  string,
+  { author: SozlukSessionAuthor; expiresAt: number }
+>();
+
 export async function resolveSozlukSession(
   token: string | undefined,
 ): Promise<SozlukSessionAuthor | null> {
   if (!token || !/^[A-Za-z0-9_-]{32,64}$/.test(token)) {
     return null;
   }
-  return withTransaction(async (tx) => {
-    const row = await findActiveAuthorSession(tx, tokenHash(token));
-    if (!row) return null;
-    if (row.session.expiresAt.getTime() <= Date.now()) return null;
-    if (row.author.status === "banned") return null;
+  const hash = tokenHash(token);
+  const now = Date.now();
+  const cached = sessionCache.get(hash);
+  if (cached && cached.expiresAt > now) {
+    return cached.author;
+  }
 
-    return {
-      id: row.author.id,
-      nick: row.author.nick,
-      rank: row.author.rank,
-      status: row.author.status,
-      bio: row.author.bio,
-    };
+  const db = getSozlukDatabase();
+  const row = await findActiveAuthorSession(db, hash);
+  if (!row) {
+    sessionCache.delete(hash);
+    return null;
+  }
+  if (row.session.expiresAt.getTime() <= now) {
+    sessionCache.delete(hash);
+    return null;
+  }
+  if (row.author.status === "banned") {
+    sessionCache.delete(hash);
+    return null;
+  }
+
+  const author: SozlukSessionAuthor = {
+    id: row.author.id,
+    nick: row.author.nick,
+    rank: row.author.rank,
+    status: row.author.status,
+    bio: row.author.bio,
+  };
+  sessionCache.set(hash, {
+    author,
+    expiresAt: Math.min(now + 60_000, row.session.expiresAt.getTime()),
   });
+  return author;
 }
 
 export async function logoutSozlukSession(token: string | undefined) {
   if (!token || !/^[A-Za-z0-9_-]{32,64}$/.test(token)) return;
-  await withTransaction(async (tx) => {
-    await revokeAuthorSessionByTokenHash(tx, tokenHash(token));
-  });
+  const hash = tokenHash(token);
+  sessionCache.delete(hash);
+  const db = getSozlukDatabase();
+  await revokeAuthorSessionByTokenHash(db, hash);
 }

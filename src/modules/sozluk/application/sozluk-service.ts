@@ -1,4 +1,5 @@
 import "server-only";
+import { getSozlukDatabase } from "../../../lib/database/client.ts";
 import { withSozlukTransaction as withTransaction } from "../../../lib/database/transaction.ts";
 import {
   normalizeSozlukNick,
@@ -42,38 +43,82 @@ import type { SozlukSessionAuthor } from "./sozluk-auth-service.ts";
 
 const PAGE_SIZE = 10;
 
+let cachedChannels: Awaited<ReturnType<typeof listActiveChannels>> | null = null;
+let defaultChannelsEnsured = false;
+
+async function getCachedChannels() {
+  if (cachedChannels) return cachedChannels;
+  const db = getSozlukDatabase();
+  if (!defaultChannelsEnsured) {
+    await ensureDefaultChannels(db);
+    defaultChannelsEnsured = true;
+  }
+  cachedChannels = await listActiveChannels(db);
+  return cachedChannels;
+}
+
+const SIDEBAR_CACHE_TTL_MS = 15_000;
+interface SidebarCacheEntry {
+  data: Awaited<ReturnType<typeof listLeftFrameTopics>>;
+  cachedAt: number;
+}
+const sidebarTopicsCache = new Map<string, SidebarCacheEntry>();
+
+export function invalidateSidebarCache() {
+  sidebarTopicsCache.clear();
+}
+
+async function getCachedSidebarTopics(opts: {
+  mode: "gundem" | "bugun" | "kanal";
+  channelSlug?: string;
+}) {
+  const cacheKey = `${opts.mode}:${opts.channelSlug ?? ""}`;
+  const now = Date.now();
+  const cached = sidebarTopicsCache.get(cacheKey);
+  if (cached && now - cached.cachedAt < SIDEBAR_CACHE_TTL_MS) {
+    return cached.data;
+  }
+  const db = getSozlukDatabase();
+  const data = await listLeftFrameTopics(db, {
+    mode: opts.mode,
+    channelSlug: opts.channelSlug,
+    limit: 35,
+  });
+  sidebarTopicsCache.set(cacheKey, { data, cachedAt: now });
+  return data;
+}
+
 export async function getSozlukSidebarData(opts: {
   mode: "gundem" | "bugun" | "kanal";
   channelSlug?: string;
 }) {
-  return withTransaction(async (tx) => {
-    await ensureDefaultChannels(tx);
-    const [channels, topics] = await Promise.all([
-      listActiveChannels(tx),
-      listLeftFrameTopics(tx, {
-        mode: opts.mode,
-        channelSlug: opts.channelSlug,
-        limit: 35,
-      }),
-    ]);
-    return { channels, topics };
-  });
+  const [channels, topics] = await Promise.all([
+    getCachedChannels(),
+    getCachedSidebarTopics(opts),
+  ]);
+  return { channels, topics };
 }
 
 export async function getSozlukHomeFeed(viewerAuthorId?: string) {
-  return withTransaction(async (tx) => {
-    const stream = await listPopularStreamEntries(tx, 12);
-    const entryIds = stream.map((item) => item.entry.id);
-    const viewerState = viewerAuthorId
-      ? await getViewerEntryStates(tx, viewerAuthorId, entryIds)
+  const db = getSozlukDatabase();
+  const stream = await listPopularStreamEntries(db, 12);
+  const entryIds = stream.map((item) => item.entry.id);
+  const viewerState =
+    viewerAuthorId && entryIds.length > 0
+      ? await getViewerEntryStates(db, viewerAuthorId, entryIds)
       : { votes: new Map<string, 1 | -1>(), favorites: new Set<string>() };
 
-    return stream.map((item) => ({
-      ...item,
-      viewerVote: (viewerState.votes.get(item.entry.id) ?? 0) as -1 | 0 | 1,
-      viewerFavorited: viewerState.favorites.has(item.entry.id),
-    }));
-  });
+  return stream.map((item) => ({
+    ...item,
+    viewerVote: (viewerState.votes.get(item.entry.id) ?? 0) as -1 | 0 | 1,
+    viewerFavorited: viewerState.favorites.has(item.entry.id),
+  }));
+}
+
+export async function getSozlukTopicTitle(slug: string) {
+  const db = getSozlukDatabase();
+  const found = await findTopicBySlug(db, slug);
+  return found?.topic ?? null;
 }
 
 export async function getSozlukTopicPage(
@@ -84,46 +129,46 @@ export async function getSozlukTopicPage(
     viewerAuthorId?: string;
   },
 ) {
-  return withTransaction(async (tx) => {
-    const found = await findTopicBySlug(tx, slug);
-    if (!found) return null;
+  const db = getSozlukDatabase();
+  const found = await findTopicBySlug(db, slug);
+  if (!found) return null;
 
-    let activeTopic = found.topic;
-    let activeChannel = found.channel;
-    if (activeTopic.mergedIntoTopicId) {
-      const target = await findTopicBySlug(tx, slug);
-      if (target) {
-        activeTopic = target.topic;
-        activeChannel = target.channel;
-      }
+  let activeTopic = found.topic;
+  let activeChannel = found.channel;
+  if (activeTopic.mergedIntoTopicId) {
+    const target = await findTopicBySlug(db, slug);
+    if (target) {
+      activeTopic = target.topic;
+      activeChannel = target.channel;
     }
+  }
 
-    const page = Math.max(1, opts.page);
-    const { total, rows } = await listTopicEntries(tx, {
-      topicId: activeTopic.id,
-      filter: opts.filter,
-      page,
-      pageSize: PAGE_SIZE,
-    });
+  const page = Math.max(1, opts.page);
+  const { total, rows } = await listTopicEntries(db, {
+    topicId: activeTopic.id,
+    filter: opts.filter,
+    page,
+    pageSize: PAGE_SIZE,
+  });
 
-    const entryIds = rows.map((r) => r.entry.id);
-    const viewerState = opts.viewerAuthorId
-      ? await getViewerEntryStates(tx, opts.viewerAuthorId, entryIds)
+  const entryIds = rows.map((r) => r.entry.id);
+  const viewerState =
+    opts.viewerAuthorId && entryIds.length > 0
+      ? await getViewerEntryStates(db, opts.viewerAuthorId, entryIds)
       : { votes: new Map<string, 1 | -1>(), favorites: new Set<string>() };
 
-    return {
-      topic: activeTopic,
-      channel: activeChannel,
-      totalEntries: total,
-      page,
-      totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)),
-      entries: rows.map((r) => ({
-        ...r,
-        viewerVote: (viewerState.votes.get(r.entry.id) ?? 0) as -1 | 0 | 1,
-        viewerFavorited: viewerState.favorites.has(r.entry.id),
-      })),
-    };
-  });
+  return {
+    topic: activeTopic,
+    channel: activeChannel,
+    totalEntries: total,
+    page,
+    totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)),
+    entries: rows.map((r) => ({
+      ...r,
+      viewerVote: (viewerState.votes.get(r.entry.id) ?? 0) as -1 | 0 | 1,
+      viewerFavorited: viewerState.favorites.has(r.entry.id),
+    })),
+  };
 }
 
 export async function getSozlukAuthorPage(
@@ -131,32 +176,32 @@ export async function getSozlukAuthorPage(
   viewerAuthorId?: string,
 ) {
   const normalized = normalizeSozlukNick(decodeURIComponent(nick));
-  return withTransaction(async (tx) => {
-    const author = await findAuthorByNick(tx, normalized);
-    if (!author) return null;
-    const statsAndEntries = await listAuthorEntriesAndStats(tx, author.id);
-    const entryIds = statsAndEntries.entries.map((e) => e.entry.id);
-    const viewerState = viewerAuthorId
-      ? await getViewerEntryStates(tx, viewerAuthorId, entryIds)
+  const db = getSozlukDatabase();
+  const author = await findAuthorByNick(db, normalized);
+  if (!author) return null;
+  const statsAndEntries = await listAuthorEntriesAndStats(db, author.id);
+  const entryIds = statsAndEntries.entries.map((e) => e.entry.id);
+  const viewerState =
+    viewerAuthorId && entryIds.length > 0
+      ? await getViewerEntryStates(db, viewerAuthorId, entryIds)
       : { votes: new Map<string, 1 | -1>(), favorites: new Set<string>() };
 
-    return {
-      author: {
-        id: author.id,
-        nick: author.nick,
-        rank: author.rank,
-        bio: author.bio,
-        createdAt: author.createdAt,
-      },
-      entryCount: statsAndEntries.entryCount,
-      totalUpvotes: statsAndEntries.totalUpvotes,
-      entries: statsAndEntries.entries.map((item) => ({
-        ...item,
-        viewerVote: (viewerState.votes.get(item.entry.id) ?? 0) as -1 | 0 | 1,
-        viewerFavorited: viewerState.favorites.has(item.entry.id),
-      })),
-    };
-  });
+  return {
+    author: {
+      id: author.id,
+      nick: author.nick,
+      rank: author.rank,
+      bio: author.bio,
+      createdAt: author.createdAt,
+    },
+    entryCount: statsAndEntries.entryCount,
+    totalUpvotes: statsAndEntries.totalUpvotes,
+    entries: statsAndEntries.entries.map((item) => ({
+      ...item,
+      viewerVote: (viewerState.votes.get(item.entry.id) ?? 0) as -1 | 0 | 1,
+      viewerFavorited: viewerState.favorites.has(item.entry.id),
+    })),
+  };
 }
 
 export async function createSozlukTopicWithEntry(
@@ -201,6 +246,7 @@ export async function createSozlukTopicWithEntry(
       status: author.rank === "caylak" ? "pending" : "published",
     });
 
+    invalidateSidebarCache();
     return { topic, entry };
   });
 }
@@ -224,6 +270,7 @@ export async function createSozlukEntry(
       status: author.rank === "caylak" ? "pending" : "published",
     });
 
+    invalidateSidebarCache();
     return { topic: found.topic, entry };
   });
 }
@@ -260,7 +307,9 @@ export async function deleteSozlukEntry(
     if (existing.authorId !== author.id && !isMod) {
       throw new Error("SOZLUK_FORBIDDEN");
     }
-    return softDeleteEntryRecord(tx, entryId);
+    const deleted = await softDeleteEntryRecord(tx, entryId, existing);
+    invalidateSidebarCache();
+    return deleted;
   });
 }
 
@@ -313,9 +362,9 @@ export async function reportSozlukEntry(
 }
 
 export async function searchSozlukTopics(query: string) {
-  return withTransaction(async (tx) => searchTopicsByQuery(tx, query, 15));
+  return searchTopicsByQuery(getSozlukDatabase(), query, 15);
 }
 
 export async function getSozlukRandomSlug() {
-  return withTransaction(async (tx) => getRandomTopicSlug(tx));
+  return getRandomTopicSlug(getSozlukDatabase());
 }

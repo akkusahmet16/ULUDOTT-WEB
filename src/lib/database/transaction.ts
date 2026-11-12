@@ -5,6 +5,7 @@ import {
   type Database,
 } from "./client.ts";
 export type DbTx = Parameters<Parameters<Database["transaction"]>[0]>[0];
+export type DbClient = Database | DbTx;
 export async function withTransaction<T>(
   work: (tx: DbTx) => Promise<T>,
 ): Promise<T> {

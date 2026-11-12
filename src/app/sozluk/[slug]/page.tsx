@@ -6,6 +6,7 @@ import { getSozlukRequestContext } from "../../../modules/sozluk/application/soz
 import {
   getSozlukSidebarData,
   getSozlukTopicPage,
+  getSozlukTopicTitle,
 } from "../../../modules/sozluk/application/sozluk-service.ts";
 import { SozlukEntryComposer } from "../../../modules/sozluk/ui/entry-composer.tsx";
 import { SozlukFeed } from "../../../modules/sozluk/ui/sozluk-feed.tsx";
@@ -18,12 +19,12 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const [{ slug }, locale] = await Promise.all([params, getLocale()]);
-  const data = await getSozlukTopicPage(slug, { filter: "all", page: 1 });
+  const topic = await getSozlukTopicTitle(slug);
   return buildMetadata({
     routeId: "sozlukTopic",
     locale,
     params: { slug },
-    content: data ? { title: data.topic.title } : { notFound: true },
+    content: topic ? { title: topic.title } : { notFound: true },
   });
 }
 

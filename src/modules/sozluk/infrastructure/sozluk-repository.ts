@@ -10,7 +10,7 @@ import {
   sozlukSessions,
   sozlukTopics,
 } from "../../../db/schema/sozluk.ts";
-import type { DbTx } from "../../../lib/database/transaction.ts";
+import type { DbClient } from "../../../lib/database/transaction.ts";
 import type { SozlukReportReason } from "../domain/validation.ts";
 
 export const DEFAULT_SOZLUK_CHANNELS = [
@@ -22,22 +22,22 @@ export const DEFAULT_SOZLUK_CHANNELS = [
   { slug: "geyik", name: "geyik", description: "serbest muhabbet", sortOrder: 6 },
 ] as const;
 
-export async function ensureDefaultChannels(tx: DbTx) {
-  for (const ch of DEFAULT_SOZLUK_CHANNELS) {
-    await tx
-      .insert(sozlukChannels)
-      .values({
+export async function ensureDefaultChannels(tx: DbClient) {
+  await tx
+    .insert(sozlukChannels)
+    .values(
+      DEFAULT_SOZLUK_CHANNELS.map((ch) => ({
         slug: ch.slug,
         name: ch.name,
         description: ch.description,
         sortOrder: ch.sortOrder,
         isActive: true,
-      })
-      .onConflictDoNothing({ target: sozlukChannels.slug });
-  }
+      })),
+    )
+    .onConflictDoNothing({ target: sozlukChannels.slug });
 }
 
-export async function listActiveChannels(tx: DbTx) {
+export async function listActiveChannels(tx: DbClient) {
   return tx
     .select()
     .from(sozlukChannels)
@@ -45,7 +45,7 @@ export async function listActiveChannels(tx: DbTx) {
     .orderBy(sozlukChannels.sortOrder, sozlukChannels.name);
 }
 
-export async function findAuthorById(tx: DbTx, authorId: string) {
+export async function findAuthorById(tx: DbClient, authorId: string) {
   const [row] = await tx
     .select()
     .from(sozlukAuthors)
@@ -54,7 +54,7 @@ export async function findAuthorById(tx: DbTx, authorId: string) {
   return row ?? null;
 }
 
-export async function findAuthorByNick(tx: DbTx, normalizedNick: string) {
+export async function findAuthorByNick(tx: DbClient, normalizedNick: string) {
   const [row] = await tx
     .select()
     .from(sozlukAuthors)
@@ -64,7 +64,7 @@ export async function findAuthorByNick(tx: DbTx, normalizedNick: string) {
 }
 
 export async function findAuthorByIdentifier(
-  tx: DbTx,
+  tx: DbClient,
   normalizedIdentifier: string,
 ) {
   const [row] = await tx
@@ -80,7 +80,7 @@ export async function findAuthorByIdentifier(
   return row ?? null;
 }
 
-export async function findAuthorByGoogleSub(tx: DbTx, googleSub: string) {
+export async function findAuthorByGoogleSub(tx: DbClient, googleSub: string) {
   const [row] = await tx
     .select()
     .from(sozlukAuthors)
@@ -90,7 +90,7 @@ export async function findAuthorByGoogleSub(tx: DbTx, googleSub: string) {
 }
 
 export async function linkAuthorGoogleSub(
-  tx: DbTx,
+  tx: DbClient,
   authorId: string,
   googleSub: string,
 ) {
@@ -101,7 +101,7 @@ export async function linkAuthorGoogleSub(
 }
 
 export async function insertAuthor(
-  tx: DbTx,
+  tx: DbClient,
   input: {
     nick: string;
     normalizedNick: string;
@@ -128,7 +128,7 @@ export async function insertAuthor(
 }
 
 export async function insertAuthorSession(
-  tx: DbTx,
+  tx: DbClient,
   input: { authorId: string; tokenHash: string; expiresAt: Date },
 ) {
   const [row] = await tx
@@ -142,7 +142,7 @@ export async function insertAuthorSession(
   return row!;
 }
 
-export async function findActiveAuthorSession(tx: DbTx, tokenHash: string) {
+export async function findActiveAuthorSession(tx: DbClient, tokenHash: string) {
   const [row] = await tx
     .select({
       session: sozlukSessions,
@@ -161,7 +161,7 @@ export async function findActiveAuthorSession(tx: DbTx, tokenHash: string) {
 }
 
 export async function revokeAuthorSessionByTokenHash(
-  tx: DbTx,
+  tx: DbClient,
   tokenHash: string,
 ) {
   await tx
@@ -176,7 +176,7 @@ export async function revokeAuthorSessionByTokenHash(
 }
 
 export async function listLeftFrameTopics(
-  tx: DbTx,
+  tx: DbClient,
   opts: {
     mode: "gundem" | "bugun" | "kanal";
     channelSlug?: string;
@@ -184,7 +184,10 @@ export async function listLeftFrameTopics(
   },
 ) {
   const limit = opts.limit ?? 35;
-  const conditions = [isNull(sozlukTopics.mergedIntoTopicId)];
+  const conditions = [
+    isNull(sozlukTopics.mergedIntoTopicId),
+    sql`${sozlukTopics.entryCount} > 0`,
+  ];
 
   if (opts.mode === "bugun") {
     const since = new Date(Date.now() - 24 * 60 * 60_000);
@@ -225,7 +228,7 @@ export async function listLeftFrameTopics(
 }
 
 export async function searchTopicsByQuery(
-  tx: DbTx,
+  tx: DbClient,
   query: string,
   limit = 15,
 ) {
@@ -249,7 +252,7 @@ export async function searchTopicsByQuery(
     .limit(limit);
 }
 
-export async function getRandomTopicSlug(tx: DbTx): Promise<string | null> {
+export async function getRandomTopicSlug(tx: DbClient): Promise<string | null> {
   const [row] = await tx
     .select({ slug: sozlukTopics.slug })
     .from(sozlukTopics)
@@ -259,7 +262,7 @@ export async function getRandomTopicSlug(tx: DbTx): Promise<string | null> {
   return row?.slug ?? null;
 }
 
-export async function findTopicBySlug(tx: DbTx, slug: string) {
+export async function findTopicBySlug(tx: DbClient, slug: string) {
   const [row] = await tx
     .select({
       topic: sozlukTopics,
@@ -273,7 +276,7 @@ export async function findTopicBySlug(tx: DbTx, slug: string) {
 }
 
 export async function findTopicByNormalizedTitle(
-  tx: DbTx,
+  tx: DbClient,
   normalizedTitle: string,
 ) {
   const [row] = await tx
@@ -285,7 +288,7 @@ export async function findTopicByNormalizedTitle(
 }
 
 export async function createTopic(
-  tx: DbTx,
+  tx: DbClient,
   input: {
     slug: string;
     title: string;
@@ -309,7 +312,7 @@ export async function createTopic(
   return row!;
 }
 
-export async function findChannelBySlug(tx: DbTx, slug: string) {
+export async function findChannelBySlug(tx: DbClient, slug: string) {
   const [row] = await tx
     .select()
     .from(sozlukChannels)
@@ -319,7 +322,7 @@ export async function findChannelBySlug(tx: DbTx, slug: string) {
 }
 
 export async function listTopicEntries(
-  tx: DbTx,
+  tx: DbClient,
   opts: {
     topicId: string;
     filter: "all" | "sukela" | "today";
@@ -337,11 +340,6 @@ export async function listTopicEntries(
     );
   }
 
-  const [{ total }] = await tx
-    .select({ total: sql<number>`count(*)::int` })
-    .from(sozlukEntries)
-    .where(and(...conditions));
-
   const orderClause =
     opts.filter === "sukela"
       ? [
@@ -350,26 +348,32 @@ export async function listTopicEntries(
         ]
       : [sozlukEntries.createdAt];
 
-  const rows = await tx
-    .select({
-      entry: sozlukEntries,
-      author: {
-        id: sozlukAuthors.id,
-        nick: sozlukAuthors.nick,
-        rank: sozlukAuthors.rank,
-      },
-    })
-    .from(sozlukEntries)
-    .innerJoin(sozlukAuthors, eq(sozlukEntries.authorId, sozlukAuthors.id))
-    .where(and(...conditions))
-    .orderBy(...orderClause)
-    .limit(opts.pageSize)
-    .offset((opts.page - 1) * opts.pageSize);
+  const [totalRes, rows] = await Promise.all([
+    tx
+      .select({ total: sql<number>`count(*)::int` })
+      .from(sozlukEntries)
+      .where(and(...conditions)),
+    tx
+      .select({
+        entry: sozlukEntries,
+        author: {
+          id: sozlukAuthors.id,
+          nick: sozlukAuthors.nick,
+          rank: sozlukAuthors.rank,
+        },
+      })
+      .from(sozlukEntries)
+      .innerJoin(sozlukAuthors, eq(sozlukEntries.authorId, sozlukAuthors.id))
+      .where(and(...conditions))
+      .orderBy(...orderClause)
+      .limit(opts.pageSize)
+      .offset((opts.page - 1) * opts.pageSize),
+  ]);
 
-  return { total: total ?? 0, rows };
+  return { total: totalRes[0]?.total ?? 0, rows };
 }
 
-export async function listPopularStreamEntries(tx: DbTx, limit = 12) {
+export async function listPopularStreamEntries(tx: DbClient, limit = 12) {
   return tx
     .select({
       entry: sozlukEntries,
@@ -401,7 +405,7 @@ export async function listPopularStreamEntries(tx: DbTx, limit = 12) {
 }
 
 export async function getViewerEntryStates(
-  tx: DbTx,
+  tx: DbClient,
   authorId: string,
   entryIds: string[],
 ) {
@@ -444,7 +448,7 @@ export async function getViewerEntryStates(
 }
 
 export async function insertEntry(
-  tx: DbTx,
+  tx: DbClient,
   input: {
     topicId: string;
     authorId: string;
@@ -476,7 +480,7 @@ export async function insertEntry(
   return entry!;
 }
 
-export async function findEntryById(tx: DbTx, entryId: string) {
+export async function findEntryById(tx: DbClient, entryId: string) {
   const [row] = await tx
     .select()
     .from(sozlukEntries)
@@ -486,7 +490,7 @@ export async function findEntryById(tx: DbTx, entryId: string) {
 }
 
 export async function updateEntryContent(
-  tx: DbTx,
+  tx: DbClient,
   entryId: string,
   content: string,
 ) {
@@ -498,30 +502,44 @@ export async function updateEntryContent(
   return row ?? null;
 }
 
-export async function softDeleteEntryRecord(tx: DbTx, entryId: string) {
-  const [existing] = await tx
-    .select()
-    .from(sozlukEntries)
-    .where(and(eq(sozlukEntries.id, entryId), ne(sozlukEntries.status, "deleted")))
-    .limit(1);
-  if (!existing) return null;
+export async function softDeleteEntryRecord(
+  tx: DbClient,
+  entryId: string,
+  existingEntry?: { id: string; topicId: string; status: string } | null,
+) {
+  const target =
+    existingEntry ??
+    (
+      await tx
+        .select({
+          id: sozlukEntries.id,
+          topicId: sozlukEntries.topicId,
+          status: sozlukEntries.status,
+        })
+        .from(sozlukEntries)
+        .where(and(eq(sozlukEntries.id, entryId), ne(sozlukEntries.status, "deleted")))
+        .limit(1)
+    )[0];
+  if (!target || target.status === "deleted") return null;
 
-  await tx
-    .update(sozlukEntries)
-    .set({ status: "deleted" })
-    .where(eq(sozlukEntries.id, entryId));
+  await Promise.all([
+    tx
+      .update(sozlukEntries)
+      .set({ status: "deleted" })
+      .where(eq(sozlukEntries.id, entryId)),
+    target.status === "published"
+      ? tx
+          .update(sozlukTopics)
+          .set({ entryCount: sql`GREATEST(${sozlukTopics.entryCount} - 1, 0)` })
+          .where(eq(sozlukTopics.id, target.topicId))
+      : Promise.resolve(),
+  ]);
 
-  if (existing.status === "published") {
-    await tx
-      .update(sozlukTopics)
-      .set({ entryCount: sql`GREATEST(${sozlukTopics.entryCount} - 1, 0)` })
-      .where(eq(sozlukTopics.id, existing.topicId));
-  }
-  return existing;
+  return target;
 }
 
 export async function upsertEntryVote(
-  tx: DbTx,
+  tx: DbClient,
   entryId: string,
   authorId: string,
   nextValue: -1 | 0 | 1,
@@ -593,7 +611,7 @@ export async function upsertEntryVote(
 }
 
 export async function toggleEntryFavorite(
-  tx: DbTx,
+  tx: DbClient,
   entryId: string,
   authorId: string,
 ) {
@@ -637,7 +655,7 @@ export async function toggleEntryFavorite(
 }
 
 export async function insertEntryReport(
-  tx: DbTx,
+  tx: DbClient,
   input: {
     entryId: string;
     reporterAuthorId: string;
@@ -657,7 +675,7 @@ export async function insertEntryReport(
   return row!;
 }
 
-export async function listAuthorEntriesAndStats(tx: DbTx, authorId: string) {
+export async function listAuthorEntriesAndStats(tx: DbClient, authorId: string) {
   const [stats] = await tx
     .select({
       entryCount: sql<number>`count(*)::int`,

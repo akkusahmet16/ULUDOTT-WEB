@@ -58,6 +58,7 @@ export function SozlukEntryCard({
   const [reportNote, setReportNote] = useState("");
   const [reportSent, setReportSent] = useState(false);
   const [deleted, setDeleted] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   if (deleted) return null;
 
@@ -77,6 +78,10 @@ export function SozlukEntryCard({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ value: nextValue }),
     });
+    if (res.status === 404) {
+      setDeleted(true);
+      return;
+    }
     if (res.ok) {
       const data = (await res.json()) as {
         upvotes: number;
@@ -97,6 +102,10 @@ export function SozlukEntryCard({
     const res = await fetch(`/api/sozluk/entries/${item.id}/favorite`, {
       method: "POST",
     });
+    if (res.status === 404) {
+      setDeleted(true);
+      return;
+    }
     if (res.ok) {
       const data = (await res.json()) as {
         favorited: boolean;
@@ -113,6 +122,10 @@ export function SozlukEntryCard({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ content: draft }),
     });
+    if (res.status === 404) {
+      setDeleted(true);
+      return;
+    }
     if (res.ok) {
       setContent(draft);
       setEditing(false);
@@ -121,12 +134,30 @@ export function SozlukEntryCard({
   }
 
   async function handleDelete() {
-    const res = await fetch(`/api/sozluk/entries/${item.id}`, {
-      method: "DELETE",
-    });
-    if (res.ok) {
-      setDeleted(true);
-      router.refresh();
+    if (isDeleting) return;
+    if (
+      typeof window !== "undefined" &&
+      !window.confirm(t("sozluk.deleteConfirm"))
+    ) {
+      return;
+    }
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/sozluk/entries/${item.id}`, {
+        method: "DELETE",
+      });
+      if (res.ok || res.status === 404) {
+        setDeleted(true);
+      } else {
+        const data = (await res.json().catch(() => ({}))) as {
+          error?: string;
+        };
+        alert(data.error ?? t("sozluk.deleteError"));
+      }
+    } catch {
+      alert(t("sozluk.deleteError"));
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -234,8 +265,9 @@ export function SozlukEntryCard({
                 type="button"
                 className="sozluk-action-btn"
                 onClick={handleDelete}
+                disabled={isDeleting}
               >
-                {t("sozluk.deleteButton")}
+                {isDeleting ? t("sozluk.deletingButton") : t("sozluk.deleteButton")}
               </button>
             </>
           )}
