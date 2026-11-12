@@ -311,7 +311,7 @@ export async function verifyStudentViaSks(
     const isApprovedMember = rows.some((row) => {
       const normalizedRow = normalizeMemberName(
         decodeEntities(row[1].replace(/<[^>]+>/g, " ")),
-      );
+      ).replace(/ı/g, "i");
       return (
         normalizedRow.includes("dijital oyun tasarim toplulugu") &&
         !normalizedRow.includes("onay bekliyor") &&
@@ -330,9 +330,15 @@ export async function verifyStudentViaSks(
     const extractedName = sidebarNameMatch
       ? decodeEntities(sidebarNameMatch[1].replace(/<[^>]+>/g, " "))
       : "";
-    const fullName = extractedName || studentNumber.trim();
+    const cleanStudentId = studentNumber.trim();
+    const fullName =
+      extractedName && !/t[ıi]klay[ıi]n[ıi]z/i.test(extractedName)
+        ? extractedName
+        : cleanStudentId;
 
-    let email = `${studentNumber.trim().toLowerCase()}@ogr.uludag.edu.tr`;
+    let email = cleanStudentId.includes("@")
+      ? cleanStudentId.toLowerCase()
+      : `${cleanStudentId.toLowerCase()}@ogr.uludag.edu.tr`;
     try {
       const profileRes = await fetch(
         "https://topluluk-etkinlik.uludag.edu.tr/Ogrenci/BilgilerimiDuzenle",
