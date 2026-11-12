@@ -225,6 +225,13 @@
       "when": 1794488651161,
       "tag": "0031_conscious_franklin_storm",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1794498683919,
+      "tag": "0032_brief_hawkeye",
+      "breakpoints": true
     }
   ]
 }

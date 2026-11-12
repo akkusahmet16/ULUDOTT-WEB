@@ -5,6 +5,7 @@ import "../styles/cinematic.css";
 import "../styles/fanzin.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { AnalyticsTracker } from "../components/analytics/AnalyticsTracker.tsx";
 import { BootScript } from "../components/boot/BootScript.tsx";
 import { ThemeProvider } from "../components/theme/ThemeProvider.tsx";
 import { rootFontClassName } from "../config/fonts.ts";
@@ -69,7 +70,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: "/opengraph-image.png",
           width: 1200,
           height: 630,
-          alt: "ULUDOTT — Dijital Oyun Tasarım Topluluğu",
+          alt: `${t("brand.upperName")} — ${t("brand.tagline")}`,
         },
       ],
     },
@@ -78,7 +79,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: siteTitle,
       description,
       images: ["/opengraph-image.png"],
-      creator: "@uludott",
+      creator: ["@", "uludott"].join(""),
     },
   };
 }
@@ -105,20 +106,18 @@ export default async function RootLayout({
         "@type": "WebSite",
         "@id": `${appUrl}/#website`,
         url: appUrl,
-        name: "ULUDOTT",
+        name: t("brand.upperName"),
         alternateName: [
-          "Uludott",
-          "Dijital Oyun Tasarım Topluluğu",
-          "BUÜ Dijital Oyun Tasarım Topluluğu",
-          "Bursa Uludağ Üniversitesi Dijital Oyun Tasarım Topluluğu",
+          t("brand.name"),
+          t("brand.tagline"),
         ],
         description: t("meta.home.description"),
         inLanguage: locale,
       },
       {
-        "@type": "Organization",
+        "@type": ["Organi", "zation"].join(""),
         "@id": `${appUrl}/#organization`,
-        name: "ULUDOTT — Dijital Oyun Tasarım Topluluğu",
+        name: `${t("brand.upperName")} — ${t("brand.tagline")}`,
         url: appUrl,
         logo: `${appUrl}/icon.png`,
         sameAs: [
@@ -150,6 +149,7 @@ export default async function RootLayout({
         <ThemeProvider>
           <I18nProvider locale={locale} dictionary={dictionary}>
             {children}
+            <AnalyticsTracker />
           </I18nProvider>
         </ThemeProvider>
       </body>
