@@ -20,6 +20,18 @@ git fetch origin uludott-web-final
 git checkout uludott-web-final
 git pull origin uludott-web-final
 
+# Ortam değişkenleri
+if [ -f "/etc/uludott/runtime.env" ]; then
+  echo "==> /etc/uludott/runtime.env yükleniyor..."
+  set -a
+  # shellcheck source=/dev/null
+  source /etc/uludott/runtime.env
+  set +a
+  if [ ! -f ".env.local" ] && [ ! -L ".env.local" ]; then
+    ln -sf /etc/uludott/runtime.env .env.local
+  fi
+fi
+
 # 3. Bağımlılıkları güncelle
 echo "==> Bağımlılıklar yükleniyor (pnpm install)..."
 pnpm install --frozen-lockfile
