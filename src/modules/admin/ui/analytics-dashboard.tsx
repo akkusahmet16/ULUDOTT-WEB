@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import type { AnalyticsSummary } from "../application/analytics-service";
+import { formatDateTime } from "../../../i18n/format.ts";
 import styles from "./analytics-dashboard.module.css";
 
 export function AnalyticsDashboard() {
@@ -543,7 +544,7 @@ export function AnalyticsDashboard() {
                       <code>{event.path}</code>
                     </div>
                     <span className={styles.eventTime}>
-                      {new Date(event.createdAt).toLocaleTimeString("tr-TR", {
+                      {formatDateTime(event.createdAt, "tr", {
                         hour: "2-digit",
                         minute: "2-digit",
                         second: "2-digit",

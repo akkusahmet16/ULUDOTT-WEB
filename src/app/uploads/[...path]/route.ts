@@ -1,6 +1,7 @@
 import { createReadStream, statSync, existsSync } from "node:fs";
 import { join, extname, basename } from "node:path";
 import { Readable } from "node:stream";
+import { recordEvent } from "../../../modules/admin/application/analytics-service";
 
 export const runtime = "nodejs";
 
@@ -88,6 +89,31 @@ export async function GET(
       : "inline";
 
     const rangeHeader = request.headers.get("range");
+
+    if (
+      isDownload &&
+      ext === ".pdf" &&
+      segments.some((s) => s.toLowerCase().includes("fanzin")) &&
+      !url.searchParams.has("tracked") &&
+      (!rangeHeader || rangeHeader.startsWith("bytes=0-"))
+    ) {
+      void recordEvent({
+        eventType: "download",
+        eventName: `Fanzin İndir: ${fileBase}`,
+        path: url.pathname,
+        userAgent: request.headers.get("user-agent") || undefined,
+        ip:
+          request.headers.get("cf-connecting-ip") ||
+          request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+          undefined,
+        metadata: {
+          fileBase,
+          source: "server_uploads_route",
+        },
+      }).catch((err) => {
+        console.error("[uploads] fanzin direct download tracking error:", err);
+      });
+    }
     if (rangeHeader && rangeHeader.startsWith("bytes=")) {
       const parts = rangeHeader.replace("bytes=", "").split("-");
       const start = parseInt(parts[0], 10);

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import type { PageFlip } from "page-flip";
 import type { FanzinIssue } from "../domain/fanzin-types.ts";
+import { trackSiteEvent } from "../../../lib/analytics/tracker.ts";
 
 interface FlipbookReaderProps {
   readonly issue?: FanzinIssue | null;
@@ -14,54 +15,8 @@ interface FlipbookReaderProps {
   readonly interactiveSoonText?: string;
 }
 
-// GTA VI temalı fanzin iskelet sayfa SVG'si (Arka planda render sürerken gösterilen zarif yer tutucu)
-function createPlaceholderPage(pageNumber?: number): string {
-  const label = pageNumber ? `Sayfa ${pageNumber}` : "Sayfa Hazırlanıyor";
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 750" width="580" height="750">
-    <defs>
-      <linearGradient id="pbg" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#111420" />
-        <stop offset="100%" stop-color="#0a0c14" />
-      </linearGradient>
-      <linearGradient id="pbar" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#1c2234" />
-        <stop offset="50%" stop-color="#2a334d" />
-        <stop offset="100%" stop-color="#1c2234" />
-      </linearGradient>
-    </defs>
-    <rect width="580" height="750" fill="url(#pbg)"/>
-    <rect x="36" y="36" width="508" height="678" rx="8" fill="#131724" stroke="#22293e" stroke-width="1.5"/>
-    <rect x="70" y="80" width="260" height="28" rx="4" fill="url(#pbar)"/>
-    <rect x="70" y="130" width="440" height="12" rx="3" fill="url(#pbar)"/>
-    <rect x="70" y="154" width="410" height="12" rx="3" fill="url(#pbar)"/>
-    <rect x="70" y="178" width="430" height="12" rx="3" fill="url(#pbar)"/>
-    <rect x="70" y="220" width="440" height="260" rx="8" fill="url(#pbar)"/>
-    <rect x="70" y="510" width="440" height="12" rx="3" fill="url(#pbar)"/>
-    <rect x="70" y="534" width="380" height="12" rx="3" fill="url(#pbar)"/>
-    <rect x="70" y="558" width="420" height="12" rx="3" fill="url(#pbar)"/>
-    <text x="290" y="675" fill="#64748b" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="13" font-weight="600" letter-spacing="1" text-anchor="middle">${label}</text>
-  </svg>`;
-  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-}
-
-// Çift sayfa düzenini dengelemek için kullanılan arka kapak SVG'si
-function createBackCoverPage(): string {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 750" width="580" height="750">
-    <defs>
-      <linearGradient id="bcbg" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#0e1018" />
-        <stop offset="100%" stop-color="#06070a" />
-      </linearGradient>
-    </defs>
-    <rect width="580" height="750" fill="url(#bcbg)"/>
-    <rect x="36" y="36" width="508" height="678" rx="8" fill="#11131c" stroke="#1f2537" stroke-width="1.5"/>
-    <circle cx="290" cy="340" r="44" fill="#181c2b" stroke="#ff598333" stroke-width="2"/>
-    <text x="290" y="348" fill="#ffd1df" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="24" font-weight="700" text-anchor="middle">✦</text>
-    <text x="290" y="420" fill="#f8fafc" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="16" font-weight="700" letter-spacing="2" text-anchor="middle">ULUDOTT FANZİN</text>
-    <text x="290" y="445" fill="#64748b" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="12" letter-spacing="1.5" text-anchor="middle">uludott.com.tr/fanzin</text>
-  </svg>`;
-  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-}
+const PLACEHOLDER_PAGE_URL = "/images/fanzin/placeholder.svg";
+const BACK_COVER_PAGE_URL = "/images/fanzin/backcover.svg";
 
 // PDF.js kütüphanesini dinamik olarak yükle
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -116,7 +71,7 @@ async function renderSinglePdfPage(
   const ctx = canvas.getContext("2d", { alpha: false });
   if (!ctx) throw new Error("Canvas 2D context oluşturulamadı");
 
-  ctx.fillStyle = "#ffffff";
+  ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
@@ -267,6 +222,21 @@ export function FlipbookReader({
   const createdBlobUrlsRef = useRef<string[]>([]);
 
   const [loadError, setLoadError] = useState<boolean>(false);
+  const hasTrackedViewRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!issue || !issue.id || hasTrackedViewRef.current === issue.id) return;
+    hasTrackedViewRef.current = issue.id;
+    trackSiteEvent(
+      "fanzin_view",
+      `Fanzin Görüntülendi: #${issue.issueNumber} - ${issue.title}`,
+      {
+        issueId: issue.id,
+        issueNumber: issue.issueNumber,
+        title: issue.title,
+      },
+    );
+  }, [issue]);
 
   const hasPages = Boolean(
     (issue?.pages && issue.pages.length >= 2) ||
@@ -388,10 +358,9 @@ export function FlipbookReader({
             if (hasCover && i === 0) {
               pageImages[i] = validCoverUrl!;
             } else if (hasCover && i === paddedTotalPages - 1 && totalPages !== paddedTotalPages) {
-              pageImages[i] = createBackCoverPage();
+              pageImages[i] = BACK_COVER_PAGE_URL;
             } else {
-              const pdfPageNumber = hasCover ? i : i + 1;
-              pageImages[i] = createPlaceholderPage(pdfPageNumber);
+              pageImages[i] = PLACEHOLDER_PAGE_URL;
             }
           }
 

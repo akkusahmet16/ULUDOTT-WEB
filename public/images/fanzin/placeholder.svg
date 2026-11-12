@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 750" width="580" height="750">
+  <defs>
+    <linearGradient id="pbg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#111420" />
+      <stop offset="100%" stop-color="#0a0c14" />
+    </linearGradient>
+    <linearGradient id="pbar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1c2234" />
+      <stop offset="50%" stop-color="#2a334d" />
+      <stop offset="100%" stop-color="#1c2234" />
+    </linearGradient>
+  </defs>
+  <rect width="580" height="750" fill="url(#pbg)"/>
+  <rect x="36" y="36" width="508" height="678" rx="8" fill="#131724" stroke="#22293e" stroke-width="1.5"/>
+  <rect x="70" y="80" width="260" height="28" rx="4" fill="url(#pbar)"/>
+  <rect x="70" y="130" width="440" height="12" rx="3" fill="url(#pbar)"/>
+  <rect x="70" y="154" width="410" height="12" rx="3" fill="url(#pbar)"/>
+  <rect x="70" y="178" width="430" height="12" rx="3" fill="url(#pbar)"/>
+  <rect x="70" y="220" width="440" height="260" rx="8" fill="url(#pbar)"/>
+  <rect x="70" y="510" width="440" height="12" rx="3" fill="url(#pbar)"/>
+  <rect x="70" y="534" width="380" height="12" rx="3" fill="url(#pbar)"/>
+  <rect x="70" y="558" width="420" height="12" rx="3" fill="url(#pbar)"/>
+  <text x="290" y="675" fill="#64748b" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="13" font-weight="600" letter-spacing="1" text-anchor="middle">ULUDOTT</text>
+</svg>

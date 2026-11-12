@@ -1,4 +1,5 @@
 import type { FanzinIssue } from "../domain/fanzin-types.ts";
+import { FanzinDownloadButton } from "./fanzin-download-button.tsx";
 
 interface FanzinHeroProps {
   readonly issue?: FanzinIssue | null;
@@ -27,13 +28,16 @@ export function FanzinHero({ issue, labels }: FanzinHeroProps) {
             {labels.readButton}
           </a>
           {hasPdf && issue && (
-            <a
-              href={issue.pdfUrl.includes("?") ? `${issue.pdfUrl}&download=1` : `${issue.pdfUrl}?download=1`}
+            <FanzinDownloadButton
+              href={issue.pdfUrl}
               download={`uludott-fanzin-sayi-${String(issue.issueNumber).padStart(2, "0")}.pdf`}
               className="button secondary"
+              issueId={issue.id}
+              issueNumber={issue.issueNumber}
+              title={issue.title}
             >
               {labels.downloadButton}
-            </a>
+            </FanzinDownloadButton>
           )}
           <a href="#arsiv" className="button secondary">
             {labels.archiveButton}

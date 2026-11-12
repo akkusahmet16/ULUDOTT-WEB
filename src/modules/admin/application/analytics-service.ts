@@ -1,6 +1,6 @@
 import "server-only";
 import { createHash } from "node:crypto";
-import { sql, gte, desc, count, countDistinct } from "drizzle-orm";
+import { sql, gte, desc, count, countDistinct, eq } from "drizzle-orm";
 import { sitePageViews, siteAnalyticsEvents } from "../../../db/schema/analytics.ts";
 import { fanzinIssues } from "../../../db/schema/fanzin.ts";
 import { getDatabase } from "../../../lib/database/client.ts";
@@ -228,6 +228,63 @@ export async function recordEvent(options: {
       visitorHash,
       metadata: options.metadata ? JSON.stringify(options.metadata).slice(0, 2000) : null,
     });
+
+    // Fanzin indirme ve görüntüleme sayaçlarını güncelle
+    if (
+      options.eventType === "download" ||
+      options.eventType === "fanzin_download" ||
+      options.eventName.toLowerCase().includes("fanzin")
+    ) {
+      const db = getDatabase();
+      const issueId = options.metadata?.issueId;
+      const issueNumber = options.metadata?.issueNumber;
+
+      if (typeof issueId === "string" && issueId.length > 10) {
+        await db
+          .update(fanzinIssues)
+          .set({ downloadCount: sql`${fanzinIssues.downloadCount} + 1` })
+          .where(eq(fanzinIssues.id, issueId));
+      } else if (
+        typeof issueNumber === "number" ||
+        (typeof issueNumber === "string" && !isNaN(Number(issueNumber)))
+      ) {
+        await db
+          .update(fanzinIssues)
+          .set({ downloadCount: sql`${fanzinIssues.downloadCount} + 1` })
+          .where(eq(fanzinIssues.issueNumber, Number(issueNumber)));
+      } else {
+        await db
+          .update(fanzinIssues)
+          .set({ downloadCount: sql`${fanzinIssues.downloadCount} + 1` })
+          .where(eq(fanzinIssues.status, "published"));
+      }
+    }
+
+    if (options.eventType === "fanzin_view") {
+      const db = getDatabase();
+      const issueId = options.metadata?.issueId;
+      const issueNumber = options.metadata?.issueNumber;
+
+      if (typeof issueId === "string" && issueId.length > 10) {
+        await db
+          .update(fanzinIssues)
+          .set({ viewCount: sql`${fanzinIssues.viewCount} + 1` })
+          .where(eq(fanzinIssues.id, issueId));
+      } else if (
+        typeof issueNumber === "number" ||
+        (typeof issueNumber === "string" && !isNaN(Number(issueNumber)))
+      ) {
+        await db
+          .update(fanzinIssues)
+          .set({ viewCount: sql`${fanzinIssues.viewCount} + 1` })
+          .where(eq(fanzinIssues.issueNumber, Number(issueNumber)));
+      } else {
+        await db
+          .update(fanzinIssues)
+          .set({ viewCount: sql`${fanzinIssues.viewCount} + 1` })
+          .where(eq(fanzinIssues.status, "published"));
+      }
+    }
   } catch (error) {
     console.error("[analytics] failed to record event:", error);
   }
@@ -432,7 +489,17 @@ export async function getAnalyticsSummary(days: number = 30): Promise<AnalyticsS
       .orderBy(desc(fanzinIssues.issueNumber))
       .limit(10);
 
-    const totalFanzinDownloads = fanzinData.reduce((acc, curr) => acc + (curr.downloads || 0), 0);
+    const totalFanzinDownloadsFromIssues = fanzinData.reduce((acc, curr) => acc + (curr.downloads || 0), 0);
+
+    const [fanzinEventCount] = await db
+      .select({ count: count() })
+      .from(siteAnalyticsEvents)
+      .where(sql`${siteAnalyticsEvents.eventType} = 'download' OR ${siteAnalyticsEvents.eventName} ILIKE '%fanzin%'`);
+
+    const totalFanzinDownloads = Math.max(
+      totalFanzinDownloadsFromIssues,
+      Number(fanzinEventCount?.count || 0),
+    );
 
     const viewsPerVisitor = uniqueVisitorsCount > 0
       ? Math.round((totalViewsCount / uniqueVisitorsCount) * 10) / 10
