@@ -147,3 +147,32 @@ it("deleteSiteAsset uploads altındaki dosyayı VDS diskinden kalıcı olarak si
     await rm(root, { recursive: true, force: true });
   }
 });
+
+it("fanzin kapsamı altında PDF dosyaları (magic bytes ve uzantı ile) 100MB sınırına kadar kabul edilir", async () => {
+  const root = await mkdtemp(join(tmpdir(), "uludott-pdf-assets-"));
+  try {
+    const pdfContent = Buffer.from("%PDF-1.4\n1 0 obj\n<<>>\nendobj\ntrailer\n<<>>\n%%EOF");
+    const file = new File([pdfContent], "Fanzin Sayı 1.pdf", {
+      type: "application/pdf",
+    });
+
+    const uploaded = await uploadSiteAsset("fanzin", file, root);
+    expect(uploaded.path).toMatch(/^\/uploads\/fanzin\/\d+-fanzin-sayi-1\.pdf$/);
+    expect(uploaded.folder).toBe("/uploads/fanzin");
+    expect(uploaded.kind).toBe("document");
+
+    await expect(
+      assertSiteAsset(uploaded.path, "fanzin", "document", root),
+    ).resolves.toBeUndefined();
+
+    // Magic bytes içeren ancak uzantısı olmayan veya octet-stream MIME tipi olan PDF de algılanır
+    const binaryPdfFile = new File([pdfContent], "adsiz-dosya", {
+      type: "application/octet-stream",
+    });
+    const uploadedBinary = await uploadSiteAsset("fanzin", binaryPdfFile, root);
+    expect(uploadedBinary.kind).toBe("document");
+    expect(uploadedBinary.path).toMatch(/\.pdf$/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});

@@ -61,7 +61,7 @@ const roots: Record<SiteAssetScope, string[]> = {
 
 const MAX_IMAGE_BYTES = 15 * 1024 * 1024; // 15 MiB
 const MAX_VIDEO_BYTES = 100 * 1024 * 1024; // 100 MiB
-const MAX_DOC_BYTES = 50 * 1024 * 1024; // 50 MiB
+const MAX_DOC_BYTES = 100 * 1024 * 1024; // 100 MiB (Fanzin ve yüksek çözünürlüklü dijital baskı PDF'leri için)
 
 function slugifyFilename(name: string): string {
   const map: Record<string, string> = {
@@ -136,10 +136,21 @@ export async function uploadSiteAsset(
   const targetDir = join(root, "uploads", uploadFolder);
   await mkdir(targetDir, { recursive: true, mode: 0o755 });
 
-  // 1. PDF / Belge yüklemesi
-  if (ext === ".pdf" || file.type === "application/pdf") {
+  // 1. PDF / Belge yüklemesi (Uzantı, MIME türü veya %PDF- sihirli bayt doğrulaması)
+  const isPdf =
+    ext === ".pdf" ||
+    file.type === "application/pdf" ||
+    file.type === "application/x-pdf" ||
+    file.type === "application/acrobat" ||
+    (buffer.length >= 4 &&
+      buffer[0] === 0x25 && // '%'
+      buffer[1] === 0x50 && // 'P'
+      buffer[2] === 0x44 && // 'D'
+      buffer[3] === 0x46);  // 'F'
+
+  if (isPdf) {
     if (file.size > MAX_DOC_BYTES) {
-      throw Error("PDF boyutu en fazla 50 MiB olabilir");
+      throw Error("PDF boyutu en fazla 100 MiB olabilir");
     }
     const filename = `${Date.now()}-${safeBase}.pdf`;
     const targetPath = join(targetDir, filename);

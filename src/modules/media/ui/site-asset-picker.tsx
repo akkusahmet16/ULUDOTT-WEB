@@ -103,20 +103,99 @@ export function SiteAssetPicker({
         };
 
         xhr.onload = () => {
+          let data: { item?: SiteAsset; error?: string } | null = null;
           try {
-            const data = JSON.parse(xhr.responseText);
-            if (xhr.status >= 200 && xhr.status < 300) {
-              setUploadProgress(1);
-              resolve(data);
-            } else {
-              reject(new Error(data.error || "Dosya yüklenemedi"));
+            if (xhr.responseText && xhr.responseText.trim()) {
+              data = JSON.parse(xhr.responseText);
             }
           } catch {
-            reject(new Error("Sunucu yanıtı geçersiz"));
+            // HTML hata yanıtı veya geçersiz JSON durumunda sessizce devam et
           }
+
+          if (xhr.status >= 200 && xhr.status < 300) {
+            if (data?.item) {
+              setUploadProgress(1);
+              resolve(data as { item: SiteAsset });
+              return;
+            }
+          }
+
+          // Durum kodlarına göre kullanıcıya açık, yönlendirici ve çözüm odaklı mesajlar:
+          if (xhr.status === 413) {
+            reject(
+              new Error(
+                "Dosya boyutu sunucu sınırını aştı (413 Payload Too Large). Nginx yapılandırmanızda 'client_max_body_size 100M;' tanımlı olduğundan emin olun."
+              )
+            );
+            return;
+          }
+
+          if (xhr.status === 401) {
+            reject(
+              new Error(
+                "Oturum süreniz dolmuş (401). Lütfen sayfayı yenileyip admin paneline tekrar giriş yapın."
+              )
+            );
+            return;
+          }
+
+          if (xhr.status === 403) {
+            reject(
+              new Error(
+                data?.error ||
+                  "Bu işlem için yetkiniz yok veya CSRF doğrulaması başarısız oldu (403)."
+              )
+            );
+            return;
+          }
+
+          if (xhr.status === 502 || xhr.status === 504) {
+            reject(
+              new Error(
+                `Sunucu ağ geçidi hatası veya zaman aşımı (HTTP ${xhr.status} Bad Gateway). Sunucu süreci (Node.js) yanıt vermiyor.`
+              )
+            );
+            return;
+          }
+
+          if (data?.error) {
+            reject(new Error(data.error));
+            return;
+          }
+
+          // HTML hata sayfasından başlığı çıkarma (varsa):
+          const titleMatch = xhr.responseText.match(/<title>(.*?)<\/title>/i);
+          const htmlTitle = titleMatch ? titleMatch[1].trim() : "";
+
+          if (htmlTitle) {
+            reject(new Error(`Sunucu Hatası (HTTP ${xhr.status}): ${htmlTitle}`));
+            return;
+          }
+
+          if (xhr.status >= 400) {
+            reject(
+              new Error(
+                `Yükleme başarısız oldu (HTTP ${xhr.status} ${xhr.statusText || ""}).`
+              )
+            );
+            return;
+          }
+
+          reject(new Error("Sunucu yanıtı geçersiz veya boş döndü."));
         };
 
-        xhr.onerror = () => reject(new Error("Ağ bağlantısı hatası oluştu"));
+        xhr.onerror = () =>
+          reject(
+            new Error(
+              "Ağ bağlantısı hatası oluştu. Sunucuya ulaşılamıyor veya bağlantı koptu."
+            )
+          );
+        xhr.ontimeout = () =>
+          reject(
+            new Error(
+              "Yükleme zaman aşımına uğradı. Dosya boyutu büyük olabilir veya bağlantı yavaş."
+            )
+          );
         xhr.send(formData);
       });
 

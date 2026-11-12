@@ -62,11 +62,37 @@ export function MediaManager() {
         body: formData,
       });
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error ?? "Dosya yüklenemedi");
+      const text = await response.text();
+      let data: { item?: SiteAsset; error?: string } | null = null;
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch {
+        // non-JSON
+      }
 
-      setMessage(`"${data.item.name}" sunucuya başarıyla yüklendi.`);
-      setItems((prev) => [data.item, ...prev.filter((i) => i.path !== data.item.path)]);
+      if (!response.ok) {
+        if (response.status === 413) {
+          throw new Error(
+            "Dosya boyutu sunucu sınırını aştı (413 Payload Too Large). Nginx üzerinde 'client_max_body_size 100M;' ayarlandığından emin olun."
+          );
+        }
+        if (data?.error) {
+          throw new Error(data.error);
+        }
+        const titleMatch = text.match(/<title>(.*?)<\/title>/i);
+        const title = titleMatch ? titleMatch[1].trim() : "";
+        throw new Error(
+          title ? `Sunucu Hatası (${response.status}): ${title}` : `Dosya yüklenemedi (HTTP ${response.status})`
+        );
+      }
+
+      if (!data || !data.item) {
+        throw new Error("Sunucu yanıtı geçersiz.");
+      }
+
+      const item = data.item;
+      setMessage(`"${item.name}" sunucuya başarıyla yüklendi.`);
+      setItems((prev) => [item, ...prev.filter((i) => i.path !== item.path)]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Dosya yüklenemedi");
     } finally {
