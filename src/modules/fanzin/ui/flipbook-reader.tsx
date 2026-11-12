@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import type { PageFlip } from "page-flip";
 import type { FanzinIssue } from "../domain/fanzin-types.ts";
 
@@ -14,80 +14,242 @@ interface FlipbookReaderProps {
   readonly interactiveSoonText?: string;
 }
 
-async function loadPdfPages(pdfUrl: string): Promise<string[]> {
-  if (typeof window === "undefined") return [];
+// GTA VI temalı fanzin iskelet sayfa SVG'si (Arka planda render sürerken gösterilen zarif yer tutucu)
+function createPlaceholderPage(pageNumber?: number): string {
+  const label = pageNumber ? `Sayfa ${pageNumber}` : "Sayfa Hazırlanıyor";
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 750" width="580" height="750">
+    <defs>
+      <linearGradient id="pbg" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#111420" />
+        <stop offset="100%" stop-color="#0a0c14" />
+      </linearGradient>
+      <linearGradient id="pbar" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#1c2234" />
+        <stop offset="50%" stop-color="#2a334d" />
+        <stop offset="100%" stop-color="#1c2234" />
+      </linearGradient>
+    </defs>
+    <rect width="580" height="750" fill="url(#pbg)"/>
+    <rect x="36" y="36" width="508" height="678" rx="8" fill="#131724" stroke="#22293e" stroke-width="1.5"/>
+    <rect x="70" y="80" width="260" height="28" rx="4" fill="url(#pbar)"/>
+    <rect x="70" y="130" width="440" height="12" rx="3" fill="url(#pbar)"/>
+    <rect x="70" y="154" width="410" height="12" rx="3" fill="url(#pbar)"/>
+    <rect x="70" y="178" width="430" height="12" rx="3" fill="url(#pbar)"/>
+    <rect x="70" y="220" width="440" height="260" rx="8" fill="url(#pbar)"/>
+    <rect x="70" y="510" width="440" height="12" rx="3" fill="url(#pbar)"/>
+    <rect x="70" y="534" width="380" height="12" rx="3" fill="url(#pbar)"/>
+    <rect x="70" y="558" width="420" height="12" rx="3" fill="url(#pbar)"/>
+    <text x="290" y="675" fill="#64748b" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="13" font-weight="600" letter-spacing="1" text-anchor="middle">${label}</text>
+  </svg>`;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
 
-  // 1. pdf.min.js yükle (yoksa)
+// Çift sayfa düzenini dengelemek için kullanılan arka kapak SVG'si
+function createBackCoverPage(): string {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 750" width="580" height="750">
+    <defs>
+      <linearGradient id="bcbg" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#0e1018" />
+        <stop offset="100%" stop-color="#06070a" />
+      </linearGradient>
+    </defs>
+    <rect width="580" height="750" fill="url(#bcbg)"/>
+    <rect x="36" y="36" width="508" height="678" rx="8" fill="#11131c" stroke="#1f2537" stroke-width="1.5"/>
+    <circle cx="290" cy="340" r="44" fill="#181c2b" stroke="#ff598333" stroke-width="2"/>
+    <text x="290" y="348" fill="#ffd1df" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="24" font-weight="700" text-anchor="middle">✦</text>
+    <text x="290" y="420" fill="#f8fafc" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="16" font-weight="700" letter-spacing="2" text-anchor="middle">ULUDOTT FANZİN</text>
+    <text x="290" y="445" fill="#64748b" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="12" letter-spacing="1.5" text-anchor="middle">uludott.com.tr/fanzin</text>
+  </svg>`;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
+
+// PDF.js kütüphanesini dinamik olarak yükle
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function ensurePdfJs(): Promise<any> {
+  if (typeof window === "undefined") return null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!(window as any).pdfjsLib) {
-    await new Promise<void>((resolve, reject) => {
+  if ((window as any).pdfjsLib) return (window as any).pdfjsLib;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return new Promise<any>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ((window as any).pdfjsLib) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if ((window as any).pdfjsLib) {
-        resolve();
-        return;
+      resolve((window as any).pdfjsLib);
+      return;
+    }
+    const existing = document.querySelector('script[src*="pdf.min.js"]');
+    if (existing) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      existing.addEventListener("load", () => resolve((window as any).pdfjsLib));
+      existing.addEventListener("error", () => reject(new Error("PDF.js yüklenemedi")));
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "/vendor/pdfjs/pdf.min.js";
+    script.async = true;
+    script.onload = () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const lib = (window as any).pdfjsLib;
+      if (lib?.GlobalWorkerOptions) {
+        lib.GlobalWorkerOptions.workerSrc = "/vendor/pdfjs/pdf.worker.min.js";
       }
-      const existing = document.querySelector('script[src*="pdf.min.js"]');
-      if (existing) {
-        existing.addEventListener("load", () => resolve());
-        existing.addEventListener("error", () => reject(new Error("PDF.js yüklenemedi")));
-        return;
-      }
-      const script = document.createElement("script");
-      script.src = "/vendor/pdfjs/pdf.min.js";
-      script.async = true;
-      script.onload = () => resolve();
-      script.onerror = () => reject(new Error("PDF.js kütüphanesi yüklenemedi"));
-      document.head.appendChild(script);
-    });
-  }
+      resolve(lib);
+    };
+    script.onerror = () => reject(new Error("PDF.js kütüphanesi yüklenemedi"));
+    document.head.appendChild(script);
+  });
+}
 
+// Tek bir PDF sayfasını yüksek kaliteli WebP Blob URL'sine dönüştür
+async function renderSinglePdfPage(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const pdfjs = (window as any).pdfjsLib;
-  if (!pdfjs) throw new Error("PDF.js hazır değil");
+  doc: any,
+  pageNum: number,
+  targetScale: number
+): Promise<string> {
+  const page = await doc.getPage(pageNum);
+  const viewport = page.getViewport({ scale: targetScale });
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.floor(viewport.width);
+  canvas.height = Math.floor(viewport.height);
+  const ctx = canvas.getContext("2d", { alpha: false });
+  if (!ctx) throw new Error("Canvas 2D context oluşturulamadı");
 
-  if (pdfjs.GlobalWorkerOptions) {
-    pdfjs.GlobalWorkerOptions.workerSrc = "/vendor/pdfjs/pdf.worker.min.js";
-  }
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
 
-  const doc = await pdfjs.getDocument({
-    url: pdfUrl,
-    disableRange: true,
-    disableStream: true,
+  await page.render({
+    canvasContext: ctx,
+    viewport,
+    intent: "print",
   }).promise;
 
-  const count = doc.numPages;
-  const rendered: string[] = [];
+  return new Promise<string>((resolve) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob) {
+          resolve(URL.createObjectURL(blob));
+        } else {
+          resolve(canvas.toDataURL("image/webp", 0.95));
+        }
+      },
+      "image/webp",
+      0.95
+    );
+  });
+}
 
-  // Ultra yüksek çözünürlüklü rasterizasyon:
-  // Fanzin yazıları, tipografi, el çizimleri ve detaylar için 300+ DPI Retina kalitesi
-  const dpr = typeof window !== "undefined" ? Math.max(window.devicePixelRatio || 1, 2) : 2;
-  const targetScale = Math.min(3.8, Math.max(3.2, dpr * 1.6));
+// PageFlip içindeki belirli bir sayfa görselini dinamik ve kesintisiz güncelle
+function updatePageInFlip(pageFlip: PageFlip | null, index: number, imageUrl: string) {
+  if (!pageFlip) return;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const collection = (pageFlip as any).getPageCollection?.();
+    if (collection) {
+      const pageObj = collection.getPage(index);
+      if (pageObj && pageObj.image) {
+        pageObj.image.src = imageUrl;
+        if (pageObj.image.complete) {
+          pageObj.isLoad = true;
+        } else {
+          pageObj.isLoad = false;
+          pageObj.image.onload = () => {
+            pageObj.isLoad = true;
+            try {
+              pageFlip.update();
+            } catch {
+              // ignore
+            }
+          };
+        }
+        try {
+          pageFlip.update();
+        } catch {
+          // ignore
+        }
+      }
+    }
+  } catch {
+    // ignore
+  }
+}
 
-  for (let i = 1; i <= count; i++) {
-    const page = await doc.getPage(i);
-    const viewport = page.getViewport({ scale: targetScale });
-    const canvas = document.createElement("canvas");
-    canvas.width = Math.floor(viewport.width);
-    canvas.height = Math.floor(viewport.height);
-    const ctx = canvas.getContext("2d", { alpha: false });
-    if (!ctx) continue;
-
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "high";
-
-    await page.render({
-      canvasContext: ctx,
-      viewport,
-      intent: "print",
-    }).promise;
-
-    // Yüksek kaliteli WebP (0.98) ile kayıpsız netlik ve pürüzsüz vektör kenarları
-    rendered.push(canvas.toDataURL("image/webp", 0.98));
+// CanvasUI ve CanvasRender High-DPI (Retina/4K) optimizasyon kancalarını uygula
+function applyHighDpiHooks(pageFlip: PageFlip) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ui = (pageFlip as any).getUI?.();
+  if (ui && typeof ui.resizeCanvas === "function") {
+    ui.resizeCanvas = function () {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const cvs = (this as any).canvas as HTMLCanvasElement | undefined;
+      if (!cvs) return;
+      const cs = getComputedStyle(cvs);
+      const width = parseInt(cs.getPropertyValue("width"), 10) || cvs.clientWidth || 1160;
+      const height = parseInt(cs.getPropertyValue("height"), 10) || cvs.clientHeight || 750;
+      const ratio = typeof window !== "undefined" ? Math.max(window.devicePixelRatio || 1, 2) : 2;
+      cvs.width = Math.round(width * ratio);
+      cvs.height = Math.round(height * ratio);
+    };
+    ui.resizeCanvas();
   }
 
-  return rendered;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const render = (pageFlip as any).getRender?.();
+  if (render) {
+    render.clear = function () {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const ctx = (this as any).ctx as CanvasRenderingContext2D | undefined;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const cvs = (this as any).canvas as HTMLCanvasElement | undefined;
+      if (ctx && cvs) {
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
+        ctx.restore();
+      }
+    };
+
+    if (typeof render.drawFrame === "function") {
+      const origDrawFrame = render.drawFrame.bind(render);
+      render.drawFrame = function () {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const cvs = (this as any).canvas as HTMLCanvasElement | undefined;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const ctx = (this as any).ctx as CanvasRenderingContext2D | undefined;
+        if (!cvs || !ctx) {
+          origDrawFrame();
+          return;
+        }
+        const ratio = typeof window !== "undefined" ? Math.max(window.devicePixelRatio || 1, 2) : 2;
+        const cs = getComputedStyle(cvs);
+        const cssW = parseInt(cs.getPropertyValue("width"), 10) || cvs.clientWidth || 1160;
+        const cssH = parseInt(cs.getPropertyValue("height"), 10) || cvs.clientHeight || 750;
+        const targetW = Math.round(cssW * ratio);
+        const targetH = Math.round(cssH * ratio);
+
+        if (cvs.width !== targetW || cvs.height !== targetH) {
+          cvs.width = targetW;
+          cvs.height = targetH;
+        }
+
+        ctx.save();
+        ctx.scale(ratio, ratio);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        origDrawFrame();
+        ctx.restore();
+      };
+    }
+  }
+
+  try {
+    pageFlip.update();
+  } catch {
+    // ignore
+  }
 }
 
 export function FlipbookReader({
@@ -102,8 +264,8 @@ export function FlipbookReader({
   const containerRef = useRef<HTMLDivElement>(null);
   const pageFlipRef = useRef<PageFlip | null>(null);
   const currentPageRef = useRef<number>(initialPage > 0 ? initialPage - 1 : 0);
+  const createdBlobUrlsRef = useRef<string[]>([]);
 
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [loadError, setLoadError] = useState<boolean>(false);
 
   const hasPages = Boolean(
@@ -153,13 +315,12 @@ export function FlipbookReader({
     }
   }, []);
 
-  // PageFlip başlatma ve yaşam döngüsü
+  // PageFlip başlatma, aşamalı yükleme ve yaşam döngüsü
   useEffect(() => {
     if (!hasPages || !containerRef.current) return;
 
     let isMounted = true;
     let pageFlipInstance: PageFlip | null = null;
-    setIsLoading(true);
     setLoadError(false);
 
     // React DOM senkronizasyonunu korumak için izole mount öğesi
@@ -172,9 +333,6 @@ export function FlipbookReader({
       try {
         const { PageFlip } = await import("page-flip");
         if (!isMounted) return;
-
-        let pageImages: string[] = [];
-        let bodyPages: string[] = [];
 
         // 1. Kapak görseli var mı ve erişilebilir mi kontrol et
         const candidateCover =
@@ -199,66 +357,210 @@ export function FlipbookReader({
           }
         }
 
-        // 2. PDF URL varsa doğrudan PDF'ten yüksek kaliteli rasterize et
-        if (issue?.pdfUrl && issue.pdfUrl !== "#" && issue.pdfUrl.trim() !== "") {
-          try {
-            const renderedFromPdf = await loadPdfPages(issue.pdfUrl);
-            if (renderedFromPdf.length > 0) {
-              bodyPages = renderedFromPdf;
+        let pageImages: string[] = [];
+        const hasPdf = Boolean(issue?.pdfUrl && issue.pdfUrl !== "#" && issue.pdfUrl.trim() !== "");
+
+        // 2. PDF varsa: İlk sayfaları hemen render edip okuyucuyu anında aç, kalanları arka planda akıt
+        if (hasPdf && issue?.pdfUrl) {
+          const pdfjs = await ensurePdfJs();
+          if (!pdfjs) throw new Error("PDF.js kütüphanesi yüklenemedi");
+
+          // HTTP Range ve stream desteği ile tüm 30 sayfayı indirmeden sadece ilk kısmı çek
+          const doc = await pdfjs.getDocument({
+            url: issue.pdfUrl,
+            cMapUrl: "/vendor/pdfjs/cmaps/",
+            cMapPacked: true,
+          }).promise;
+
+          if (!isMounted) return;
+
+          const totalPdfPages = doc.numPages;
+          const hasCover = Boolean(validCoverUrl);
+          const totalPages = hasCover ? totalPdfPages + 1 : totalPdfPages;
+          // Çift sayfa açılışını simetrik tutmak için tek sayılı sayfalarda arka kapak ekle
+          const paddedTotalPages = totalPages % 2 !== 0 ? totalPages + 1 : totalPages;
+
+          pageImages = new Array(paddedTotalPages);
+          const renderedPdfPages = new Map<number, string>();
+
+          // İlk olarak tüm sayfaları şık iskelet SVG yer tutucularıyla doldur
+          for (let i = 0; i < paddedTotalPages; i++) {
+            if (hasCover && i === 0) {
+              pageImages[i] = validCoverUrl!;
+            } else if (hasCover && i === paddedTotalPages - 1 && totalPages !== paddedTotalPages) {
+              pageImages[i] = createBackCoverPage();
+            } else {
+              const pdfPageNumber = hasCover ? i : i + 1;
+              pageImages[i] = createPlaceholderPage(pdfPageNumber);
             }
-          } catch (pdfErr) {
-            console.error("PDF sayfaları ayrıştırılırken hata:", pdfErr);
           }
+
+          // Retina ve Yüksek DPI ekranlar için ideal optimizasyon ölçeği
+          const dpr = typeof window !== "undefined" ? Math.min(window.devicePixelRatio || 1, 2.5) : 2;
+          const targetScale = Math.min(2.5, Math.max(1.8, dpr * 1.15));
+
+          // İLK AÇILIŞ: İlk spread (Kapak + 1. Sayfa veya 1. + 2. Sayfa) anında render edilir
+          if (hasCover) {
+            try {
+              const page1Url = await renderSinglePdfPage(doc, 1, targetScale);
+              pageImages[1] = page1Url;
+              renderedPdfPages.set(1, page1Url);
+              createdBlobUrlsRef.current.push(page1Url);
+            } catch (err) {
+              console.warn("PDF 1. sayfa oluşturulurken hata:", err);
+            }
+          } else {
+            try {
+              const page1Url = await renderSinglePdfPage(doc, 1, targetScale);
+              pageImages[0] = page1Url;
+              renderedPdfPages.set(1, page1Url);
+              createdBlobUrlsRef.current.push(page1Url);
+
+              if (totalPdfPages >= 2) {
+                const page2Url = await renderSinglePdfPage(doc, 2, targetScale);
+                pageImages[1] = page2Url;
+                renderedPdfPages.set(2, page2Url);
+                createdBlobUrlsRef.current.push(page2Url);
+              }
+            } catch (err) {
+              console.warn("PDF ilk sayfalar oluşturulurken hata:", err);
+            }
+          }
+
+          if (!isMounted) return;
+
+          // PageFlip örneğini hemen başlat (Okuyucu yükleme simgesi olmadan anında açılır)
+          const pageFlip = new PageFlip(mountEl, {
+            width: 580,
+            height: 750,
+            size: "stretch",
+            minWidth: 320,
+            maxWidth: 950,
+            minHeight: 414,
+            maxHeight: 1230,
+            drawShadow: true,
+            maxShadowOpacity: 0.35,
+            showCover: false, // Sol tarafta kapak görseli, sağ tarafta 1. sayfa açık başlasın
+            usePortrait: true,
+            showPageCorners: true,
+            useMouseEvents: true,
+            mobileScrollSupport: false,
+            flippingTime: 700,
+            startPage: currentPageRef.current,
+          });
+
+          pageFlipInstance = pageFlip;
+          pageFlipRef.current = pageFlip;
+
+          pageFlip.on("init", (e) => {
+            if (!isMounted) return;
+            currentPageRef.current = e.data.page;
+          });
+
+          pageFlip.on("flip", (e) => {
+            if (!isMounted) return;
+            currentPageRef.current = e.data;
+            try {
+              pageFlip.update();
+            } catch {
+              // ignore
+            }
+          });
+
+          pageFlip.on("changeState", (e) => {
+            if (!isMounted) return;
+            if (e.data === "flipping") {
+              playPageTurnAudio();
+            }
+          });
+
+          pageFlip.loadFromImages(pageImages);
+          applyHighDpiHooks(pageFlip);
+
+          // 3. ARKA PLAN İŞLEYİCİSİ (Aşamalı / Zamanla Yükleme):
+          // Kalan sayfaları ana iş parçacığını (UI thread) dondurmadan, kullanıcının
+          // okuduğu sayfaya göre önceliklendirerek arka planda birer birer render et
+          const startBackgroundRendering = async () => {
+            while (isMounted && renderedPdfPages.size < totalPdfPages) {
+              const currentSpread = currentPageRef.current;
+              const currentPdf = hasCover ? currentSpread : currentSpread + 1;
+
+              // Kullanıcının baktığı sayfa ve hemen sonraki sayfalar en yüksek önceliğe sahiptir
+              const priorityCandidates: number[] = [
+                currentPdf,
+                currentPdf + 1,
+                currentPdf + 2,
+                currentPdf + 3,
+                currentPdf - 1,
+                currentPdf - 2,
+              ];
+
+              for (let p = 1; p <= totalPdfPages; p++) {
+                priorityCandidates.push(p);
+              }
+
+              const nextPdfPage = priorityCandidates.find(
+                (p) => p >= 1 && p <= totalPdfPages && !renderedPdfPages.has(p)
+              );
+
+              if (!nextPdfPage) break;
+
+              try {
+                const blobUrl = await renderSinglePdfPage(doc, nextPdfPage, targetScale);
+                if (!isMounted) {
+                  URL.revokeObjectURL(blobUrl);
+                  break;
+                }
+
+                renderedPdfPages.set(nextPdfPage, blobUrl);
+                createdBlobUrlsRef.current.push(blobUrl);
+
+                const targetIndex = hasCover ? nextPdfPage : nextPdfPage - 1;
+                if (targetIndex >= 0 && targetIndex < pageImages.length) {
+                  pageImages[targetIndex] = blobUrl;
+                  updatePageInFlip(pageFlipRef.current, targetIndex, blobUrl);
+                }
+              } catch (renderErr) {
+                console.warn(`Sayfa ${nextPdfPage} arka planda render edilirken hata:`, renderErr);
+                renderedPdfPages.set(nextPdfPage, "error");
+              }
+
+              // UI thread'in 60 FPS akıcı kalması ve sayfa çevirme animasyonlarının donmaması için 25ms bekleme ver
+              await new Promise((resolve) => setTimeout(resolve, 25));
+            }
+          };
+
+          void startBackgroundRendering();
+          return;
         }
 
-        // 3. PDF yoksa veya yüklenemediyse hazır statik sayfa kayıtlarına bak
-        if (bodyPages.length === 0) {
-          const staticPages = (issue?.pages ?? [])
-            .map((p) => p.imageUrl)
-            .filter((url): url is string => Boolean(url));
+        // 3. PDF yoksa hazır statik sayfa kayıtlarına bak
+        const staticPages = (issue?.pages ?? [])
+          .map((p) => p.imageUrl)
+          .filter((url): url is string => Boolean(url));
 
-          if (staticPages.length >= 1) {
-            const firstUrl = staticPages[0];
-            const testOk = firstUrl.startsWith("data:")
-              ? true
-              : await new Promise<boolean>((resolve) => {
-                  const img = new Image();
-                  img.onload = () => resolve(true);
-                  img.onerror = () => resolve(false);
-                  img.src = firstUrl;
-                });
-
-            if (testOk) {
-              bodyPages = staticPages;
-            }
-          }
+        let bodyPages: string[] = [];
+        if (staticPages.length >= 1) {
+          bodyPages = staticPages;
         }
 
-        // 4. Kapak görseli kuralı:
-        // Yüklenen kapak görseli ilk sayfanın yerine GEÇMESİN.
-        // Soldaki kısım ilk sayfada kapak görseli olsun.
-        // PDF ilk sayfası yine sağda yer alsın.
         if (validCoverUrl) {
           pageImages = [validCoverUrl, ...bodyPages];
         } else {
-          // Kapak yüklenmediyse ilk sayfayı asla boş gösterme:
           pageImages = [...bodyPages];
         }
 
         if (!isMounted) return;
 
         if (pageImages.length === 0) {
-          setIsLoading(false);
           setLoadError(true);
           return;
         }
 
-        // Tek sayfa durumunda güvenli çift sayfa görünümü için tamamla
         if (pageImages.length === 1) {
           pageImages = [pageImages[0], pageImages[0]];
         }
 
-        // US Letter / A4 fanzin en-boy oranı (1224x1584 ~ 1:1.294)
         const pageFlip = new PageFlip(mountEl, {
           width: 580,
           height: 750,
@@ -269,7 +571,7 @@ export function FlipbookReader({
           maxHeight: 1230,
           drawShadow: true,
           maxShadowOpacity: 0.35,
-          showCover: false, // Sol tarafta kapak görseli, sağ tarafta PDF ilk sayfası olarak iki sayfa açık başlasın
+          showCover: false,
           usePortrait: true,
           showPageCorners: true,
           useMouseEvents: true,
@@ -283,7 +585,6 @@ export function FlipbookReader({
 
         pageFlip.on("init", (e) => {
           if (!isMounted) return;
-          setIsLoading(false);
           currentPageRef.current = e.data.page;
         });
 
@@ -300,105 +601,10 @@ export function FlipbookReader({
         });
 
         pageFlip.loadFromImages(pageImages);
-
-        // CanvasUI ve CanvasRender High-DPI (Retina) optimizasyonu:
-        // PageFlip varsayılan olarak canvas.width/height değerlerini 1x CSS pikseline
-        // eşitlediğinden yüksek çözünürlüklü ekranlarda (Retina/4K) bulanıklaşma oluşur.
-        // Canvas buffer'ını DPR çarpanı ile ölçeklendirip ctx.scale(dpr, dpr) uygulayarak
-        // piksel piksel kristal netliğinde 300+ DPI render sağlıyoruz.
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const ui = (pageFlip as any).getUI();
-        if (ui && typeof ui.resizeCanvas === "function") {
-          ui.resizeCanvas = function () {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const cvs = (this as any).canvas as HTMLCanvasElement | undefined;
-            if (!cvs) return;
-            const cs = getComputedStyle(cvs);
-            const width =
-              parseInt(cs.getPropertyValue("width"), 10) || cvs.clientWidth || 1160;
-            const height =
-              parseInt(cs.getPropertyValue("height"), 10) || cvs.clientHeight || 750;
-            const dpr =
-              typeof window !== "undefined"
-                ? Math.max(window.devicePixelRatio || 1, 2)
-                : 2;
-
-            cvs.width = Math.round(width * dpr);
-            cvs.height = Math.round(height * dpr);
-          };
-          ui.resizeCanvas();
-        }
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const render = (pageFlip as any).getRender();
-        if (render) {
-          // Sayfa boşken veya sayfa çevrilirken tüm tuvali beyaza boyayıp
-          // boş alanları beyaz göstermek yerine saydam tut
-          render.clear = function () {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const ctx = (this as any).ctx as CanvasRenderingContext2D | undefined;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const cvs = (this as any).canvas as HTMLCanvasElement | undefined;
-            if (ctx && cvs) {
-              ctx.save();
-              ctx.setTransform(1, 0, 0, 1, 0, 0);
-              ctx.clearRect(0, 0, cvs.width, cvs.height);
-              ctx.restore();
-            }
-          };
-
-          if (typeof render.drawFrame === "function") {
-            const origDrawFrame = render.drawFrame.bind(render);
-            render.drawFrame = function () {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const cvs = (this as any).canvas as HTMLCanvasElement | undefined;
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const ctx = (this as any).ctx as CanvasRenderingContext2D | undefined;
-
-              if (!cvs || !ctx) {
-                origDrawFrame();
-                return;
-              }
-
-              const dpr =
-                typeof window !== "undefined"
-                  ? Math.max(window.devicePixelRatio || 1, 2)
-                  : 2;
-
-              const cs = getComputedStyle(cvs);
-              const cssW =
-                parseInt(cs.getPropertyValue("width"), 10) || cvs.clientWidth || 1160;
-              const cssH =
-                parseInt(cs.getPropertyValue("height"), 10) || cvs.clientHeight || 750;
-              const targetW = Math.round(cssW * dpr);
-              const targetH = Math.round(cssH * dpr);
-
-              if (cvs.width !== targetW || cvs.height !== targetH) {
-                cvs.width = targetW;
-                cvs.height = targetH;
-              }
-
-              ctx.save();
-              ctx.scale(dpr, dpr);
-              ctx.imageSmoothingEnabled = true;
-              ctx.imageSmoothingQuality = "high";
-
-              origDrawFrame();
-
-              ctx.restore();
-            };
-          }
-        }
-
-        try {
-          pageFlip.update();
-        } catch {
-          // ignore
-        }
+        applyHighDpiHooks(pageFlip);
       } catch (err) {
-        console.error("PageFlip yüklenirken hata oluştu:", err);
+        console.error("PageFlip başlatılırken hata oluştu:", err);
         if (isMounted) {
-          setIsLoading(false);
           setLoadError(true);
         }
       }
@@ -415,6 +621,16 @@ export function FlipbookReader({
           // ignore
         }
         pageFlipRef.current = null;
+      }
+      // Bellek sızıntılarını önlemek için oluşturulan tüm Blob URL'lerini serbest bırak
+      const urlsToRevoke = [...createdBlobUrlsRef.current];
+      createdBlobUrlsRef.current = [];
+      for (const u of urlsToRevoke) {
+        try {
+          URL.revokeObjectURL(u);
+        } catch {
+          // ignore
+        }
       }
       mountEl.remove();
     };
@@ -442,12 +658,8 @@ export function FlipbookReader({
             <span className="fanzin-empty-icon" aria-hidden="true">
               ✦
             </span>
-            <h3 className="fanzin-empty-title">
-              {emptyTitle}
-            </h3>
-            <p className="fanzin-empty-desc">
-              {emptyDesc}
-            </p>
+            <h3 className="fanzin-empty-title">{emptyTitle}</h3>
+            <p className="fanzin-empty-desc">{emptyDesc}</p>
           </div>
         </div>
       </div>
@@ -479,13 +691,8 @@ export function FlipbookReader({
   return (
     <div className="fanzin-reader-container">
       <div className="fanzin-book-stage">
-        {/* PageFlip Canvas Sahnesi (GTA VI Neon Estetiği) */}
+        {/* PageFlip Canvas Sahnesi (GTA VI Neon Estetiği - Doğrudan ve İkonsuz Açılış) */}
         <div className="fanzin-pageflip-wrapper">
-          {isLoading && (
-            <div className="fanzin-reader-loading" aria-live="polite">
-              <div className="fanzin-loading-spinner" />
-            </div>
-          )}
           <div ref={containerRef} className="fanzin-pageflip-container" />
         </div>
       </div>
