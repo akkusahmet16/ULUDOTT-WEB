@@ -73,7 +73,6 @@ export function proxy(request: NextRequest) {
   let response: NextResponse;
   if (shouldRewriteToSozluk) {
     const rewriteUrl = request.nextUrl.clone();
-    rewriteUrl.protocol = "http:";
     rewriteUrl.pathname = effectivePathname;
     response = NextResponse.rewrite(rewriteUrl, { request: { headers } });
   } else {
