@@ -525,7 +525,7 @@ export const enDictionary: PublicDictionary = {
     addToGoogleWallet: "Add to Google Wallet",
     appleWalletSoon: "Apple Wallet coming soon",
     walletNotice:
-      "Save your card to Google Wallet to present it quickly at community events and partner venues.",
+      "Save your card to Google Wallet to present it quickly at community events and partner venues. If you cannot add it to your wallet, you can also take a screenshot of the card screen and present it.",
     manualFallbackHint:
       "If your name does not appear in the synced roster yet, you can verify instantly with your BUU student number and automation password.",
     manualFallbackButton: "Verify with Automation Password",

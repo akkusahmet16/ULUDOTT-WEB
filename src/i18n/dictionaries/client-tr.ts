@@ -418,7 +418,7 @@ export const clientTrSlice: DefaultClientTrSlice = {
     addToGoogleWallet: "Google Wallet'a Ekle",
     appleWalletSoon: "Apple Wallet çok yakında",
     walletNotice:
-      "Kartınızı Google Wallet içerisine kaydederek etkinliklerde ve anlaşmalı mekanlarda hızlıca gösterebilirsiniz.",
+      "Kartınızı Google Wallet içerisine kaydederek etkinliklerde ve anlaşmalı mekanlarda hızlıca gösterebilirsiniz. Cüzdanınıza ekleyemiyorsanız kart ekranının ekran görüntüsünü (SS) alarak da kullanabilirsiniz.",
     manualFallbackHint:
       "Topluluk listesi senkronizasyonunda adınız henüz görünmüyorsa BUÜ öğrenci numaranız ve otomasyon şifreniz ile anlık doğrulama yapabilirsiniz.",
     manualFallbackButton: "Otomasyon Şifresi ile Doğrula",

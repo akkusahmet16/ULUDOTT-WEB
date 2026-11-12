@@ -63,7 +63,7 @@ export default async function HomePage() {
             <h1>{t("brand.name")}</h1>
             <p>{t("brand.tagline")}</p>
           </div>
-          <Link href="/hakkimizda" className={`button ${styles.softPulse}`}>
+          <Link href="/uye-karti" className={`button ${styles.softPulse}`}>
             {t("common.discoverCommunity")}
           </Link>
           <div className={styles.openingLinks}>
