@@ -208,7 +208,6 @@ export function SozlukShell({
   return (
     <div className="sozluk-root">
       <header className="sozluk-topbar">
-        <div className="sozluk-sunset-strip" aria-hidden="true" />
         <div className="sozluk-topbar-inner">
           <Link href={sozlukHref("/", isSubdomain)} className="sozluk-brand">
             <span className="sozluk-brand-mark" aria-hidden="true">

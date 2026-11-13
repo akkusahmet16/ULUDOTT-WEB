@@ -1,45 +1,41 @@
 /*
- * ulusözlük — Ekşi Sözlük düzeni + ULUDOTT kimliği + GTA VI / Vice City gün batımı paleti.
- * Tüm renkler src/styles/themes.css içindeki --vice-* tokenlarından gelir.
+ * ulusözlük — Ekşi Sözlük düzeni + ULUDOTT ArtDeco sinematik kimliği.
+ * Tamamen minimal, estetik ve sitenin geri kalanıyla (themes.css) uyumlu.
+ * Sıfır gradyan, net okunabilirlik ve yüksek kontrast.
  */
 
 .sozluk-root {
   min-height: 100vh;
-  background: var(--vice-sky);
-  background-color: var(--vice-night);
-  color: var(--vice-text);
+  background-color: var(--ink);
+  color: var(--cream);
   font-family: var(--font);
   font-size: 15px;
+  line-height: 1.6;
 }
 
 .sozluk-root a {
   color: inherit;
+  text-decoration: none;
 }
 
 .sozluk-root button {
   font-family: inherit;
 }
 
-/* ---------- Üst bar ---------- */
+/* ---------- Üst Menü / Topbar ---------- */
 
 .sozluk-topbar {
   position: sticky;
   top: 0;
   z-index: var(--z-50);
-  background: var(--vice-night-2);
-  border-bottom: 1px solid var(--vice-line);
-  box-shadow: var(--vice-shadow);
-}
-
-.sozluk-sunset-strip {
-  height: 3px;
-  background: var(--vice-sunset);
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
 }
 
 .sozluk-topbar-inner {
-  max-width: 1180px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 10px 20px;
+  padding: 12px 20px;
   display: flex;
   align-items: center;
   gap: 20px;
@@ -49,70 +45,68 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  text-decoration: none;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .sozluk-brand-mark {
-  color: var(--vice-teal);
+  color: var(--purple);
   font-size: 1.1rem;
   line-height: 1;
 }
 
 .sozluk-brand-text {
   font-family: var(--heading);
-  font-size: 1.65rem;
-  letter-spacing: 0.01em;
+  font-size: 1.6rem;
+  letter-spacing: 0.02em;
   text-transform: lowercase;
-  background: var(--vice-sunset);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
+  color: var(--purple);
+  transition: color var(--motion-140ms) var(--ease-standard);
+}
+
+.sozluk-brand:hover .sozluk-brand-text {
+  color: var(--cream);
 }
 
 .sozluk-search-wrap {
   position: relative;
   flex: 1 1 auto;
-  max-width: 520px;
+  max-width: 480px;
   margin: 0;
 }
 
 .sozluk-search-input {
   width: 100%;
-  height: 38px;
-  padding: 0 16px;
-  border-radius: var(--radius-999px);
-  border: 1px solid var(--vice-line-strong);
-  background: var(--vice-panel);
-  color: var(--vice-text);
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--radius-4px);
+  border: 1px solid var(--line);
+  background: var(--ink);
+  color: var(--cream);
   font-family: var(--font);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   outline: none;
-  transition: border-color var(--motion-180ms) var(--ease-standard),
-    box-shadow var(--motion-180ms) var(--ease-standard);
+  transition: border-color var(--motion-140ms) var(--ease-standard);
 }
 
 .sozluk-search-input::placeholder {
-  color: var(--vice-dim);
+  color: var(--muted);
 }
 
 .sozluk-search-input:focus {
-  border-color: var(--vice-teal);
-  box-shadow: var(--vice-glow-teal);
+  border-color: var(--purple);
 }
 
 .sozluk-search-dropdown {
   position: absolute;
-  top: calc(100% + 6px);
+  top: calc(100% + 4px);
   left: 0;
   right: 0;
-  background: var(--vice-panel);
-  border: 1px solid var(--vice-line-strong);
-  border-radius: var(--radius-10px);
-  box-shadow: var(--vice-shadow);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-4px);
   z-index: var(--z-51);
-  max-height: 360px;
+  max-height: 340px;
   overflow-y: auto;
 }
 
@@ -122,9 +116,9 @@
   align-items: center;
   gap: 12px;
   padding: 10px 14px;
-  text-decoration: none;
-  border-bottom: 1px solid var(--vice-line);
-  font-size: 0.9rem;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.88rem;
+  color: var(--cream);
 }
 
 .sozluk-search-item:last-child {
@@ -132,8 +126,8 @@
 }
 
 a.sozluk-search-item:hover {
-  background: var(--vice-pink-soft);
-  color: var(--vice-pink);
+  background: var(--color-edb2e420);
+  color: var(--purple);
 }
 
 .sozluk-topbar-actions {
@@ -149,17 +143,17 @@ a.sozluk-search-item:hover {
   border: none;
   padding: 0;
   cursor: pointer;
-  color: var(--vice-text);
-  text-decoration: none;
-  font-size: 0.88rem;
+  color: var(--cream);
+  font-size: 0.86rem;
+  transition: color var(--motion-140ms) var(--ease-standard);
 }
 
 .sozluk-top-link:hover {
-  color: var(--vice-pink);
+  color: var(--purple);
 }
 
 .sozluk-top-link-dim {
-  color: var(--vice-muted);
+  color: var(--muted);
 }
 
 /* ---------- Butonlar ---------- */
@@ -169,24 +163,23 @@ a.sozluk-search-item:hover {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  height: 34px;
+  height: 32px;
   padding: 0 14px;
-  border-radius: var(--radius-999px);
-  border: 1px solid var(--vice-line-strong);
+  border-radius: var(--radius-4px);
+  border: 1px solid var(--line);
   background: transparent;
-  color: var(--vice-text);
-  font-size: 0.85rem;
+  color: var(--cream);
+  font-size: 0.84rem;
   cursor: pointer;
-  text-decoration: none;
   white-space: nowrap;
-  transition: border-color var(--motion-180ms) var(--ease-standard),
-    color var(--motion-180ms) var(--ease-standard),
-    box-shadow var(--motion-180ms) var(--ease-standard);
+  transition: border-color var(--motion-140ms) var(--ease-standard),
+    color var(--motion-140ms) var(--ease-standard),
+    background var(--motion-140ms) var(--ease-standard);
 }
 
 .sozluk-btn:hover {
-  border-color: var(--vice-pink);
-  color: var(--vice-pink);
+  border-color: var(--purple);
+  color: var(--purple);
 }
 
 .sozluk-btn:disabled {
@@ -195,16 +188,16 @@ a.sozluk-search-item:hover {
 }
 
 .sozluk-btn-primary {
-  background: var(--vice-sunset);
-  border-color: transparent;
-  color: var(--vice-night);
-  font-weight: 700;
+  background: var(--purple);
+  border-color: var(--purple);
+  color: var(--ink);
+  font-weight: 600;
 }
 
 .sozluk-btn-primary:hover {
-  color: var(--vice-night);
-  border-color: transparent;
-  box-shadow: var(--vice-glow-pink);
+  background: var(--lime);
+  border-color: var(--lime);
+  color: var(--ink);
 }
 
 .sozluk-link-btn {
@@ -212,7 +205,7 @@ a.sozluk-search-item:hover {
   border: none;
   padding: 0;
   cursor: pointer;
-  color: var(--vice-teal);
+  color: var(--purple);
   font-size: 0.85rem;
 }
 
@@ -220,19 +213,20 @@ a.sozluk-search-item:hover {
   text-decoration: underline;
 }
 
-/* ---------- Başlık/kanal şeridi ---------- */
+/* ---------- Başlık / Kanal Şeridi ---------- */
 
 .sozluk-topicnav {
-  border-top: 1px solid var(--vice-line);
+  border-top: 1px solid var(--line);
+  background: var(--panel);
 }
 
 .sozluk-topicnav-inner {
-  max-width: 1180px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
   display: flex;
   align-items: stretch;
-  gap: 2px;
+  gap: 4px;
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -244,13 +238,12 @@ a.sozluk-search-item:hover {
 .sozluk-topicnav-link {
   display: inline-flex;
   align-items: center;
-  padding: 10px 12px;
+  padding: 8px 10px;
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
-  color: var(--vice-muted);
-  font-size: 0.88rem;
-  text-decoration: none;
+  color: var(--muted);
+  font-size: 0.85rem;
   white-space: nowrap;
   cursor: pointer;
   transition: color var(--motion-140ms) var(--ease-standard),
@@ -258,64 +251,63 @@ a.sozluk-search-item:hover {
 }
 
 .sozluk-topicnav-link:hover {
-  color: var(--vice-text);
+  color: var(--cream);
 }
 
 .sozluk-topicnav-link[data-active="true"] {
-  color: var(--vice-pink);
-  border-bottom-color: var(--vice-pink);
+  color: var(--purple);
+  border-bottom-color: var(--purple);
 }
 
 .sozluk-topicnav-channel:hover,
 .sozluk-topicnav-channel[data-active="true"] {
-  color: var(--vice-teal);
-  border-bottom-color: var(--vice-teal);
+  color: var(--cream);
+  border-bottom-color: var(--line);
 }
 
 .sozluk-topicnav-sep {
   width: 1px;
-  margin: 10px 8px;
-  background: var(--vice-line-strong);
+  margin: 8px 6px;
+  background: var(--line);
   flex-shrink: 0;
 }
 
-/* ---------- Düzen ---------- */
+/* ---------- Ana Düzen ---------- */
 
 .sozluk-layout {
-  max-width: 1180px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 24px 20px 64px;
   display: grid;
-  grid-template-columns: 270px minmax(0, 1fr);
-  gap: 36px;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 32px;
   align-items: start;
 }
 
 .sozluk-main {
   min-width: 0;
-  max-width: 760px;
+  max-width: 780px;
 }
 
-/* ---------- Sol çerçeve (gündem) ---------- */
+/* ---------- Sol Çerçeve (Gündem) ---------- */
 
 .sozluk-left-frame {
   position: sticky;
-  top: 116px;
-  max-height: calc(100vh - 136px);
+  top: 104px;
+  max-height: calc(100vh - 124px);
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: var(--vice-line-strong) transparent;
-  padding-right: 6px;
+  padding-right: 8px;
 }
 
 .sozluk-frame-head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding-bottom: 10px;
+  padding-bottom: 8px;
   margin-bottom: 6px;
-  border-bottom: 1px solid var(--vice-line);
+  border-bottom: 1px solid var(--line);
 }
 
 .sozluk-frame-title {
@@ -324,7 +316,7 @@ a.sozluk-search-item:hover {
   font-size: 1.05rem;
   font-weight: 400;
   text-transform: lowercase;
-  color: var(--vice-sun);
+  color: var(--purple);
 }
 
 .sozluk-frame-tabs {
@@ -335,20 +327,20 @@ a.sozluk-search-item:hover {
 .sozluk-frame-tab {
   background: none;
   border: 1px solid transparent;
-  border-radius: var(--radius-999px);
-  padding: 2px 9px;
+  border-radius: var(--radius-4px);
+  padding: 2px 8px;
   font-size: 0.76rem;
-  color: var(--vice-dim);
+  color: var(--muted);
   cursor: pointer;
 }
 
 .sozluk-frame-tab:hover {
-  color: var(--vice-text);
+  color: var(--cream);
 }
 
 .sozluk-frame-tab[data-active="true"] {
-  color: var(--vice-pink);
-  border-color: var(--vice-pink);
+  color: var(--purple);
+  border-color: var(--line);
 }
 
 .sozluk-frame-list {
@@ -362,26 +354,25 @@ a.sozluk-search-item:hover {
   justify-content: space-between;
   align-items: baseline;
   gap: 10px;
-  padding: 6px 8px 6px 10px;
+  padding: 6px 8px;
   border-left: 2px solid transparent;
-  border-radius: 0 var(--radius-6px) var(--radius-6px) 0;
-  text-decoration: none;
+  border-radius: 0 var(--radius-4px) var(--radius-4px) 0;
   font-size: 0.88rem;
   line-height: 1.35;
-  color: var(--vice-text);
+  color: var(--cream);
   transition: background var(--motion-140ms) var(--ease-standard),
     color var(--motion-140ms) var(--ease-standard);
 }
 
 .sozluk-frame-item:hover {
-  background: var(--vice-pink-soft);
-  color: var(--vice-pink);
+  background: var(--color-edb2e420);
+  color: var(--purple);
 }
 
 .sozluk-frame-item[data-active="true"] {
-  border-left-color: var(--vice-pink);
-  background: var(--vice-pink-soft);
-  color: var(--vice-pink);
+  border-left-color: var(--purple);
+  background: var(--color-edb2e420);
+  color: var(--purple);
 }
 
 .sozluk-frame-item-title {
@@ -390,41 +381,43 @@ a.sozluk-search-item:hover {
 }
 
 .sozluk-frame-empty {
-  color: var(--vice-muted);
+  color: var(--muted);
   font-size: 0.86rem;
   line-height: 1.5;
+  padding: 12px 0;
 }
 
 .sozluk-count {
   flex-shrink: 0;
-  color: var(--vice-dim);
+  color: var(--muted);
   font-size: 0.76rem;
   font-variant-numeric: tabular-nums;
 }
 
-/* ---------- Başlık sayfası ---------- */
+/* ---------- Başlık Sayfası & Başlık Çubuğu ---------- */
 
 .sozluk-topic-header {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .sozluk-topic-title {
   margin: 0 0 10px;
   font-family: var(--heading);
-  font-size: 1.7rem;
+  font-size: 1.75rem;
   font-weight: 400;
-  line-height: 1.2;
+  line-height: 1.25;
   text-transform: lowercase;
   overflow-wrap: anywhere;
-  color: var(--vice-pink);
+  color: var(--purple);
 }
 
 .sozluk-topic-title a {
-  text-decoration: none;
-  background: var(--vice-sunset);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
+  color: var(--purple);
+  transition: color var(--motion-140ms) var(--ease-standard);
+}
+
+.sozluk-topic-title a:hover {
+  color: var(--cream);
 }
 
 .sozluk-topic-toolbar {
@@ -434,7 +427,7 @@ a.sozluk-search-item:hover {
   gap: 12px;
   flex-wrap: wrap;
   padding-bottom: 12px;
-  border-bottom: 1px solid var(--vice-line);
+  border-bottom: 1px solid var(--line);
 }
 
 .sozluk-filter-row {
@@ -447,42 +440,45 @@ a.sozluk-search-item:hover {
 
 .sozluk-filter-link {
   padding: 3px 10px;
-  border-radius: var(--radius-999px);
-  border: 1px solid var(--vice-line-strong);
-  color: var(--vice-muted);
-  text-decoration: none;
+  border-radius: var(--radius-4px);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  transition: color var(--motion-140ms) var(--ease-standard),
+    border-color var(--motion-140ms) var(--ease-standard);
 }
 
 .sozluk-filter-link:hover {
-  color: var(--vice-text);
-  border-color: var(--vice-muted);
+  color: var(--cream);
+  border-color: var(--purple);
 }
 
 .sozluk-filter-link[data-active="true"] {
-  color: var(--vice-night);
-  background: var(--vice-teal);
-  border-color: var(--vice-teal);
+  color: var(--ink);
+  background: var(--purple);
+  border-color: var(--purple);
+  font-weight: 600;
 }
 
 .sozluk-channel-chip {
   padding: 3px 10px;
-  border-radius: var(--radius-999px);
-  background: var(--vice-teal-soft);
-  color: var(--vice-teal);
-  text-decoration: none;
+  border-radius: var(--radius-4px);
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
 }
 
 .sozluk-channel-chip:hover {
-  box-shadow: var(--vice-glow-teal);
+  color: var(--cream);
+  border-color: var(--purple);
 }
 
 .sozluk-muted {
-  color: var(--vice-muted);
+  color: var(--muted);
   font-size: 0.84rem;
 }
 
 .sozluk-empty {
-  color: var(--vice-muted);
+  color: var(--muted);
   padding: 28px 0;
 }
 
@@ -501,15 +497,14 @@ a.sozluk-search-item:hover {
   justify-content: center;
   width: 28px;
   height: 26px;
-  border-radius: var(--radius-6px);
-  border: 1px solid var(--vice-line-strong);
-  color: var(--vice-text);
-  text-decoration: none;
+  border-radius: var(--radius-4px);
+  border: 1px solid var(--line);
+  color: var(--cream);
 }
 
 a.sozluk-pager-btn:hover {
-  border-color: var(--vice-pink);
-  color: var(--vice-pink);
+  border-color: var(--purple);
+  color: var(--purple);
 }
 
 .sozluk-pager-btn[data-disabled="true"] {
@@ -519,17 +514,17 @@ a.sozluk-pager-btn:hover {
 .sozluk-pager-state {
   min-width: 52px;
   text-align: center;
-  color: var(--vice-muted);
+  color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
 
 .sozluk-pager-bottom {
   display: flex;
   justify-content: flex-end;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
-/* ---------- Entry listesi ---------- */
+/* ---------- Entry Akışı ---------- */
 
 .sozluk-entry-list {
   list-style: none;
@@ -539,7 +534,7 @@ a.sozluk-pager-btn:hover {
 
 .sozluk-entry {
   padding: 18px 0 14px;
-  border-bottom: 1px solid var(--vice-line);
+  border-bottom: 1px solid var(--line);
 }
 
 .sozluk-entry:last-child {
@@ -556,12 +551,11 @@ a.sozluk-pager-btn:hover {
 }
 
 .sozluk-entry-topic a {
-  color: var(--vice-pink);
-  text-decoration: none;
+  color: var(--purple);
 }
 
 .sozluk-entry-topic a:hover {
-  color: var(--vice-orange);
+  color: var(--cream);
 }
 
 .sozluk-entry-row {
@@ -572,8 +566,8 @@ a.sozluk-pager-btn:hover {
 .sozluk-entry-index {
   flex-shrink: 0;
   min-width: 22px;
-  padding-top: 3px;
-  color: var(--vice-dim);
+  padding-top: 2px;
+  color: var(--muted);
   font-size: 0.74rem;
   font-variant-numeric: tabular-nums;
   text-align: right;
@@ -587,26 +581,24 @@ a.sozluk-pager-btn:hover {
 .sozluk-entry-body {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  line-height: 1.72;
-  font-size: 0.97rem;
-  color: var(--vice-text);
+  line-height: 1.7;
+  font-size: 0.96rem;
+  color: var(--cream);
 }
 
 .sozluk-bkz {
-  color: var(--vice-teal);
-  text-decoration: none;
-}
-
-.sozluk-root .sozluk-bkz {
-  color: var(--vice-teal);
+  color: var(--purple);
+  border-bottom: 1px dashed var(--line);
+  padding-bottom: 1px;
 }
 
 .sozluk-bkz:hover {
-  text-decoration: underline;
+  color: var(--cream);
+  border-bottom-color: var(--purple);
 }
 
-.sozluk-root .sozluk-ext-link {
-  color: var(--vice-orange);
+.sozluk-ext-link {
+  color: var(--coral);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -633,11 +625,11 @@ a.sozluk-pager-btn:hover {
   align-items: center;
   gap: 5px;
   height: 26px;
-  padding: 0 9px;
-  border-radius: var(--radius-999px);
+  padding: 0 8px;
+  border-radius: var(--radius-4px);
   border: 1px solid transparent;
   background: none;
-  color: var(--vice-dim);
+  color: var(--muted);
   font-size: 0.78rem;
   font-variant-numeric: tabular-nums;
   cursor: pointer;
@@ -646,25 +638,26 @@ a.sozluk-pager-btn:hover {
 }
 
 .sozluk-vote:hover {
-  color: var(--vice-text);
-  background: var(--vice-panel-2);
+  color: var(--cream);
+  background: var(--panel);
 }
 
 .sozluk-vote-up[data-active="true"] {
-  color: var(--vice-teal);
-  border-color: var(--vice-teal);
-  background: var(--vice-teal-soft);
+  color: var(--lime);
+  border-color: var(--line);
+  background: var(--panel);
 }
 
 .sozluk-vote-down[data-active="true"] {
-  color: var(--vice-pink);
-  border-color: var(--vice-pink);
-  background: var(--vice-pink-soft);
+  color: var(--coral);
+  border-color: var(--line);
+  background: var(--panel);
 }
 
 .sozluk-vote-fav[data-active="true"] {
-  color: var(--vice-sun);
-  border-color: var(--vice-sun);
+  color: var(--purple);
+  border-color: var(--line);
+  background: var(--panel);
 }
 
 .sozluk-entry-tools {
@@ -684,18 +677,18 @@ a.sozluk-pager-btn:hover {
   background: none;
   border: none;
   padding: 0;
-  color: var(--vice-muted);
+  color: var(--muted);
   font-size: 0.76rem;
   cursor: pointer;
 }
 
 .sozluk-tool:hover {
-  color: var(--vice-text);
+  color: var(--cream);
   text-decoration: underline;
 }
 
 .sozluk-tool-danger:hover {
-  color: var(--vice-pink);
+  color: var(--coral);
 }
 
 .sozluk-entry-meta {
@@ -706,18 +699,13 @@ a.sozluk-pager-btn:hover {
 }
 
 .sozluk-entry-date {
-  color: var(--vice-dim);
+  color: var(--muted);
   font-size: 0.76rem;
 }
 
 .sozluk-entry-author {
-  color: var(--vice-sun);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.sozluk-root .sozluk-entry-author {
-  color: var(--vice-sun);
+  color: var(--purple);
+  font-weight: 500;
 }
 
 .sozluk-entry-author:hover {
@@ -728,29 +716,25 @@ a.sozluk-pager-btn:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   border-radius: var(--radius-50pct);
-  background: var(--vice-sunset);
-  text-decoration: none;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--purple);
   font-family: var(--heading);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   text-transform: lowercase;
 }
 
-.sozluk-root .sozluk-entry-avatar {
-  color: var(--vice-night);
-}
-
-/* ---------- Formlar ---------- */
+/* ---------- Formlar & Giriş Alanları ---------- */
 
 .sozluk-composer {
   margin-top: 28px;
   padding: 18px;
-  border-radius: var(--radius-12px);
-  border: 1px solid var(--vice-line);
-  border-top: 2px solid var(--vice-pink);
-  background: var(--vice-panel);
+  border-radius: var(--radius-4px);
+  border: 1px solid var(--line);
+  background: var(--panel);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -760,10 +744,10 @@ a.sozluk-pager-btn:hover {
 .sozluk-composer-title {
   margin: 0;
   font-family: var(--heading);
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 400;
   text-transform: lowercase;
-  color: var(--vice-sun);
+  color: var(--purple);
 }
 
 .sozluk-inline-form {
@@ -778,28 +762,27 @@ a.sozluk-pager-btn:hover {
   flex-direction: column;
   gap: 6px;
   font-size: 0.82rem;
-  color: var(--vice-muted);
+  color: var(--muted);
 }
 
 .sozluk-input {
   width: 100%;
   padding: 10px 12px;
-  border-radius: var(--radius-8px);
-  border: 1px solid var(--vice-line-strong);
-  background: var(--vice-night);
-  color: var(--vice-text);
+  border-radius: var(--radius-4px);
+  border: 1px solid var(--line);
+  background: var(--ink);
+  color: var(--cream);
   font-family: var(--font);
   font-size: 0.92rem;
   outline: none;
 }
 
 .sozluk-input:focus {
-  border-color: var(--vice-teal);
-  box-shadow: var(--vice-glow-teal);
+  border-color: var(--purple);
 }
 
 .sozluk-textarea {
-  min-height: 140px;
+  min-height: 130px;
   line-height: 1.6;
   resize: vertical;
 }
@@ -813,7 +796,7 @@ a.sozluk-pager-btn:hover {
 
 .sozluk-error {
   margin: 0;
-  color: var(--vice-pink);
+  color: var(--coral);
   font-size: 0.86rem;
 }
 
@@ -822,7 +805,7 @@ a.sozluk-pager-btn:hover {
 .sozluk-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: var(--vice-backdrop);
+  background: var(--color-0c0d1bea);
   z-index: var(--z-100);
   display: flex;
   align-items: center;
@@ -832,11 +815,10 @@ a.sozluk-pager-btn:hover {
 
 .sozluk-modal {
   width: 100%;
-  max-width: 480px;
-  background: var(--vice-panel);
-  border: 1px solid var(--vice-line-strong);
-  border-radius: var(--radius-14px);
-  box-shadow: var(--vice-shadow), var(--vice-glow-pink);
+  max-width: 460px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-4px);
   padding: 22px;
   display: flex;
   flex-direction: column;
@@ -846,16 +828,13 @@ a.sozluk-pager-btn:hover {
 .sozluk-modal-title {
   margin: 0;
   font-family: var(--heading);
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 400;
   text-transform: lowercase;
-  background: var(--vice-sunset);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
+  color: var(--purple);
 }
 
-/* ---------- Kanal listesi ---------- */
+/* ---------- Kanal Listesi ---------- */
 
 .sozluk-channel-list {
   list-style: none;
@@ -869,24 +848,24 @@ a.sozluk-pager-btn:hover {
   align-items: baseline;
   gap: 12px;
   padding: 12px 4px;
-  border-bottom: 1px solid var(--vice-line);
-  text-decoration: none;
-  font-size: 0.98rem;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.96rem;
+  color: var(--cream);
 }
 
 .sozluk-channel-item:hover {
-  color: var(--vice-pink);
+  color: var(--purple);
 }
 
-/* ---------- Yazar profili ---------- */
+/* ---------- Yazar Profili ---------- */
 
 .sozluk-profile-header {
   display: flex;
   gap: 18px;
   align-items: flex-start;
   padding-bottom: 18px;
-  margin-bottom: 8px;
-  border-bottom: 1px solid var(--vice-line);
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--line);
 }
 
 .sozluk-profile-avatar {
@@ -894,15 +873,15 @@ a.sozluk-pager-btn:hover {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   border-radius: var(--radius-50pct);
-  background: var(--vice-sunset);
-  color: var(--vice-night);
+  background: var(--panel);
+  border: 1px solid var(--purple);
+  color: var(--purple);
   font-family: var(--heading);
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   text-transform: lowercase;
-  box-shadow: var(--vice-glow-pink);
 }
 
 .sozluk-profile-info {
@@ -911,10 +890,6 @@ a.sozluk-pager-btn:hover {
 
 .sozluk-profile-info .sozluk-topic-title {
   margin-bottom: 6px;
-  background: var(--vice-sunset);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
 }
 
 .sozluk-profile-stats {
@@ -922,26 +897,27 @@ a.sozluk-pager-btn:hover {
   align-items: center;
   gap: 14px;
   flex-wrap: wrap;
-  color: var(--vice-muted);
+  color: var(--muted);
   font-size: 0.85rem;
 }
 
 .sozluk-profile-stats strong {
-  color: var(--vice-text);
+  color: var(--cream);
 }
 
 .sozluk-rank-chip {
-  padding: 2px 10px;
-  border-radius: var(--radius-999px);
-  background: var(--vice-teal-soft);
-  color: var(--vice-teal);
+  padding: 2px 8px;
+  border-radius: var(--radius-4px);
+  border: 1px solid var(--line);
+  background: var(--ink);
+  color: var(--purple);
   font-size: 0.76rem;
 }
 
 .sozluk-profile-bio {
   margin: 10px 0 0;
   line-height: 1.6;
-  color: var(--vice-text);
+  color: var(--muted);
 }
 
 /* ---------- Yükleniyor ---------- */
@@ -951,16 +927,16 @@ a.sozluk-pager-btn:hover {
     transform: translateX(-100%);
   }
   to {
-    transform: translateX(260%);
+    transform: translateX(250%);
   }
 }
 
 @keyframes sozluk-skeleton-pulse {
   from {
-    opacity: 0.45;
+    opacity: 0.4;
   }
   to {
-    opacity: 0.9;
+    opacity: 0.8;
   }
 }
 
@@ -976,27 +952,28 @@ a.sozluk-pager-btn:hover {
   position: fixed;
   top: 0;
   left: 0;
-  width: 40%;
-  height: 3px;
-  background: var(--vice-sunset);
+  width: 35%;
+  height: 2px;
+  background: var(--purple);
   z-index: var(--z-150);
   animation: sozluk-loading-slide var(--motion-900ms) var(--ease-in-out) infinite;
 }
 
 .sozluk-skeleton {
-  height: 72px;
-  border-radius: var(--radius-10px);
-  background: var(--vice-panel);
+  height: 68px;
+  border-radius: var(--radius-4px);
+  background: var(--panel);
+  border: 1px solid var(--line);
   animation: sozluk-skeleton-pulse var(--motion-800ms) var(--ease-in-out) infinite alternate;
 }
 
 .sozluk-skeleton-title {
-  height: 34px;
-  width: 55%;
+  height: 32px;
+  width: 50%;
 }
 
 .sozluk-skeleton-short {
-  width: 70%;
+  width: 65%;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1006,7 +983,7 @@ a.sozluk-pager-btn:hover {
   }
 }
 
-/* ---------- Mobil ---------- */
+/* ---------- Mobil Uyum ---------- */
 
 @media (max-width: 900px) {
   .sozluk-topbar-inner {
@@ -1032,9 +1009,9 @@ a.sozluk-pager-btn:hover {
     max-height: none;
     margin-bottom: 18px;
     padding: 12px;
-    border: 1px solid var(--vice-line);
-    border-radius: var(--radius-12px);
-    background: var(--vice-panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-4px);
+    background: var(--panel);
   }
 
   .sozluk-left-frame[data-open="true"] {
