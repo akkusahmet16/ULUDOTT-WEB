@@ -18,8 +18,43 @@
   text-decoration: none;
 }
 
-.sozluk-root button {
+/*
+ * Neutralize global base.css button defaults (button:not(.menu-toggle), etc.)
+ * across the entire sözlük domain so no buttons accidentally render as 48px pink pills.
+ */
+.sozluk-root button,
+.sozluk-root button:not(.menu-toggle),
+.sozluk-root button:not(.menu-toggle):not(:disabled):hover,
+.sozluk-root button:not(.menu-toggle):focus-visible {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: unset;
+  height: auto;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
   font-family: inherit;
+  font-size: inherit;
+  font-weight: normal;
+  line-height: inherit;
+  text-decoration: none;
+  transform: none;
+  box-shadow: none;
+  outline: none;
+  cursor: pointer;
+  transition: color var(--motion-140ms) var(--ease-standard),
+    background-color var(--motion-140ms) var(--ease-standard),
+    border-color var(--motion-140ms) var(--ease-standard);
+}
+
+.sozluk-root button:hover,
+.sozluk-root button:not(.menu-toggle):not(:disabled):hover {
+  background: transparent;
+  transform: none;
+  box-shadow: none;
 }
 
 /* ---------- Üst Menü / Topbar ---------- */
@@ -138,31 +173,43 @@ a.sozluk-search-item:hover {
   flex-shrink: 0;
 }
 
-.sozluk-top-link {
-  background: none;
+.sozluk-root .sozluk-top-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: unset;
+  height: auto;
+  padding: 4px 6px;
+  background: transparent;
   border: none;
-  padding: 0;
+  border-radius: 0;
   cursor: pointer;
   color: var(--cream);
   font-size: 0.86rem;
+  box-shadow: none;
+  transform: none;
   transition: color var(--motion-140ms) var(--ease-standard);
 }
 
-.sozluk-top-link:hover {
+.sozluk-root .sozluk-top-link:hover,
+.sozluk-root .sozluk-top-link:not(:disabled):hover {
   color: var(--purple);
+  background: transparent;
+  box-shadow: none;
+  transform: none;
 }
 
-.sozluk-top-link-dim {
+.sozluk-root .sozluk-top-link-dim {
   color: var(--muted);
 }
 
 /* ---------- Butonlar ---------- */
 
-.sozluk-btn {
+.sozluk-root .sozluk-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
+  min-height: 32px;
   height: 32px;
   padding: 0 14px;
   border-radius: var(--radius-4px);
@@ -170,47 +217,68 @@ a.sozluk-search-item:hover {
   background: transparent;
   color: var(--cream);
   font-size: 0.84rem;
+  font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
+  box-shadow: none;
+  transform: none;
   transition: border-color var(--motion-140ms) var(--ease-standard),
     color var(--motion-140ms) var(--ease-standard),
-    background var(--motion-140ms) var(--ease-standard);
+    background-color var(--motion-140ms) var(--ease-standard);
 }
 
-.sozluk-btn:hover {
+.sozluk-root .sozluk-btn:hover,
+.sozluk-root .sozluk-btn:not(:disabled):hover {
   border-color: var(--purple);
   color: var(--purple);
+  background: transparent;
+  box-shadow: none;
+  transform: none;
 }
 
-.sozluk-btn:disabled {
+.sozluk-root .sozluk-btn:disabled {
   opacity: 0.6;
   cursor: progress;
 }
 
-.sozluk-btn-primary {
+.sozluk-root .sozluk-btn-primary {
   background: var(--purple);
   border-color: var(--purple);
   color: var(--ink);
   font-weight: 600;
 }
 
-.sozluk-btn-primary:hover {
+.sozluk-root .sozluk-btn-primary:hover,
+.sozluk-root .sozluk-btn-primary:not(:disabled):hover {
   background: var(--lime);
   border-color: var(--lime);
   color: var(--ink);
+  box-shadow: none;
+  transform: none;
 }
 
-.sozluk-link-btn {
+.sozluk-root .sozluk-link-btn {
+  display: inline;
+  min-height: unset;
+  height: auto;
   background: none;
   border: none;
+  border-radius: 0;
   padding: 0;
   cursor: pointer;
   color: var(--purple);
   font-size: 0.85rem;
+  box-shadow: none;
+  transform: none;
 }
 
-.sozluk-link-btn:hover {
+.sozluk-root .sozluk-link-btn:hover,
+.sozluk-root .sozluk-link-btn:not(:disabled):hover {
+  color: var(--cream);
+  background: transparent;
   text-decoration: underline;
+  box-shadow: none;
+  transform: none;
 }
 
 /* ---------- Başlık / Kanal Şeridi ---------- */
@@ -235,34 +303,50 @@ a.sozluk-search-item:hover {
   display: none;
 }
 
-.sozluk-topicnav-link {
+.sozluk-root .sozluk-topicnav-link {
   display: inline-flex;
   align-items: center;
-  padding: 8px 10px;
-  background: none;
+  justify-content: center;
+  min-height: unset;
+  height: 38px;
+  padding: 0 12px;
+  background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
+  border-radius: 0;
   color: var(--muted);
   font-size: 0.85rem;
+  font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
+  box-shadow: none;
+  transform: none;
   transition: color var(--motion-140ms) var(--ease-standard),
     border-color var(--motion-140ms) var(--ease-standard);
 }
 
-.sozluk-topicnav-link:hover {
+.sozluk-root .sozluk-topicnav-link:hover,
+.sozluk-root .sozluk-topicnav-link:not(:disabled):hover {
   color: var(--cream);
+  background: transparent;
+  border-bottom-color: transparent;
+  box-shadow: none;
+  transform: none;
 }
 
-.sozluk-topicnav-link[data-active="true"] {
+.sozluk-root .sozluk-topicnav-link[data-active="true"] {
   color: var(--purple);
+  background: transparent;
   border-bottom-color: var(--purple);
   font-weight: 600;
+  box-shadow: none;
+  transform: none;
 }
 
-.sozluk-topicnav-channel:hover,
-.sozluk-topicnav-channel[data-active="true"] {
+.sozluk-root .sozluk-topicnav-channel:hover,
+.sozluk-root .sozluk-topicnav-channel[data-active="true"] {
   color: var(--cream);
+  background: transparent;
   border-bottom-color: var(--line);
 }
 
@@ -320,32 +404,48 @@ a.sozluk-search-item:hover {
   color: var(--purple);
 }
 
-.sozluk-frame-tabs {
+.sozluk-root .sozluk-frame-tabs {
   display: flex;
   gap: 4px;
 }
 
-.sozluk-frame-tab {
+.sozluk-root .sozluk-frame-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: unset;
+  height: 24px;
+  padding: 0 8px;
   background: transparent;
   border: 1px solid transparent;
   border-radius: var(--radius-4px);
-  padding: 2px 8px;
   font-size: 0.76rem;
+  font-weight: 500;
+  line-height: 1;
   color: var(--muted);
   cursor: pointer;
+  box-shadow: none;
+  transform: none;
   transition: color var(--motion-140ms) var(--ease-standard),
-    border-color var(--motion-140ms) var(--ease-standard);
+    border-color var(--motion-140ms) var(--ease-standard),
+    background-color var(--motion-140ms) var(--ease-standard);
 }
 
-.sozluk-frame-tab:hover {
+.sozluk-root .sozluk-frame-tab:hover,
+.sozluk-root .sozluk-frame-tab:not(:disabled):hover {
   color: var(--cream);
+  background: transparent;
+  box-shadow: none;
+  transform: none;
 }
 
-.sozluk-frame-tab[data-active="true"] {
+.sozluk-root .sozluk-frame-tab[data-active="true"] {
   color: var(--purple);
   border-color: var(--purple);
   background: transparent;
   font-weight: 600;
+  box-shadow: none;
+  transform: none;
 }
 
 .sozluk-frame-list {
@@ -464,17 +564,32 @@ a.sozluk-search-item:hover {
   font-weight: 600;
 }
 
-.sozluk-channel-chip {
-  padding: 3px 10px;
+.sozluk-root .sozluk-channel-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: unset;
+  height: 26px;
+  padding: 0 10px;
   border-radius: var(--radius-4px);
   border: 1px solid var(--line);
   background: transparent;
   color: var(--muted);
+  font-size: 0.82rem;
+  cursor: pointer;
+  box-shadow: none;
+  transform: none;
+  transition: color var(--motion-140ms) var(--ease-standard),
+    border-color var(--motion-140ms) var(--ease-standard);
 }
 
-.sozluk-channel-chip:hover {
+.sozluk-root .sozluk-channel-chip:hover,
+.sozluk-root .sozluk-channel-chip:not(:disabled):hover {
   color: var(--cream);
   border-color: var(--purple);
+  background: transparent;
+  box-shadow: none;
+  transform: none;
 }
 
 .sozluk-muted {
@@ -618,17 +733,19 @@ a.sozluk-pager-btn:hover {
   font-size: 0.8rem;
 }
 
-.sozluk-entry-feedback {
+.sozluk-root .sozluk-entry-feedback {
   display: flex;
   align-items: center;
   gap: 4px;
   flex-wrap: wrap;
 }
 
-.sozluk-vote {
+.sozluk-root .sozluk-vote {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 3px;
+  min-height: unset;
   height: 20px;
   padding: 0 4px;
   border-radius: var(--radius-2px);
@@ -638,69 +755,94 @@ a.sozluk-pager-btn:hover {
   font-size: 0.72rem;
   font-variant-numeric: tabular-nums;
   cursor: pointer;
-  transition: color var(--motion-140ms) var(--ease-standard);
+  box-shadow: none;
+  transform: none;
+  transition: color var(--motion-140ms) var(--ease-standard),
+    opacity var(--motion-140ms) var(--ease-standard);
 }
 
-.sozluk-vote-icon {
-  font-size: 0.68rem;
+.sozluk-root .sozluk-vote:hover,
+.sozluk-root .sozluk-vote:not(:disabled):hover {
+  color: var(--cream);
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.sozluk-root .sozluk-vote-icon {
+  font-size: 0.65rem;
   line-height: 1;
 }
 
-.sozluk-vote-count {
+.sozluk-root .sozluk-vote-count {
   font-size: 0.72rem;
   font-variant-numeric: tabular-nums;
   line-height: 1;
+  font-weight: 500;
 }
 
-.sozluk-vote:hover {
-  color: var(--cream);
-  background: transparent;
-}
-
-.sozluk-vote-up[data-active="true"] {
+.sozluk-root .sozluk-vote-up[data-active="true"] {
   color: var(--lime);
   background: transparent;
+  font-weight: 600;
 }
 
-.sozluk-vote-down[data-active="true"] {
+.sozluk-root .sozluk-vote-down[data-active="true"] {
   color: var(--coral);
   background: transparent;
+  font-weight: 600;
 }
 
-.sozluk-vote-fav[data-active="true"] {
+.sozluk-root .sozluk-vote-fav[data-active="true"] {
   color: var(--purple);
   background: transparent;
+  font-weight: 600;
 }
 
-.sozluk-entry-tools {
+.sozluk-root .sozluk-entry-tools {
   display: inline-flex;
-  gap: 10px;
-  margin-left: 8px;
+  align-items: center;
+  gap: 8px;
+  margin-left: 6px;
   opacity: 0.55;
   transition: opacity var(--motion-140ms) var(--ease-standard);
 }
 
-.sozluk-entry:hover .sozluk-entry-tools,
-.sozluk-entry-tools:focus-within {
+.sozluk-root .sozluk-entry:hover .sozluk-entry-tools,
+.sozluk-root .sozluk-entry-tools:focus-within {
   opacity: 1;
 }
 
-.sozluk-tool {
-  background: none;
-  border: none;
+.sozluk-root .sozluk-tool {
+  display: inline-flex;
+  align-items: center;
+  min-height: unset;
+  height: auto;
   padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
   color: var(--muted);
-  font-size: 0.76rem;
+  font-size: 0.75rem;
   cursor: pointer;
+  box-shadow: none;
+  transform: none;
+  transition: color var(--motion-140ms) var(--ease-standard);
 }
 
-.sozluk-tool:hover {
+.sozluk-root .sozluk-tool:hover,
+.sozluk-root .sozluk-tool:not(:disabled):hover {
   color: var(--cream);
+  background: transparent;
   text-decoration: underline;
+  box-shadow: none;
+  transform: none;
 }
 
-.sozluk-tool-danger:hover {
+.sozluk-root .sozluk-tool-danger:hover,
+.sozluk-root .sozluk-tool-danger:not(:disabled):hover {
   color: var(--coral);
+  background: transparent;
 }
 
 .sozluk-entry-meta {

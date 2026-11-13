@@ -388,7 +388,7 @@ export function SozlukShell({
           )}
         </aside>
 
-        <main className="sozluk-main">{children}</main>
+        <main id="main-content" className="sozluk-main">{children}</main>
       </div>
 
       {onboardingOpen && !viewer && (
