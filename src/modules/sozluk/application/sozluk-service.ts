@@ -1,6 +1,9 @@
 import "server-only";
 import { getSozlukDatabase } from "../../../lib/database/client.ts";
-import { withSozlukTransaction as withTransaction } from "../../../lib/database/transaction.ts";
+import {
+  withSozlukTransaction,
+  type DbTx,
+} from "../../../lib/database/transaction.ts";
 import {
   normalizeSozlukNick,
   normalizeSozlukTitle,
@@ -64,8 +67,58 @@ interface SidebarCacheEntry {
 }
 const sidebarTopicsCache = new Map<string, SidebarCacheEntry>();
 
+/*
+ * Supabase (sözlük DB) VDS'den uzak bir bölgede; her round-trip ~300ms+.
+ * Bu yüzden herkese açık okuma verisi süreç içi bellekte önbelleğe alınır ve
+ * herhangi bir yazma işleminde (entry/başlık/oy/favori/silme) sürüm artırılarak
+ * tamamı geçersiz kılınır. Tek Node süreci çalıştığı için tutarlıdır.
+ */
+const READ_CACHE_TTL_MS = 60_000;
+const READ_CACHE_MAX = 500;
+let dataVersion = 0;
+const readCache = new Map<string, { version: number; at: number; value: Promise<unknown> }>();
+
+function cachedRead<T>(key: string, loader: () => Promise<T>): Promise<T> {
+  const now = Date.now();
+  const hit = readCache.get(key);
+  if (hit && hit.version === dataVersion && now - hit.at < READ_CACHE_TTL_MS) {
+    return hit.value as Promise<T>;
+  }
+  if (readCache.size >= READ_CACHE_MAX) readCache.clear();
+  const version = dataVersion;
+  const value = loader().catch((error: unknown) => {
+    readCache.delete(key);
+    throw error;
+  });
+  readCache.set(key, { version, at: now, value });
+  return value;
+}
+
 export function invalidateSidebarCache() {
   sidebarTopicsCache.clear();
+  dataVersion += 1;
+  readCache.clear();
+}
+
+/** Yazma işlemi: commit sonrası tüm okuma önbelleğini geçersiz kılar. */
+async function withTransaction<T>(fn: (tx: DbTx) => Promise<T>): Promise<T> {
+  const result = await withSozlukTransaction(fn);
+  invalidateSidebarCache();
+  return result;
+}
+
+const EMPTY_VIEWER_STATE = () => ({
+  votes: new Map<string, 1 | -1>(),
+  favorites: new Set<string>(),
+});
+
+function loadViewerState(viewerAuthorId: string | undefined, entryIds: string[]) {
+  if (!viewerAuthorId || entryIds.length === 0) {
+    return Promise.resolve(EMPTY_VIEWER_STATE());
+  }
+  return cachedRead(`viewer:${viewerAuthorId}:${entryIds.join(",")}`, () =>
+    getViewerEntryStates(getSozlukDatabase(), viewerAuthorId, entryIds),
+  );
 }
 
 async function getCachedSidebarTopics(opts: {
@@ -100,13 +153,11 @@ export async function getSozlukSidebarData(opts: {
 }
 
 export async function getSozlukHomeFeed(viewerAuthorId?: string) {
-  const db = getSozlukDatabase();
-  const stream = await listPopularStreamEntries(db, 12);
+  const stream = await cachedRead("home-feed", () =>
+    listPopularStreamEntries(getSozlukDatabase(), 12),
+  );
   const entryIds = stream.map((item) => item.entry.id);
-  const viewerState =
-    viewerAuthorId && entryIds.length > 0
-      ? await getViewerEntryStates(db, viewerAuthorId, entryIds)
-      : { votes: new Map<string, 1 | -1>(), favorites: new Set<string>() };
+  const viewerState = await loadViewerState(viewerAuthorId, entryIds);
 
   return stream.map((item) => ({
     ...item,
@@ -115,10 +166,25 @@ export async function getSozlukHomeFeed(viewerAuthorId?: string) {
   }));
 }
 
+function findTopicCached(slug: string) {
+  return cachedRead(`topic:${slug}`, () =>
+    findTopicBySlug(getSozlukDatabase(), slug),
+  );
+}
+
 export async function getSozlukTopicTitle(slug: string) {
-  const db = getSozlukDatabase();
-  const found = await findTopicBySlug(db, slug);
+  const found = await findTopicCached(slug);
   return found?.topic ?? null;
+}
+
+export async function getSozlukChannelTopics(channelSlug: string) {
+  return cachedRead(`channel-topics:${channelSlug}`, () =>
+    listLeftFrameTopics(getSozlukDatabase(), {
+      mode: "kanal",
+      channelSlug,
+      limit: 50,
+    }),
+  );
 }
 
 export async function getSozlukTopicPage(
@@ -129,33 +195,26 @@ export async function getSozlukTopicPage(
     viewerAuthorId?: string;
   },
 ) {
-  const db = getSozlukDatabase();
-  const found = await findTopicBySlug(db, slug);
+  const found = await findTopicCached(slug);
   if (!found) return null;
 
-  let activeTopic = found.topic;
-  let activeChannel = found.channel;
-  if (activeTopic.mergedIntoTopicId) {
-    const target = await findTopicBySlug(db, slug);
-    if (target) {
-      activeTopic = target.topic;
-      activeChannel = target.channel;
-    }
-  }
+  const activeTopic = found.topic;
+  const activeChannel = found.channel;
 
   const page = Math.max(1, opts.page);
-  const { total, rows } = await listTopicEntries(db, {
-    topicId: activeTopic.id,
-    filter: opts.filter,
-    page,
-    pageSize: PAGE_SIZE,
-  });
+  const { total, rows } = await cachedRead(
+    `topic-entries:${activeTopic.id}:${opts.filter}:${page}`,
+    () =>
+      listTopicEntries(getSozlukDatabase(), {
+        topicId: activeTopic.id,
+        filter: opts.filter,
+        page,
+        pageSize: PAGE_SIZE,
+      }),
+  );
 
   const entryIds = rows.map((r) => r.entry.id);
-  const viewerState =
-    opts.viewerAuthorId && entryIds.length > 0
-      ? await getViewerEntryStates(db, opts.viewerAuthorId, entryIds)
-      : { votes: new Map<string, 1 | -1>(), favorites: new Set<string>() };
+  const viewerState = await loadViewerState(opts.viewerAuthorId, entryIds);
 
   return {
     topic: activeTopic,
@@ -176,15 +235,16 @@ export async function getSozlukAuthorPage(
   viewerAuthorId?: string,
 ) {
   const normalized = normalizeSozlukNick(decodeURIComponent(nick));
-  const db = getSozlukDatabase();
-  const author = await findAuthorByNick(db, normalized);
-  if (!author) return null;
-  const statsAndEntries = await listAuthorEntriesAndStats(db, author.id);
+  const loaded = await cachedRead(`author:${normalized}`, async () => {
+    const db = getSozlukDatabase();
+    const found = await findAuthorByNick(db, normalized);
+    if (!found) return null;
+    return { author: found, stats: await listAuthorEntriesAndStats(db, found.id) };
+  });
+  if (!loaded) return null;
+  const { author, stats: statsAndEntries } = loaded;
   const entryIds = statsAndEntries.entries.map((e) => e.entry.id);
-  const viewerState =
-    viewerAuthorId && entryIds.length > 0
-      ? await getViewerEntryStates(db, viewerAuthorId, entryIds)
-      : { votes: new Map<string, 1 | -1>(), favorites: new Set<string>() };
+  const viewerState = await loadViewerState(viewerAuthorId, entryIds);
 
   return {
     author: {
@@ -246,7 +306,6 @@ export async function createSozlukTopicWithEntry(
       status: author.rank === "caylak" ? "pending" : "published",
     });
 
-    invalidateSidebarCache();
     return { topic, entry };
   });
 }
@@ -270,7 +329,6 @@ export async function createSozlukEntry(
       status: author.rank === "caylak" ? "pending" : "published",
     });
 
-    invalidateSidebarCache();
     return { topic: found.topic, entry };
   });
 }
@@ -307,9 +365,7 @@ export async function deleteSozlukEntry(
     if (existing.authorId !== author.id && !isMod) {
       throw new Error("SOZLUK_FORBIDDEN");
     }
-    const deleted = await softDeleteEntryRecord(tx, entryId, existing);
-    invalidateSidebarCache();
-    return deleted;
+    return softDeleteEntryRecord(tx, entryId, existing);
   });
 }
 
@@ -362,7 +418,10 @@ export async function reportSozlukEntry(
 }
 
 export async function searchSozlukTopics(query: string) {
-  return searchTopicsByQuery(getSozlukDatabase(), query, 15);
+  const normalized = query.trim().toLocaleLowerCase("tr");
+  return cachedRead(`search:${normalized}`, () =>
+    searchTopicsByQuery(getSozlukDatabase(), query, 15),
+  );
 }
 
 export async function getSozlukRandomSlug() {

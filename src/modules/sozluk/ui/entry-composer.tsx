@@ -22,7 +22,7 @@ export function SozlukEntryComposer({
   if (isLocked) {
     return (
       <div className="sozluk-composer">
-        <p className="sozluk-count-badge">{t("sozluk.topicLockedNotice")}</p>
+        <p className="sozluk-muted">{t("sozluk.topicLockedNotice")}</p>
       </div>
     );
   }
@@ -30,7 +30,10 @@ export function SozlukEntryComposer({
   if (!hasViewer) {
     return (
       <div className="sozluk-composer">
-        <p className="sozluk-count-badge">{t("sozluk.loginPromptToWrite")}</p>
+        <p className="sozluk-muted">{t("sozluk.loginPromptToWrite")}</p>
+        <a href="/api/sozluk/auth/google" className="sozluk-btn sozluk-btn-primary">
+          {t("sozluk.googleSignInButton")}
+        </a>
       </div>
     );
   }
@@ -59,9 +62,10 @@ export function SozlukEntryComposer({
 
   return (
     <form className="sozluk-composer" onSubmit={handleSubmit}>
+      <h2 className="sozluk-composer-title">{t("sozluk.composerHeading")}</h2>
       {error && <p className="sozluk-error">{error}</p>}
       <textarea
-        className="sozluk-textarea"
+        className="sozluk-input sozluk-textarea"
         required
         minLength={3}
         maxLength={8000}
@@ -69,13 +73,13 @@ export function SozlukEntryComposer({
         value={content}
         onChange={(e) => setContent(e.target.value)}
       />
-      <div>
+      <div className="sozluk-form-actions">
         <button
           type="submit"
           disabled={submitting}
           className="sozluk-btn sozluk-btn-primary"
         >
-          {t("sozluk.publishEntryButton")}
+          {submitting ? t("sozluk.loadingLabel") : t("sozluk.publishEntryButton")}
         </button>
       </div>
     </form>

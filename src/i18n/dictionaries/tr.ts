@@ -621,7 +621,6 @@ export const trDictionary = {
     reportButton: "şikayet",
     editButton: "düzenle",
     deleteButton: "sil",
-    deletingButton: "siliniyor...",
     deleteConfirm: "bu entry'yi silmek istediğinize emin misiniz?",
     deleteError: "entry silinemedi.",
     saveButton: "kaydet",
@@ -647,6 +646,12 @@ export const trDictionary = {
     topicNotFoundHint: "istersen bu başlığı ilk açan sen olabilirsin.",
     prevPage: "önceki",
     nextPage: "sonraki",
+    channelTopicsEmpty: "bu kanalda henüz başlık yok.",
+    leftFrameAria: "gündem başlıkları",
+    loadingLabel: "yükleniyor...",
+    topicEntryCount: "{count} entry",
+    composerHeading: "bu başlığa sen de yaz",
+    channelsLabel: "kanallar",
   },
 } as const;
 

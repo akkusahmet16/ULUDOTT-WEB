@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useLocale, useTranslator } from "../../../i18n/client.tsx";
 import { formatDate } from "../../../i18n/format.ts";
 import { SozlukMarkupRenderer } from "./markup-renderer.tsx";
@@ -31,12 +30,14 @@ export interface SozlukEntryCardItem {
 
 export function SozlukEntryCard({
   item,
+  index,
   viewerAuthorId,
   viewerRank,
   isSubdomain,
   onRequireAuth,
 }: {
   item: SozlukEntryCardItem;
+  index?: number;
   viewerAuthorId?: string;
   viewerRank?: string;
   isSubdomain: boolean;
@@ -44,7 +45,6 @@ export function SozlukEntryCard({
 }) {
   const t = useTranslator();
   const locale = useLocale();
-  const router = useRouter();
   const [upvotes, setUpvotes] = useState(item.upvotes);
   const [downvotes, setDownvotes] = useState(item.downvotes);
   const [vote, setVote] = useState<-1 | 0 | 1>(item.viewerVote);
@@ -53,12 +53,13 @@ export function SozlukEntryCard({
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(item.content);
   const [content, setContent] = useState(item.content);
+  const [saving, setSaving] = useState(false);
+  const [edited, setEdited] = useState(Boolean(item.editedAt));
   const [reporting, setReporting] = useState(false);
   const [reportReason, setReportReason] = useState("spam");
   const [reportNote, setReportNote] = useState("");
   const [reportSent, setReportSent] = useState(false);
   const [deleted, setDeleted] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   if (deleted) return null;
 
@@ -67,22 +68,35 @@ export function SozlukEntryCard({
     viewerRank === "moderator" ||
     viewerRank === "admin";
 
+  // Oy: anında (optimistic) güncelle, sunucu yanıtıyla eşitle, hata olursa geri al.
   async function handleVote(targetValue: 1 | -1) {
     if (!viewerAuthorId) {
       onRequireAuth();
       return;
     }
-    const nextValue = vote === targetValue ? 0 : targetValue;
-    const res = await fetch(`/api/sozluk/entries/${item.id}/vote`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ value: nextValue }),
-    });
-    if (res.status === 404) {
-      setDeleted(true);
-      return;
-    }
-    if (res.ok) {
+    const prev = { vote, upvotes, downvotes };
+    const nextValue: -1 | 0 | 1 = vote === targetValue ? 0 : targetValue;
+    let up = upvotes;
+    let down = downvotes;
+    if (vote === 1) up -= 1;
+    if (vote === -1) down -= 1;
+    if (nextValue === 1) up += 1;
+    if (nextValue === -1) down += 1;
+    setVote(nextValue);
+    setUpvotes(Math.max(0, up));
+    setDownvotes(Math.max(0, down));
+
+    try {
+      const res = await fetch(`/api/sozluk/entries/${item.id}/vote`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ value: nextValue }),
+      });
+      if (res.status === 404) {
+        setDeleted(true);
+        return;
+      }
+      if (!res.ok) throw new Error("vote-failed");
       const data = (await res.json()) as {
         upvotes: number;
         downvotes: number;
@@ -91,6 +105,10 @@ export function SozlukEntryCard({
       setUpvotes(data.upvotes);
       setDownvotes(data.downvotes);
       setVote(data.userVote);
+    } catch {
+      setVote(prev.vote);
+      setUpvotes(prev.upvotes);
+      setDownvotes(prev.downvotes);
     }
   }
 
@@ -99,65 +117,68 @@ export function SozlukEntryCard({
       onRequireAuth();
       return;
     }
-    const res = await fetch(`/api/sozluk/entries/${item.id}/favorite`, {
-      method: "POST",
-    });
-    if (res.status === 404) {
-      setDeleted(true);
-      return;
-    }
-    if (res.ok) {
+    const prev = { favorited, favCount };
+    setFavorited(!favorited);
+    setFavCount(Math.max(0, favCount + (favorited ? -1 : 1)));
+    try {
+      const res = await fetch(`/api/sozluk/entries/${item.id}/favorite`, {
+        method: "POST",
+      });
+      if (res.status === 404) {
+        setDeleted(true);
+        return;
+      }
+      if (!res.ok) throw new Error("favorite-failed");
       const data = (await res.json()) as {
         favorited: boolean;
         favoritesCount: number;
       };
       setFavorited(data.favorited);
       setFavCount(data.favoritesCount);
+    } catch {
+      setFavorited(prev.favorited);
+      setFavCount(prev.favCount);
     }
   }
 
   async function handleSaveEdit() {
-    const res = await fetch(`/api/sozluk/entries/${item.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: draft }),
-    });
-    if (res.status === 404) {
-      setDeleted(true);
-      return;
-    }
-    if (res.ok) {
-      setContent(draft);
-      setEditing(false);
-      router.refresh();
+    if (saving) return;
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/sozluk/entries/${item.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: draft }),
+      });
+      if (res.status === 404) {
+        setDeleted(true);
+        return;
+      }
+      if (res.ok) {
+        setContent(draft);
+        setEdited(true);
+        setEditing(false);
+      }
+    } finally {
+      setSaving(false);
     }
   }
 
+  // Silme: onaydan sonra entry anında kaybolur; sunucu reddederse geri gelir.
   async function handleDelete() {
-    if (isDeleting) return;
-    if (
-      typeof window !== "undefined" &&
-      !window.confirm(t("sozluk.deleteConfirm"))
-    ) {
-      return;
-    }
-    setIsDeleting(true);
+    if (!window.confirm(t("sozluk.deleteConfirm"))) return;
+    setDeleted(true);
     try {
       const res = await fetch(`/api/sozluk/entries/${item.id}`, {
         method: "DELETE",
       });
-      if (res.ok || res.status === 404) {
-        setDeleted(true);
-      } else {
-        const data = (await res.json().catch(() => ({}))) as {
-          error?: string;
-        };
-        alert(data.error ?? t("sozluk.deleteError"));
-      }
+      if (res.ok || res.status === 404) return;
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      setDeleted(false);
+      window.alert(data.error ?? t("sozluk.deleteError"));
     } catch {
-      alert(t("sozluk.deleteError"));
-    } finally {
-      setIsDeleting(false);
+      setDeleted(false);
+      window.alert(t("sozluk.deleteError"));
     }
   }
 
@@ -177,121 +198,141 @@ export function SozlukEntryCard({
     }
   }
 
+  const authorHref = sozlukHref(
+    `/yazar/${encodeURIComponent(item.author.nick)}`,
+    isSubdomain,
+  );
+
   return (
-    <article id={`entry-${item.id}`} className="sozluk-entry-card">
+    <li id={`entry-${item.id}`} className="sozluk-entry">
       {item.topic && (
-        <Link
-          href={sozlukHref(`/${item.topic.slug}`, isSubdomain)}
-          className="sozluk-entry-topic-link"
-        >
-          {item.topic.title}
-        </Link>
+        <h2 className="sozluk-entry-topic">
+          <Link href={sozlukHref(`/${item.topic.slug}`, isSubdomain)}>
+            {item.topic.title}
+          </Link>
+        </h2>
       )}
 
-      {editing ? (
-        <div className="sozluk-composer">
-          <textarea
-            className="sozluk-textarea"
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-          />
-          <div className="sozluk-entry-actions">
-            <button
-              type="button"
-              className="sozluk-btn sozluk-btn-primary"
-              onClick={handleSaveEdit}
-            >
-              {t("sozluk.saveButton")}
-            </button>
-            <button
-              type="button"
-              className="sozluk-btn"
-              onClick={() => {
-                setEditing(false);
-                setDraft(content);
-              }}
-            >
-              {t("sozluk.cancelButton")}
-            </button>
-          </div>
-        </div>
-      ) : (
-        <SozlukMarkupRenderer content={content} isSubdomain={isSubdomain} />
-      )}
-
-      <footer className="sozluk-entry-footer">
-        <div className="sozluk-entry-actions">
-          <button
-            type="button"
-            className="sozluk-action-btn"
-            data-active={vote === 1}
-            onClick={() => handleVote(1)}
-          >
-            {`${t("sozluk.sukelaButton")} (${upvotes})`}
-          </button>
-          <button
-            type="button"
-            className="sozluk-action-btn"
-            data-active={vote === -1}
-            onClick={() => handleVote(-1)}
-          >
-            {`${t("sozluk.copButton")} (${downvotes})`}
-          </button>
-          <button
-            type="button"
-            className="sozluk-action-btn"
-            data-active={favorited}
-            onClick={handleFavorite}
-          >
-            {`${t("sozluk.favoriteButton")} (${favCount})`}
-          </button>
-          <button
-            type="button"
-            className="sozluk-action-btn"
-            onClick={() => setReporting((prev) => !prev)}
-          >
-            {t("sozluk.reportButton")}
-          </button>
-          {canModify && !editing && (
-            <>
-              <button
-                type="button"
-                className="sozluk-action-btn"
-                onClick={() => setEditing(true)}
-              >
-                {t("sozluk.editButton")}
-              </button>
-              <button
-                type="button"
-                className="sozluk-action-btn"
-                onClick={handleDelete}
-                disabled={isDeleting}
-              >
-                {isDeleting ? t("sozluk.deletingButton") : t("sozluk.deleteButton")}
-              </button>
-            </>
+      <div className="sozluk-entry-row">
+        {index !== undefined && (
+          <span className="sozluk-entry-index" aria-hidden="true">
+            {index}
+          </span>
+        )}
+        <div className="sozluk-entry-content">
+          {editing ? (
+            <div className="sozluk-inline-form">
+              <textarea
+                className="sozluk-input sozluk-textarea"
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+              />
+              <div className="sozluk-form-actions">
+                <button
+                  type="button"
+                  className="sozluk-btn sozluk-btn-primary"
+                  onClick={handleSaveEdit}
+                  disabled={saving}
+                >
+                  {saving ? t("sozluk.loadingLabel") : t("sozluk.saveButton")}
+                </button>
+                <button
+                  type="button"
+                  className="sozluk-btn"
+                  onClick={() => {
+                    setEditing(false);
+                    setDraft(content);
+                  }}
+                >
+                  {t("sozluk.cancelButton")}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <SozlukMarkupRenderer content={content} isSubdomain={isSubdomain} />
           )}
         </div>
+      </div>
 
-        <div>
-          <Link
-            href={sozlukHref(
-              `/yazar/${encodeURIComponent(item.author.nick)}`,
-              isSubdomain,
-            )}
-            className="sozluk-bkz"
+      <footer className="sozluk-entry-footer">
+        <div className="sozluk-entry-feedback">
+          <button
+            type="button"
+            className="sozluk-vote sozluk-vote-up"
+            data-active={vote === 1}
+            onClick={() => handleVote(1)}
+            aria-label={t("sozluk.sukelaButton")}
+            title={t("sozluk.sukelaButton")}
           >
-            {`@${item.author.nick}`}
+            <span aria-hidden="true">{"▲"}</span>
+            <span>{upvotes}</span>
+          </button>
+          <button
+            type="button"
+            className="sozluk-vote sozluk-vote-down"
+            data-active={vote === -1}
+            onClick={() => handleVote(-1)}
+            aria-label={t("sozluk.copButton")}
+            title={t("sozluk.copButton")}
+          >
+            <span aria-hidden="true">{"▼"}</span>
+            <span>{downvotes}</span>
+          </button>
+          <button
+            type="button"
+            className="sozluk-vote sozluk-vote-fav"
+            data-active={favorited}
+            onClick={handleFavorite}
+            aria-label={t("sozluk.favoriteButton")}
+            title={t("sozluk.favoriteButton")}
+          >
+            <span aria-hidden="true">{"✦"}</span>
+            <span>{favCount}</span>
+          </button>
+
+          <span className="sozluk-entry-tools">
+            <button
+              type="button"
+              className="sozluk-tool"
+              onClick={() => setReporting((prev) => !prev)}
+            >
+              {t("sozluk.reportButton")}
+            </button>
+            {canModify && !editing && (
+              <>
+                <button type="button" className="sozluk-tool" onClick={() => setEditing(true)}>
+                  {t("sozluk.editButton")}
+                </button>
+                <button
+                  type="button"
+                  className="sozluk-tool sozluk-tool-danger"
+                  onClick={handleDelete}
+                >
+                  {t("sozluk.deleteButton")}
+                </button>
+              </>
+            )}
+          </span>
+        </div>
+
+        <div className="sozluk-entry-meta">
+          <span className="sozluk-entry-date">
+            {formatDate(item.createdAt, locale)}
+            {edited && ` · ${t("sozluk.editedLabel")}`}
+          </span>
+          <Link href={authorHref} className="sozluk-entry-author">
+            {item.author.nick}
           </Link>
-          <span> · {formatDate(item.createdAt, locale)}</span>
-          {item.editedAt && <span> · {t("sozluk.editedLabel")}</span>}
+          <Link href={authorHref} className="sozluk-entry-avatar" aria-hidden="true" tabIndex={-1}>
+            {item.author.nick.slice(0, 1)}
+          </Link>
         </div>
       </footer>
 
       {reporting && (
-        <div className="sozluk-composer">
+        <div className="sozluk-inline-form">
           <select
-            className="sozluk-select"
+            className="sozluk-input"
             value={reportReason}
             onChange={(e) => setReportReason(e.target.value)}
           >
@@ -306,17 +347,15 @@ export function SozlukEntryCard({
             value={reportNote}
             onChange={(e) => setReportNote(e.target.value)}
           />
-          <button
-            type="button"
-            className="sozluk-btn sozluk-btn-primary"
-            onClick={handleReport}
-          >
-            {t("sozluk.reportSubmit")}
-          </button>
+          <div className="sozluk-form-actions">
+            <button type="button" className="sozluk-btn sozluk-btn-primary" onClick={handleReport}>
+              {t("sozluk.reportSubmit")}
+            </button>
+          </div>
         </div>
       )}
 
-      {reportSent && <p className="sozluk-count-badge">{t("sozluk.reportSent")}</p>}
-    </article>
+      {reportSent && <p className="sozluk-muted">{t("sozluk.reportSent")}</p>}
+    </li>
   );
 }

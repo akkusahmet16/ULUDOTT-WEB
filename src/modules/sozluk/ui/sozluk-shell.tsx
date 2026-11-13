@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, type ReactNode } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslator } from "../../../i18n/client.tsx";
 import { sozlukHref } from "./sozluk-links.ts";
 
@@ -25,27 +25,39 @@ export interface SozlukViewerAuthor {
   readonly rank: string;
 }
 
+type FrameTab = "gundem" | "bugun";
+
 export function SozlukShell({
   isSubdomain,
   viewer,
   channels,
-  topics,
-  activeChannelSlug,
-  activeMode,
+  gundemTopics,
+  bugunTopics,
   children,
 }: {
   isSubdomain: boolean;
   viewer: SozlukViewerAuthor | null;
   channels: readonly SozlukChannelItem[];
-  topics: readonly SozlukSidebarTopic[];
-  activeChannelSlug?: string;
-  activeMode: "gundem" | "bugun" | "kanal";
+  gundemTopics: readonly SozlukSidebarTopic[];
+  bugunTopics: readonly SozlukSidebarTopic[];
   children: ReactNode;
 }) {
   const t = useTranslator();
   const router = useRouter();
+  const pathname = usePathname() ?? "/";
+  const searchParams = useSearchParams();
+  const activeChannelSlug = searchParams?.get("kanal") ?? null;
+
+  const [frameTab, setFrameTab] = useState<FrameTab>(
+    searchParams?.get("mode") === "bugun" ? "bugun" : "gundem",
+  );
+  const [frameOpen, setFrameOpen] = useState(false);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SozlukSidebarTopic[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const searchSeq = useRef(0);
+
   const [onboardingOpen, setOnboardingOpen] = useState(false);
   const [newTopicOpen, setNewTopicOpen] = useState(false);
 
@@ -57,6 +69,7 @@ export function SozlukShell({
   const [newChannel, setNewChannel] = useState("gundem");
   const [newContent, setNewContent] = useState("");
   const [topicError, setTopicError] = useState<string | null>(null);
+  const [topicSubmitting, setTopicSubmitting] = useState(false);
 
   useEffect(() => {
     if (viewer) return;
@@ -66,18 +79,63 @@ export function SozlukShell({
     }
   }, [viewer]);
 
-  async function handleSearchChange(value: string) {
-    setSearchQuery(value);
-    if (value.trim().length < 2) {
+  // Arama: 200ms debounce + eski yanıtları yok say.
+  useEffect(() => {
+    const q = searchQuery.trim();
+    if (q.length < 2) {
       setSearchResults([]);
+      setSearchLoading(false);
       return;
     }
-    const res = await fetch(
-      `/api/sozluk/search?q=${encodeURIComponent(value.trim())}`,
-    );
-    if (res.ok) {
-      const data = (await res.json()) as { topics: SozlukSidebarTopic[] };
-      setSearchResults(data.topics);
+    const seq = ++searchSeq.current;
+    setSearchLoading(true);
+    const timer = window.setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/sozluk/search?q=${encodeURIComponent(q)}`);
+        if (!res.ok || seq !== searchSeq.current) return;
+        const data = (await res.json()) as { topics: SozlukSidebarTopic[] };
+        setSearchResults(data.topics);
+      } finally {
+        if (seq === searchSeq.current) setSearchLoading(false);
+      }
+    }, 200);
+    return () => window.clearTimeout(timer);
+  }, [searchQuery]);
+
+  const frameTopics = frameTab === "gundem" ? gundemTopics : bugunTopics;
+
+  function isActiveTopic(slug: string) {
+    let current = pathname;
+    try {
+      current = decodeURIComponent(pathname);
+    } catch {
+      /* geçersiz URI — olduğu gibi karşılaştır */
+    }
+    return current === sozlukHref(`/${slug}`, isSubdomain);
+  }
+
+  function openFrame(tab: FrameTab) {
+    setFrameTab(tab);
+    setFrameOpen((prev) => (frameTab === tab ? !prev : true));
+  }
+
+  function clearSearch() {
+    setSearchQuery("");
+    setSearchResults([]);
+  }
+
+  function handleSearchSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const first = searchResults[0];
+    if (first) {
+      clearSearch();
+      router.push(sozlukHref(`/${first.slug}`, isSubdomain));
+      return;
+    }
+    if (viewer && searchQuery.trim().length >= 2) {
+      setNewTitle(searchQuery.trim());
+      clearSearch();
+      setNewTopicOpen(true);
     }
   }
 
@@ -116,46 +174,60 @@ export function SozlukShell({
 
   async function handleCreateTopic(e: React.FormEvent) {
     e.preventDefault();
+    if (topicSubmitting) return;
     setTopicError(null);
-    const res = await fetch("/api/sozluk/topics", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: newTitle,
-        channelSlug: newChannel,
-        content: newContent,
-      }),
-    });
-    const data = (await res.json()) as {
-      error?: string;
-      topic?: { slug: string };
-    };
-    if (!res.ok || !data.topic) {
-      setTopicError(data.error ?? t("errors.operationFailed"));
-      return;
+    setTopicSubmitting(true);
+    try {
+      const res = await fetch("/api/sozluk/topics", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: newTitle,
+          channelSlug: newChannel,
+          content: newContent,
+        }),
+      });
+      const data = (await res.json()) as {
+        error?: string;
+        topic?: { slug: string };
+      };
+      if (!res.ok || !data.topic) {
+        setTopicError(data.error ?? t("errors.operationFailed"));
+        return;
+      }
+      setNewTopicOpen(false);
+      setNewTitle("");
+      setNewContent("");
+      router.push(sozlukHref(`/${data.topic.slug}`, isSubdomain));
+      router.refresh();
+    } finally {
+      setTopicSubmitting(false);
     }
-    setNewTopicOpen(false);
-    setNewTitle("");
-    setNewContent("");
-    router.push(sozlukHref(`/${data.topic.slug}`, isSubdomain));
-    router.refresh();
   }
 
   return (
     <div className="sozluk-root">
       <header className="sozluk-topbar">
+        <div className="sozluk-sunset-strip" aria-hidden="true" />
         <div className="sozluk-topbar-inner">
           <Link href={sozlukHref("/", isSubdomain)} className="sozluk-brand">
-            {t("sozluk.brand")}
+            <span className="sozluk-brand-mark" aria-hidden="true">
+              ✦
+            </span>
+            <span className="sozluk-brand-text">{t("sozluk.brand")}</span>
           </Link>
 
-          <div className="sozluk-search-wrap">
+          <form className="sozluk-search-wrap" onSubmit={handleSearchSubmit} role="search">
             <input
               type="search"
               className="sozluk-search-input"
               placeholder={t("sozluk.searchPlaceholder")}
+              aria-label={t("sozluk.searchPlaceholder")}
               value={searchQuery}
-              onChange={(e) => handleSearchChange(e.target.value)}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") clearSearch();
+              }}
             />
             {searchQuery.trim().length >= 2 && (
               <div className="sozluk-search-dropdown">
@@ -165,25 +237,26 @@ export function SozlukShell({
                       key={topic.id}
                       href={sozlukHref(`/${topic.slug}`, isSubdomain)}
                       className="sozluk-search-item"
-                      onClick={() => {
-                        setSearchQuery("");
-                        setSearchResults([]);
-                      }}
+                      onClick={clearSearch}
                     >
                       <span>{topic.title}</span>
-                      <span className="sozluk-count-badge">{topic.entryCount}</span>
+                      <span className="sozluk-count">{topic.entryCount}</span>
                     </Link>
                   ))
+                ) : searchLoading ? (
+                  <div className="sozluk-search-item sozluk-muted">
+                    {t("sozluk.loadingLabel")}
+                  </div>
                 ) : (
                   <div className="sozluk-search-item">
-                    <span>{t("sozluk.searchNoResults")}</span>
+                    <span className="sozluk-muted">{t("sozluk.searchNoResults")}</span>
                     {viewer && (
                       <button
                         type="button"
-                        className="sozluk-btn"
+                        className="sozluk-link-btn"
                         onClick={() => {
                           setNewTitle(searchQuery.trim());
-                          setSearchQuery("");
+                          clearSearch();
                           setNewTopicOpen(true);
                         }}
                       >
@@ -194,7 +267,7 @@ export function SozlukShell({
                 )}
               </div>
             )}
-          </div>
+          </form>
 
           <div className="sozluk-topbar-actions">
             {viewer ? (
@@ -211,98 +284,108 @@ export function SozlukShell({
                     `/yazar/${encodeURIComponent(viewer.nick)}`,
                     isSubdomain,
                   )}
-                  className="sozluk-btn"
+                  className="sozluk-top-link"
                 >
-                  {`@${viewer.nick}`}
+                  {viewer.nick}
                 </Link>
-                <button
-                  type="button"
-                  className="sozluk-btn"
-                  onClick={handleLogout}
-                >
+                <button type="button" className="sozluk-top-link" onClick={handleLogout}>
                   {t("sozluk.logoutButton")}
                 </button>
               </>
             ) : (
-              <a
-                href="/api/sozluk/auth/google"
-                className="sozluk-btn sozluk-btn-primary"
-              >
+              <a href="/api/sozluk/auth/google" className="sozluk-btn sozluk-btn-primary">
                 {t("sozluk.googleSignInButton")}
               </a>
             )}
-            <a href="https://uludott.com.tr" className="sozluk-btn">
+            <a href="https://uludott.com.tr" className="sozluk-top-link sozluk-top-link-dim">
               {t("sozluk.backToMainSite")}
             </a>
           </div>
         </div>
 
-        <nav className="sozluk-subnav">
-          <Link
-            href={sozlukHref("/", isSubdomain)}
-            className="sozluk-subnav-link"
-            data-active={activeMode === "gundem" && !activeChannelSlug}
-          >
-            {t("sozluk.tabGundem")}
-          </Link>
-          <Link
-            href={sozlukHref("/?mode=bugun", isSubdomain)}
-            className="sozluk-subnav-link"
-            data-active={activeMode === "bugun"}
-          >
-            {t("sozluk.tabToday")}
-          </Link>
-          <button
-            type="button"
-            className="sozluk-subnav-link sozluk-subnav-btn"
-            onClick={handleRandomTopic}
-          >
-            {t("sozluk.tabRandom")}
-          </button>
-          {channels.map((ch) => (
-            <Link
-              key={ch.id}
-              href={sozlukHref(`/?kanal=${ch.slug}`, isSubdomain)}
-              className="sozluk-subnav-link"
-              data-active={activeChannelSlug === ch.slug}
+        <nav className="sozluk-topicnav" aria-label={t("sozluk.channelsLabel")}>
+          <div className="sozluk-topicnav-inner">
+            <button
+              type="button"
+              className="sozluk-topicnav-link"
+              data-active={frameTab === "gundem"}
+              onClick={() => openFrame("gundem")}
             >
-              {`#${ch.slug}`}
-            </Link>
-          ))}
+              {t("sozluk.tabGundem")}
+            </button>
+            <button
+              type="button"
+              className="sozluk-topicnav-link"
+              data-active={frameTab === "bugun"}
+              onClick={() => openFrame("bugun")}
+            >
+              {t("sozluk.tabToday")}
+            </button>
+            <button type="button" className="sozluk-topicnav-link" onClick={handleRandomTopic}>
+              {t("sozluk.tabRandom")}
+            </button>
+            <span className="sozluk-topicnav-sep" aria-hidden="true" />
+            {channels.map((ch) => (
+              <Link
+                key={ch.id}
+                href={sozlukHref(`/?kanal=${ch.slug}`, isSubdomain)}
+                className="sozluk-topicnav-link sozluk-topicnav-channel"
+                data-active={activeChannelSlug === ch.slug}
+              >
+                {`#${ch.slug}`}
+              </Link>
+            ))}
+          </div>
         </nav>
       </header>
 
       <div className="sozluk-layout">
-        <aside className="sozluk-left-frame">
-          <div className="sozluk-frame-tabs">
-            <Link
-              href={sozlukHref("/", isSubdomain)}
-              className="sozluk-subnav-link"
-              data-active={activeMode === "gundem"}
-            >
-              {t("sozluk.tabGundem")}
-            </Link>
-            <Link
-              href={sozlukHref("/?mode=bugun", isSubdomain)}
-              className="sozluk-subnav-link"
-              data-active={activeMode === "bugun"}
-            >
-              {t("sozluk.tabToday")}
-            </Link>
+        <aside
+          className="sozluk-left-frame"
+          data-open={frameOpen}
+          aria-label={t("sozluk.leftFrameAria")}
+        >
+          <div className="sozluk-frame-head">
+            <h2 className="sozluk-frame-title">
+              {frameTab === "gundem" ? t("sozluk.tabGundem") : t("sozluk.tabToday")}
+            </h2>
+            <div className="sozluk-frame-tabs">
+              <button
+                type="button"
+                className="sozluk-frame-tab"
+                data-active={frameTab === "gundem"}
+                onClick={() => setFrameTab("gundem")}
+              >
+                {t("sozluk.tabGundem")}
+              </button>
+              <button
+                type="button"
+                className="sozluk-frame-tab"
+                data-active={frameTab === "bugun"}
+                onClick={() => setFrameTab("bugun")}
+              >
+                {t("sozluk.tabToday")}
+              </button>
+            </div>
           </div>
-          {topics.length > 0 ? (
+          {frameTopics.length > 0 ? (
             <ul className="sozluk-frame-list">
-              {topics.map((topic) => (
-                <li key={topic.id} className="sozluk-frame-item">
-                  <Link href={sozlukHref(`/${topic.slug}`, isSubdomain)}>
-                    <span>{topic.title}</span>
-                    <span className="sozluk-count-badge">{topic.entryCount}</span>
+              {frameTopics.map((topic) => (
+                <li key={topic.id}>
+                  <Link
+                    href={sozlukHref(`/${topic.slug}`, isSubdomain)}
+                    className="sozluk-frame-item"
+                    data-active={isActiveTopic(topic.slug)}
+                    onClick={() => setFrameOpen(false)}
+                  >
+                    <span className="sozluk-frame-item-title">{topic.title}</span>
+                    <small className="sozluk-count">{topic.entryCount}</small>
                   </Link>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="sozluk-count-badge">{t("sozluk.emptyAgenda")}</p>
+            <p className="sozluk-frame-empty">{t("sozluk.emptyAgenda")}</p>
           )}
         </aside>
 
@@ -312,10 +395,10 @@ export function SozlukShell({
       {onboardingOpen && !viewer && (
         <div className="sozluk-modal-backdrop">
           <form className="sozluk-modal" onSubmit={handleOnboardingSubmit}>
-            <h2>{t("sozluk.onboardingTitle")}</h2>
+            <h2 className="sozluk-modal-title">{t("sozluk.onboardingTitle")}</h2>
             {authError && <p className="sozluk-error">{authError}</p>}
 
-            <label>
+            <label className="sozluk-field">
               <span>{t("sozluk.nickLabel")}</span>
               <input
                 className="sozluk-input"
@@ -328,7 +411,7 @@ export function SozlukShell({
               />
             </label>
 
-            <label>
+            <label className="sozluk-field">
               <span>{t("sozluk.bioLabel")}</span>
               <input
                 className="sozluk-input"
@@ -338,7 +421,7 @@ export function SozlukShell({
               />
             </label>
 
-            <div className="sozluk-entry-actions">
+            <div className="sozluk-form-actions">
               <button type="submit" className="sozluk-btn sozluk-btn-primary">
                 {t("sozluk.onboardingSubmit")}
               </button>
@@ -357,10 +440,10 @@ export function SozlukShell({
       {newTopicOpen && (
         <div className="sozluk-modal-backdrop">
           <form className="sozluk-modal" onSubmit={handleCreateTopic}>
-            <h2>{t("sozluk.newTopicButton")}</h2>
+            <h2 className="sozluk-modal-title">{t("sozluk.newTopicButton")}</h2>
             {topicError && <p className="sozluk-error">{topicError}</p>}
 
-            <label>
+            <label className="sozluk-field">
               <span>{t("sozluk.topicTitleLabel")}</span>
               <input
                 className="sozluk-input"
@@ -373,10 +456,10 @@ export function SozlukShell({
               />
             </label>
 
-            <label>
+            <label className="sozluk-field">
               <span>{t("sozluk.channelLabel")}</span>
               <select
-                className="sozluk-select"
+                className="sozluk-input"
                 value={newChannel}
                 onChange={(e) => setNewChannel(e.target.value)}
               >
@@ -388,10 +471,10 @@ export function SozlukShell({
               </select>
             </label>
 
-            <label>
+            <label className="sozluk-field">
               <span>{t("sozluk.entryContentLabel")}</span>
               <textarea
-                className="sozluk-textarea"
+                className="sozluk-input sozluk-textarea"
                 required
                 minLength={3}
                 placeholder={t("sozluk.entryPlaceholder")}
@@ -400,9 +483,13 @@ export function SozlukShell({
               />
             </label>
 
-            <div className="sozluk-entry-actions">
-              <button type="submit" className="sozluk-btn sozluk-btn-primary">
-                {t("sozluk.publishTopicButton")}
+            <div className="sozluk-form-actions">
+              <button
+                type="submit"
+                className="sozluk-btn sozluk-btn-primary"
+                disabled={topicSubmitting}
+              >
+                {topicSubmitting ? t("sozluk.loadingLabel") : t("sozluk.publishTopicButton")}
               </button>
               <button
                 type="button"

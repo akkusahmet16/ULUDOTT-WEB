@@ -1,13 +1,14 @@
+import Link from "next/link";
 import { getLocale } from "../../i18n/server.ts";
 import { getTranslator } from "../../i18n/translate.ts";
 import { buildMetadata } from "../../seo/build-metadata.ts";
 import { getSozlukRequestContext } from "../../modules/sozluk/application/sozluk-request-context.ts";
 import {
+  getSozlukChannelTopics,
   getSozlukHomeFeed,
-  getSozlukSidebarData,
 } from "../../modules/sozluk/application/sozluk-service.ts";
 import { SozlukFeed } from "../../modules/sozluk/ui/sozluk-feed.tsx";
-import { SozlukShell } from "../../modules/sozluk/ui/sozluk-shell.tsx";
+import { sozlukHref } from "../../modules/sozluk/ui/sozluk-links.ts";
 
 export async function generateMetadata() {
   return buildMetadata({ routeId: "sozluk", locale: await getLocale() });
@@ -24,18 +25,36 @@ export default async function SozlukHomePage({
     getSozlukRequestContext(),
   ]);
   const t = getTranslator(locale);
-  const mode =
-    query.mode === "bugun"
-      ? "bugun"
-      : query.kanal
-        ? "kanal"
-        : "gundem";
 
-  const [sidebar, feed] = await Promise.all([
-    getSozlukSidebarData({ mode, channelSlug: query.kanal }),
-    getSozlukHomeFeed(ctx.viewer?.id),
-  ]);
+  if (query.kanal) {
+    const topics = await getSozlukChannelTopics(query.kanal);
+    return (
+      <section>
+        <header className="sozluk-topic-header">
+          <h1 className="sozluk-topic-title">{`#${query.kanal}`}</h1>
+        </header>
+        {topics.length > 0 ? (
+          <ul className="sozluk-channel-list">
+            {topics.map((topic) => (
+              <li key={topic.id}>
+                <Link
+                  href={sozlukHref(`/${topic.slug}`, ctx.isSubdomain)}
+                  className="sozluk-channel-item"
+                >
+                  <span>{topic.title}</span>
+                  <small className="sozluk-count">{topic.entryCount}</small>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="sozluk-empty">{t("sozluk.channelTopicsEmpty")}</p>
+        )}
+      </section>
+    );
+  }
 
+  const feed = await getSozlukHomeFeed(ctx.viewer?.id);
   const items = feed.map((item) => ({
     id: item.entry.id,
     content: item.entry.content,
@@ -51,17 +70,10 @@ export default async function SozlukHomePage({
   }));
 
   return (
-    <SozlukShell
-      isSubdomain={ctx.isSubdomain}
-      viewer={ctx.viewer}
-      channels={sidebar.channels}
-      topics={sidebar.topics}
-      activeChannelSlug={query.kanal}
-      activeMode={mode}
-    >
-      <div className="sozluk-topic-header">
+    <section>
+      <header className="sozluk-topic-header">
         <h1 className="sozluk-topic-title">{t("sozluk.popularTitle")}</h1>
-      </div>
+      </header>
       <SozlukFeed
         items={items}
         viewerAuthorId={ctx.viewer?.id}
@@ -69,6 +81,6 @@ export default async function SozlukHomePage({
         isSubdomain={ctx.isSubdomain}
         emptyKey="sozluk.emptyFeed"
       />
-    </SozlukShell>
+    </section>
   );
 }

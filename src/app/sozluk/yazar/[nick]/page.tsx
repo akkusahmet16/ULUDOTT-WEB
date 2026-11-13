@@ -3,12 +3,8 @@ import { getLocale } from "../../../../i18n/server.ts";
 import { getTranslator } from "../../../../i18n/translate.ts";
 import { buildMetadata } from "../../../../seo/build-metadata.ts";
 import { getSozlukRequestContext } from "../../../../modules/sozluk/application/sozluk-request-context.ts";
-import {
-  getSozlukAuthorPage,
-  getSozlukSidebarData,
-} from "../../../../modules/sozluk/application/sozluk-service.ts";
+import { getSozlukAuthorPage } from "../../../../modules/sozluk/application/sozluk-service.ts";
 import { SozlukFeed } from "../../../../modules/sozluk/ui/sozluk-feed.tsx";
-import { SozlukShell } from "../../../../modules/sozluk/ui/sozluk-shell.tsx";
 
 export async function generateMetadata({
   params,
@@ -36,10 +32,7 @@ export default async function SozlukAuthorPage({
     getSozlukRequestContext(),
   ]);
   const t = getTranslator(locale);
-  const [sidebar, data] = await Promise.all([
-    getSozlukSidebarData({ mode: "gundem" }),
-    getSozlukAuthorPage(nick, ctx.viewer?.id),
-  ]);
+  const data = await getSozlukAuthorPage(nick, ctx.viewer?.id);
 
   if (!data) notFound();
 
@@ -62,20 +55,25 @@ export default async function SozlukAuthorPage({
   }));
 
   return (
-    <SozlukShell
-      isSubdomain={ctx.isSubdomain}
-      viewer={ctx.viewer}
-      channels={sidebar.channels}
-      topics={sidebar.topics}
-      activeMode="gundem"
-    >
-      <div className="sozluk-topic-header">
-        <h1 className="sozluk-topic-title">{`@${data.author.nick}`}</h1>
-        <p className="sozluk-count-badge">
-          {`${data.author.rank} · ${data.entryCount} ${t("sozluk.profileEntriesCount")} · ${data.totalUpvotes} ${t("sozluk.profileSukelaCount")}`}
-        </p>
-        {data.author.bio && <p>{data.author.bio}</p>}
-      </div>
+    <section>
+      <header className="sozluk-profile-header">
+        <div className="sozluk-profile-avatar" aria-hidden="true">
+          {data.author.nick.slice(0, 1)}
+        </div>
+        <div className="sozluk-profile-info">
+          <h1 className="sozluk-topic-title">{data.author.nick}</h1>
+          <div className="sozluk-profile-stats">
+            <span className="sozluk-rank-chip">{data.author.rank}</span>
+            <span>
+              <strong>{data.entryCount}</strong> {t("sozluk.profileEntriesCount")}
+            </span>
+            <span>
+              <strong>{data.totalUpvotes}</strong> {t("sozluk.profileSukelaCount")}
+            </span>
+          </div>
+          {data.author.bio && <p className="sozluk-profile-bio">{data.author.bio}</p>}
+        </div>
+      </header>
 
       <SozlukFeed
         items={items}
@@ -84,6 +82,6 @@ export default async function SozlukAuthorPage({
         isSubdomain={ctx.isSubdomain}
         emptyKey="sozluk.profileNoEntries"
       />
-    </SozlukShell>
+    </section>
   );
 }

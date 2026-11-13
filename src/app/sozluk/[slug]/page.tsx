@@ -4,14 +4,12 @@ import { getTranslator } from "../../../i18n/translate.ts";
 import { buildMetadata } from "../../../seo/build-metadata.ts";
 import { getSozlukRequestContext } from "../../../modules/sozluk/application/sozluk-request-context.ts";
 import {
-  getSozlukSidebarData,
   getSozlukTopicPage,
   getSozlukTopicTitle,
 } from "../../../modules/sozluk/application/sozluk-service.ts";
 import { SozlukEntryComposer } from "../../../modules/sozluk/ui/entry-composer.tsx";
 import { SozlukFeed } from "../../../modules/sozluk/ui/sozluk-feed.tsx";
 import { sozlukHref } from "../../../modules/sozluk/ui/sozluk-links.ts";
-import { SozlukShell } from "../../../modules/sozluk/ui/sozluk-shell.tsx";
 
 export async function generateMetadata({
   params,
@@ -26,6 +24,51 @@ export async function generateMetadata({
     params: { slug },
     content: topic ? { title: topic.title } : { notFound: true },
   });
+}
+
+function Pager({
+  slug,
+  filter,
+  page,
+  totalPages,
+  isSubdomain,
+  prevLabel,
+  nextLabel,
+}: {
+  slug: string;
+  filter: string;
+  page: number;
+  totalPages: number;
+  isSubdomain: boolean;
+  prevLabel: string;
+  nextLabel: string;
+}) {
+  if (totalPages <= 1) return null;
+  const href = (p: number) =>
+    sozlukHref(`/${slug}?a=${filter}&p=${p}`, isSubdomain);
+  return (
+    <nav className="sozluk-pager">
+      {page > 1 ? (
+        <Link href={href(page - 1)} className="sozluk-pager-btn" aria-label={prevLabel}>
+          {"«"}
+        </Link>
+      ) : (
+        <span className="sozluk-pager-btn" data-disabled="true">
+          {"«"}
+        </span>
+      )}
+      <span className="sozluk-pager-state">{`${page} / ${totalPages}`}</span>
+      {page < totalPages ? (
+        <Link href={href(page + 1)} className="sozluk-pager-btn" aria-label={nextLabel}>
+          {"»"}
+        </Link>
+      ) : (
+        <span className="sozluk-pager-btn" data-disabled="true">
+          {"»"}
+        </span>
+      )}
+    </nav>
+  );
 }
 
 export default async function SozlukTopicPage({
@@ -46,29 +89,20 @@ export default async function SozlukTopicPage({
     query.a === "sukela" ? "sukela" : query.a === "today" ? "today" : "all";
   const page = Number.parseInt(query.p ?? "1", 10) || 1;
 
-  const [sidebar, data] = await Promise.all([
-    getSozlukSidebarData({ mode: "gundem" }),
-    getSozlukTopicPage(slug, {
-      filter,
-      page,
-      viewerAuthorId: ctx.viewer?.id,
-    }),
-  ]);
+  const data = await getSozlukTopicPage(slug, {
+    filter,
+    page,
+    viewerAuthorId: ctx.viewer?.id,
+  });
 
   if (!data) {
     return (
-      <SozlukShell
-        isSubdomain={ctx.isSubdomain}
-        viewer={ctx.viewer}
-        channels={sidebar.channels}
-        topics={sidebar.topics}
-        activeMode="gundem"
-      >
-        <div className="sozluk-topic-header">
+      <section>
+        <header className="sozluk-topic-header">
           <h1 className="sozluk-topic-title">{t("sozluk.topicNotFoundTitle")}</h1>
-          <p className="sozluk-count-badge">{t("sozluk.topicNotFoundHint")}</p>
-        </div>
-      </SozlukShell>
+          <p className="sozluk-muted">{t("sozluk.topicNotFoundHint")}</p>
+        </header>
+      </section>
     );
   }
 
@@ -85,43 +119,59 @@ export default async function SozlukTopicPage({
     viewerFavorited: item.viewerFavorited,
   }));
 
-  return (
-    <SozlukShell
+  const filters = [
+    { key: "all", href: `/${slug}`, label: t("sozluk.filterAll") },
+    { key: "sukela", href: `/${slug}?a=sukela`, label: t("sozluk.filterSukela") },
+    { key: "today", href: `/${slug}?a=today`, label: t("sozluk.filterToday") },
+  ] as const;
+
+  const pager = (
+    <Pager
+      slug={slug}
+      filter={filter}
+      page={data.page}
+      totalPages={data.totalPages}
       isSubdomain={ctx.isSubdomain}
-      viewer={ctx.viewer}
-      channels={sidebar.channels}
-      topics={sidebar.topics}
-      activeMode="gundem"
-    >
-      <div className="sozluk-topic-header">
-        <h1 className="sozluk-topic-title">{data.topic.title}</h1>
-        <div className="sozluk-filter-row">
-          <Link
-            href={sozlukHref(`/${slug}`, ctx.isSubdomain)}
-            className="sozluk-subnav-link"
-            data-active={filter === "all"}
-          >
-            {t("sozluk.filterAll")}
+      prevLabel={t("sozluk.prevPage")}
+      nextLabel={t("sozluk.nextPage")}
+    />
+  );
+
+  return (
+    <section>
+      <header className="sozluk-topic-header">
+        <h1 className="sozluk-topic-title">
+          <Link href={sozlukHref(`/${data.topic.slug}`, ctx.isSubdomain)}>
+            {data.topic.title}
           </Link>
-          <Link
-            href={sozlukHref(`/${slug}?a=sukela`, ctx.isSubdomain)}
-            className="sozluk-subnav-link"
-            data-active={filter === "sukela"}
-          >
-            {t("sozluk.filterSukela")}
-          </Link>
-          <Link
-            href={sozlukHref(`/${slug}?a=today`, ctx.isSubdomain)}
-            className="sozluk-subnav-link"
-            data-active={filter === "today"}
-          >
-            {t("sozluk.filterToday")}
-          </Link>
-          {data.channel && (
-            <span className="sozluk-count-badge">{`#${data.channel.slug}`}</span>
-          )}
+        </h1>
+        <div className="sozluk-topic-toolbar">
+          <div className="sozluk-filter-row">
+            {filters.map((f) => (
+              <Link
+                key={f.key}
+                href={sozlukHref(f.href, ctx.isSubdomain)}
+                className="sozluk-filter-link"
+                data-active={filter === f.key}
+              >
+                {f.label}
+              </Link>
+            ))}
+            {data.channel && (
+              <Link
+                href={sozlukHref(`/?kanal=${data.channel.slug}`, ctx.isSubdomain)}
+                className="sozluk-channel-chip"
+              >
+                {`#${data.channel.slug}`}
+              </Link>
+            )}
+            <span className="sozluk-muted">
+              {t("sozluk.topicEntryCount", { count: String(data.totalEntries) })}
+            </span>
+          </div>
+          {pager}
         </div>
-      </div>
+      </header>
 
       <SozlukFeed
         items={items}
@@ -129,43 +179,16 @@ export default async function SozlukTopicPage({
         viewerRank={ctx.viewer?.rank}
         isSubdomain={ctx.isSubdomain}
         emptyKey="sozluk.emptyFeed"
+        numberOffset={(data.page - 1) * 10}
       />
 
-      {data.totalPages > 1 && (
-        <div className="sozluk-pagination">
-          {data.page > 1 && (
-            <Link
-              href={sozlukHref(
-                `/${slug}?a=${filter}&p=${data.page - 1}`,
-                ctx.isSubdomain,
-              )}
-              className="sozluk-btn"
-            >
-              {t("sozluk.prevPage")}
-            </Link>
-          )}
-          <span className="sozluk-count-badge">
-            {`${data.page} / ${data.totalPages}`}
-          </span>
-          {data.page < data.totalPages && (
-            <Link
-              href={sozlukHref(
-                `/${slug}?a=${filter}&p=${data.page + 1}`,
-                ctx.isSubdomain,
-              )}
-              className="sozluk-btn"
-            >
-              {t("sozluk.nextPage")}
-            </Link>
-          )}
-        </div>
-      )}
+      <div className="sozluk-pager-bottom">{pager}</div>
 
       <SozlukEntryComposer
         topicSlug={data.topic.slug}
         isLocked={data.topic.isLocked}
         hasViewer={Boolean(ctx.viewer)}
       />
-    </SozlukShell>
+    </section>
   );
 }
