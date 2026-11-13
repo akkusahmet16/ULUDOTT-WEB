@@ -264,8 +264,8 @@ export function SozlukEntryCard({
             aria-label={t("sozluk.sukelaButton")}
             title={t("sozluk.sukelaButton")}
           >
-            <span aria-hidden="true">{"▲"}</span>
-            <span>{upvotes}</span>
+            <span aria-hidden="true" className="sozluk-vote-icon">{"▲"}</span>
+            {upvotes > 0 && <span className="sozluk-vote-count">{upvotes}</span>}
           </button>
           <button
             type="button"
@@ -275,8 +275,8 @@ export function SozlukEntryCard({
             aria-label={t("sozluk.copButton")}
             title={t("sozluk.copButton")}
           >
-            <span aria-hidden="true">{"▼"}</span>
-            <span>{downvotes}</span>
+            <span aria-hidden="true" className="sozluk-vote-icon">{"▼"}</span>
+            {downvotes > 0 && <span className="sozluk-vote-count">{downvotes}</span>}
           </button>
           <button
             type="button"
@@ -286,8 +286,8 @@ export function SozlukEntryCard({
             aria-label={t("sozluk.favoriteButton")}
             title={t("sozluk.favoriteButton")}
           >
-            <span aria-hidden="true">{"✦"}</span>
-            <span>{favCount}</span>
+            <span aria-hidden="true" className="sozluk-vote-icon">{"✦"}</span>
+            {favCount > 0 && <span className="sozluk-vote-count">{favCount}</span>}
           </button>
 
           <span className="sozluk-entry-tools">

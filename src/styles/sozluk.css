@@ -257,6 +257,7 @@ a.sozluk-search-item:hover {
 .sozluk-topicnav-link[data-active="true"] {
   color: var(--purple);
   border-bottom-color: var(--purple);
+  font-weight: 600;
 }
 
 .sozluk-topicnav-channel:hover,
@@ -325,13 +326,15 @@ a.sozluk-search-item:hover {
 }
 
 .sozluk-frame-tab {
-  background: none;
+  background: transparent;
   border: 1px solid transparent;
   border-radius: var(--radius-4px);
   padding: 2px 8px;
   font-size: 0.76rem;
   color: var(--muted);
   cursor: pointer;
+  transition: color var(--motion-140ms) var(--ease-standard),
+    border-color var(--motion-140ms) var(--ease-standard);
 }
 
 .sozluk-frame-tab:hover {
@@ -340,7 +343,9 @@ a.sozluk-search-item:hover {
 
 .sozluk-frame-tab[data-active="true"] {
   color: var(--purple);
-  border-color: var(--line);
+  border-color: var(--purple);
+  background: transparent;
+  font-weight: 600;
 }
 
 .sozluk-frame-list {
@@ -354,25 +359,23 @@ a.sozluk-search-item:hover {
   justify-content: space-between;
   align-items: baseline;
   gap: 10px;
-  padding: 6px 8px;
+  padding: 5px 8px;
   border-left: 2px solid transparent;
   border-radius: 0 var(--radius-4px) var(--radius-4px) 0;
   font-size: 0.88rem;
   line-height: 1.35;
   color: var(--cream);
-  transition: background var(--motion-140ms) var(--ease-standard),
-    color var(--motion-140ms) var(--ease-standard);
+  transition: color var(--motion-140ms) var(--ease-standard);
 }
 
 .sozluk-frame-item:hover {
-  background: var(--color-edb2e420);
   color: var(--purple);
 }
 
 .sozluk-frame-item[data-active="true"] {
   border-left-color: var(--purple);
-  background: var(--color-edb2e420);
   color: var(--purple);
+  font-weight: 600;
 }
 
 .sozluk-frame-item-title {
@@ -438,24 +441,26 @@ a.sozluk-search-item:hover {
   font-size: 0.82rem;
 }
 
-.sozluk-filter-link {
+.sozluk-root .sozluk-filter-link {
   padding: 3px 10px;
   border-radius: var(--radius-4px);
   border: 1px solid var(--line);
+  background: transparent;
   color: var(--muted);
+  text-decoration: none;
   transition: color var(--motion-140ms) var(--ease-standard),
     border-color var(--motion-140ms) var(--ease-standard);
 }
 
-.sozluk-filter-link:hover {
+.sozluk-root .sozluk-filter-link:hover {
   color: var(--cream);
   border-color: var(--purple);
 }
 
-.sozluk-filter-link[data-active="true"] {
-  color: var(--ink);
-  background: var(--purple);
+.sozluk-root .sozluk-filter-link[data-active="true"] {
+  color: var(--purple);
   border-color: var(--purple);
+  background: transparent;
   font-weight: 600;
 }
 
@@ -623,41 +628,48 @@ a.sozluk-pager-btn:hover {
 .sozluk-vote {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  height: 26px;
-  padding: 0 8px;
-  border-radius: var(--radius-4px);
-  border: 1px solid transparent;
-  background: none;
+  gap: 3px;
+  height: 20px;
+  padding: 0 4px;
+  border-radius: var(--radius-2px);
+  border: none;
+  background: transparent;
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-variant-numeric: tabular-nums;
   cursor: pointer;
-  transition: color var(--motion-140ms) var(--ease-standard),
-    background var(--motion-140ms) var(--ease-standard);
+  transition: color var(--motion-140ms) var(--ease-standard);
+}
+
+.sozluk-vote-icon {
+  font-size: 0.68rem;
+  line-height: 1;
+}
+
+.sozluk-vote-count {
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
 }
 
 .sozluk-vote:hover {
   color: var(--cream);
-  background: var(--panel);
+  background: transparent;
 }
 
 .sozluk-vote-up[data-active="true"] {
   color: var(--lime);
-  border-color: var(--line);
-  background: var(--panel);
+  background: transparent;
 }
 
 .sozluk-vote-down[data-active="true"] {
   color: var(--coral);
-  border-color: var(--line);
-  background: var(--panel);
+  background: transparent;
 }
 
 .sozluk-vote-fav[data-active="true"] {
   color: var(--purple);
-  border-color: var(--line);
-  background: var(--panel);
+  background: transparent;
 }
 
 .sozluk-entry-tools {
